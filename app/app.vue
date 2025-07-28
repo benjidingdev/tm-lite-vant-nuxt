@@ -47,8 +47,6 @@ useHead({
     <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />
-
-      <!--tab bar-->
       <TabBar />
     </NuxtLayout>
   </UApp>
