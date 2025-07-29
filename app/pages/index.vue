@@ -1,6 +1,4 @@
 <script setup>
-import SwipeCard from "@/component/SwipeCard";
-import Navigation from "@/component/Navigation";
 </script>
 
 <template>
@@ -15,7 +13,8 @@ import Navigation from "@/component/Navigation";
 </template>
 
 <style>
-.swipe-card-container {
-  height: calc(100vh - 50px); /* Adjust height based on nav bar and tab bar */
-}
+  .swipe-card-container {
+    height: calc(100vh - 50px);
+    /* Adjust height based on nav bar and tab bar */
+  }
 </style>

@@ -29,5 +29,25 @@ export default defineNuxtConfig({
   build: {
     transpile: ["form-data"],
   },
+  runtimeConfig: {
+    public: {
+      reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
+      siteUrl: "",
+      siteName: "",
+      siteSlogan: "",
+      siteDescription: "",
+      branch: process.env.VERCEL_GIT_COMMIT_REF || "localDev",
+      hash: process.env.VERCEL_GIT_COMMIT_SHA || "localDev",
+
+      // all options can be found here: https://www.npmjs.com/package/logrocket?activeTab=code
+      // dist/types.d.ts --> interface IOptions
+      logRocket: {
+        id: process.env.NUXT_PUBLIC_LOG_ROCKET_ID || "",
+        dev: false, // or true if you want
+        enablePinia: true,
+        config: {},
+      },
+    },
+  },
 });
 
