@@ -30,3 +30,4 @@ export default defineNuxtConfig({
     transpile: ["form-data"],
   },
 });
+
