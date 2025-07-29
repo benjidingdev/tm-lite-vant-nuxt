@@ -8,6 +8,7 @@ let startX = ref(0); // The value of startX
 let startY = ref(0); // The value of startY
 let lastPage = ref(false);
 let refresherTriggered = ref(false);
+const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
 const getInfoList = async (refresh) => {
   if (refresh) {
@@ -44,15 +45,15 @@ const getInfoList = async (refresh) => {
 const getCardStyle = (index) => {
   if (index === currentIndex.value) {
     return {
-      transform: `translateX(${offsetX.value}px) rotate(${
-        offsetX.value / 20
-      }deg)`,
-      zIndex: 100 - index,
+      transform: `translateX(${offsetX.value}px) translateY(${
+        offsetY.value
+      }px) rotate(${offsetX.value / 20}deg)`,
+      zIndex: 30 - index,
     };
   }
 
   return {
-    zIndex: 100 - index,
+    zIndex: 30 - index,
   };
 };
 
@@ -78,9 +79,13 @@ const touchMove = (e) => {
   offsetY.value = currentY - startY.value;
 
   // limit the offset value
-  const maxOffset = 150;
-  if (Math.abs(offsetX.value) > maxOffset) {
-    offsetX.value = offsetX.value > 0 ? maxOffset : -maxOffset;
+  const maxOffsetX = 150;
+  const maxOffsetY = 150;
+  if (Math.abs(offsetX.value) > maxOffsetX) {
+    offsetX.value = offsetX.value > 0 ? maxOffsetX : -maxOffsetX;
+  }
+  if (Math.abs(offsetY.value) > maxOffsetY) {
+    offsetY.value = offsetY.value > 0 ? maxOffsetY : -maxOffsetY;
   }
 };
 
@@ -94,30 +99,43 @@ const touchEnd = () => {
     buyYes(); // swipe to right means accept
   } else if (offsetX.value < -threshold) {
     buyNo(); // swipe to left means reject
+  } else if (offsetY.value > threshold) {
+    pickNext(); // swipe down means pick next card
+  } else if (offsetY.value < -threshold) {
+    bookmark(); // swipe up means bookmark
   } else {
-    resetCard(); // reset
+    resetCard(); // reset the position of card
   }
 };
 
 const buyYes = () => {
-  swipeCard(true);
+  swipeCard(statusList[0]);
 };
 
 const buyNo = () => {
-  swipeCard(false);
+  swipeCard(statusList[1]);
 };
 
-const bookmark = () => {};
+const bookmark = () => {
+  swipeCard(statusList[2]);
+};
+
+const pickNext = () => {
+  swipeCard(statusList[3]);
+};
 
 // Card swipe Animation
-const swipeCard = (isLike) => {
-  const direction = isLike ? 1 : -1;
+const swipeCard = (status) => {
+  let direction =
+    statusList.indexOf(status) === 0 || statusList.indexOf(status) === 2
+      ? 1
+      : -1;
   offsetX.value = direction * 500;
-
+  offsetY.value = direction * 500;
   // Switch to next card after 0.3 second
   setTimeout(() => {
     offsetX.value = 0;
-
+    offsetY.value = 0;
     // The result of card swiping
     if (currentIndex.value >= cards.value.length) {
       uni.showToast({
@@ -126,7 +144,7 @@ const swipeCard = (isLike) => {
       });
     }
     cards.value.shift();
-  }, 300);
+  }, 0);
 };
 
 // reset the position of cards
@@ -164,21 +182,13 @@ onMounted((e) => {
               class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
               @click="buyYes"
             >
-              <van-icon
-                name="checked"
-                size="66"
-                color="#97dbb4"
-              />
+              <van-icon name="checked" size="66" color="#97dbb4" />
             </div>
             <div
               class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
               @click="buyNo"
             >
-              <van-icon
-                name="clear"
-                size="66"
-                color="#fe9595"
-              />
+              <van-icon name="clear" size="66" color="#fe9595" />
             </div>
 
             <div
@@ -214,22 +224,11 @@ onMounted((e) => {
   overflow: hidden;
 }
 
-.card-image {
-  width: 100%;
-  height: 80%;
-  object-fit: cover;
-}
-
 .name {
   font-size: 20px;
   font-weight: bold;
   display: block;
   margin-bottom: 5px;
-}
-
-.desc {
-  font-size: 14px;
-  display: block;
 }
 
 .hint-box {
@@ -261,26 +260,9 @@ onMounted((e) => {
   background: rgba(255, 77, 79, 0.7);
 }
 
-/* .btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-} */
-
 .btn.like {
   border: 2px solid #52c41a;
 }
 
-.btn.nope {
-  border: 2px solid #ff4d4f;
-}
 
-.btn.bookmark {
-  border: 2px solid yellow;
-}
 </style>
