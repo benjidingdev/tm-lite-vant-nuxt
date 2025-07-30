@@ -1,16 +1,19 @@
+import { useDisconnect } from "@wagmi/vue";
 import { getUserInfo, getUserProfile } from "@/api/userInfo";
+import { getLogout } from "~/api/login";
 
 export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType } = $(coreStore());
+
+  //   const { disconnectWallet } = $(useWalletStore());
+  const { disconnect } = useDisconnect();
   let tokenShow = $ref(false);
   let token = $ref({
-    token: {
-      accessToken: "",
-      expiresTime: "",
-      openid: "",
-      refreshToken: "",
-      userId: "",
-    },
+    accessToken: "",
+    expiresTime: "",
+    openid: "",
+    refreshToken: "",
+    userId: "",
   });
 
   //if show login modal
@@ -41,7 +44,33 @@ export const authStore = defineStore("authStore", () => {
     updateTraderType(userProfile.data.traderType);
   };
 
-  return $$({ isToken, tokenShow, token, afterLoginSuccess });
+  const logOut = async () => {
+    try {
+      let res: any = await getLogout();
+      if (res.code === 0) {
+        updateToken({});
+        // disconnectWallet();
+        disconnect();
+        updateUserInfo({});
+        // store.clearTuitBalance();
+        // store.clearPointsBalance();
+        // handleClose();
+        // websocket.close();
+        // websocket.connect();
+      }
+    } catch (e) {
+      //console.log('Failure message：', e)
+    }
+  };
+
+  return $$({
+    isToken,
+    tokenShow,
+    token,
+    afterLoginSuccess,
+    logOut,
+    updateToken,
+  });
 });
 
 if (import.meta.hot) {

@@ -1,16 +1,9 @@
 <script setup>
 import { useAppKit } from "@reown/appkit/vue";
-import {
-  useConnect,
-  useDisconnect,
-  useAccount,
-  useBalance,
-  useSignMessage,
-} from "@wagmi/vue";
 
 const { msg } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
-const { isToken } = $(authStore());
+const { isToken, token, logOut } = $(authStore());
 
 const { open } = useAppKit();
 const openSettingModal = () => {
@@ -21,9 +14,20 @@ const openSettingModal = () => {
 <template>
   <div class="h-20 flex items-center justify-between px-10">
     <h1 class="text-3xl text-white">Prediction</h1>
+
     <div class="mr-8">
-      <!-- <appkit-button /> -->
+      {{ token.accessToken }}
+      <van-button
+        v-if="token.accessToken !== ''"
+        class="ml-4"
+        type="primary"
+        size="small"
+        @click="logOut"
+      >
+        disconnect
+      </van-button>
       <appkit-connect-button
+        v-else
         balance="show"
         size="md"
         label="connect"

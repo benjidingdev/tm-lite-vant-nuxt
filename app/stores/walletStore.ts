@@ -2,14 +2,14 @@ import { defineStore } from "pinia";
 import * as walletApi from "~/api/wallet";
 import {
   useConnect,
-  useDisconnect,
+  // useDisconnect,
   useAccount,
   useBalance,
   useSignMessage,
 } from "@wagmi/vue";
 
 export const useWalletStore = defineStore("walletStore", () => {
-  const { afterLoginSuccess } = $(useAuthStore());
+  const { afterLoginSuccess } = $(authStore());
   let walletAddress = $ref("");
   let walletBalance = $ref(0);
   let walletConected = $ref(false);
@@ -26,7 +26,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     isDisconnected,
   } = useAccount();
   const { data: signedMessage, signMessageAsync } = useSignMessage();
-  const { disconnect } = useDisconnect();
+  // const { disconnect } = useDisconnect();
 
   const setWalletAddress = (address: string) => {
     walletAddress = address;
@@ -39,16 +39,16 @@ export const useWalletStore = defineStore("walletStore", () => {
   const setWalletConnected = (connected: boolean) => {
     walletConected = connected;
   };
-  /**
-   * disconnect wallet
-   */
-  const disconnectWallet = async () => {
-    try {
-      await disconnect();
-    } catch (err) {
-      console.error("Error disconnecting wallet:", err);
-    }
-  };
+  // /**
+  //  * disconnect wallet
+  //  */
+  // const disconnectWallet = async () => {
+  //   try {
+  //     await disconnect();
+  //   } catch (err) {
+  //     console.error("Error disconnecting wallet:", err);
+  //   }
+  // };
 
   /**request signature
    *  */
@@ -106,6 +106,7 @@ export const useWalletStore = defineStore("walletStore", () => {
       console.log("login success");
       afterLoginSuccess(result);
     }
+    //console.log("todoLogin data=", data);
   };
 
   /**
@@ -160,7 +161,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     nonce,
     msg,
     todoSignIn,
-    disconnectWallet,
+    // disconnectWallet,
     updateSign,
   });
 });
