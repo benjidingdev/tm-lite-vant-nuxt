@@ -2,9 +2,7 @@
 </script>
 
 <template>
-  <div class="container w-full bg-gradient-to-b from-purple-300 to-blue-300">
-    <!--setting board-->
-    <Navigation />
+  <div>
     <!--swipe card-->
     <div class="swipe-card-container px-10 pb-30">
       <SwipeCard />

@@ -43,7 +43,6 @@
     <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />
-      <TabBar />
     </NuxtLayout>
   </UApp>
 </template>

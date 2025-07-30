@@ -1,5 +1,4 @@
 <script setup>
-import OrderList from "~/component/OrderList.vue";
 
 </script>
 

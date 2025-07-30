@@ -24,6 +24,9 @@ export default defineNuxtConfig({
       "/app-api/**": {
         proxy: "http://192.168.1.82:48082",
       },
+      "/api/news/**": {
+        proxy: "https://unidemo.dcloud.net.cn/",
+      },
     },
   },
   build: {
@@ -50,4 +53,3 @@ export default defineNuxtConfig({
     },
   },
 });
-

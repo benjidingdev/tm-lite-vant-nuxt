@@ -16,20 +16,6 @@ export default defineNuxtPlugin(nuxtApp => {
   const wagmiAdapter = new WagmiAdapter({
     networks,
     projectId,
-    // connectors: [
-    //   injected(),
-    //   metaMask(),
-    //   safe(),
-    //   walletConnect({
-    //     projectId,
-    //     metadata,
-    //     showQrModal: false,
-    //   }),
-    //   coinbaseWallet({
-    //     appName: config.public.siteName as string,
-    //     appLogoUrl: `${config.public.siteUrl}/favicon.ico`,
-    //   }),
-    // ],
   })
   nuxtApp.vueApp.use(WagmiPlugin, { 
     config: wagmiAdapter.wagmiConfig,

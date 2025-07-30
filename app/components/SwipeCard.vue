@@ -1,4 +1,5 @@
 <script setup>
+import axios from "axios";
 const cards = ref([]);
 
 let currentIndex = ref(0); // The index of current card
@@ -16,15 +17,11 @@ const getInfoList = async (refresh) => {
     refresherTriggered.value = true;
   }
 
-  const { data, error, loading } = await useFetch(
+  const res = await axios(
     "https://unidemo.dcloud.net.cn/api/news?column=title,author_name,cover,published_at"
   );
-  if (error.value) {
-    console.error("Error fetching data:", error.value);
-    return;
-  }
-  if (data.value) {
-    const result = data.value;
+  if (res.data) {
+    const result = res.data;
     console.log(result);
     if (result !== null) {
       if (refresh) {
@@ -39,6 +36,8 @@ const getInfoList = async (refresh) => {
         }
       }
     }
+  } else {
+    cards.value = [];
   }
 };
 // Obtain the style of card
@@ -263,6 +262,4 @@ onMounted((e) => {
 .btn.like {
   border: 2px solid #52c41a;
 }
-
-
 </style>
