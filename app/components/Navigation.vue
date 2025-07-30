@@ -8,7 +8,9 @@ import {
   useSignMessage,
 } from "@wagmi/vue";
 
+const { msg } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
+const { isToken } = $(authStore());
 
 const { open } = useAppKit();
 const openSettingModal = () => {
@@ -18,9 +20,16 @@ const openSettingModal = () => {
 
 <template>
   <div class="h-20 flex items-center justify-between px-10">
-    <h1 class="text-3xl text-white">Predict</h1>
+    <h1 class="text-3xl text-white">Prediction</h1>
     <div class="mr-8">
-      <appkit-button />
+      <!-- <appkit-button /> -->
+      <appkit-connect-button
+        balance="show"
+        size="md"
+        label="connect"
+        loadingLabel="connecting"
+        @click="isToken(true)"
+      />
     </div>
 
     <div

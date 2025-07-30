@@ -19,16 +19,6 @@ export default defineNuxtConfig({
       "window.FormData": "undefined", // 防止 SSR 问题
     },
   },
-  nitro: {
-    routeRules: {
-      "/app-api/**": {
-        proxy: "http://192.168.1.82:48082",
-      },
-      "/api/news/**": {
-        proxy: "https://unidemo.dcloud.net.cn/",
-      },
-    },
-  },
   build: {
     transpile: ["form-data"],
   },
@@ -50,6 +40,7 @@ export default defineNuxtConfig({
         enablePinia: true,
         config: {},
       },
+      host: process.env.NUXT_PUBLIC_API_DOMAIN || "http://192.168.1.82:48082",
     },
   },
 });

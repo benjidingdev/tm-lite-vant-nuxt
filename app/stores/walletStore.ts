@@ -9,8 +9,12 @@ import {
 } from "@wagmi/vue";
 
 export const useWalletStore = defineStore("walletStore", () => {
+  const { afterLoginSuccess } = $(useAuthStore());
   let walletAddress = $ref("");
   let walletBalance = $ref(0);
+  let walletConected = $ref(false);
+  let isSign = $ref(false);
+  let msg = $ref("");
   let nonce = $ref("");
   const {
     isConnected,
@@ -32,6 +36,9 @@ export const useWalletStore = defineStore("walletStore", () => {
     walletBalance = balance;
   };
 
+  const setWalletConnected = (connected: boolean) => {
+    walletConected = connected;
+  };
   /**
    * disconnect wallet
    */
@@ -40,20 +47,6 @@ export const useWalletStore = defineStore("walletStore", () => {
       await disconnect();
     } catch (err) {
       console.error("Error disconnecting wallet:", err);
-    }
-  };
-
-  /**
-   * get signature message
-   */
-  const getNonce = async (_address: any) => {
-    try {
-      let res: any = await walletApi.getNonce({ proxyWallet: _address });
-      nonce = res.msg || "error";
-      return res;
-    } catch (error) {
-      //console.log("fetch signature error", error);
-      throw error;
     }
   };
 
@@ -76,9 +69,9 @@ export const useWalletStore = defineStore("walletStore", () => {
       { account: address.value, message: message },
       {
         onSuccess: (data, variables, context) => {
-          state.msg = "signature success";
+          msg = "signature success";
           todoLogin(data, "wallet");
-          store.isToken(false);
+          // store.isToken(false);
         },
         onError: (error, variables, context) => {
           console.log("error", error);
@@ -87,7 +80,20 @@ export const useWalletStore = defineStore("walletStore", () => {
     );
   };
 
-  const todoLogin = async (data, type) => {
+  /**
+   * get signature message
+   */
+  const getNonce = async (_address: any) => {
+    try {
+      let res: any = await walletApi.getNonce({ proxyWallet: _address.value });
+      return res;
+    } catch (error) {
+      //console.log("fetch signature error", error);
+      throw error;
+    }
+  };
+
+  const todoLogin = async (data: any, type: any) => {
     console.log("todoLogin address=", {
       proxyWallet: address.value,
       signature: data,
@@ -98,27 +104,63 @@ export const useWalletStore = defineStore("walletStore", () => {
     });
     if (result && result.code === 0) {
       console.log("login success");
-      // afterLoginSuccess(result);
+      afterLoginSuccess(result);
     }
-    //console.log("todoLogin data=", data);
+  };
+
+  /**
+   *
+   * refresh user info after login
+   */
+  const loadUserInfo = async () => {
+    // if (store.token.accessToken) {
+    //   //getUserInfo
+    //   let user = await getUserInfo();
+    //   //user.data.experience: 0
+    //   store.codeShow = user.data.experience === 0 ? true : false;
+    //   store.updateUserInfo(user.data);
+    //   //get wallet balance
+    //   let money = await getUserPortfolio();
+    //   store.updateUserMoney(money.data.portfolio);
+    // }
+  };
+
+  /**
+   *
+   * refresh sign status
+   */
+  const updateSign = (sign: boolean) => {
+    isSign.value = sign;
   };
 
   watch(
     () => address.value,
     (newAddress) => {
       setWalletAddress(newAddress || "");
+      todoSignIn();
     },
     { immediate: true }
-  )
+  );
+
+  watch(
+    () => isConnected.value,
+    (isConnected: boolean) => {
+      setWalletConnected(isConnected);
+    },
+    { immediate: true }
+  );
 
   return $$({
     walletAddress,
     walletBalance,
+    walletConected,
     setWalletAddress,
     setWalletBalance,
     getNonce,
     nonce,
+    msg,
     todoSignIn,
     disconnectWallet,
+    updateSign,
   });
 });
