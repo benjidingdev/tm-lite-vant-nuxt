@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     define: {
-      "window.FormData": "undefined", // 防止 SSR 问题
+      "window.FormData": "undefined",
     },
   },
   build: {

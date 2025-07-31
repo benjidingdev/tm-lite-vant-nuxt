@@ -1,3 +1,21 @@
+<template>
+  <div class="container w-full">
+    <van-card
+      v-for="item in list"
+      :key="item.id"
+      currency="$"
+      :price="item.price"
+      :desc="item.description"
+      :title="item.title"
+      :thumb="item.thumb"
+    >
+      <template #footer>
+        <van-button plain size="mini" type="primary">Decrease</van-button>
+        <van-button plain size="mini" type="danger">Increase</van-button>
+      </template>
+    </van-card>
+  </div>
+</template>
 <script setup lang="ts">
 const list = $ref([
   {
@@ -18,23 +36,3 @@ const list = $ref([
   },
 ]);
 </script>
-
-<template>
-  <div class="container w-full">
-    <van-card
-      v-for="item in list"
-      :key="item.id"
-      currency="$"
-      :price="item.price"
-      :desc="item.description"
-      :title="item.title"
-      :thumb="item.thumb"
-    >
-      <template #footer>
-        <van-button plain size="mini" type="primary">Decrease</van-button>
-        <van-button plain size="mini" type="danger">Increase</van-button>
-      </template>
-    </van-card>
-  </div>
-</template>
-

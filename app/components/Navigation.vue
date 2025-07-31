@@ -1,16 +1,3 @@
-<script setup>
-import { useAppKit } from "@reown/appkit/vue";
-
-const { msg } = $(useWalletStore());
-const { setSettingModalShow } = $(uiStore());
-const { isToken, token, logOut } = $(authStore());
-
-const { open } = useAppKit();
-const openSettingModal = () => {
-  setSettingModalShow(true);
-};
-</script>
-
 <template>
   <div class="h-20 flex items-center justify-between px-10">
     <h1 class="text-3xl text-white">Prediction</h1>
@@ -54,3 +41,16 @@ const openSettingModal = () => {
     <SettingModal />
   </div>
 </template>
+
+<script setup>
+import { useAppKit } from "@reown/appkit/vue";
+
+const { msg } = $(useWalletStore());
+const { setSettingModalShow } = $(uiStore());
+const { isToken, token, logOut } = $(authStore());
+
+const { open } = useAppKit();
+const openSettingModal = () => {
+  setSettingModalShow(true);
+};
+</script>

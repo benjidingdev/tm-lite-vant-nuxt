@@ -1,11 +1,11 @@
 import Request from "@/utils/request";
 
-const config = useRuntimeConfig();
-const host = config.public.host;
+// const config = useRuntimeConfig();
+// const host = config.public.host;
 // use the email to get the verification code
 export const sendEmailCode = (params = {}) => {
   return Request({
-    url: `${host}/app-api/topic/user/send-email-code`,
+    url: `/app-api/topic/user/send-email-code`,
     method: "post",
     data: params,
   });
@@ -14,7 +14,7 @@ export const sendEmailCode = (params = {}) => {
 // register by email password
 export const emailRegistration = (params = {}) => {
   return Request({
-    url: `${host}/app-api/topic/user/userReg`,
+    url: `/app-api/topic/user/userReg`,
     method: "post",
     data: params,
   });
@@ -23,7 +23,7 @@ export const emailRegistration = (params = {}) => {
 // login by email password
 export const emailLogin = (params = {}) => {
   return Request({
-    url: `${host}/app-api/topic/user/mail-login`,
+    url: `/app-api/topic/user/mail-login`,
     method: "post",
     data: params,
   });
@@ -32,7 +32,7 @@ export const emailLogin = (params = {}) => {
 // forgot password
 export const emailForgotPassword = (params = {}) => {
   return Request({
-    url: `${host}/app-api/topic/user/resetPwd`,
+    url: `/app-api/topic/user/resetPwd`,
     method: "put",
     data: params,
   });
@@ -41,7 +41,7 @@ export const emailForgotPassword = (params = {}) => {
 // logout
 export const getLogout = (params = {}) => {
   return Request({
-    url: `${host}/app-api/topic/user/logout`,
+    url: `/app-api/topic/user/logout`,
     method: "post",
     data: params,
   });

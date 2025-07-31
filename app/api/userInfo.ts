@@ -1,11 +1,10 @@
 import Request from '@/utils/request'
 
-const config = useRuntimeConfig();
-const host = config.public.host;
+
 // Check the user's wallet balance
 export const getUserBalance = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/getBalance`,
+        url: `/app-api/topic/user/getBalance`,
         method: 'get'
     })
 }
@@ -13,7 +12,7 @@ export const getUserBalance = (params = {}) => {
 // Check the user's portfolio balance
 export const getUserPortfolio = () => {
     return Request({
-        url: `${host}/app-api/topic/user/getPortfolio`,
+        url: `/app-api/topic/user/getPortfolio`,
         method: 'get'
     })
 }
@@ -21,7 +20,7 @@ export const getUserPortfolio = () => {
 // Check the user's profile information
 export const getUserProfile = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/profile`,
+        url: `/app-api/topic/user/profile`,
         method: 'post',
         data: params
     })
@@ -30,7 +29,7 @@ export const getUserProfile = (params = {}) => {
 // Check the user's basic information
 export const getUserInfo = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/get`,
+        url: `/app-api/topic/user/get`,
         method: 'get',
         params
     })
@@ -39,7 +38,7 @@ export const getUserInfo = (params = {}) => {
 // Update the user's basic information
 export const updateUserSettings = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/update`,
+        url: `/app-api/topic/user/update`,
         method: 'post',
         data: params
     })
@@ -48,7 +47,7 @@ export const updateUserSettings = (params = {}) => {
 // Send email verification code
 export const sendEmailCode = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/sendEmailCode`,
+        url: `/app-api/topic/user/sendEmailCode`,
         method: 'post',
         data: params
     })
@@ -57,7 +56,7 @@ export const sendEmailCode = (params = {}) => {
 // Bind email
 export const bindEmail = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/bindEmail`,
+        url: `/app-api/topic/user/bindEmail`,
         method: 'post',
         data: params
     })
@@ -66,7 +65,7 @@ export const bindEmail = (params = {}) => {
 // Update the user's notification settings
 export const updateNotify = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/updateNotify`,
+        url: `/app-api/topic/user/updateNotify`,
         method: 'post',
         data: params
     })
@@ -75,7 +74,7 @@ export const updateNotify = (params = {}) => {
 // Check the user's holding information
 export const getUserHoldInfo = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/userHoldInfo`,
+        url: `/app-api/topic/user/userHoldInfo`,
         method: 'post',
         data: params
     })
@@ -84,7 +83,7 @@ export const getUserHoldInfo = (params = {}) => {
 // Check the user's invite code
 export const updateInviteCode = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/updateInviteCode`,
+        url: `/app-api/topic/user/updateInviteCode`,
         method: 'post',
         data: params
     })
@@ -93,7 +92,7 @@ export const updateInviteCode = (params = {}) => {
 // Redemption signature information
 export const getClaimSignData = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/getClaimSignData`,
+        url: `/app-api/topic/user/getClaimSignData`,
         method: 'post',
         data: params
     })
@@ -102,7 +101,7 @@ export const getClaimSignData = (params = {}) => {
 // Position redemption
 export const cashOut = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/cashOut`,
+        url: `/app-api/topic/user/cashOut`,
         method: 'post',
         data: params
     })
@@ -111,7 +110,7 @@ export const cashOut = (params = {}) => {
 // Contract configuration information
 export const userConfig = () => {
     return Request({
-        url: `${host}/app-api/topic/user/config`,
+        url: `/app-api/topic/user/config`,
         method: 'get',
     })
 }
@@ -119,7 +118,7 @@ export const userConfig = () => {
 // User token authorization
 export const approveSign = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/approveSign`,
+        url: `/app-api/topic/user/approveSign`,
         method: 'post',
         data: params
     })
@@ -128,7 +127,7 @@ export const approveSign = (params = {}) => {
 // Obtain task information
 export const getUserTask = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/task/list`,
+        url: `/app-api/topic/task/list`,
         method: 'get',
         params
     })
@@ -137,7 +136,7 @@ export const getUserTask = (params = {}) => {
 // Receive a prize in mission
 export const userTaskReceive = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/task/receive`,
+        url: `/app-api/topic/task/receive`,
         method: 'get',
         params
     })
@@ -146,7 +145,7 @@ export const userTaskReceive = (params = {}) => {
 // Apply to become a broker
 export const applyBroker = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/broker/apply`,
+        url: `/app-api/topic/user/broker/apply`,
         method: 'post',
         data: params
     })
@@ -155,7 +154,7 @@ export const applyBroker = (params = {}) => {
 // Get broker settlement information
 export const getBrokerSettleInfo = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/broker/settleInfo`,
+        url: `/app-api/topic/user/broker/settleInfo`,
         method: 'get',
         params
     })
@@ -164,7 +163,7 @@ export const getBrokerSettleInfo = (params = {}) => {
 // Get the broker settlement details page
 export const getBrokerSettleDetail = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/broker/settleDetail`,
+        url: `/app-api/topic/user/broker/settleDetail`,
         method: 'post',
         data: params
     })
@@ -173,7 +172,7 @@ export const getBrokerSettleDetail = (params = {}) => {
 // Agent withdrawal log pagination
 export const getBrokerWithdraw = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/user/broker/withdraw/page`,
+        url: `/app-api/topic/user/broker/withdraw/page`,
         method: 'post',
         data: params
     })
@@ -182,7 +181,7 @@ export const getBrokerWithdraw = (params = {}) => {
 // Apply to become an agent
 export const applyUserMarketing = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/marketing/user/apply`,
+        url: `/app-api/topic/marketing/user/apply`,
         method: 'post',
         data: params
     })
@@ -191,7 +190,7 @@ export const applyUserMarketing = (params = {}) => {
 // Agency application history
 export const getUserMarketing = (params = {}) => {
     return Request({
-        url: `${host}/app-api/topic/marketing/user/status`,
+        url: `/app-api/topic/marketing/user/status`,
         method: 'post',
         data: params
     })

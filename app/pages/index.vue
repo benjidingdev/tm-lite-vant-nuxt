@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
   <div>
     <!--swipe card-->
@@ -10,9 +7,11 @@
   </div>
 </template>
 
+<script setup />
+
 <style>
-  .swipe-card-container {
-    height: calc(100vh - 50px);
-    /* Adjust height based on nav bar and tab bar */
-  }
+.swipe-card-container {
+  height: calc(100vh - 50px);
+  /* Adjust height based on nav bar and tab bar */
+}
 </style>

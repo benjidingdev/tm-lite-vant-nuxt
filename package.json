@@ -14,7 +14,6 @@
     "@reown/appkit": "^1.7.16",
     "@reown/appkit-adapter-wagmi": "^1.7.16",
     "@tailwindcss/vite": "^4.1.11",
-    "@tanstack/vue-query": "^5.83.0",
     "@vant/nuxt": "1.0.7",
     "@wagmi/vue": "^0.1.24",
     "axios": "^1.11.0",
