@@ -59,7 +59,7 @@
 <script setup>
 import axios from "axios";
 import { parseUnits } from "viem";
-import { debounce } from "lodash";
+import _ from "lodash";
 import {
   getTopicsRecommend,
   getTopicsOrderPreview,
@@ -252,7 +252,7 @@ const pickNext = () => {
 };
 
 // start transcation
-const goDeposit = debounce(async () => {
+const goDeposit = _.debounce(async () => {
   if (token.accessToken === "") {
     isToken(true);
   } else {
