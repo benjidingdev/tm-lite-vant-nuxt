@@ -135,7 +135,6 @@ export const useWalletStore = defineStore("walletStore", () => {
       let res: any = await walletApi.getNonce({ proxyWallet: _address.value });
       return res;
     } catch (error) {
-      //console.log("fetch signature error", error);
       throw error;
     }
   };
