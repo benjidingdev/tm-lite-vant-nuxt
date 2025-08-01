@@ -10,8 +10,7 @@
       :thumb="item.thumb"
     >
       <template #footer>
-        <van-button plain size="mini" type="primary">Decrease</van-button>
-        <van-button plain size="mini" type="danger">Increase</van-button>
+        <van-button plain size="mini" type="primary">Shares</van-button>
       </template>
     </van-card>
   </div>

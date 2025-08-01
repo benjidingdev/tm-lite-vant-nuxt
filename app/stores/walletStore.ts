@@ -1,22 +1,16 @@
 import { defineStore } from "pinia";
 import * as walletApi from "~/api/wallet";
 import {
-  useConnect,
   // useDisconnect,
   useAccount,
   useSignMessage,
   useSignTypedData,
-  useAccountEffect,
 } from "@wagmi/vue";
-import { mainnet } from "@wagmi/vue/chains";
 import type { SignTradeDataOptions } from "@/config/tradeTypes";
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_ORDER,
   TYPEHASH_MERGE_SPLIT_ORDER,
-  TYPEHASH_PERMIT,
-  TYPEHASH_REWARD,
-  TYPEHASH_BROKER,
 } from "@/config/tradeTypes";
 
 type contentType = {
@@ -34,16 +28,8 @@ export const useWalletStore = defineStore("walletStore", () => {
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
-  const {
-    isConnected,
-    address,
-    connector,
-    chain,
-    chainId,
-    status,
-    isDisconnected,
-  } = useAccount();
-  const { data: signedMessage, signMessageAsync } = useSignMessage();
+  const { isConnected, address } = useAccount();
+  const { signMessageAsync } = useSignMessage();
   const { signTypedDataAsync } = useSignTypedData();
 
   const setWalletAddress = (address: string) => {
@@ -53,19 +39,21 @@ export const useWalletStore = defineStore("walletStore", () => {
   const setWalletConnected = (connected: boolean) => {
     walletConected = connected;
   };
-  // /**
-  //  * disconnect wallet
-  //  */
-  // const disconnectWallet = async () => {
-  //   try {
-  //     await disconnect();
-  //   } catch (err) {
-  //     console.error("Error disconnecting wallet:", err);
-  //   }
-  // };
 
-  /**request signature
-   *  */
+  const updateWalletConfig = (data: any) => {
+    walletConfig = data;
+  };
+
+  /**
+   * refresh sign status
+   */
+  const updateSign = (sign: boolean) => {
+    isSign.value = sign;
+  };
+
+  /**
+   *  request signature
+   */
   const todoSignIn = async () => {
     let nonce = new Date().getTime().toString();
     let message = "Welcome to TuringMarket Sign to connect.";
@@ -85,7 +73,6 @@ export const useWalletStore = defineStore("walletStore", () => {
         onSuccess: (data, variables, context) => {
           msg = "signature success";
           todoLogin(data, "wallet");
-          // store.isToken(false);
         },
         onError: (error, variables, context) => {
           console.log("error", error);
@@ -95,7 +82,7 @@ export const useWalletStore = defineStore("walletStore", () => {
   };
 
   /**
-   * transcation signature
+   *  transcation signature
    */
   const signTradeData = async (options: SignTradeDataOptions) => {
     const { domain, types, order } = options;
@@ -118,7 +105,7 @@ export const useWalletStore = defineStore("walletStore", () => {
       };
       // signature returned result
       const result = await signTypedDataAsync(content);
-      // //console.log('content:', content, 'result:', result)
+      // console.log('content:', content, 'result:', result)
 
       return result;
     } catch (err) {
@@ -140,10 +127,6 @@ export const useWalletStore = defineStore("walletStore", () => {
   };
 
   const todoLogin = async (data: any, type: any) => {
-    console.log("todoLogin address=", {
-      proxyWallet: address.value,
-      signature: data,
-    });
     let result = await walletApi.loginByWallet({
       proxyWallet: address.value,
       signature: data,
@@ -152,32 +135,6 @@ export const useWalletStore = defineStore("walletStore", () => {
       console.log("login success");
       afterLoginSuccess(result);
     }
-    //console.log("todoLogin data=", data);
-  };
-
-  /**
-   *
-   * refresh user info after login
-   */
-  const loadUserInfo = async () => {
-    // if (store.token.accessToken) {
-    //   //getUserInfo
-    //   let user = await getUserInfo();
-    //   //user.data.experience: 0
-    //   store.codeShow = user.data.experience === 0 ? true : false;
-    //   store.updateUserInfo(user.data);
-    //   //get wallet balance
-    //   let money = await getUserPortfolio();
-    //   store.updateUserMoney(money.data.portfolio);
-    // }
-  };
-
-  /**
-   *
-   * refresh sign status
-   */
-  const updateSign = (sign: boolean) => {
-    isSign.value = sign;
   };
 
   watch(
@@ -200,13 +157,15 @@ export const useWalletStore = defineStore("walletStore", () => {
   return $$({
     walletAddress,
     walletConected,
-    setWalletAddress,
-    getNonce,
+    walletConfig,
     nonce,
     msg,
+    getNonce,
     todoSignIn,
     signTradeData,
     // disconnectWallet,
     updateSign,
+    setWalletAddress,
+    updateWalletConfig,
   });
 });

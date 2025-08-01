@@ -58,6 +58,7 @@
 
 <script setup>
 import axios from "axios";
+import { showDialog } from "vant";
 import { parseUnits } from "viem";
 import _ from "lodash";
 import {
@@ -77,6 +78,7 @@ let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
 const { token, isToken } = $(authStore());
+const { signTradeData } = $(useWalletStore());
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize: 12,
@@ -279,14 +281,14 @@ const goDeposit = _.debounce(async () => {
       // } else return ElMessage.error("Permit authorization failed!");
 
       const req = {
-        marketId: transaction.marketsId,
+        marketId: transaction.marketsId || 1012110,
         type: transaction.type, //1-YES；2-NO,
         amount: null,
         // volume: amount.value || 1,
         volume: 1,
         priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
         orderType: 1, //1: buy, 2: sell
-        price: transaction.textPrice * 100,
+        price: 46 || transaction.textPrice * 100,
         isDeduction: false,
       };
       let result = await getTopicsOrderPreview(req);
@@ -300,7 +302,7 @@ const goDeposit = _.debounce(async () => {
             result.data.tokenPriceInPaymentToken + "",
             6
           );
-          tradeSign = await walletStore.signTradeData({ order: result.data });
+          tradeSign = await signTradeData({ order: result.data });
           // //console.log('signature result', tradeSign)
         } catch (e) {
           //console.log(e)
@@ -313,15 +315,18 @@ const goDeposit = _.debounce(async () => {
           };
           let res = await getTopicsOrderCreate(params);
           if (res.code === 0) {
-            alert("success");
-            // refresh yes / no price(delay 500 milliseconds)
-            const topicId = transaction.parentId;
-            const marketsId = transaction.marketsId;
-            const to = setTimeout(() => {
-              clearTimeout(to);
-              // getLastPrice(topicId, marketsId);
-            }, 500);
-            // hideTransaction();
+            showDialog()({
+              title: "Transaction Successful",
+              message: "Your transaction has been successfully processed.",
+              confirmButtonText: "OK",
+            });
+          } else {
+            showDialog({
+              title: "Transaction Failed",
+              message:
+                res.message || "An error occurred during the transaction.",
+              confirmButtonText: "OK",
+            });
           }
         }
       }

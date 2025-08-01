@@ -36,29 +36,28 @@
 </template>
 
 <script setup>
-import { useBalance } from "@wagmi/vue";
+import { useBalance, useAccount } from "@wagmi/vue";
 import { mainnet, polygon } from "@wagmi/vue/chains";
 
 const { walletAddress } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
-const { isToken, token } = $(authStore());
+const { isToken } = $(authStore());
 
-const { data: balance } = useBalance({
-  address: walletAddress,
-  chainId: polygon.id,
-});
-
-const shortenedAddress = computed(() => {
-  con;
-  return walletAddress
-    ? `${walletAddress.substring(0, 4)}...${walletAddress.slice(-2)}`
-    : "";
-});
+const { address, isConnected } = $(useAccount());
+let { data: balance, refetch: refreshBalance } = $(
+  useBalance({
+    address,
+    // need change it to configuration
+    chainId: 31337,
+    cacheTime: 0,
+    staleTime: 0,
+  })
+);
 
 const formattedBalance = computed(() => {
-  if (!balance.value) return "0.000";
+  if (!balance) return "0.000";
 
-  const value = parseFloat(balance.value.formatted);
+  const value = parseFloat(balance.formatted);
   return isNaN(value)
     ? "0.000"
     : value.toLocaleString(undefined, {
@@ -66,20 +65,20 @@ const formattedBalance = computed(() => {
         maximumFractionDigits: 1,
       }) +
         " " +
-        balance.value.symbol;
+        balance.symbol;
 });
 
 const openSettingModal = () => {
   setSettingModalShow(true);
 };
 
-// watch(
-//   () => walletAddress,
-//   (newVal) => {
-
-//   },
-//   { immediate: true }
-// );
+watch(
+  () => isConnected,
+  (newVal) => {
+    refreshBalance();
+  },
+  { immediate: true }
+);
 </script>
 
 <style>

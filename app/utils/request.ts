@@ -1,14 +1,14 @@
 import axios from "axios";
 import { authStore } from "@/stores/authStore";
 
-export const BaseUrl = "http://192.168.1.82:18082";
+// need to change it to configuration
+export const BaseUrl = "http://192.168.1.82:48082";
+// const config = useRuntimeConfig();
+// const BaseUrl = config.public.host;
 //console.log('__VUE_branch', __VUE_branch)
 //console.log('__VUE_commitHash', __VUE_commitHash)
 
-// const { $pinia } = useNuxtApp(); // 获取 Pinia 实例
-// const useUserStore = authStore($pinia); // 传入 Pinia 实例
-// console.log("token", useUserStore);
-// const { updateToken, token } = authStore();
+
 const service = axios.create({
   baseURL: BaseUrl,
   timeout: 100000,
@@ -45,20 +45,15 @@ service.interceptors.response.use(
       const { updateToken, isToken } = $(authStore());
       //api report 401 means login expired, need to clear personal information and expired token
       updateToken({});
-      //   updateUserInfo({});
       // show popup login modal after clear user info
       isToken(true);
     } else if (res.code !== 0) {
-      // alert(res.msg);
       return Promise.reject(new Error(res.msg || "Error"));
     } else {
       return res;
     }
   },
   (error) => {
-    // if (error.response && error.response.status !== 200) {
-    //     alert(error);
-    // }
     return Promise.reject(error);
   }
 );

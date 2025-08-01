@@ -1,4 +1,7 @@
+import * as userApi from "~/api/userInfo";
+
 export const coreStore = defineStore("coreStore", () => {
+  const { token } = $(authStore());
   let userInfo = $ref({});
   let traderType = $ref({});
 
@@ -11,7 +14,24 @@ export const coreStore = defineStore("coreStore", () => {
     traderType = type;
   };
 
-  return $$({ updateUserInfo, userInfo, updateTraderType, traderType });
+  /**
+   *
+   * refresh user info after login
+   */
+  const loadUserInfo = async () => {
+    if (token.accessToken) {
+      let user = await userApi.getUserInfo();
+      updateUserInfo(user.data);
+    }
+  };
+
+  return $$({
+    updateUserInfo,
+    userInfo,
+    updateTraderType,
+    traderType,
+    loadUserInfo,
+  });
 });
 
 if (import.meta.hot) {

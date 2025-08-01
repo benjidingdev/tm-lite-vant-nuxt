@@ -1,48 +1,54 @@
 <script setup lang="ts">
-  import { createAppKit } from "@reown/appkit/vue";
-  import { networks } from './config/networks'
+import { createAppKit } from "@reown/appkit/vue";
+import { networks } from "./config/networks";
+import { userConfig } from "~/api/userInfo";
 
-  useHead({
-    title: "turning Market",
-    meta: [
-      {
-        name: "viewport",
-        content:
-          "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
-      },
-    ],
-  });
-
-  const config = useRuntimeConfig()
-  const { $wagmiAdapter, $metadata } = useNuxtApp()
-  createAppKit({
-    adapters: [$wagmiAdapter],
-    networks,
-    projectId: config.public.reownProjectId,
-    features: {
-      email: false,
-      socials: [],
-      analytics: true,
-      legalCheckbox: true,
-      session: {
-        persist: true,
-        storage: 'localStorage',
-        timeout: 604800
-      }
+useHead({
+  title: "turning Market",
+  meta: [
+    {
+      name: "viewport",
+      content:
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
     },
-    defaultAccountTypes: { eip155: "eoa" },
-    metadata: $metadata,
-    debug: true,
-    // termsConditionsUrl: "https://TuringM.io/terms",
-    // privacyPolicyUrl: "https://TuringM.io/privacy",
-  })
+  ],
+});
+
+const config = useRuntimeConfig();
+const { $wagmiAdapter, $metadata } = useNuxtApp();
+createAppKit({
+  adapters: [$wagmiAdapter],
+  networks: [networks[1]],
+  projectId: config.public.reownProjectId,
+  features: {
+    email: false,
+    socials: [],
+    analytics: true,
+    legalCheckbox: true,
+    session: {
+      persist: true,
+      storage: "localStorage",
+      timeout: 604800,
+    },
+  },
+  defaultAccountTypes: { eip155: "eoa" },
+  metadata: $metadata,
+  debug: true,
+  // termsConditionsUrl: "https://TuringM.io/terms",
+  // privacyPolicyUrl: "https://TuringM.io/privacy",
+});
 </script>
 
 <template>
-  <UApp>
-    <NuxtLoadingIndicator />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </UApp>
+  <van-config-provider>
+    <UApp>
+      <NuxtLoadingIndicator />
+      <NuxtLayout>
+        <NuxtPage />
+        <!--data loading-->
+        <LoginAuth />
+        <ConfigLoad />
+      </NuxtLayout>
+    </UApp>
+  </van-config-provider>
 </template>

@@ -2,22 +2,14 @@
   <van-dialog
     @confirm="closeSettingModal"
     v-model:show="settingModalShow"
-    title="Set Shares"
+    title="Shares"
     show-cancel-button
-    confirmButtonText="Buy"
+    confirmButtonText="Set"
     cancelButtonText="Cancel"
   >
-    <div class="h-24 items-center">
-      <van-field name="stepper" label="Shares">
-        <template #input>
-          <van-stepper v-model="shares" />
-        </template>
-      </van-field>
-      <van-slider class="mt-2" v-model="shares">
-        <template #button>
-          <div class="custom-button">{{ shares }}</div>
-        </template>
-      </van-slider>
+    <div class="h-24 items-center px-4">
+      <van-stepper class="w-[60%]" min="1" max="100" v-model="shares" />
+      <van-slider bar-height="4px" class="mt-2" v-model="shares" />
     </div>
   </van-dialog>
 </template>
