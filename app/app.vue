@@ -45,9 +45,6 @@ createAppKit({
       <NuxtLoadingIndicator />
       <NuxtLayout>
         <NuxtPage />
-        <!--data loading-->
-        <LoginAuth />
-        <ConfigLoad />
       </NuxtLayout>
     </UApp>
   </van-config-provider>
