@@ -1,24 +1,17 @@
 <template>
   <div class="h-20 flex items-center justify-between px-10">
-    <h1 class="text-3xl text-white">Prediction</h1>
+    <div class="flex items-center">
+      <van-icon class="text-2xl! text-white" name="balance-o" />
+      <span class="text-white">{{ formattedBalance }}</span>
+    </div>
 
     <div class="mr-8">
-      {{ token.accessToken }}
-      <van-button
-        v-if="token.accessToken !== ''"
-        class="ml-4"
-        type="primary"
-        size="small"
-        @click="logOut"
-      >
-        disconnect
-      </van-button>
-      <appkit-connect-button
-        v-else
+      <appkit-button
         balance="show"
         size="md"
-        label="connect"
-        loadingLabel="connecting"
+        class="text-white"
+        label="Connect"
+        loadingLabel="Connecting"
         @click="isToken(true)"
       />
     </div>
@@ -43,14 +36,54 @@
 </template>
 
 <script setup>
-import { useAppKit } from "@reown/appkit/vue";
+import { useBalance } from "@wagmi/vue";
+import { mainnet, polygon } from "@wagmi/vue/chains";
 
-const { msg } = $(useWalletStore());
+const { walletAddress } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
-const { isToken, token, logOut } = $(authStore());
+const { isToken, token } = $(authStore());
 
-const { open } = useAppKit();
+const { data: balance } = useBalance({
+  address: walletAddress,
+  chainId: polygon.id,
+});
+
+const shortenedAddress = computed(() => {
+  con;
+  return walletAddress
+    ? `${walletAddress.substring(0, 4)}...${walletAddress.slice(-2)}`
+    : "";
+});
+
+const formattedBalance = computed(() => {
+  if (!balance.value) return "0.000";
+
+  const value = parseFloat(balance.value.formatted);
+  return isNaN(value)
+    ? "0.000"
+    : value.toLocaleString(undefined, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }) +
+        " " +
+        balance.value.symbol;
+});
+
 const openSettingModal = () => {
   setSettingModalShow(true);
 };
+
+// watch(
+//   () => walletAddress,
+//   (newVal) => {
+
+//   },
+//   { immediate: true }
+// );
 </script>
+
+<style>
+wui-flex > wui-text {
+  color: white;
+}
+</style>

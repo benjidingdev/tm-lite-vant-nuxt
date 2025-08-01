@@ -4,18 +4,36 @@ import {
   useConnect,
   // useDisconnect,
   useAccount,
-  useBalance,
   useSignMessage,
+  useSignTypedData,
+  useAccountEffect,
 } from "@wagmi/vue";
+import { mainnet } from "@wagmi/vue/chains";
+import type { SignTradeDataOptions } from "@/config/tradeTypes";
+import {
+  TYPEHASH_DOMAIN,
+  TYPEHASH_ORDER,
+  TYPEHASH_MERGE_SPLIT_ORDER,
+  TYPEHASH_PERMIT,
+  TYPEHASH_REWARD,
+  TYPEHASH_BROKER,
+} from "@/config/tradeTypes";
+
+type contentType = {
+  domain: typeof TYPEHASH_DOMAIN;
+  types: typeof TYPEHASH_ORDER | typeof TYPEHASH_MERGE_SPLIT_ORDER;
+  primaryType: "Order" | "OrderSelf";
+  message: any;
+};
 
 export const useWalletStore = defineStore("walletStore", () => {
   const { afterLoginSuccess } = $(authStore());
-  let walletAddress = $ref("");
-  let walletBalance = $ref(0);
-  let walletConected = $ref(false);
-  let isSign = $ref(false);
+  let walletConected = $ref<boolean>(false);
+  let walletAddress = $ref<string | null>("");
+  let isSign = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
+  let walletConfig = $ref({});
   const {
     isConnected,
     address,
@@ -26,14 +44,10 @@ export const useWalletStore = defineStore("walletStore", () => {
     isDisconnected,
   } = useAccount();
   const { data: signedMessage, signMessageAsync } = useSignMessage();
-  // const { disconnect } = useDisconnect();
+  const { signTypedDataAsync } = useSignTypedData();
 
   const setWalletAddress = (address: string) => {
     walletAddress = address;
-  };
-
-  const setWalletBalance = (balance: number) => {
-    walletBalance = balance;
   };
 
   const setWalletConnected = (connected: boolean) => {
@@ -78,6 +92,39 @@ export const useWalletStore = defineStore("walletStore", () => {
         },
       }
     );
+  };
+
+  /**
+   * transcation signature
+   */
+  const signTradeData = async (options: SignTradeDataOptions) => {
+    const { domain, types, order } = options;
+    try {
+      // signature head information
+      const typeDomain = {
+        name: walletConfig.contract.name,
+        version: walletConfig.contract.version.toString(),
+        chainId: walletConfig.chain.id,
+        verifyingContract: walletConfig.contract.address,
+      } as const;
+      // signature trade data
+      const content: contentType = {
+        domain: typeDomain,
+        types: order.hasOwnProperty("side")
+          ? TYPEHASH_ORDER
+          : TYPEHASH_MERGE_SPLIT_ORDER,
+        primaryType: order.hasOwnProperty("side") ? "Order" : "OrderSelf",
+        message: order,
+      };
+      // signature returned result
+      const result = await signTypedDataAsync(content);
+      // //console.log('content:', content, 'result:', result)
+
+      return result;
+    } catch (err) {
+      console.error("Error signing typed data:", err);
+      throw err;
+    }
   };
 
   /**
@@ -153,14 +200,13 @@ export const useWalletStore = defineStore("walletStore", () => {
 
   return $$({
     walletAddress,
-    walletBalance,
     walletConected,
     setWalletAddress,
-    setWalletBalance,
     getNonce,
     nonce,
     msg,
     todoSignIn,
+    signTradeData,
     // disconnectWallet,
     updateSign,
   });

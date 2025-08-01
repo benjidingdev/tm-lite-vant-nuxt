@@ -18,7 +18,6 @@ export const authStore = defineStore("authStore", () => {
 
   //if show login modal
   const isToken = (flag: boolean) => {
-    //console.log('isToken:', flag)
     tokenShow = flag;
   };
 

@@ -52,11 +52,19 @@
       </div>
     </div>
   </div>
+  <!--trade modal-->
+  <TradeModal />
 </template>
 
 <script setup>
 import axios from "axios";
-import { getTopicsRecommend } from "~/api/market";
+import { parseUnits } from "viem";
+import { debounce } from "lodash";
+import {
+  getTopicsRecommend,
+  getTopicsOrderPreview,
+  getTopicsOrderCreate,
+} from "~/api/market";
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
@@ -68,6 +76,7 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
+const { token, isToken } = $(authStore());
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize: 12,
@@ -79,6 +88,17 @@ const recommondQueryParams = $ref({
   page: 1,
   tagId: null,
   followed: false,
+});
+let transaction = $ref({
+  parentId: null,
+  textName: "",
+  textColor: "",
+  textPrice: "",
+  marketsId: null,
+  marketsTitle: "",
+  type: null,
+  fee: null,
+  marketsItem: {},
 });
 
 // get the list of cards
@@ -160,7 +180,7 @@ const touchEnd = () => {
 };
 
 // Card swipe Animation
-const swipeCard = (status) => {
+const swipeCard = (status, callback) => {
   let direction =
     statusList.indexOf(status) === 0 || statusList.indexOf(status) === 2
       ? 1
@@ -179,6 +199,7 @@ const swipeCard = (status) => {
       });
     }
     cards.shift();
+    callback();
   }, 0);
 };
 
@@ -189,20 +210,126 @@ const resetCard = () => {
 };
 
 const buyYes = () => {
-  swipeCard(statusList[0]);
+  transaction = {
+    parentId: null,
+    textName: "",
+    textColor: "",
+    textPrice: 1,
+    marketsId: null,
+    marketsTitle: "",
+    type: 1,
+    fee: null,
+    marketsItem: {},
+  };
+  goDeposit();
+  swipeCard(statusList[0], () => {
+    // setTradeModalShow(true);
+  });
 };
 
 const buyNo = () => {
-  swipeCard(statusList[1]);
+  transaction = {
+    parentId: null,
+    textName: "",
+    textColor: "",
+    textPrice: 1,
+    marketsId: null,
+    marketsTitle: "",
+    type: 2,
+    fee: null,
+    marketsItem: {},
+  };
+  goDeposit();
+  swipeCard(statusList[1], () => {});
 };
 
 const bookmark = () => {
-  swipeCard(statusList[2]);
+  swipeCard(statusList[2], () => {});
 };
 
 const pickNext = () => {
-  swipeCard(statusList[3]);
+  swipeCard(statusList[3], () => {});
 };
+
+// start transcation
+const goDeposit = debounce(async () => {
+  if (token.accessToken === "") {
+    isToken(true);
+  } else {
+    // balance check
+    // if (store.userBalance < transaction.textPrice) {
+    // ElMessage.error("Insufficient balance, please recharge first!");
+    // return false;
+    // }
+    try {
+      // switchLoading(true);
+
+      // const amountRes = await getOrderAmount();
+      // if (amountRes.code === 0) {
+      //   const allowanceAmount =
+      //     (transaction.textPrice + transaction.fee) * amount.value +
+      //     amountRes.data.totalAmount;
+      //   let allowanceRes = await walletStore.queryAllowanceAndPermit(
+      //     0,
+      //     allowanceAmount
+      //   );
+      //   if (!allowanceRes) {
+      //     return ElMessage.error("Permit authorization failed!");
+      //   }
+      // } else return ElMessage.error("Permit authorization failed!");
+
+      const req = {
+        marketId: transaction.marketsId,
+        type: transaction.type, //1-YES；2-NO,
+        amount: null,
+        // volume: amount.value || 1,
+        volume: 1,
+        priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
+        orderType: 1, //1: buy, 2: sell
+        price: transaction.textPrice * 100,
+        isDeduction: false,
+      };
+      let result = await getTopicsOrderPreview(req);
+      if (result.code === 0) {
+        const order = { ...result.data };
+        let tradeSign;
+        try {
+          result.data.slippageBps = parseUnits(result.data.slippageBps + "", 4);
+          result.data.tokenAmount = parseUnits(result.data.tokenAmount + "", 6);
+          result.data.tokenPriceInPaymentToken = parseUnits(
+            result.data.tokenPriceInPaymentToken + "",
+            6
+          );
+          tradeSign = await walletStore.signTradeData({ order: result.data });
+          // //console.log('signature result', tradeSign)
+        } catch (e) {
+          //console.log(e)
+        }
+        if (tradeSign) {
+          const params = {
+            salt: order.salt,
+            message: JSON.stringify(order),
+            signContent: tradeSign,
+          };
+          let res = await getTopicsOrderCreate(params);
+          if (res.code === 0) {
+            alert("success");
+            // refresh yes / no price(delay 500 milliseconds)
+            const topicId = transaction.parentId;
+            const marketsId = transaction.marketsId;
+            const to = setTimeout(() => {
+              clearTimeout(to);
+              // getLastPrice(topicId, marketsId);
+            }, 500);
+            // hideTransaction();
+          }
+        }
+      }
+    } finally {
+      // switchLoading(false);
+    }
+  }
+}, 200);
 
 onMounted((e) => {
   getInfoList(false);
