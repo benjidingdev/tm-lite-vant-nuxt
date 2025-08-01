@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createAppKit } from "@reown/appkit/vue";
-import { networks } from "./config/networks";
+import { networks, localHardhat } from "./config/networks";
 import { userConfig } from "~/api/userInfo";
 
 useHead({
@@ -18,7 +18,7 @@ const config = useRuntimeConfig();
 const { $wagmiAdapter, $metadata } = useNuxtApp();
 createAppKit({
   adapters: [$wagmiAdapter],
-  networks: [networks[1]],
+  networks: [localHardhat],
   projectId: config.public.reownProjectId,
   features: {
     email: false,
