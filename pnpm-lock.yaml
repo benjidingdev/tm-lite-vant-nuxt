@@ -23,12 +23,18 @@ importers:
       '@vant/nuxt':
         specifier: 1.0.7
         version: 1.0.7(magicast@0.3.5)(vant@4.9.21(vue@3.5.18(typescript@5.8.3)))
+      '@wagmi/core':
+        specifier: ^2.18.0
+        version: 2.18.0(@tanstack/query-core@5.83.0)(react@18.3.1)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.33.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@wagmi/vue':
         specifier: ^0.1.24
         version: 0.1.24(6fa7vjkddz6vuoavu5x5kpfb4e)
       axios:
         specifier: ^1.11.0
         version: 1.11.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       logrocket:
         specifier: ^10.1.0
         version: 10.1.0
