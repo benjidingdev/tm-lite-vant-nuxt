@@ -1,6 +1,8 @@
 <template>
-  <div class="m-4">Positions</div>
-  <OrderList />
+  <div class="bg-white">
+    <div class="px-4 py-2">Positions</div>
+    <OrderList />
+  </div>
 </template>
 <script setup />
 

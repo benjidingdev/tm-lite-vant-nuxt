@@ -2,15 +2,12 @@ import axios from "axios";
 import { authStore } from "@/stores/authStore";
 
 // need to change it to configuration
-export const BaseUrl = "http://192.168.1.82:48082";
-// const config = useRuntimeConfig();
-// const BaseUrl = config.public.host;
+export const baseUrl = "https://avax-test.turingma-api.com/";
+//  const { baseUrl } = getConfig()
 //console.log('__VUE_branch', __VUE_branch)
 //console.log('__VUE_commitHash', __VUE_commitHash)
-
-
 const service = axios.create({
-  baseURL: BaseUrl,
+  baseURL: baseUrl,
   timeout: 100000,
   // allow carry cookie
   withCredentials: false,

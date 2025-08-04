@@ -1,30 +1,42 @@
 <template>
   <van-dialog
-    @confirm="closeSettingModal"
+    @confirm="onvolumnChange"
+    @cancel="closeSettingModal"
     v-model:show="settingModalShow"
-    title="Shares"
+    title="volumn"
     show-cancel-button
     confirmButtonText="Set"
     cancelButtonText="Cancel"
   >
     <div class="h-24 items-center px-4">
-      <van-stepper class="w-[60%]" min="1" max="100" v-model="shares" />
-      <van-slider bar-height="4px" class="mt-2" v-model="shares" />
+      <van-stepper
+        class="w-[60%]"
+        min="1"
+        max="100"
+        v-model="volumn"
+        @change="onvolumnChange"
+      />
+      <van-slider
+        bar-height="4px"
+        class="mt-2"
+        v-model="volumn"
+        @change="onvolumnChange"
+      />
     </div>
   </van-dialog>
 </template>
 
 <script setup lang="ts">
 let { settingModalShow, setSettingModalShow } = $(uiStore());
+let { volumn, updateVolumn
+ } = $(coreStore());
 
 const closeSettingModal = () => {
   setSettingModalShow(false);
 };
 
-const shares = $ref(50);
-const onSharesChange = (value) => {
-  console.log("Shares changed to:", value);
-  // Here you can handle the change of shares, e.g., save it to a store or send it to an API
+const onvolumnChange = (volumn) => {
+  updateVolumn(volumn);
 };
 </script>
 

@@ -106,4 +106,5 @@ export const networks = [
     polygon,
     localHardhat,
     avalanche,
+    avaxTest,
 ]

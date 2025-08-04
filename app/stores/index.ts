@@ -4,7 +4,7 @@ export const coreStore = defineStore("coreStore", () => {
   const { token } = $(authStore());
   let userInfo = $ref({});
   let traderType = $ref({});
-
+  let volumn = $ref(1);
   // refresh information
   const updateUserInfo = (userInfo: any) => {
     userInfo = userInfo;
@@ -12,6 +12,10 @@ export const coreStore = defineStore("coreStore", () => {
 
   const updateTraderType = (type: any) => {
     traderType = type;
+  };
+
+  const updateVolumn = (volumn: any) => {
+    volumn = volumn;
   };
 
   /**
@@ -31,6 +35,8 @@ export const coreStore = defineStore("coreStore", () => {
     updateTraderType,
     traderType,
     loadUserInfo,
+    volumn,
+    updateVolumn,
   });
 });
 

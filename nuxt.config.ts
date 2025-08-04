@@ -40,7 +40,7 @@ export default defineNuxtConfig({
         enablePinia: true,
         config: {},
       },
-      host: process.env.NUXT_PUBLIC_API_DOMAIN || "http://192.168.1.82:48082",
+      baseUrl: process.env.NUXT_PUBLIC_API_DOMAIN || "http://192.168.1.82:48082",
     },
   },
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { createAppKit } from "@reown/appkit/vue";
-import { networks, localHardhat } from "./config/networks";
+import { createAppKit, useAppKitTheme } from "@reown/appkit/vue";
+import { networks, localHardhat, avaxTest } from "./config/networks";
 import { userConfig } from "~/api/userInfo";
 
 useHead({
@@ -18,7 +18,7 @@ const config = useRuntimeConfig();
 const { $wagmiAdapter, $metadata } = useNuxtApp();
 createAppKit({
   adapters: [$wagmiAdapter],
-  networks: [localHardhat],
+  networks: [localHardhat, avaxTest],
   projectId: config.public.reownProjectId,
   features: {
     email: false,
@@ -31,9 +31,13 @@ createAppKit({
       timeout: 604800,
     },
   },
+  themeMode: "light",
   defaultAccountTypes: { eip155: "eoa" },
   metadata: $metadata,
   debug: true,
+  themeVariables: {
+    "--w3m-color-mixin": "#000000",
+  },
   // termsConditionsUrl: "https://TuringM.io/terms",
   // privacyPolicyUrl: "https://TuringM.io/privacy",
 });
@@ -41,11 +45,11 @@ createAppKit({
 
 <template>
   <van-config-provider>
-    <UApp>
+    <div>
       <NuxtLoadingIndicator />
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
-    </UApp>
+    </div>
   </van-config-provider>
 </template>

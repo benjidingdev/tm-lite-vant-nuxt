@@ -1,55 +1,65 @@
 <template>
   <div class="w-full h-full relative">
-    <div
-      v-for="(card, index) in cards"
-      :key="card.id"
-      :class="['card', { active: currentIndex === index }]"
-      :style="getCardStyle(index)"
-      class="shadow-xl"
-      @touchstart="touchStart"
-      @touchmove="touchMove"
-      @touchend="touchEnd"
-    >
-      <van-image width="100%" height="61.8%" :src="card['image']">
-        <div class="absolute -bottom-8 h-16 w-full">
-          <div class="flex justify-between items-center h-full px-6">
-            <div
-              class="rounded-full bg-white w-10 h-10 flex justify-center items-center shadow-lg"
-              @click="bookmark"
-            >
-              <van-icon name="star-o" />
-            </div>
-            <div
-              class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-              @click="buyYes"
-            >
-              <van-icon name="checked" size="66" color="#97dbb4" />
-            </div>
-            <div
-              class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-              @click="buyNo"
-            >
-              <van-icon name="clear" size="66" color="#fe9595" />
-            </div>
+    <div v-if="cards.length">
+      <div
+        v-for="(card, index) in cards"
+        :key="card.id"
+        :class="['card', { active: currentIndex === index }]"
+        :style="getCardStyle(index)"
+        class="shadow-xl"
+        @touchstart="touchStart"
+        @touchmove="touchMove"
+        @touchend="touchEnd(card, event)"
+      >
+        <van-image width="100%" height="61.8%" :src="card['image']">
+          <div class="absolute -bottom-8 h-16 w-full">
+            <div class="flex justify-between items-center h-full px-6">
+              <div
+                class="rounded-full bg-white w-10 h-10 flex justify-center items-center shadow-lg"
+                @click="bookmark"
+              >
+                <van-icon name="star-o" />
+              </div>
+              <div
+                class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                @click="buyYes"
+              >
+                <van-icon name="checked" size="66" color="#97dbb4" />
+              </div>
+              <div
+                class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                @click="buyNo"
+              >
+                <van-icon name="clear" size="66" color="#fe9595" />
+              </div>
 
-            <div
-              class="rounded-full bg-white w-10 h-10 flex justify-center items-center shadow-lg"
-              @click="bookmark"
-            >
-              <van-icon name="star-o" />
+              <div
+                class="rounded-full bg-white w-10 h-10 flex justify-center items-center shadow-lg"
+                @click="bookmark"
+              >
+                <van-icon name="star-o" />
+              </div>
             </div>
           </div>
+        </van-image>
+        <div class="p-4 h-[38.2%]">
+          <text class="name mt-4">{{ card.title }}</text>
+          <text v-if="card.markets.length" class="desc">{{
+            card.markets[0].question
+          }}</text>
         </div>
-      </van-image>
-      <div class="absolute bottom-0 left-0 right-0 p-4">
-        <text class="name">{{ card.title }}</text>
-        <text class="desc">{{ card.content }}</text>
-      </div>
 
-      <div v-if="currentIndex === index" class="hint-box">
-        <div class="hint like" :style="{ opacity: offsetX / 150 }">YES</div>
-        <div class="hint nope" :style="{ opacity: -offsetX / 150 }">NO</div>
+        <div v-if="currentIndex === index" class="hint-box">
+          <div class="hint like" :style="{ opacity: -offsetX / 150 }">YES</div>
+          <div class="hint nope" :style="{ opacity: offsetX / 150 }">NO</div>
+        </div>
       </div>
+    </div>
+
+    <div v-else>
+      <van-empty
+        description="If you are interested in Turning Market, please go to our official version"
+      />
     </div>
   </div>
   <!--trade modal-->
@@ -79,6 +89,7 @@ let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
 const { token, isToken } = $(authStore());
 const { signTradeData } = $(useWalletStore());
+let { volume } = $(coreStore());
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize: 12,
@@ -163,15 +174,15 @@ const touchMove = (e) => {
 };
 
 // Touch end
-const touchEnd = () => {
+const touchEnd = (card, event) => {
   if (currentIndex >= cards.length) return;
 
   const threshold = 80; // Threshold of swiping
 
   if (offsetX > threshold) {
-    buyYes(); // swipe to right means accept
+    buyNo(card); // swipe to left means reject
   } else if (offsetX < -threshold) {
-    buyNo(); // swipe to left means reject
+    buyYes(card); // swipe to right means accept
   } else if (offsetY > threshold) {
     pickNext(); // swipe down means pick next card
   } else if (offsetY < -threshold) {
@@ -211,13 +222,14 @@ const resetCard = () => {
   offsetY = 0;
 };
 
-const buyYes = () => {
+const buyYes = (card) => {
+  console.log(card);
   transaction = {
     parentId: null,
     textName: "",
     textColor: "",
     textPrice: 1,
-    marketsId: null,
+    marketsId: card.markets[0].id,
     marketsTitle: "",
     type: 1,
     fee: null,
@@ -229,13 +241,13 @@ const buyYes = () => {
   });
 };
 
-const buyNo = () => {
+const buyNo = (card) => {
   transaction = {
     parentId: null,
     textName: "",
     textColor: "",
     textPrice: 1,
-    marketsId: null,
+    marketsId: card.markets[0].id,
     marketsTitle: "",
     type: 2,
     fee: null,
@@ -285,7 +297,7 @@ const goDeposit = _.debounce(async () => {
         type: transaction.type, //1-YES；2-NO,
         amount: null,
         // volume: amount.value || 1,
-        volume: 1,
+        volume,
         priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
         orderType: 1, //1: buy, 2: sell
         price: 46 || transaction.textPrice * 100,
@@ -303,7 +315,6 @@ const goDeposit = _.debounce(async () => {
             6
           );
           tradeSign = await signTradeData({ order: result.data });
-          // //console.log('signature result', tradeSign)
         } catch (e) {
           //console.log(e)
         }
@@ -315,7 +326,7 @@ const goDeposit = _.debounce(async () => {
           };
           let res = await getTopicsOrderCreate(params);
           if (res.code === 0) {
-            showDialog()({
+            showDialog({
               title: "Transaction Successful",
               message: "Your transaction has been successfully processed.",
               confirmButtonText: "OK",
@@ -390,5 +401,9 @@ onMounted((e) => {
 
 .btn.like {
   border: 2px solid #52c41a;
+}
+
+.van-empty__description {
+  color: #fff !important;
 }
 </style>
