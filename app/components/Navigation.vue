@@ -37,7 +37,6 @@
 
 <script setup>
 import { useBalance, useAccount } from "@wagmi/vue";
-import { mainnet, polygon } from "@wagmi/vue/chains";
 
 const { walletAddress } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());

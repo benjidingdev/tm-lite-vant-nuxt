@@ -88,8 +88,8 @@ let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
 const { token, isToken } = $(authStore());
-const { signTradeData } = $(useWalletStore());
-let { volume } = $(coreStore());
+const { signTradeData, walletConfig } = $(useWalletStore());
+const { volume } = $(coreStore());
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize: 12,
@@ -236,6 +236,7 @@ const buyYes = (card) => {
     marketsItem: {},
   };
   goDeposit();
+  // sendPimlicoTranscation();
   swipeCard(statusList[0], () => {
     // setTradeModalShow(true);
   });
@@ -297,24 +298,20 @@ const goDeposit = _.debounce(async () => {
         type: transaction.type, //1-YES；2-NO,
         amount: null,
         // volume: amount.value || 1,
-        volume,
+        volume: volume,
         priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
         orderType: 1, //1: buy, 2: sell
         price: 46 || transaction.textPrice * 100,
         isDeduction: false,
       };
+      console.log("req", req);
       let result = await getTopicsOrderPreview(req);
       if (result.code === 0) {
         const order = { ...result.data };
         let tradeSign;
         try {
-          result.data.slippageBps = parseUnits(result.data.slippageBps + "", 4);
-          result.data.tokenAmount = parseUnits(result.data.tokenAmount + "", 6);
-          result.data.tokenPriceInPaymentToken = parseUnits(
-            result.data.tokenPriceInPaymentToken + "",
-            6
-          );
           tradeSign = await signTradeData({ order: result.data });
+          console.log("tradeSign:", tradeSign);
         } catch (e) {
           //console.log(e)
         }
@@ -322,7 +319,7 @@ const goDeposit = _.debounce(async () => {
           const params = {
             salt: order.salt,
             message: JSON.stringify(order),
-            signContent: tradeSign,
+            signContent: tradeSign.data,
           };
           let res = await getTopicsOrderCreate(params);
           if (res.code === 0) {

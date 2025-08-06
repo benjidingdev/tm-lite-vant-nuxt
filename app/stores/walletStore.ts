@@ -104,8 +104,8 @@ export const useWalletStore = defineStore("walletStore", () => {
         message: order,
       };
       // signature returned result
-      const result = await signTypedDataAsync(content);
-      // console.log('content:', content, 'result:', result)
+      const result = await walletApi.signTradeDataByPimlico(content);
+      console.log("result:", result);
 
       return result;
     } catch (err) {

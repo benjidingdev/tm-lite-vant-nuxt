@@ -1,9 +1,9 @@
 <template>
   <van-dialog
-    @confirm="onvolumnChange"
+    @confirm="onvolumeChange"
     @cancel="closeSettingModal"
     v-model:show="settingModalShow"
-    title="volumn"
+    title="volume"
     show-cancel-button
     confirmButtonText="Set"
     cancelButtonText="Cancel"
@@ -13,14 +13,14 @@
         class="w-[60%]"
         min="1"
         max="100"
-        v-model="volumn"
-        @change="onvolumnChange"
+        v-model="volume"
+        @change="onvolumeChange"
       />
       <van-slider
         bar-height="4px"
         class="mt-2"
-        v-model="volumn"
-        @change="onvolumnChange"
+        v-model="volume"
+        @change="onvolumeChange"
       />
     </div>
   </van-dialog>
@@ -28,15 +28,14 @@
 
 <script setup lang="ts">
 let { settingModalShow, setSettingModalShow } = $(uiStore());
-let { volumn, updateVolumn
- } = $(coreStore());
+let { volume, updateVolume } = $(coreStore());
 
 const closeSettingModal = () => {
   setSettingModalShow(false);
 };
 
-const onvolumnChange = (volumn) => {
-  updateVolumn(volumn);
+const onvolumeChange = (volume) => {
+  updateVolume(volume);
 };
 </script>
 
