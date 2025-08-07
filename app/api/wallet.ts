@@ -18,10 +18,3 @@ export const loginByWallet = (params = {}) => {
   });
 };
 
-export const signTradeDataByPimlico = (params = {}) => {
-  return Request({
-    url: `http://localhost:3000/api/signDataByPimlico`,
-    method: "post",
-    data: params,
-  });
-}

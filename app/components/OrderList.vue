@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-color-white p-4">
+  <div class="w-full bg-color-white p-4 h-[calc(100vh-170px)] overflow-auto">
     <van-card
       v-for="item in list"
       :key="item.id"
@@ -15,6 +15,7 @@
     </van-card>
   </div>
 </template>
+
 <script setup lang="ts">
 import { userHoldInfoList } from "@/api/positions";
 import { onMounted } from "vue";

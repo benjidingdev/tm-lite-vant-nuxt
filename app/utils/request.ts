@@ -39,11 +39,9 @@ service.interceptors.response.use(
     const res = response.data;
     if (res.code === 401) {
       //   ElMessage.error(res.msg);
-      const { updateToken, isToken } = $(authStore());
+      const { updateToken } = $(authStore());
       //api report 401 means login expired, need to clear personal information and expired token
       updateToken({});
-      // show popup login modal after clear user info
-      isToken(true);
     } else if (res.code !== 0) {
       return Promise.reject(new Error(res.msg || "Error"));
     } else {

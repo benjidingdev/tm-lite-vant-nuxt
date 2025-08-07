@@ -2,7 +2,6 @@ import { WagmiPlugin } from '@wagmi/vue'
 import { defineNuxtPlugin } from 'nuxt/app'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { networks } from '@/config/networks'
-import { injected, metaMask, safe, walletConnect, coinbaseWallet } from '@wagmi/vue/connectors'
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig()

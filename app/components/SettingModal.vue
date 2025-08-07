@@ -1,6 +1,6 @@
 <template>
   <van-dialog
-    @confirm="onvolumeChange"
+    @confirm="closeSettingModal"
     @cancel="closeSettingModal"
     v-model:show="settingModalShow"
     title="volume"
@@ -8,20 +8,24 @@
     confirmButtonText="Set"
     cancelButtonText="Cancel"
   >
-    <div class="h-24 items-center px-4">
-      <van-stepper
-        class="w-[60%]"
-        min="1"
-        max="100"
-        v-model="volume"
-        @change="onvolumeChange"
-      />
-      <van-slider
-        bar-height="4px"
-        class="mt-2"
-        v-model="volume"
-        @change="onvolumeChange"
-      />
+    <div class="h-24 text-center px-4">
+      <div class="align-center mt-4">
+        <van-stepper
+          class="w-[40%]"
+          min="1"
+          max="100"
+          v-model="volume"
+          @change="onvolumeChange"
+        />
+      </div>
+      <div class="mt-4">
+        <van-slider
+          bar-height="4px"
+          class="mt-2"
+          v-model="volume"
+          @change="onvolumeChange"
+        />
+      </div>
     </div>
   </van-dialog>
 </template>

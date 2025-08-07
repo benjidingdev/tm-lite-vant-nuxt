@@ -12,7 +12,6 @@
         class="text-white"
         label="Connect"
         loadingLabel="Connecting"
-        @click="isToken(true)"
       />
     </div>
 
@@ -40,14 +39,12 @@ import { useBalance, useAccount } from "@wagmi/vue";
 
 const { walletAddress } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
-const { isToken } = $(authStore());
 
-const { address, isConnected } = $(useAccount());
+const { address, isConnected, chainId } = $(useAccount());
 let { data: balance, refetch: refreshBalance } = $(
   useBalance({
     address,
-    // need change it to configuration
-    chainId: 31337,
+    chainId: chainId,
     cacheTime: 0,
     staleTime: 0,
   })

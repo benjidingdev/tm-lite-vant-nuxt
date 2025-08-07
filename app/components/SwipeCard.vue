@@ -87,7 +87,7 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
-const { token, isToken } = $(authStore());
+const { token } = $(authStore());
 const { signTradeData, walletConfig } = $(useWalletStore());
 const { volume } = $(coreStore());
 const recommondQueryParams = $ref({
@@ -268,8 +268,9 @@ const pickNext = () => {
 
 // start transcation
 const goDeposit = _.debounce(async () => {
+  console.log(volume, "volume");
   if (token.accessToken === "") {
-    isToken(true);
+   
   } else {
     // balance check
     // if (store.userBalance < transaction.textPrice) {
@@ -310,6 +311,12 @@ const goDeposit = _.debounce(async () => {
         const order = { ...result.data };
         let tradeSign;
         try {
+          result.data.slippageBps = parseUnits(result.data.slippageBps + "", 4);
+          result.data.tokenAmount = parseUnits(result.data.tokenAmount + "", 6);
+          result.data.tokenPriceInPaymentToken = parseUnits(
+            result.data.tokenPriceInPaymentToken + "",
+            6
+          );
           tradeSign = await signTradeData({ order: result.data });
           console.log("tradeSign:", tradeSign);
         } catch (e) {
@@ -319,7 +326,7 @@ const goDeposit = _.debounce(async () => {
           const params = {
             salt: order.salt,
             message: JSON.stringify(order),
-            signContent: tradeSign.data,
+            signContent: tradeSign,
           };
           let res = await getTopicsOrderCreate(params);
           if (res.code === 0) {

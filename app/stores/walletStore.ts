@@ -6,12 +6,14 @@ import {
   useSignMessage,
   useSignTypedData,
 } from "@wagmi/vue";
+import { createWalletClient, http } from "viem";
 import type { SignTradeDataOptions } from "@/config/tradeTypes";
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_ORDER,
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
+import { avalancheFuji } from "viem/chains";
 
 type contentType = {
   domain: typeof TYPEHASH_DOMAIN;
@@ -21,16 +23,25 @@ type contentType = {
 };
 
 export const useWalletStore = defineStore("walletStore", () => {
-  const { afterLoginSuccess } = $(authStore());
+  const { afterLoginSuccess, logOut } = $(authStore());
+  // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
   let walletAddress = $ref<string | null>("");
   let isSign = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
-  const { isConnected, address } = useAccount();
+  let walletClient = $ref(null);
+  const { isConnected, address } = $(useAccount());
   const { signMessageAsync } = useSignMessage();
   const { signTypedDataAsync } = useSignTypedData();
+
+  const initWalletClient = () => {
+    walletClient = createWalletClient({
+      account: walletAddress,
+      transport: http(avalancheFuji.rpcUrls.default.http[0]),
+    });
+  };
 
   const setWalletAddress = (address: string) => {
     walletAddress = address;
@@ -68,7 +79,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     }
 
     await signMessageAsync(
-      { account: address.value, message: message },
+      { account: address, message: message },
       {
         onSuccess: (data, variables, context) => {
           msg = "signature success";
@@ -104,7 +115,7 @@ export const useWalletStore = defineStore("walletStore", () => {
         message: order,
       };
       // signature returned result
-      const result = await walletApi.signTradeDataByPimlico(content);
+      const result = await signTypedDataAsync(content);
       console.log("result:", result);
 
       return result;
@@ -119,7 +130,7 @@ export const useWalletStore = defineStore("walletStore", () => {
    */
   const getNonce = async (_address: any) => {
     try {
-      let res: any = await walletApi.getNonce({ proxyWallet: _address.value });
+      let res: any = await walletApi.getNonce({ proxyWallet: _address });
       return res;
     } catch (error) {
       throw error;
@@ -128,7 +139,7 @@ export const useWalletStore = defineStore("walletStore", () => {
 
   const todoLogin = async (data: any, type: any) => {
     let result = await walletApi.loginByWallet({
-      proxyWallet: address.value,
+      proxyWallet: address,
       signature: data,
     });
     if (result && result.code === 0) {
@@ -138,18 +149,26 @@ export const useWalletStore = defineStore("walletStore", () => {
   };
 
   watch(
-    () => address.value,
-    (newAddress) => {
+    () => address,
+    async (newAddress) => {
       setWalletAddress(newAddress || "");
-      todoSignIn();
     },
     { immediate: true }
   );
 
   watch(
-    () => isConnected.value,
-    (isConnected: boolean) => {
+    () => isConnected,
+    async (isConnected: boolean) => {
       setWalletConnected(isConnected);
+      if (isConnected) {
+        setTimeout(async () => {
+          initWalletClient();
+          // await createPimlicoClientInstance();
+          todoSignIn();
+        }, 1000);
+      } else {
+        logOut();
+      }
     },
     { immediate: true }
   );
@@ -167,5 +186,6 @@ export const useWalletStore = defineStore("walletStore", () => {
     updateSign,
     setWalletAddress,
     updateWalletConfig,
+    walletClient,
   });
 });

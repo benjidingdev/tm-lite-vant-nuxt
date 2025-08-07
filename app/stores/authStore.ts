@@ -6,7 +6,6 @@ export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType } = $(coreStore());
 
   const { disconnect } = useDisconnect();
-  let tokenShow = $ref(false);
   let token = $ref({
     accessToken: "",
     expiresTime: "",
@@ -15,17 +14,14 @@ export const authStore = defineStore("authStore", () => {
     userId: "",
   });
 
-  //if show login modal
-  const isToken = (flag: boolean) => {
-    tokenShow = flag;
-  };
-
   // refresh local cache token
   const updateToken = (tokenInfo: any) => {
     if (JSON.stringify(tokenInfo) === "{}") {
       Object.keys(token).forEach((key) => (token[key] = ""));
+      localStorage.remove("accessToken");
     } else {
       token = tokenInfo;
+      localStorage.setItem("accessToken", JSON.stringify(token?.accessToken));
     }
   };
 
@@ -47,14 +43,8 @@ export const authStore = defineStore("authStore", () => {
       let res: any = await getLogout();
       if (res.code === 0) {
         updateToken({});
-        // disconnectWallet();
         disconnect();
         updateUserInfo({});
-        // store.clearTuitBalance();
-        // store.clearPointsBalance();
-        // handleClose();
-        // websocket.close();
-        // websocket.connect();
       }
     } catch (e) {
       //console.log('Failure message：', e)
@@ -62,8 +52,6 @@ export const authStore = defineStore("authStore", () => {
   };
 
   return $$({
-    isToken,
-    tokenShow,
     token,
     afterLoginSuccess,
     logOut,

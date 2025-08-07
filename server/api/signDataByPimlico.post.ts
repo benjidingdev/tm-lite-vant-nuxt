@@ -5,11 +5,8 @@ import { Hex, createPublicClient, getContract, http, parseUnits } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { sepolia, baseSepolia, avalancheFuji } from "viem/chains";
 import { createPimlicoClient } from "permissionless/clients/pimlico";
-import {
-  entryPoint07Address,
-} from "viem/account-abstraction";
+import { entryPoint07Address } from "viem/account-abstraction";
 import { createSmartAccountClient } from "permissionless";
-
 
 export default defineEventHandler(async (event) => {
   console.log("Starting PIMLICO transaction...");
@@ -38,7 +35,7 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  console.log(pimlicoClient, "pimlicoClient");
+  console.log(publicClient, "publicClient");
 
   const account = await toSafeSmartAccount({
     client: publicClient,
@@ -61,6 +58,7 @@ export default defineEventHandler(async (event) => {
       },
     },
   });
+  console.log(smartAccountClient.account.address, "smartAccountClient");
 
   content.message.slippageBps = parseUnits(content.message.slippageBps + "", 4);
   content.message.tokenAmount = parseUnits(content.message.tokenAmount + "", 6);
