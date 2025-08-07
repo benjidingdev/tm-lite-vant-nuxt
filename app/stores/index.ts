@@ -5,6 +5,7 @@ export const coreStore = defineStore("coreStore", () => {
   let userInfo = $ref({});
   let traderType = $ref({});
   let volume = $ref(1);
+
   // refresh information
   const updateUserInfo = (userInfo: any) => {
     userInfo = userInfo;
@@ -19,10 +20,7 @@ export const coreStore = defineStore("coreStore", () => {
     volume = volume_;
   };
 
-  /**
-   *
-   * refresh user info after login
-   */
+  //refresh user info after login
   const loadUserInfo = async () => {
     if (token.accessToken) {
       let user = await userApi.getUserInfo();

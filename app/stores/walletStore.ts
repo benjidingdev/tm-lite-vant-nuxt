@@ -55,16 +55,12 @@ export const useWalletStore = defineStore("walletStore", () => {
     walletConfig = data;
   };
 
-  /**
-   * refresh sign status
-   */
+  // refresh sign status
   const updateSign = (sign: boolean) => {
     isSign.value = sign;
   };
 
-  /**
-   *  request signature
-   */
+  //request signature
   const todoSignIn = async () => {
     let nonce = new Date().getTime().toString();
     let message = "Welcome to TuringMarket Sign to connect.";
@@ -92,13 +88,10 @@ export const useWalletStore = defineStore("walletStore", () => {
     );
   };
 
-  /**
-   *  transcation signature
-   */
+  // transcation signature
   const signTradeData = async (options: SignTradeDataOptions) => {
     const { domain, types, order } = options;
     try {
-      // signature head information
       const typeDomain = {
         name: walletConfig.contract.name,
         version: walletConfig.contract.version.toString(),
@@ -125,9 +118,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     }
   };
 
-  /**
-   * get signature message
-   */
+  // get signature message
   const getNonce = async (_address: any) => {
     try {
       let res: any = await walletApi.getNonce({ proxyWallet: _address });
@@ -137,6 +128,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     }
   };
 
+  // start login process
   const todoLogin = async (data: any, type: any) => {
     let result = await walletApi.loginByWallet({
       proxyWallet: address,
@@ -161,11 +153,9 @@ export const useWalletStore = defineStore("walletStore", () => {
     async (isConnected: boolean) => {
       setWalletConnected(isConnected);
       if (isConnected) {
-        setTimeout(async () => {
-          initWalletClient();
-          // await createPimlicoClientInstance();
-          todoSignIn();
-        }, 1000);
+        initWalletClient();
+        // await createPimlicoClientInstance();
+        todoSignIn();
       } else {
         logOut();
       }
@@ -182,7 +172,6 @@ export const useWalletStore = defineStore("walletStore", () => {
     getNonce,
     todoSignIn,
     signTradeData,
-    // disconnectWallet,
     updateSign,
     setWalletAddress,
     updateWalletConfig,

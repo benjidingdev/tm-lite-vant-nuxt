@@ -18,10 +18,8 @@ export const authStore = defineStore("authStore", () => {
   const updateToken = (tokenInfo: any) => {
     if (JSON.stringify(tokenInfo) === "{}") {
       Object.keys(token).forEach((key) => (token[key] = ""));
-      localStorage.remove("accessToken");
     } else {
       token = tokenInfo;
-      localStorage.setItem("accessToken", JSON.stringify(token?.accessToken));
     }
   };
 
@@ -29,7 +27,6 @@ export const authStore = defineStore("authStore", () => {
   const afterLoginSuccess = async (data: any) => {
     updateToken(data.data);
 
-    // get user info
     let user = await getUserInfo();
     let userProfile = await getUserProfile({
       proxyWallet: user.data.proxyWallet,
@@ -38,6 +35,7 @@ export const authStore = defineStore("authStore", () => {
     updateTraderType(userProfile.data.traderType);
   };
 
+  // disconnect wallet and log out
   const logOut = async () => {
     try {
       let res: any = await getLogout();
@@ -47,7 +45,7 @@ export const authStore = defineStore("authStore", () => {
         updateUserInfo({});
       }
     } catch (e) {
-      //console.log('Failure message：', e)
+      console.log('Failure message：', e)
     }
   };
 

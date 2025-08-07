@@ -43,10 +43,15 @@
           </div>
         </van-image>
         <div class="p-4 h-[38.2%]">
-          <text class="name mt-4">{{ card.title }}</text>
-          <text v-if="card.markets.length" class="desc">{{
-            card.markets[0].question
-          }}</text>
+          <div class="h-[80%] overflow-auto">
+            <text class="name mt-4">{{ card.title }}</text>
+            <text v-if="card.markets.length" class="desc">{{
+              card.markets[0].question
+            }}</text>
+          </div>
+         <div class="h-[20%]">
+            <text> ${{ convertCurrency(card.volume) }} Vol.</text>
+          </div>
         </div>
 
         <div v-if="currentIndex === index" class="hint-box">
@@ -76,6 +81,7 @@ import {
   getTopicsOrderPreview,
   getTopicsOrderCreate,
 } from "~/api/market";
+import { convertCurrency } from "@/utils/processing";
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
@@ -270,7 +276,6 @@ const pickNext = () => {
 const goDeposit = _.debounce(async () => {
   console.log(volume, "volume");
   if (token.accessToken === "") {
-   
   } else {
     // balance check
     // if (store.userBalance < transaction.textPrice) {
