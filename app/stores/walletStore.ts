@@ -8,6 +8,7 @@ import {
 } from "@wagmi/vue";
 import { createWalletClient, http } from "viem";
 import type { SignTradeDataOptions } from "@/config/tradeTypes";
+// import { getBalance } from "@wagmi/core";
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_ORDER,
@@ -32,6 +33,9 @@ export const useWalletStore = defineStore("walletStore", () => {
   let nonce = $ref("");
   let walletConfig = $ref({});
   let walletClient = $ref(null);
+  const usdtBalance = $ref<bigint | null>(null);
+
+  const { $wagmiAdapter } = useNuxtApp();
   const { isConnected, address } = $(useAccount());
   const { signMessageAsync } = useSignMessage();
   const { signTypedDataAsync } = useSignTypedData();
@@ -139,6 +143,41 @@ export const useWalletStore = defineStore("walletStore", () => {
       afterLoginSuccess(result);
     }
   };
+
+  // /**
+  //  * get wallet balance and update store
+  //  */
+  // const updateWalletBalance = async () => {
+  //   console.log("params", {
+  //     chainId: network.id,
+  //     address: address.value as any,
+  //     token: store.walletConfig.main.address,
+  //   });
+  //   if (!address) return;
+  //   // get USDT balance
+  //   getBalance($wagmiAdapter.wagmiConfig, {
+  //     chainId: network.id,
+  //     address: address.value as any,
+  //     token: store.walletConfig.main.address,
+  //   }).then((res) => {
+  //     if (res.value != usdtBalance.value) {
+  //       store.updateUserBalance(Number(formatUnits(res.value, res.decimals)));
+  //       usdtBalance.value = res.value;
+  //     }
+  //   });
+  //   // get MEME balance
+  //   getBalance($wagmiAdapter.wagmiConfig, {
+  //     chainId: network.id,
+  //     address: address.value as any,
+  //     token: store.walletConfig.meme.address,
+  //   }).then((res) => {
+  //     if (res.value != tokenBalance.value) {
+  //       //console.log(`token 余额变化: ${tokenBalance.value} → ${res.value}`)
+  //       store.updateTokenBalance(Number(formatUnits(res.value, res.decimals)));
+  //       tokenBalance.value = res.value;
+  //     }
+  //   });
+  // };
 
   watch(
     () => address,

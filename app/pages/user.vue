@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white">
-    <div class="px-4 py-2">Positions</div>
+    <UserInfoCard />
     <OrderList />
   </div>
 </template>

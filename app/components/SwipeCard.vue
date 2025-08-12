@@ -285,8 +285,8 @@ const goDeposit = async () => {
   } else {
     // balance check
     // if (store.userBalance < transaction.textPrice) {
-    // ElMessage.error("Insufficient balance, please recharge first!");
-    // return false;
+    //   ElMessage.error("Insufficient balance, please recharge first!");
+    //   return false;
     // }
     try {
       // switchLoading(true);

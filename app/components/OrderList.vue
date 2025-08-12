@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-color-white p-4 h-[calc(100vh-170px)] overflow-auto">
+  <div class="w-full bg-color-white p-4 h-[calc(100vh-170px-248px-88px)] overflow-auto">
     <van-card
       v-for="item in list"
       :key="item.id"
