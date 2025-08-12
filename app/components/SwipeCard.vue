@@ -49,7 +49,7 @@
               card.markets[0].question
             }}</text>
           </div>
-         <div class="h-[20%]">
+          <div class="h-[20%]">
             <text> ${{ convertCurrency(card.volume) }} Vol.</text>
           </div>
         </div>
@@ -93,6 +93,7 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
+let animationFrame = $ref(null);
 const { token } = $(authStore());
 const { signTradeData, walletConfig } = $(useWalletStore());
 const { volume } = $(coreStore());
@@ -136,9 +137,7 @@ const getInfoList = async (refresh) => {
 const getCardStyle = (index) => {
   if (index === currentIndex) {
     return {
-      transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${
-        offsetX / 20
-      }deg)`,
+      transform: `translateX(${offsetX}px) translateY(${offsetY}px)`,
       zIndex: 30 - index,
     };
   }
@@ -166,17 +165,24 @@ const touchMove = (e) => {
   const currentX = e.touches[0].clientX;
   const currentY = e.touches[0].clientY;
 
-  offsetX = currentX - startX;
-  offsetY = currentY - startY;
+  if (animationFrame) {
+    cancelAnimationFrame(animationFrame);
+  }
+  animationFrame = requestAnimationFrame(() => {
+    offsetX = currentX - startX;
+    offsetY = currentY - startY;
 
-  const maxOffsetX = 150;
-  const maxOffsetY = 150;
-  if (Math.abs(offsetX) > maxOffsetX) {
-    offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
-  }
-  if (Math.abs(offsetY) > maxOffsetY) {
-    offsetY = offsetY > 0 ? maxOffsetY : -maxOffsetY;
-  }
+    console.log("touchmove", offsetX, offsetY);
+    const maxOffsetX = 150;
+    const maxOffsetY = 150;
+    if (Math.abs(offsetX) > maxOffsetX) {
+      offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
+    }
+    if (Math.abs(offsetY) > maxOffsetY) {
+      offsetY = offsetY > 0 ? maxOffsetY : -maxOffsetY;
+    }
+    animationFrame = null;
+  });
 };
 
 // Touch end
@@ -273,7 +279,7 @@ const pickNext = () => {
 };
 
 // start transcation
-const goDeposit = _.debounce(async () => {
+const goDeposit = async () => {
   console.log(volume, "volume");
   if (token.accessToken === "") {
   } else {
@@ -354,7 +360,7 @@ const goDeposit = _.debounce(async () => {
       // switchLoading(false);
     }
   }
-}, 200);
+};
 
 onMounted((e) => {
   getInfoList(false);
