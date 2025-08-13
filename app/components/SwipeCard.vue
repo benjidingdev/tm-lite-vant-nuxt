@@ -6,12 +6,12 @@
         :key="card.id"
         :class="['card', { active: currentIndex === index }]"
         :style="getCardStyle(index)"
-        class="shadow-xl"
-        @touchstart="touchStart"
-        @touchmove="touchMove"
-        @touchend="touchEnd(card, event)"
+        class="shadow-xl draggable-element"
+        @touchstart.prevent="touchStart"
+        @touchmove.prevent="touchMove"
+        @touchend.prevent="touchEnd(card, event)"
       >
-        <van-image width="100%" height="61.8%" :src="card['image']">
+        <van-image width="100%" height="60%" :src="card['image']">
           <div class="absolute -bottom-8 h-16 w-full">
             <div class="flex justify-between items-center h-full px-6">
               <div
@@ -22,13 +22,13 @@
               </div>
               <div
                 class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="buyYes"
+                @click="buyYes(card)"
               >
                 <van-icon name="checked" size="66" color="#97dbb4" />
               </div>
               <div
                 class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="buyNo"
+                @click="buyNo(card)"
               >
                 <van-icon name="clear" size="66" color="#fe9595" />
               </div>
@@ -94,6 +94,8 @@ let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
 let animationFrame = $ref(null);
+
+// The data from store 
 const { token } = $(authStore());
 const { signTradeData, walletConfig } = $(useWalletStore());
 const { volume } = $(coreStore());
@@ -150,25 +152,30 @@ const getCardStyle = (index) => {
 // Touch start
 const touchStart = (e) => {
   if (currentIndex >= cards.length) return;
-
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-  offsetX = 0;
-  offsetY = 0;
-  console.log(startX, startY);
+  if (animationFrame) {
+    cancelAnimationFrame(animationFrame);
+  }
+  animationFrame = requestAnimationFrame(() => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    offsetX = 0;
+    offsetY = 0;
+    console.log(startX, startY);
+    animationFrame = null;
+  });
 };
 
 // Touch move
 const touchMove = (e) => {
   if (currentIndex >= cards.length) return;
 
-  const currentX = e.touches[0].clientX;
-  const currentY = e.touches[0].clientY;
-
   if (animationFrame) {
     cancelAnimationFrame(animationFrame);
   }
+
   animationFrame = requestAnimationFrame(() => {
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
     offsetX = currentX - startX;
     offsetY = currentY - startY;
 
@@ -189,19 +196,24 @@ const touchMove = (e) => {
 const touchEnd = (card, event) => {
   if (currentIndex >= cards.length) return;
 
-  const threshold = 80; // Threshold of swiping
-
-  if (offsetX > threshold) {
-    buyNo(card); // swipe to left means reject
-  } else if (offsetX < -threshold) {
-    buyYes(card); // swipe to right means accept
-  } else if (offsetY > threshold) {
-    pickNext(); // swipe down means pick next card
-  } else if (offsetY < -threshold) {
-    bookmark(); // swipe up means bookmark
-  } else {
-    resetCard(); // reset the position of card
+  const threshold = 100; // Threshold of swiping
+  if (animationFrame) {
+    cancelAnimationFrame(animationFrame);
   }
+  animationFrame = requestAnimationFrame(() => {
+    if (offsetX > threshold) {
+      buyNo(card); // swipe to left means reject
+    } else if (offsetX < -threshold) {
+      buyYes(card); // swipe to right means accept
+    } else if (offsetY > threshold) {
+      pickNext(); // swipe down means pick next card
+    } else if (offsetY < -threshold) {
+      bookmark(); // swipe up means bookmark
+    } else {
+      resetCard(); // reset the position of card
+    }
+    animationFrame = null;
+  });
 };
 
 // Card swipe Animation
@@ -218,13 +230,15 @@ const swipeCard = (status, callback) => {
     offsetY = 0;
     // The result of card swiping
     if (currentIndex >= cards.length) {
-      uni.showToast({
-        title: "no more cards",
-        icon: "none",
-      });
+      // uni.showToast({
+      //   title: "no more cards",
+      //   icon: "none",
+      // });
     }
     cards.shift();
-    callback();
+    if (typeof callback === "function") {
+      callback();
+    }
   }, 0);
 };
 
@@ -249,9 +263,7 @@ const buyYes = (card) => {
   };
   goDeposit();
   // sendPimlicoTranscation();
-  swipeCard(statusList[0], () => {
-    // setTradeModalShow(true);
-  });
+  swipeCard(statusList[0]);
 };
 
 const buyNo = (card) => {
@@ -284,10 +296,10 @@ const goDeposit = async () => {
   if (token.accessToken === "") {
   } else {
     // balance check
-    // if (store.userBalance < transaction.textPrice) {
-    //   ElMessage.error("Insufficient balance, please recharge first!");
-    //   return false;
-    // }
+    if (store.userBalance < transaction.textPrice) {
+      ElMessage.error("Insufficient balance, please recharge first!");
+      return false;
+    }
     try {
       // switchLoading(true);
 
@@ -309,11 +321,10 @@ const goDeposit = async () => {
         marketId: transaction.marketsId || 1012110,
         type: transaction.type, //1-YES；2-NO,
         amount: null,
-        // volume: amount.value || 1,
         volume: volume,
         priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
         orderType: 1, //1: buy, 2: sell
-        price: 46 || transaction.textPrice * 100,
+        price: transaction.textPrice * 100,
         isDeduction: false,
       };
       console.log("req", req);
@@ -418,7 +429,11 @@ onMounted((e) => {
   border: 2px solid #52c41a;
 }
 
-.van-empty__description {
-  color: #fff !important;
+.draggable-element {
+  will-change: transform;
+  touch-action: none;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  contain: content;
 }
 </style>

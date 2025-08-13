@@ -2,7 +2,9 @@ import axios from "axios";
 import { authStore } from "@/stores/authStore";
 
 // need to change it to configuration
-export const baseUrl = "https://avax-test.turingma-api.com/";
+// export const baseUrl = "https://avax-test.turingma-api.com/";
+
+export const baseUrl = "http://192.168.3.230/mktapi";
 //  const { baseUrl } = getConfig()
 //console.log('__VUE_branch', __VUE_branch)
 //console.log('__VUE_commitHash', __VUE_commitHash)

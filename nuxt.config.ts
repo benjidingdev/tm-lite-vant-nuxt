@@ -6,6 +6,7 @@ const modules = [
   "@vue-macros/nuxt",
   "@pinia/nuxt",
   "@wagmi/vue/nuxt",
+  "@vueuse/motion/nuxt",
 ];
 
 export default defineNuxtConfig({
@@ -18,6 +19,9 @@ export default defineNuxtConfig({
     define: {
       "window.FormData": "undefined",
     },
+  },
+  vueuse: {
+    motion: true
   },
   build: {
     transpile: ["form-data"],

@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+const active = ref(0);
 const goToLInk = async (path: string) => {
   await navigateTo(path);
 };

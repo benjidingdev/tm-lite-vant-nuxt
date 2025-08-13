@@ -11,7 +11,7 @@
 
 <style>
 .swipe-card-container {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 150px);
   /* Adjust height based on nav bar and tab bar */
 }
 </style>

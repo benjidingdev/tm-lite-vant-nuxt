@@ -6,15 +6,17 @@ import {
   useSignMessage,
   useSignTypedData,
 } from "@wagmi/vue";
-import { createWalletClient, http } from "viem";
+import { createWalletClient, http, formatUnits, getAddress } from "viem";
+import { avalancheFuji } from "viem/chains";
+import { getBalance } from "@wagmi/core";
 import type { SignTradeDataOptions } from "@/config/tradeTypes";
-// import { getBalance } from "@wagmi/core";
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_ORDER,
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
-import { avalancheFuji } from "viem/chains";
+import { createSiweMessage } from "viem/siwe";
+import type { SiweMessage } from "@/types";
 
 type contentType = {
   domain: typeof TYPEHASH_DOMAIN;
@@ -25,18 +27,20 @@ type contentType = {
 
 export const useWalletStore = defineStore("walletStore", () => {
   const { afterLoginSuccess, logOut } = $(authStore());
+  const { updateUserBalance, updateTokenBalance, isToken } = $(coreStore());
   // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
   let walletAddress = $ref<string | null>("");
-  let isSign = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
   let walletClient = $ref(null);
-  const usdtBalance = $ref<bigint | null>(null);
+  let isSign = $ref<boolean>(false); // Whether to sign successfully
+  let usdtBalance = $ref<bigint | null>(null); // USDT balance
+  let tokenBalance = $ref<bigint>(); // TUIT balance
 
   const { $wagmiAdapter } = useNuxtApp();
-  const { isConnected, address } = $(useAccount());
+  const { isConnected, address, chainId } = $(useAccount());
   const { signMessageAsync } = useSignMessage();
   const { signTypedDataAsync } = useSignTypedData();
 
@@ -61,35 +65,77 @@ export const useWalletStore = defineStore("walletStore", () => {
 
   // refresh sign status
   const updateSign = (sign: boolean) => {
-    isSign.value = sign;
+    isSign = sign;
   };
 
-  //request signature
-  const todoSignIn = async () => {
-    let nonce = new Date().getTime().toString();
-    let message = "Welcome to TuringMarket Sign to connect.";
-    message = message.concat("\nNonce:\n").concat(nonce);
-    message = message.concat("\nNonce:\n").concat(nonce);
+  /**
+   * Sign in, after the user connects the wallet, call the backend service to get the message
+   * Then request the signature, get the signature string, and call the backend interface to verify the signature
+   */
+  const signLoginMessage = async (nonce: string) => {
+    const messageObj = {
+      address: getAddress(address),
+      chainId: chainId as number,
+      domain: location.host,
+      nonce,
+      uri: location.href,
+      version: "1" as "1",
+      issuedAt: new Date(),
+      expirationTime: new Date(Date.now() + 60000),
+      statement:
+        "I accept the TuringM Terms of Service: https://TuringM.io/terms",
+    } as SiweMessage;
+    const message = createSiweMessage(messageObj);
 
-    let res = await getNonce(address);
-    if (res && res.code === 0) {
-      message = res.data;
-    } else {
-      return;
+    try {
+      let res = await signMessageAsync(
+        {
+          account: address,
+          message: message,
+        },
+        {
+          onSuccess: (data: any, variables: any, context: any) => {
+            isSign = true;
+            return data;
+          },
+          onError: (error: any, variables: any, context: any) => {
+            isSign = false;
+            isToken(false);
+            throw error;
+          },
+        }
+      );
+      return { message: messageObj, signature: res };
+    } catch (err) {
+      console.error("Error signing message:", err);
+      isSign = false; // Ensure isSign is false when signing fails
+      isToken(false);
+      throw err;
     }
+  };
 
-    await signMessageAsync(
-      { account: address, message: message },
-      {
-        onSuccess: (data, variables, context) => {
-          msg = "signature success";
-          todoLogin(data, "wallet");
-        },
-        onError: (error, variables, context) => {
-          console.log("error", error);
-        },
+  /**
+   * Sign in
+   * @returns
+   */
+  const todoSign = async () => {
+    if (isSign) return;
+    try {
+      isSign = true;
+      if (address) {
+        console.log("todoSign address:", address);
+        const nonceRes = await getNonce(address);
+        if (nonceRes) {
+          const signData = await signLoginMessage(nonceRes.data);
+          console.log("signData:", signData);
+          await todoLogin(signData);
+        }
       }
-    );
+    } catch (error) {
+      console.log("todoSign error", error);
+    } finally {
+      isSign = false;
+    }
   };
 
   // transcation signature
@@ -133,51 +179,59 @@ export const useWalletStore = defineStore("walletStore", () => {
   };
 
   // start login process
-  const todoLogin = async (data: any, type: any) => {
+  const todoLogin = async (data: {
+    message: SiweMessage;
+    signature: string;
+  }) => {
+    let inviteCode = localStorage.getItem("inviteCode") || "";
     let result = await walletApi.loginByWallet({
       proxyWallet: address,
-      signature: data,
+      ivcode: inviteCode,
+      signature: data.signature,
+      message: data.message,
     });
-    if (result && result.code === 0) {
+    if (result && result?.code === 0) {
       console.log("login success");
       afterLoginSuccess(result);
+      // Update wallet balance
+      updateWalletBalance();
     }
   };
 
   // /**
   //  * get wallet balance and update store
   //  */
-  // const updateWalletBalance = async () => {
-  //   console.log("params", {
-  //     chainId: network.id,
-  //     address: address.value as any,
-  //     token: store.walletConfig.main.address,
-  //   });
-  //   if (!address) return;
-  //   // get USDT balance
-  //   getBalance($wagmiAdapter.wagmiConfig, {
-  //     chainId: network.id,
-  //     address: address.value as any,
-  //     token: store.walletConfig.main.address,
-  //   }).then((res) => {
-  //     if (res.value != usdtBalance.value) {
-  //       store.updateUserBalance(Number(formatUnits(res.value, res.decimals)));
-  //       usdtBalance.value = res.value;
-  //     }
-  //   });
-  //   // get MEME balance
-  //   getBalance($wagmiAdapter.wagmiConfig, {
-  //     chainId: network.id,
-  //     address: address.value as any,
-  //     token: store.walletConfig.meme.address,
-  //   }).then((res) => {
-  //     if (res.value != tokenBalance.value) {
-  //       //console.log(`token 余额变化: ${tokenBalance.value} → ${res.value}`)
-  //       store.updateTokenBalance(Number(formatUnits(res.value, res.decimals)));
-  //       tokenBalance.value = res.value;
-  //     }
-  //   });
-  // };
+  const updateWalletBalance = async () => {
+    console.log("params", {
+      chainId: chainId,
+      address: address as any,
+      token: walletConfig.main.address,
+    });
+    if (!address) return;
+    // get USDT balance
+    getBalance($wagmiAdapter.wagmiConfig, {
+      chainId: chainId,
+      address: address as any,
+      token: walletConfig!.main.address,
+    }).then((res) => {
+      if (res.value != usdtBalance) {
+        updateUserBalance(Number(formatUnits(res.value, res.decimals)));
+        usdtBalance = res.value;
+      }
+    });
+    // get MEME balance
+    getBalance($wagmiAdapter.wagmiConfig, {
+      chainId: chainId,
+      address: address as any,
+      token: walletConfig!.meme.address,
+    }).then((res) => {
+      if (res.value != tokenBalance) {
+        console.log(`token balance change: ${tokenBalance} → ${res.value}`);
+        updateTokenBalance(Number(formatUnits(res.value, res.decimals)));
+        tokenBalance = res.value;
+      }
+    });
+  };
 
   watch(
     () => address,
@@ -194,7 +248,7 @@ export const useWalletStore = defineStore("walletStore", () => {
       if (isConnected) {
         initWalletClient();
         // await createPimlicoClientInstance();
-        todoSignIn();
+        todoSign();
       } else {
         logOut();
       }
@@ -209,7 +263,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     nonce,
     msg,
     getNonce,
-    todoSignIn,
+    todoSign,
     signTradeData,
     updateSign,
     setWalletAddress,
