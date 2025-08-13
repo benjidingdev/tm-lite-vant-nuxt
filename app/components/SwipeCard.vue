@@ -80,6 +80,7 @@ import {
   getTopicsRecommend,
   getTopicsOrderPreview,
   getTopicsOrderCreate,
+  getOrderAmount,
 } from "~/api/market";
 import { convertCurrency } from "@/utils/processing";
 
@@ -95,9 +96,11 @@ let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
 let animationFrame = $ref(null);
 
-// The data from store 
+// The data from store
 const { token } = $(authStore());
-const { signTradeData, walletConfig } = $(useWalletStore());
+const { signTradeData, walletConfig, userBalance, queryAllowanceAndPermit } = $(
+  useWalletStore()
+);
 const { volume } = $(coreStore());
 const recommondQueryParams = $ref({
   pageNo: 1,
@@ -250,14 +253,15 @@ const resetCard = () => {
 
 const buyYes = (card) => {
   console.log(card);
+  const { title, type } = card;
   transaction = {
     parentId: null,
-    textName: "",
+    textName: card.markets[0].yesName,
     textColor: "",
-    textPrice: 1,
+    textPrice: card.markets[0].yesPrice,
     marketsId: card.markets[0].id,
-    marketsTitle: "",
-    type: 1,
+    marketsTitle: title,
+    type: type,
     fee: null,
     marketsItem: {},
   };
@@ -267,14 +271,15 @@ const buyYes = (card) => {
 };
 
 const buyNo = (card) => {
+  const { title, type } = card;
   transaction = {
     parentId: null,
-    textName: "",
+    textName: card.markets[0].noName,
     textColor: "",
-    textPrice: 1,
+    textPrice: card.markets[0].noPrice,
     marketsId: card.markets[0].id,
-    marketsTitle: "",
-    type: 2,
+    marketsTitle: title,
+    type: type,
     fee: null,
     marketsItem: {},
   };
@@ -296,26 +301,42 @@ const goDeposit = async () => {
   if (token.accessToken === "") {
   } else {
     // balance check
-    if (store.userBalance < transaction.textPrice) {
-      ElMessage.error("Insufficient balance, please recharge first!");
+    if (userBalance < transaction.textPrice) {
+      showDialog({
+        title: "Insufficient balance",
+        message: "Insufficient balance, please recharge first!",
+        confirmButtonText: "OK",
+      });
       return false;
     }
     try {
       // switchLoading(true);
 
-      // const amountRes = await getOrderAmount();
+      const amountRes = await getOrderAmount();
       // if (amountRes.code === 0) {
       //   const allowanceAmount =
-      //     (transaction.textPrice + transaction.fee) * amount.value +
-      //     amountRes.data.totalAmount;
-      //   let allowanceRes = await walletStore.queryAllowanceAndPermit(
-      //     0,
-      //     allowanceAmount
-      //   );
+      //     (transaction.textPrice + transaction.fee) * volume;
+      //   amountRes.data.totalAmount;
+      //   let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
       //   if (!allowanceRes) {
-      //     return ElMessage.error("Permit authorization failed!");
+      //     // return ElMessage.error("Permit authorization failed!");
+      //     showDialog({
+      //       title: "Permit Authorization Failed",
+      //       message:
+      //         "Please authorize the permit to proceed with the transaction.",
+      //       confirmButtonText: "OK",
+      //     });
+      //     return false;
       //   }
-      // } else return ElMessage.error("Permit authorization failed!");
+      // } else {
+      //   showDialog({
+      //     title: "Permit Authorization Failed",
+      //     message:
+      //       "Please authorize the permit to proceed with the transaction.",
+      //     confirmButtonText: "OK",
+      //   });
+      //   return false;
+      // }
 
       const req = {
         marketId: transaction.marketsId || 1012110,
@@ -327,7 +348,6 @@ const goDeposit = async () => {
         price: transaction.textPrice * 100,
         isDeduction: false,
       };
-      console.log("req", req);
       let result = await getTopicsOrderPreview(req);
       if (result.code === 0) {
         const order = { ...result.data };
@@ -340,10 +360,7 @@ const goDeposit = async () => {
             6
           );
           tradeSign = await signTradeData({ order: result.data });
-          console.log("tradeSign:", tradeSign);
-        } catch (e) {
-          //console.log(e)
-        }
+        } catch (e) {}
         if (tradeSign) {
           const params = {
             salt: order.salt,
