@@ -1,23 +1,34 @@
 <template>
-  <div
-    class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
-  >
-    <van-card
-      v-for="item in list"
-      :key="item.id"
-      currency="$"
-      :price="item.profit + '(' + item.profitRate + '%)'"
-      :desc="item.description"
-      :title="item.question"
-      :thumb="item.image"
-    >
-      <template #footer>
-        <van-button plain size="mini" type="primary" @click="showShares(item)"
-          >Shares</van-button
+  <van-tabs v-model:active="active">
+    <van-tab title="Positions">
+      <div
+        class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
+      >
+        <van-card
+          v-for="item in list"
+          :key="item.id"
+          currency="$"
+          :price="item.profit + '(' + item.profitRate + '%)'"
+          :desc="item.description"
+          :title="item.question"
+          :thumb="item.image"
         >
-      </template>
-    </van-card>
-  </div>
+          <template #footer>
+            <van-button
+              plain
+              size="mini"
+              type="primary"
+              @click="showShares(item)"
+              >Shares</van-button
+            >
+          </template>
+        </van-card>
+      </div>
+    </van-tab>
+    <van-tab title="Open orders">Open orders</van-tab>
+    <van-tab title="History">History</van-tab>
+  </van-tabs>
+
   <van-dialog v-model:show="show" title="SHARE TO" confirmButtonText="Confirm">
     <div class="w-full pb-2 px-10">
       <div class="font-sans text-center text-white text-lg font-bold">
@@ -49,7 +60,10 @@
 <script setup lang="ts">
 import { userHoldInfoList } from "@/api/positions";
 import { onMounted } from "vue";
-let list = $ref([]);
+
+let positionList = $ref([]);
+let openOrderList = $ref([]);
+let historyList = $ref([]);
 let show = $ref(false);
 const { userInfo } = $(coreStore());
 
@@ -74,9 +88,9 @@ const showShares = (item) => {
 const fetchUserHoldInfoList = async () => {
   const res = await userHoldInfoList(voState.queryParams);
   if (voState.queryParams.pageNo === 1 && res?.data) {
-    list = res?.data?.list;
+    positionList = res?.data?.list;
   } else {
-    list = list.concat(res?.data?.list);
+    positionList = positionList.concat(res?.data?.list);
   }
   voState.total = res?.data?.total;
   voState.isLoading = false;

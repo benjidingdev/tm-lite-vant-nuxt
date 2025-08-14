@@ -1,13 +1,12 @@
 <template>
-  <div class="h-20 flex items-center justify-between px-10">
+  <div class="h-20 flex items-center justify-between px-6">
     <div class="flex items-center">
       <van-icon class="text-2xl! text-white" name="balance-o" />
-      <span class="text-white">${{ Number(userBalance ?? 0).toFixed(2) }}</span>
+      <span class="text-white ml-1">${{ shortUserBalance }}</span>
     </div>
 
     <div class="mr-8">
       <appkit-button
-        balance="show"
         size="md"
         class="text-white"
         label="Connect"
@@ -28,34 +27,19 @@
 
 <script setup>
 import { useBalance, useAccount } from "@wagmi/vue";
+import { computed } from "vue";
+import { shortenNumber } from "@/utils/processing";
 
 const { walletAddress } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
 const { userBalance } = $(coreStore());
 const { address, isConnected, chainId } = $(useAccount());
 
-// let { data: balance, refetch: refreshBalance } = $(
-//   useBalance({
-//     address,
-//     chainId: chainId,
-//     cacheTime: 0,
-//     staleTime: 0,
-//   })
-// );
-
-// const formattedBalance = computed(() => {
-//   if (!balance) return "0.000";
-
-//   const value = parseFloat(balance.formatted);
-//   return isNaN(value)
-//     ? "0.000"
-//     : value.toLocaleString(undefined, {
-//         minimumFractionDigits: 1,
-//         maximumFractionDigits: 1,
-//       }) +
-//         " " +
-//         balance.symbol;
-// });
+const shortUserBalance = computed(() => {
+  return userBalance
+    ? shortenNumber(userBalance)
+    : "0.00";
+});
 
 const openSettingModal = () => {
   setSettingModalShow(true);

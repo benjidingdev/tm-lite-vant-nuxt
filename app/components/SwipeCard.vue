@@ -11,7 +11,12 @@
         @touchmove.prevent="touchMove"
         @touchend.prevent="touchEnd(card, event)"
       >
-        <van-image width="100%" height="60%" :src="card['image']">
+        <van-image
+          width="100%"
+          height="60%"
+          :src="card['image']"
+          class="p-2"
+        >
           <div class="absolute -bottom-8 h-16 w-full">
             <div class="flex justify-between items-center h-full px-6">
               <div
@@ -97,7 +102,7 @@ let refresherTriggered = $ref(false);
 let animationFrame = $ref(null);
 
 // The data from store
-const { token } = $(authStore());
+const { token, isToken } = $(authStore());
 const { signTradeData, walletConfig, userBalance, queryAllowanceAndPermit } = $(
   useWalletStore()
 );
@@ -267,7 +272,6 @@ const buyYes = (card) => {
   };
   goDeposit();
   // sendPimlicoTranscation();
-  swipeCard(statusList[0]);
 };
 
 const buyNo = (card) => {
@@ -284,7 +288,6 @@ const buyNo = (card) => {
     marketsItem: {},
   };
   goDeposit();
-  swipeCard(statusList[1], () => {});
 };
 
 const bookmark = () => {
@@ -295,23 +298,35 @@ const pickNext = () => {
   swipeCard(statusList[3], () => {});
 };
 
+const showMsgDialog = (title, message, confirmButtonText) => {
+  showDialog({
+    title,
+    message,
+    confirmButtonText: "OK",
+  });
+};
+
 // start transcation
 const goDeposit = async () => {
   console.log(volume, "volume");
   if (token.accessToken === "") {
+    showMsgDialog(
+      "Please Login!",
+      "Please login to your account to proceed with the transaction."
+    );
+    resetCard();
+    isToken(true);
   } else {
     // balance check
     if (userBalance < transaction.textPrice) {
-      showDialog({
-        title: "Insufficient balance",
-        message: "Insufficient balance, please recharge first!",
-        confirmButtonText: "OK",
-      });
+      showMsgDialog(
+        "Insufficient balance",
+        "Insufficient balance, please recharge first!"
+      );
       return false;
     }
     try {
       // switchLoading(true);
-
       const amountRes = await getOrderAmount();
       // if (amountRes.code === 0) {
       //   const allowanceAmount =
@@ -320,7 +335,7 @@ const goDeposit = async () => {
       //   let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
       //   if (!allowanceRes) {
       //     // return ElMessage.error("Permit authorization failed!");
-      //     showDialog({
+      //     showMsgDialog({
       //       title: "Permit Authorization Failed",
       //       message:
       //         "Please authorize the permit to proceed with the transaction.",
@@ -329,7 +344,7 @@ const goDeposit = async () => {
       //     return false;
       //   }
       // } else {
-      //   showDialog({
+      //   showMsgDialog({
       //     title: "Permit Authorization Failed",
       //     message:
       //       "Please authorize the permit to proceed with the transaction.",
@@ -369,18 +384,20 @@ const goDeposit = async () => {
           };
           let res = await getTopicsOrderCreate(params);
           if (res.code === 0) {
-            showDialog({
-              title: "Transaction Successful",
-              message: "Your transaction has been successfully processed.",
-              confirmButtonText: "OK",
-            });
+            if (transaction.type === 1) {
+              swipeCard(statusList[0]);
+            } else {
+              swipeCard(statusList[1], () => {});
+            }
+            showMsgDialog(
+              "Transaction Successful",
+              "Your transaction has been successfully processed."
+            );
           } else {
-            showDialog({
-              title: "Transaction Failed",
-              message:
-                res.message || "An error occurred during the transaction.",
-              confirmButtonText: "OK",
-            });
+            showMsgDialog(
+              "Transaction Failed",
+              res.message || "An error occurred during the transaction."
+            );
           }
         }
       }
@@ -444,6 +461,9 @@ onMounted((e) => {
 
 .btn.like {
   border: 2px solid #52c41a;
+}
+.van-image img{
+  border-radius: 15px;
 }
 
 .draggable-element {

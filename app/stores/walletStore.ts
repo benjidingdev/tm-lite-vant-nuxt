@@ -137,7 +137,6 @@ export const useWalletStore = defineStore("walletStore", () => {
         const nonceRes = await getNonce(address);
         if (nonceRes) {
           const signData = await signLoginMessage(nonceRes.data);
-          console.log("signData:", signData);
           await todoLogin(signData);
         }
       }
@@ -208,9 +207,9 @@ export const useWalletStore = defineStore("walletStore", () => {
     }
   };
 
-  // /**
-  //  * get wallet balance and update store
-  //  */
+   /**
+    * get wallet balance and update store
+    */
   const updateWalletBalance = async () => {
     console.log("params", {
       chainId: chainId,
