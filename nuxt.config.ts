@@ -18,13 +18,21 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
     define: {
       "window.FormData": "undefined",
+      __API_BASE__: JSON.stringify(process.env.NUXT_PUBLIC_API_BASE_URL),
+      __APP_ENV__: JSON.stringify(process.env.NUXT_PUBLIC_NODE_ENV),
+      envName: process.env.ENV_NAME
     },
   },
   vueuse: {
-    motion: true
+    motion: true,
   },
   build: {
     transpile: ["form-data"],
+  },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => ["appkit-button"].includes(tag),
+    },
   },
   runtimeConfig: {
     public: {
@@ -44,7 +52,8 @@ export default defineNuxtConfig({
         enablePinia: true,
         config: {},
       },
-      baseUrl: process.env.NUXT_PUBLIC_API_DOMAIN || "http://192.168.1.82:48082",
+      baseUrl:
+        process.env.NUXT_PUBLIC_API_DOMAIN || "http://192.168.1.82:48082",
     },
   },
 });

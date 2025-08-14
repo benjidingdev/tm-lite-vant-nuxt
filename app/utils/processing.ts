@@ -135,3 +135,11 @@ export const shortenNumber = (value: any) => {
 
   return (isNegative ? "-" : "") + result + units[unitIndex];
 };
+
+export const formatTitle = (title: string) => {
+  if (title) {
+    return encodeURIComponent(title.replace(/[^a-z0-9\u4e00-\u9fa5\s-]/gi, '').replace(/[ /?]+/g, '-').toLowerCase())
+  }
+  return ''
+}
+

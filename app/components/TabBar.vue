@@ -2,7 +2,7 @@
   <van-tabbar v-model="active">
     <van-tabbar-item
       @click="goToLInk('/')"
-      icon="completed-o"
+      icon="/icons/market.svg"
     ></van-tabbar-item>
     <van-tabbar-item @click="goToLInk('/user')" icon="user-o"></van-tabbar-item>
   </van-tabbar>

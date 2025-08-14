@@ -1,17 +1,19 @@
 <template>
-  <van-tabs v-model:active="active">
+  <van-tabs :active="active">
     <van-tab title="Positions">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
+        v-if="positionList.length !== 0"
       >
         <van-card
-          v-for="item in list"
-          :key="item.id"
+          v-for="item in positionList"
           currency="$"
+          :key="item.marketId"
           :price="item.profit + '(' + item.profitRate + '%)'"
           :desc="item.description"
           :title="item.question"
           :thumb="item.image"
+          @click="goToDetails(item)"
         >
           <template #footer>
             <van-button
@@ -19,8 +21,8 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >Shares</van-button
-            >
+              >Shares
+            </van-button>
           </template>
         </van-card>
       </div>
@@ -59,12 +61,14 @@
 
 <script setup lang="ts">
 import { userHoldInfoList } from "@/api/positions";
+import { formatTitle } from '@/utils/processing'
 import { onMounted } from "vue";
 
 let positionList = $ref([]);
 let openOrderList = $ref([]);
 let historyList = $ref([]);
 let show = $ref(false);
+let active = $ref(0);
 const { userInfo } = $(coreStore());
 
 const voState = $ref({
@@ -102,6 +106,11 @@ const goUrl = (url) => {
   path = `${url}?url=${origin}?id=${marketId}`;
   window.open(path);
   // handleClose();
+};
+
+const goToDetails = (item) => {
+  const title = formatTitle(item.question);
+  window.open(`https://avax-test.turingmarket.cc/details/${title}?id=${item.marketId}`);
 };
 
 onMounted(() => {

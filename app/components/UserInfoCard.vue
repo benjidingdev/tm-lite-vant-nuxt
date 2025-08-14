@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <div class="w-full h-full flex flex-col">
-      <div class="user-container text-center mx-auto flex justify-center items-center">
+      <div class="user-container text-center mx-auto flex justify-center items-center pt-4">
         <img
           v-if="voData.userInfo.avatar"
           class="w-16 h-16 mx-auto rounded-full"
