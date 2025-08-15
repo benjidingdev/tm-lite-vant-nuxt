@@ -27,12 +27,16 @@
         />
       </div>
     </div>
+    <van-button class="m-auto" type="primary" @click="todoSign"
+      >Sign</van-button
+    >
   </van-dialog>
 </template>
 
 <script setup lang="ts">
 let { settingModalShow, setSettingModalShow } = $(uiStore());
 let { volume, updateVolume } = $(coreStore());
+const { todoSign } = $(useWalletStore());
 
 const closeSettingModal = () => {
   setSettingModalShow(false);
