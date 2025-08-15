@@ -1,21 +1,22 @@
 <template>
-  <div class="w-full h-full relative">
+  <div class="w-full h-[90%] relative">
     <div v-if="cards.length">
       <div
         v-for="(card, index) in cards"
         :key="card.id"
         :class="['card', { active: currentIndex === index }]"
         :style="getCardStyle(index)"
-        class="shadow-xl draggable-element"
+        class="draggable-element shadow-md"
         @touchstart.prevent="touchStart"
         @touchmove.prevent="touchMove"
         @touchend.prevent="touchEnd(card, event)"
       >
         <van-image
           width="100%"
-          height="60%"
+          height="50%"
           :src="card['image']"
           class="p-2"
+          fit="cover"
         >
           <div class="absolute -bottom-8 h-16 w-full">
             <div class="flex justify-between items-center h-full px-6">
@@ -47,15 +48,25 @@
             </div>
           </div>
         </van-image>
-        <div class="p-4 h-[38.2%]">
-          <div class="h-[80%] overflow-auto">
+        <div class="px-4 pt-4 h-[50%]">
+          <div class="h-[85%] overflow-auto">
             <text class="name mt-4">{{ card.title }}</text>
             <text v-if="card.markets.length" class="desc">{{
               card.markets[0].question
             }}</text>
           </div>
-          <div class="h-[20%]">
+          <div class="h-[15%] flex justify-between">
             <text> ${{ convertCurrency(card.volume) }} Vol.</text>
+            <van-circle
+              class="bottom-5"
+              v-model:current-rate="currentRate"
+              :stroke-width="80"
+              :rate="percentage(card.markets[0].lastTradePrice, 'num')"
+              :speed="100"
+              size="42px"
+              layer-color="#d8d8d8"
+              :text="percentage(card.markets[0].lastTradePrice, 'num') + '%'"
+            />
           </div>
         </div>
 
@@ -87,7 +98,7 @@ import {
   getTopicsOrderCreate,
   getOrderAmount,
 } from "~/api/market";
-import { convertCurrency } from "@/utils/processing";
+import { convertCurrency, percentage } from "@/utils/processing";
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
@@ -461,7 +472,7 @@ onMounted((e) => {
 .btn.like {
   border: 2px solid #52c41a;
 }
-.van-image img{
+.van-image img {
   border-radius: 15px;
 }
 

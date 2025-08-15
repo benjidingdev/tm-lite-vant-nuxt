@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--swipe card-->
-    <div class="swipe-card-container px-10 pb-30">
+    <div class="swipe-card-container px-10">
       <SwipeCard />
     </div>
   </div>
