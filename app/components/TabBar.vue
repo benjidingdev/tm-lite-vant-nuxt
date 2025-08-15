@@ -3,8 +3,8 @@
     <van-tabbar-item
       @click="goToLInk('/')"
       icon="/icons/market.svg"
-    ></van-tabbar-item>
-    <van-tabbar-item @click="goToLInk('/user')" icon="user-o"></van-tabbar-item>
+    >Markets</van-tabbar-item>
+    <van-tabbar-item @click="goToLInk('/user')" icon="user-o">User</van-tabbar-item>
   </van-tabbar>
 </template>
 
