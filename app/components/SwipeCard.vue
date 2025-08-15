@@ -21,29 +21,23 @@
           <div class="absolute -bottom-8 h-16 w-full">
             <div class="flex justify-between items-center h-full px-6">
               <div
-                class="rounded-full bg-white w-10 h-10 flex justify-center items-center shadow-lg"
-                @click="bookmark"
-              >
-                <van-icon name="star-o" />
-              </div>
-              <div
                 class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
                 @click="buyYes(card)"
               >
                 <van-icon name="checked" size="66" color="#97dbb4" />
+              </div>
+
+              <div
+                class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                @click="bookmark"
+              >
+                <van-icon size="30" name="star-o" color="#c4c406" />
               </div>
               <div
                 class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
                 @click="buyNo(card)"
               >
                 <van-icon name="clear" size="66" color="#fe9595" />
-              </div>
-
-              <div
-                class="rounded-full bg-white w-10 h-10 flex justify-center items-center shadow-lg"
-                @click="bookmark"
-              >
-                <van-icon name="star-o" />
               </div>
             </div>
           </div>
