@@ -71,3 +71,9 @@ export const pimlicoStore = defineStore("pimlicoStore", () => {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(pimlicoStore, import.meta.hot));
 }
+
+// pimlico provides two kinds of paymaster to absctract away gas fees for your users:
+// 1. verified paymaster
+// 2. erc-20 paymaster
+
+

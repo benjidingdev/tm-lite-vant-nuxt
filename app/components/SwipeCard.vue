@@ -187,7 +187,6 @@ const touchMove = (e) => {
     offsetX = currentX - startX;
     offsetY = currentY - startY;
 
-    console.log("touchmove", offsetX, offsetY);
     const maxOffsetX = 150;
     const maxOffsetY = 150;
     if (Math.abs(offsetX) > maxOffsetX) {
@@ -258,7 +257,7 @@ const resetCard = () => {
 
 const buyYes = (card) => {
   console.log(card);
-  const { title, type } = card;
+  const { title } = card;
   transaction = {
     parentId: null,
     textName: card.markets[0].yesName,
@@ -266,7 +265,7 @@ const buyYes = (card) => {
     textPrice: card.markets[0].yesPrice,
     marketsId: card.markets[0].id,
     marketsTitle: title,
-    type: type,
+    type: 1, //1-YES；2-NO,
     fee: null,
     marketsItem: {},
   };
@@ -283,7 +282,7 @@ const buyNo = (card) => {
     textPrice: card.markets[0].noPrice,
     marketsId: card.markets[0].id,
     marketsTitle: title,
-    type: type,
+    type: 2, //1-YES；2-NO,
     fee: null,
     marketsItem: {},
   };
