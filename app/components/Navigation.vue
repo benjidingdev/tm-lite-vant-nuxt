@@ -15,7 +15,7 @@
     </div>
 
     <div
-      class="absolute right-5 w-9 h-9 flex flex-col justify-center items-center rounded-full bg-white/20 backdrop-opacity-10 p-3 focus:outline-none"
+      class="absolute right-3 w-9 h-9 flex flex-col justify-center items-center rounded-full bg-white/20 backdrop-opacity-10 p-3 focus:outline-none"
       @click="openSettingModal"
     >
       <van-icon name="setting-o" class="text-white text-2xl!" />

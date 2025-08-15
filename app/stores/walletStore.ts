@@ -88,7 +88,7 @@ export const useWalletStore = defineStore("walletStore", () => {
       chainId: chainId as number,
       domain: location.host,
       nonce,
-      uri: location.href,
+      uri: location.origin,
       version: "1" as "1",
       issuedAt: new Date(),
       expirationTime: new Date(Date.now() + 60000),
