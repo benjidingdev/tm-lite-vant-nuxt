@@ -33,7 +33,6 @@
   </van-dialog>
 </template>
 
-
 <script setup lang="ts">
 let { settingModalShow, setSettingModalShow } = $(uiStore());
 let { volume, updateVolume } = $(coreStore());
