@@ -7,6 +7,7 @@ const modules = [
   "@pinia/nuxt",
   "@wagmi/vue/nuxt",
   '@nuxtjs/i18n',
+  'pinia-plugin-persistedstate/nuxt',
   "@vueuse/motion/nuxt",
 ];
 

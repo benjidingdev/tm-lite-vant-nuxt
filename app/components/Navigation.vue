@@ -1,61 +1,54 @@
 <template>
-  <div class="h-20 flex items-center justify-between px-6">
-    <div class="flex items-center">
+  <div class="h-20 flex items-center justify-between px-2">
+    <div class="flex items-center flex-1">
       <van-icon class="text-2xl! text-white" name="balance-o" />
       <span class="text-white ml-1">${{ shortUserBalance }}</span>
     </div>
 
-    <div class="mr-8">
-      <appkit-button
-        size="md"
-        class="text-white"
-        label="Connect"
-        loadingLabel="Connecting"
-      />
+    <div class="flex items-center space-x-2">
+      <appkit-button size="md" class="text-white" label="Connect" loadingLabel="Connecting" />
+      <SettingsButton />
     </div>
-
-    <div
+    <!-- <div
       class="absolute right-3 w-9 h-9 flex flex-col justify-center items-center rounded-full bg-white/20 backdrop-opacity-10 p-3 focus:outline-none"
-      @click="openSettingModal"
-    >
+      @click="openSettingModal">
       <van-icon name="setting-o" class="text-white text-2xl!" />
-    </div>
-    <!--setting modal-->
-    <SettingModal />
+    </div> -->
+    <!-- <SettingPopup /> -->
   </div>
 </template>
 
 <script setup>
-import { useBalance, useAccount } from "@wagmi/vue";
-import { computed } from "vue";
-import { shortenNumber } from "@/utils/processing";
+  import { useBalance, useAccount } from "@wagmi/vue";
+  import { computed } from "vue";
+  import { shortenNumber } from "@/utils/processing";
 
-const { walletAddress } = $(useWalletStore());
-const { setSettingModalShow } = $(uiStore());
-const { userBalance } = $(coreStore());
-const { address, isConnected, chainId } = $(useAccount());
+  const { walletAddress } = $(useWalletStore());
+  const { setSettingModalShow } = $(uiStore());
+  const { userBalance } = $(coreStore());
+  const { address, isConnected, chainId } = $(useAccount());
 
-const shortUserBalance = computed(() => {
-  return userBalance
-    ? shortenNumber(userBalance)
-    : "0.00";
-});
+  const shortUserBalance = computed(() => {
+    return userBalance
+      ? shortenNumber(userBalance)
+      : "0.00";
+  });
 
-const openSettingModal = () => {
-  setSettingModalShow(true);
-};
+  const openSettingModal = () => {
+    setSettingModalShow(true);
+  };
 
-watch(
-  () => isConnected,
-  (newVal) => {
-    // refreshBalance();
-  },
-  { immediate: true }
-);
+  watch(
+    () => isConnected,
+    (newVal) => {
+      // refreshBalance();
+    },
+    { immediate: true }
+  );
 </script>
 
 <style>
-wui-flex > wui-text {
-  color: white;
-}
+  wui-flex>wui-text {
+    color: white;
+  }
 </style>

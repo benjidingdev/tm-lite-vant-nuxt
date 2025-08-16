@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    const { setModal, modalIsShow } = $(uiStore())
     const { locale, locales, setLocale } = useI18n()
     const columns = $computed(() => {
         const rz = locales.value.map(item => {
@@ -17,18 +18,15 @@
             setLocale(code)
         }
     })
-    const localeName = $computed(() => locales.value.find(item => item.code === locale.value)?.language)
-
-    let showPicker = $ref(false);
     const onConfirm = ({ selectedValues }) => {
-        showPicker = false;
+        setModal('langSwitcher', false);
         currentLocale = selectedValues[0];
     };
 </script>
 
 <template>
-    <van-field v-model="localeName" is-link readonly :label="$t('Language')" @click="showPicker = true" />
-    <van-popup v-model:show="showPicker" destroy-on-close round position="bottom">
-        <van-picker :model-value="currentLocale" :columns="columns" @cancel="showPicker = false" @confirm="onConfirm" />
+    <van-popup v-model:show="modalIsShow.langSwitcher" destroy-on-close round position="bottom">
+        <van-picker :model-value="currentLocale" :columns="columns" @cancel="setModal('langSwitcher', false)"
+            @confirm="onConfirm" />
     </van-popup>
 </template>

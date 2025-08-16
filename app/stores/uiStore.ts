@@ -1,19 +1,18 @@
 export const uiStore = defineStore("uiStore", () => {
-  let settingModalShow = $ref(false);
-  let tradeModalShow = $ref(false);
-
-  const setSettingModalShow = (value: boolean) => {
-    settingModalShow = value;
-  };
-  const setTradeModalShow = (value: boolean) => {
-    tradeModalShow = value;
-  };
+  let modalIsShow = $ref({
+    settings: false,
+    tradeSetting: false,
+    langSwitcher: false,
+  })
+  let labelWidth = $ref('12em')
+  const setModal = (name: keyof typeof modalIsShow, isShow: boolean) => {
+    modalIsShow[name] = isShow
+  }
 
   return $$({
-    settingModalShow,
-    tradeModalShow,
-    setSettingModalShow,
-    setTradeModalShow,
+    labelWidth,
+    modalIsShow,
+    setModal,
   });
 });
 
