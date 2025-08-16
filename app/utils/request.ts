@@ -4,7 +4,8 @@ import { authStore } from "@/stores/authStore";
 // need to change it to configuration
 // export const baseUrl = "https://avax-test.turingma-api.com/";
 
-export const baseUrl = __API_BASE__;
+const baseUrl = import.meta.env.NUXT_PUBLIC_API_PREFIX;
+//console.log('__VUE_commitHash', __VUE_commitHash)
 //console.log('__VUE_branch', __VUE_branch)
 //console.log('__VUE_commitHash', __VUE_commitHash)
 const service = axios.create({
