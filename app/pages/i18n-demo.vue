@@ -4,7 +4,7 @@
 
 <template>
     <div class="h-full">
-        <LangSwitcher />
+        <LangSwitcherLabel />
         <div>
             Nuxt I18n:
             <a :title="$t('i18n docs')" target="_blank" href="https://i18n.nuxtjs.org/docs/getting-started/usage">
