@@ -6,6 +6,7 @@ const modules = [
   "@vue-macros/nuxt",
   "@pinia/nuxt",
   "@wagmi/vue/nuxt",
+  '@nuxtjs/i18n',
   "@vueuse/motion/nuxt",
 ];
 
@@ -18,10 +19,18 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
     define: {
       "window.FormData": "undefined",
-      __API_BASE__: JSON.stringify(process.env.NUXT_PUBLIC_API_BASE_URL),
-      __APP_ENV__: JSON.stringify(process.env.NUXT_PUBLIC_NODE_ENV),
+      "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(import.meta.env.NUXT_PUBLIC_API_PREFIX),
       envName: process.env.ENV_NAME
     },
+  },
+  i18n: {
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', language: 'English', file: 'en-US.json' },
+      { code: 'zh', language: '简体中文', file: 'zh-CN.json' },
+      { code: 'zh-tw', language: '繁體中文', file: 'zh-TW.json' },
+      // { code: 'ja', language: '日本語', file: 'ja-JP.json' }
+    ],
   },
   vueuse: {
     motion: true,
@@ -52,8 +61,8 @@ export default defineNuxtConfig({
         enablePinia: true,
         config: {},
       },
-      baseUrl:
-        process.env.NUXT_PUBLIC_API_DOMAIN || "http://192.168.1.82:48082",
+      apiPrefix:
+        process.env.NUXT_PUBLIC_API_PREFIX || "http://192.168.1.82:48082",
     },
   },
 });
