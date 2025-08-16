@@ -1,7 +1,7 @@
 export const uiStore = defineStore("uiStore", () => {
   let modalIsShow = $ref({
     settings: false,
-    tradeSetting: true,
+    tradeSetting: false,
     langSwitcher: false,
   })
   let labelWidth = $ref('12em')
