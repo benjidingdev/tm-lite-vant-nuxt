@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { createAppKit, useAppKitTheme } from "@reown/appkit/vue";
   import { networks, localHardhat, avaxTest } from "./config/networks";
-  import { userConfig } from "~/api/userInfo";
 
   useHead({
     title: "turning Market",
@@ -49,7 +48,9 @@
       <NuxtLoadingIndicator />
       <NuxtLayout>
         <NuxtPage />
+        <SettingsRightDrawer />
         <LangSwitcherPopup />
+        <TradeSettingPopup />
       </NuxtLayout>
     </div>
   </van-config-provider>

@@ -1,20 +1,20 @@
 <template>
-  <div class="h-20 flex items-center justify-between px-6">
-    <div class="flex items-center">
+  <div class="h-20 flex items-center justify-between px-2">
+    <div class="flex items-center flex-1">
       <van-icon class="text-2xl! text-white" name="balance-o" />
       <span class="text-white ml-1">${{ shortUserBalance }}</span>
     </div>
 
-    <div class="mr-8">
+    <div class="flex items-center space-x-2">
       <appkit-button size="md" class="text-white" label="Connect" loadingLabel="Connecting" />
+      <SettingsButton />
     </div>
-
-    <div
+    <!-- <div
       class="absolute right-3 w-9 h-9 flex flex-col justify-center items-center rounded-full bg-white/20 backdrop-opacity-10 p-3 focus:outline-none"
       @click="openSettingModal">
       <van-icon name="setting-o" class="text-white text-2xl!" />
-    </div>
-    <SettingPopup />
+    </div> -->
+    <!-- <SettingPopup /> -->
   </div>
 </template>
 
