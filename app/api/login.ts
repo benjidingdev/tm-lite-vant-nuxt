@@ -39,7 +39,7 @@ export const emailForgotPassword = (params = {}) => {
 };
 
 // logout
-export const getLogout = (params = {}) => {
+export const getLogout = async (params = {}) => {
   return Request({
     url: `/app-api/topic/user/logout`,
     method: "post",

@@ -39,7 +39,7 @@ export const authStore = defineStore("authStore", () => {
   const logOut = async () => {
     try {
       let res: any = await getLogout();
-      if (res.code === 0) {
+      if (res?.code === 0) {
         updateToken({});
         disconnect();
         updateUserInfo({});
