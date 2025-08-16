@@ -10,7 +10,7 @@
             <a :title="$t('i18n docs')" target="_blank" href="https://i18n.nuxtjs.org/docs/getting-started/usage">
                 {{ $t('i18n docs') }}
             </a>
-            <Br />
+            <br />
         </div>
         <div>
             <p>全局字符串：{{ $t('Hello') }}</p>
@@ -23,7 +23,14 @@
                 </li>
             </ol>
             <br />
-            <p>本地字符串（只有在某个 template 里面才生效）{{ t('Hello Local') }}</p>
+            <br />
+            <br />
+            <p>本地字符串（只有在某个 template 里面才生效）<br />
+                <br />
+                {{ t('Hello Local') }}
+                <br />
+                <br />
+            </p>
             <ol>
                 <li>
                     1. 添加新的字符串到本地 template 的 json 里面（参考本文件代码结尾的 i18n 的 tag）
@@ -38,3 +45,17 @@
         </div>
     </div>
 </template>
+<i18n lang="json">{
+    "en": {
+        "Hello Local": "Hello Local"
+    },
+    "zh": {
+        "Hello Local": "你好 Local"
+    },
+    "zh-tw": {
+        "Hello Local": "汝好 Local"
+    },
+    "ja": {
+        "Hello Local": "こんにちは、ローカル!"
+    }
+}</i18n>
