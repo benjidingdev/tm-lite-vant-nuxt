@@ -1,9 +1,21 @@
 <script setup>
+import { useAccount } from "@wagmi/vue";
+import { onMounted } from "vue";
+const { address } = useAccount();
 const inviteUser = () => {
   window.open(
-    "https://t.me/share?url=https://t.me/turningM_lite_bot&text=Bet on your beliefs"
+    `https://t.me/share?url=https://tm-lite-vant-nuxt.vercel.app?inviteCode=${address}&text=Bet on your beliefs`
   );
 };
+onMounted(() => {
+  if (window.Telegram) {
+    console.log(
+      "window.Telegram.WebApp.initDataUnsafe",
+      window.Telegram.WebApp.initDataUnsafe
+    );
+    console.log("window.location", window.location.search);
+  }
+});
 </script>
 
 <template>

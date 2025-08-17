@@ -16,10 +16,7 @@ import {
 } from "viem";
 import type { EIP1193Provider } from "viem";
 
-import {
-  TYPEHASH_PERMIT,
-  TYPEHASH_ORDER,
-} from "@/types/sign";
+import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
 import type { SiweMessage } from "@/types";
 
@@ -97,6 +94,8 @@ export const useWalletStore = defineStore("walletStore", () => {
     } as SiweMessage;
     const message = createSiweMessage(messageObj);
 
+    console.log("signLoginMessage message:", message);
+
     try {
       let res = await signMessageAsync(
         {
@@ -120,6 +119,7 @@ export const useWalletStore = defineStore("walletStore", () => {
       console.error("Error signing message:", err);
       isSign = false; // Ensure isSign is false when signing fails
       isToken(false);
+      console.error("Signing failed:", err);
       throw err;
     }
   };
@@ -137,6 +137,7 @@ export const useWalletStore = defineStore("walletStore", () => {
         const nonceRes = await getNonce(address);
         if (nonceRes) {
           const signData = await signLoginMessage(nonceRes.data);
+          console.log("the last step before loggin", signData);
           await todoLogin(signData);
         }
       }
@@ -204,12 +205,14 @@ export const useWalletStore = defineStore("walletStore", () => {
       afterLoginSuccess(result);
       // Update wallet balance
       updateWalletBalance();
+    } else {
+      console.error("Login failed:");
     }
   };
 
-   /**
-    * get wallet balance and update store
-    */
+  /**
+   * get wallet balance and update store
+   */
   const updateWalletBalance = async () => {
     console.log("params", {
       chainId: chainId,
