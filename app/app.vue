@@ -3,7 +3,7 @@
   import { networks, localHardhat, avaxTest } from "./config/networks";
 
   useHead({
-    title: "turning Market",
+    title: "Turing Market",
     meta: [
       {
         name: "viewport",

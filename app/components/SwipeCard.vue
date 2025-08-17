@@ -73,7 +73,7 @@
 
     <div v-else>
       <van-empty
-        description="If you are interested in Turning Market, please go to our official version"
+        description="If you are interested in Turing Market, please go to our official version"
       />
     </div>
   </div>
