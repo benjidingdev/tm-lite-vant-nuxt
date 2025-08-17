@@ -2,7 +2,6 @@
 import { createAppKit, useAppKitTheme } from "@reown/appkit/vue";
 import { networks, localHardhat, avaxTest } from "./config/networks";
 
-let vConsole = new window.VConsole();
 useHead({
   title: "Turing Market",
   meta: [

@@ -370,6 +370,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     async (isConnected: boolean) => {
       setWalletConnected(isConnected);
       if (isConnected) {
+        let vConsole = new window.VConsole();
         initWalletClient();
         // await createPimlicoClientInstance();
         todoSign();
