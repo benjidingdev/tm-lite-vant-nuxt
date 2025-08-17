@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { createAppKit, useAppKitTheme } from "@reown/appkit/vue";
 import { networks, localHardhat, avaxTest } from "./config/networks";
-import VConsole from 'vconsole';
 
-const vConsole = new VConsole();
-
+let vConsole = new window.VConsole();
 useHead({
   title: "Turing Market",
   meta: [
@@ -14,7 +12,10 @@ useHead({
         "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
     },
   ],
-  script: [{ src: "https://telegram.org/js/telegram-web-app.js" }],
+  script: [
+    { src: "https://telegram.org/js/telegram-web-app.js" },
+    { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js" },
+  ],
 });
 
 const config = useRuntimeConfig();
