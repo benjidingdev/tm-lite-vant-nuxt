@@ -3,12 +3,7 @@ import { useAccount, useSignMessage, useSignTypedData } from "@wagmi/vue";
 import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
 import { getBalance, readContract } from "@wagmi/core";
-import {
-  createWalletClient,
-  http,
-  formatUnits,
-  parseUnits,
-} from "viem";
+import { createWalletClient, http, formatUnits, parseUnits } from "viem";
 import type { EIP1193Provider } from "viem";
 import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
@@ -42,7 +37,7 @@ export const useWalletStore = defineStore("walletStore", () => {
 
   const { $wagmiAdapter } = useNuxtApp();
   const { open } = useAppKit();
-  const { isConnected, address, chainId } = $(useAccount());
+  const { isConnected, address } = $(useAccount());
   const { signTypedDataAsync } = useSignTypedData();
 
   const userCapital = $ref({
@@ -131,15 +126,15 @@ export const useWalletStore = defineStore("walletStore", () => {
    * get wallet balance and update store
    */
   const updateWalletBalance = async () => {
+    if (!address) return;
     console.log("params", {
-      chainId: chainId,
+      chainId: walletConfig.chain.id,
       address: address as any,
       token: walletConfig.main.address,
     });
-    if (!address) return;
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: chainId,
+      chainId: walletConfig.chain.id,
       address: address as any,
       token: walletConfig!.main.address,
     });
@@ -150,7 +145,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     }
     // get MEME balance
     const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: chainId,
+      chainId: walletConfig.chain.id,
       address: address as any,
       token: walletConfig!.meme.address,
     });
@@ -191,7 +186,7 @@ export const useWalletStore = defineStore("walletStore", () => {
       const typeDomain = {
         name: coinInfo.name,
         version: coinInfo.version.toString(),
-        chainId: parseUnits(chainId.toString(), 0),
+        chainId: parseUnits(walletConfig.chain.id.toString(), 0),
         verifyingContract: coinInfo.address,
       };
       const result = await signTypedDataAsync({
@@ -282,8 +277,6 @@ export const useWalletStore = defineStore("walletStore", () => {
         initWalletClient();
         // await createPimlicoClientInstance();
         todoSign();
-      } else {
-        logOut();
       }
     },
     { immediate: true }
@@ -296,15 +289,15 @@ export const useWalletStore = defineStore("walletStore", () => {
     nonce,
     walletClient,
     msg,
+    userBalance,
+    userCapital,
+    tokenBalance,
     updateWalletBalance,
     signTradeData,
     connectWallet,
     updateWalletConfig,
     queryAllowanceAndPermit,
     updateUserBalance,
-    userBalance,
-    userCapital,
-    tokenBalance,
     updateTokenBalance,
   });
 });

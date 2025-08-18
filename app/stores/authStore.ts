@@ -10,6 +10,7 @@ export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType } = $(coreStore());
   const { address, chainId } = $(useAccount());
   const { isToken } = $(coreStore());
+  const { updateWalletBalance } = $(useWalletStore());
 
   const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();

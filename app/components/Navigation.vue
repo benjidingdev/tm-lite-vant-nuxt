@@ -36,10 +36,9 @@ import { useBalance, useAccount } from "@wagmi/vue";
 import { computed } from "vue";
 import { shortenNumber } from "@/utils/processing";
 
-const { walletAddress } = $(useWalletStore());
+const { walletAddress, userBalance } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
 const { token } = $(authStore());
-const { userBalance } = $(coreStore());
 const { address, isConnected, chainId } = $(useAccount());
 
 const shortUserBalance = computed(() => {
