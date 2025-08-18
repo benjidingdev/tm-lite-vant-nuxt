@@ -4,16 +4,23 @@ export const uiStore = defineStore("uiStore", () => {
     tradeSetting: false,
     langSwitcher: false,
     authLogout: false,
-  })
-  let labelWidth = $ref('12em')
+  });
+  let labelWidth = $ref("12em");
   const setModal = (name: keyof typeof modalIsShow, isShow: boolean) => {
-    modalIsShow[name] = isShow
-  }
+    modalIsShow[name] = isShow;
+  };
+  const setLoadingToast = (message: string) =>
+    showLoadingToast({
+      message,
+      forbidClick: true,
+      loadingType: "spinner",
+    });
 
   return $$({
     labelWidth,
     modalIsShow,
     setModal,
+    setLoadingToast,
   });
 });
 

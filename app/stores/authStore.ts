@@ -7,9 +7,9 @@ import { getLogout } from "~/api/login";
 import * as walletApi from "~/api/wallet";
 
 export const authStore = defineStore("authStore", () => {
-  const { updateUserInfo, updateTraderType } = $(coreStore());
+  const { updateUserInfo, updateTraderType, isToken } = $(coreStore());
   const { address, chainId, connector } = $(useAccount());
-  const { isToken } = $(coreStore());
+  const { setLoadingToast } = $(uiStore());
   const { updateWalletBalance } = $(useWalletStore());
 
   const { signMessageAsync } = useSignMessage();
@@ -81,11 +81,7 @@ export const authStore = defineStore("authStore", () => {
     console.log("signLoginMessage message:", message);
 
     try {
-      showLoadingToast({
-        message: "start to signMessageAsync",
-        forbidClick: true,
-        loadingType: "spinner",
-      });
+      setLoadingToast("start to signMessageAsync");
       let res = await signMessageAsync(
         {
           connector: connector,
@@ -108,7 +104,10 @@ export const authStore = defineStore("authStore", () => {
       return { message: messageObj, signature: res };
     } catch (err) {
       console.error("Error signing message:", err);
-
+      showDialog({
+        title: "signMessageAsync error",
+        confirmButtonText: "OK",
+      });
       isSign = false; // Ensure isSign is false when signing fails
       isToken(false);
       throw err;
@@ -130,11 +129,7 @@ export const authStore = defineStore("authStore", () => {
    * @returns
    */
   const todoSign = async () => {
-    showLoadingToast({
-      message: "start to sign",
-      forbidClick: true,
-      loadingType: "spinner",
-    });
+    setLoadingToast("start to sign");
     if (isSign) return;
     try {
       isSign = true;
@@ -161,11 +156,7 @@ export const authStore = defineStore("authStore", () => {
     message: SiweMessage;
     signature: string;
   }) => {
-    showLoadingToast({
-      message: "start to login",
-      forbidClick: true,
-      loadingType: "spinner",
-    });
+    setLoadingToast("start to login");
     let inviteCode = localStorage.getItem("inviteCode") || "";
     let result = await walletApi.loginByWallet({
       proxyWallet: address,

@@ -33,6 +33,7 @@ const {
   connectWallet,
 } = $(useWalletStore());
 const { volume, isToken } = $(coreStore());
+
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize: 12,
