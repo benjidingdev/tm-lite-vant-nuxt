@@ -9,7 +9,6 @@
       <button
         v-if="token?.accessToken && isConnected"
         class="px-3 py-1 bg-gray-500/20 rounded-xl transition-colors"
-        @click="open"
       >
         <div class="flex items-center">
           <img
@@ -35,14 +34,12 @@
 <script setup>
 import { computed } from "vue";
 import { useBalance, useAccount } from "@wagmi/vue";
-import { useAppKit } from "@reown/appkit/vue";
 import { shortenNumber } from "@/utils/processing";
 
 const { walletAddress, userBalance } = $(useWalletStore());
 const { setSettingModalShow } = $(uiStore());
 const { token } = $(authStore());
 const { address, isConnected, chainId } = $(useAccount());
-const { open } = useAppKit();
 
 const shortUserBalance = computed(() => {
   return userBalance ? shortenNumber(userBalance) : "0.00";

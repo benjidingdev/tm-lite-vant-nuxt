@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="active">
+  <van-tabbar v-model="active" safe-area-inset-bottom>
     <van-tabbar-item @click="goToLInk('/')" icon="chart-trending-o">
       Markets</van-tabbar-item
     >
