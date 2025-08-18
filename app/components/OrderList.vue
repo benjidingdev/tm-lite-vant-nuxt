@@ -125,7 +125,7 @@ let openOrderList = $ref([]);
 let historyList = $ref([]);
 let show = $ref(false);
 let active = $ref(0);
-const { userInfo } = $(coreStore());
+const { userInfo } = $(userStore());
 
 const voState = $ref({
   isLoading: false,

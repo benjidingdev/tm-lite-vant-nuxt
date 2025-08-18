@@ -4,7 +4,7 @@
 <script setup lang="ts">
 import { onMounted, watch, ref } from "vue";
 
-const { loadUserInfo } = $(coreStore());
+const { loadUserInfo } = $(userStore());
 
 onMounted(() => {
   loadUserInfo();

@@ -1,10 +1,10 @@
 <script setup>
 import { useAccount } from "@wagmi/vue";
 import { onMounted } from "vue";
-const { address } = useAccount();
+const { userInfo } = $(userStore());
 const inviteUser = () => {
   window.open(
-    `https://t.me/share?url=https://tm-lite-vant-nuxt.vercel.app?inviteCode=${address}&text=Bet on your beliefs`
+    `https://t.me/share?url=https://t.me/turingM_lite_bot/tmLite?inviteCode=${userInfo.inviteCode}`
   );
 };
 onMounted(() => {

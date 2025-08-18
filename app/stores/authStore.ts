@@ -78,7 +78,6 @@ export const authStore = defineStore("authStore", () => {
     } as SiweMessage;
     const message = createSiweMessage(messageObj);
 
-    console.log("signLoginMessage message:", message);
     try {
       let res = await signMessageAsync(
         {

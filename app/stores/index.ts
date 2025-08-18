@@ -1,8 +1,6 @@
 import * as userApi from "~/api/userInfo";
 
 export const coreStore = defineStore("coreStore", () => {
-  const { token } = $(authStore());
-  let userInfo = $ref({});
   let traderType = $ref({});
   let volume = $ref(1);
   let tokenShow = $ref(false);
@@ -10,11 +8,6 @@ export const coreStore = defineStore("coreStore", () => {
   // Actions
   const isToken = (flag: boolean) => {
     tokenShow = flag;
-  };
-
-  // refresh information
-  const updateUserInfo = (userInfo: any) => {
-    userInfo = userInfo;
   };
 
   const updateTraderType = (type: any) => {
@@ -27,20 +20,9 @@ export const coreStore = defineStore("coreStore", () => {
   };
  
 
-  //refresh user info after login
-  const loadUserInfo = async () => {
-    if (token.accessToken) {
-      let user = await userApi.getUserInfo();
-      updateUserInfo(user.data);
-    }
-  };
-
   return $$({
-    updateUserInfo,
-    userInfo,
     updateTraderType,
     traderType,
-    loadUserInfo,
     volume,
     updateVolume,
     isToken,
