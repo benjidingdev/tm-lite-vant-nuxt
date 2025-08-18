@@ -278,8 +278,7 @@ export const useWalletStore = defineStore("walletStore", () => {
         // await createPimlicoClientInstance();
         todoSign();
       }
-    },
-    { immediate: true }
+    }
   );
 
   return $$({

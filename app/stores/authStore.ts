@@ -81,6 +81,11 @@ export const authStore = defineStore("authStore", () => {
     console.log("signLoginMessage message:", message);
 
     try {
+      showLoadingToast({
+        message: "start to signMessageAsync",
+        forbidClick: true,
+        loadingType: "spinner",
+      });
       let res = await signMessageAsync(
         {
           connector: connector,
@@ -99,9 +104,11 @@ export const authStore = defineStore("authStore", () => {
           },
         }
       );
+      closeToast();
       return { message: messageObj, signature: res };
     } catch (err) {
       console.error("Error signing message:", err);
+
       isSign = false; // Ensure isSign is false when signing fails
       isToken(false);
       throw err;
