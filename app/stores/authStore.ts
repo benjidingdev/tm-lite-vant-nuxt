@@ -8,7 +8,7 @@ import * as walletApi from "~/api/wallet";
 
 export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType } = $(coreStore());
-  const { address, chainId } = $(useAccount());
+  const { address, chainId, connector } = $(useAccount());
   const { isToken } = $(coreStore());
   const { updateWalletBalance } = $(useWalletStore());
 
@@ -83,6 +83,7 @@ export const authStore = defineStore("authStore", () => {
     try {
       let res = await signMessageAsync(
         {
+          connector: connector,
           account: address,
           message: message,
         },
@@ -103,7 +104,6 @@ export const authStore = defineStore("authStore", () => {
       console.error("Error signing message:", err);
       isSign = false; // Ensure isSign is false when signing fails
       isToken(false);
-      console.error("Signing failed:", err);
       throw err;
     }
   };
