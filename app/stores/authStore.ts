@@ -79,9 +79,7 @@ export const authStore = defineStore("authStore", () => {
     const message = createSiweMessage(messageObj);
 
     console.log("signLoginMessage message:", message);
-
     try {
-      setLoadingToast("start to signMessageAsync");
       let res = await signMessageAsync(
         {
           connector: connector,
@@ -100,17 +98,13 @@ export const authStore = defineStore("authStore", () => {
           },
         }
       );
-      closeToast();
       return { message: messageObj, signature: res };
     } catch (err) {
-      console.error("Error signing message:", err);
-      showDialog({
-        title: "signMessageAsync error",
-        confirmButtonText: "OK",
-      });
       isSign = false; // Ensure isSign is false when signing fails
       isToken(false);
       throw err;
+    } finally {
+      closeToast();
     }
   };
 
