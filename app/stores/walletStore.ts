@@ -2,25 +2,21 @@ import { defineStore } from "pinia";
 import { useAccount, useSignMessage, useSignTypedData } from "@wagmi/vue";
 import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
-import { createSiweMessage } from "viem/siwe";
 import { getBalance, readContract } from "@wagmi/core";
 import {
   createWalletClient,
   http,
   formatUnits,
-  getAddress,
   parseUnits,
 } from "viem";
 import type { EIP1193Provider } from "viem";
 import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
-import type { SiweMessage } from "@/types";
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
 
-import * as walletApi from "~/api/wallet";
 import { approveSign } from "@/api/userInfo";
 import { market } from "@/config/abis";
 import { shortenAddress } from "@/utils/processing";
@@ -33,15 +29,13 @@ type contentType = {
 };
 
 export const useWalletStore = defineStore("walletStore", () => {
-  const { afterLoginSuccess, logOut } = $(authStore());
-  const { isToken } = $(coreStore());
+  const { logOut, todoSign } = $(authStore());
   // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
   let walletClient = $ref(null);
-  let isSign = $ref<boolean>(false); // Whether to sign successfully
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
@@ -49,7 +43,6 @@ export const useWalletStore = defineStore("walletStore", () => {
   const { $wagmiAdapter } = useNuxtApp();
   const { open } = useAppKit();
   const { isConnected, address, chainId } = $(useAccount());
-  const { signMessageAsync } = useSignMessage();
   const { signTypedDataAsync } = useSignTypedData();
 
   const userCapital = $ref({
@@ -79,11 +72,6 @@ export const useWalletStore = defineStore("walletStore", () => {
     walletConfig = data;
   };
 
-  // refresh sign status
-  const updateSign = (sign: boolean) => {
-    isSign = sign;
-  };
-
   const updateUserBalance = (balance: number) => {
     userBalance = balance || 0;
     userCapital.total = userBalance + userCapital.position;
@@ -91,55 +79,6 @@ export const useWalletStore = defineStore("walletStore", () => {
 
   const updateTokenBalance = (balance: number) => {
     tokenBalance = balance || 0;
-  };
-
-  /**
-   * Sign in, after the user connects the wallet, call the backend service to get the message
-   * Then request the signature, get the signature string, and call the backend interface to verify the signature
-   */
-  const signLoginMessage = async (nonce: string) => {
-    const messageObj = {
-      address: getAddress(address),
-      chainId: chainId as number,
-      domain: location.host,
-      nonce,
-      uri: location.origin,
-      version: "1" as "1",
-      issuedAt: new Date(),
-      expirationTime: new Date(Date.now() + 60000),
-      statement:
-        "I accept the TuringM Terms of Service: https://TuringM.io/terms",
-    } as SiweMessage;
-    const message = createSiweMessage(messageObj);
-
-    console.log("signLoginMessage message:", message);
-
-    try {
-      let res = await signMessageAsync(
-        {
-          account: address,
-          message: message,
-        },
-        {
-          onSuccess: (data: any, variables: any, context: any) => {
-            isSign = true;
-            return data;
-          },
-          onError: (error: any, variables: any, context: any) => {
-            isSign = false;
-            isToken(false);
-            throw error;
-          },
-        }
-      );
-      return { message: messageObj, signature: res };
-    } catch (err) {
-      console.error("Error signing message:", err);
-      isSign = false; // Ensure isSign is false when signing fails
-      isToken(false);
-      console.error("Signing failed:", err);
-      throw err;
-    }
   };
 
   /**
@@ -155,30 +94,6 @@ export const useWalletStore = defineStore("walletStore", () => {
       } else {
         open({ view: "Connect", namespace: "eip155" });
       }
-    }
-  };
-
-  /**
-   * Sign in
-   * @returns
-   */
-  const todoSign = async () => {
-    if (isSign) return;
-    try {
-      isSign = true;
-      if (address) {
-        console.log("todoSign address:", address);
-        const nonceRes = await getNonce(address);
-        if (nonceRes) {
-          const signData = await signLoginMessage(nonceRes.data);
-          console.log("the last step before loggin", signData);
-          await todoLogin(signData);
-        }
-      }
-    } catch (error) {
-      console.log("todoSign error", error);
-    } finally {
-      isSign = false;
     }
   };
 
@@ -209,38 +124,6 @@ export const useWalletStore = defineStore("walletStore", () => {
     } catch (err) {
       console.error("Error signing typed data:", err);
       throw err;
-    }
-  };
-
-  // get signature message
-  const getNonce = async (_address: any) => {
-    try {
-      let res: any = await walletApi.getNonce({ proxyWallet: _address });
-      return res;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // start login process
-  const todoLogin = async (data: {
-    message: SiweMessage;
-    signature: string;
-  }) => {
-    let inviteCode = localStorage.getItem("inviteCode") || "";
-    let result = await walletApi.loginByWallet({
-      proxyWallet: address,
-      ivcode: inviteCode,
-      signature: data.signature,
-      message: data.message,
-    });
-    if (result && result?.code === 0) {
-      console.log("login success");
-      afterLoginSuccess(result);
-      // Update wallet balance
-      updateWalletBalance();
-    } else {
-      console.error("Login failed:");
     }
   };
 
@@ -413,9 +296,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     nonce,
     walletClient,
     msg,
-    getNonce,
-    todoSign,
-    updateSign,
+    updateWalletBalance,
     signTradeData,
     connectWallet,
     updateWalletConfig,
