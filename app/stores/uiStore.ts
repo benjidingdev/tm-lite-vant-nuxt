@@ -3,6 +3,7 @@ export const uiStore = defineStore("uiStore", () => {
     settings: false,
     tradeSetting: false,
     langSwitcher: false,
+    authLogout: false,
   })
   let labelWidth = $ref('12em')
   const setModal = (name: keyof typeof modalIsShow, isShow: boolean) => {

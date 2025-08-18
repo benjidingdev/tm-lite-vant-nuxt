@@ -138,8 +138,26 @@ export const shortenNumber = (value: any) => {
 
 export const formatTitle = (title: string) => {
   if (title) {
-    return encodeURIComponent(title.replace(/[^a-z0-9\u4e00-\u9fa5\s-]/gi, '').replace(/[ /?]+/g, '-').toLowerCase())
+    return encodeURIComponent(
+      title
+        .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/gi, "")
+        .replace(/[ /?]+/g, "-")
+        .toLowerCase()
+    );
   }
-  return ''
-}
+  return "";
+};
 
+export const shortenAddress = (
+  address: string,
+  startLength = 4,
+  endLength = 4
+) => {
+  if (!address) return "";
+  if (address.length !== 42 || !address.startsWith("0x")) {
+    return address;
+  }
+  const start = address.substring(0, startLength + 2);
+  const end = address.substring(address.length - endLength);
+  return `${start}...${end}`;
+};

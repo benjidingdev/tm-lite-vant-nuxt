@@ -1,12 +1,9 @@
 import { defineStore } from "pinia";
 import { useAccount, useSignMessage, useSignTypedData } from "@wagmi/vue";
+import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
 import { createSiweMessage } from "viem/siwe";
 import { getBalance, readContract } from "@wagmi/core";
-
-import * as walletApi from "~/api/wallet";
-import { approveSign } from "@/api/userInfo";
-import { market } from "@/config/abis";
 import {
   createWalletClient,
   http,
@@ -15,15 +12,18 @@ import {
   parseUnits,
 } from "viem";
 import type { EIP1193Provider } from "viem";
-
 import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
 import type { SiweMessage } from "@/types";
-
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
+
+import * as walletApi from "~/api/wallet";
+import { approveSign } from "@/api/userInfo";
+import { market } from "@/config/abis";
+import { shortenAddress } from "@/utils/processing";
 
 type contentType = {
   domain: typeof TYPEHASH_DOMAIN;
@@ -34,10 +34,9 @@ type contentType = {
 
 export const useWalletStore = defineStore("walletStore", () => {
   const { afterLoginSuccess, logOut } = $(authStore());
-  const { updateUserBalance, updateTokenBalance, isToken } = $(coreStore());
+  const { isToken } = $(coreStore());
   // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
-  let walletAddress = $ref<string | null>("");
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
@@ -45,21 +44,31 @@ export const useWalletStore = defineStore("walletStore", () => {
   let isSign = $ref<boolean>(false); // Whether to sign successfully
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
+  let userBalance = $ref(0);
 
   const { $wagmiAdapter } = useNuxtApp();
+  const { open } = useAppKit();
   const { isConnected, address, chainId } = $(useAccount());
   const { signMessageAsync } = useSignMessage();
   const { signTypedDataAsync } = useSignTypedData();
+
+  const userCapital = $ref({
+    total: 0,
+    balance: 0,
+    freez: 0,
+    frozen: 0,
+    position: 0,
+  });
+
+  let walletAddress = $computed(() => {
+    return shortenAddress(address || "", 4, 4);
+  });
 
   const initWalletClient = () => {
     walletClient = createWalletClient({
       account: walletAddress,
       transport: http(avalancheFuji.rpcUrls.default.http[0]),
     });
-  };
-
-  const setWalletAddress = (address: string) => {
-    walletAddress = address;
   };
 
   const setWalletConnected = (connected: boolean) => {
@@ -73,6 +82,15 @@ export const useWalletStore = defineStore("walletStore", () => {
   // refresh sign status
   const updateSign = (sign: boolean) => {
     isSign = sign;
+  };
+
+  const updateUserBalance = (balance: number) => {
+    userBalance = balance || 0;
+    userCapital.total = userBalance + userCapital.position;
+  };
+
+  const updateTokenBalance = (balance: number) => {
+    tokenBalance = balance || 0;
   };
 
   /**
@@ -121,6 +139,22 @@ export const useWalletStore = defineStore("walletStore", () => {
       isToken(false);
       console.error("Signing failed:", err);
       throw err;
+    }
+  };
+
+  /**
+   * Connect wallet
+   */
+  const connectWallet = async () => {
+    if (!isConnected) {
+      await logOut();
+      open({ view: "Connect", namespace: "eip155" });
+    } else {
+      if (isConnected) {
+        todoSign();
+      } else {
+        open({ view: "Connect", namespace: "eip155" });
+      }
     }
   };
 
@@ -221,28 +255,27 @@ export const useWalletStore = defineStore("walletStore", () => {
     });
     if (!address) return;
     // get USDT balance
-    getBalance($wagmiAdapter.wagmiConfig, {
+    const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: chainId,
       address: address as any,
       token: walletConfig!.main.address,
-    }).then((res) => {
-      if (res.value != usdtBalance) {
-        updateUserBalance(Number(formatUnits(res.value, res.decimals)));
-        usdtBalance = res.value;
-      }
     });
+    if (mainRes.value != usdtBalance) {
+      updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
+      console.log("mainRes", mainRes);
+      usdtBalance = mainRes.value;
+    }
     // get MEME balance
-    getBalance($wagmiAdapter.wagmiConfig, {
+    const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: chainId,
       address: address as any,
       token: walletConfig!.meme.address,
-    }).then((res) => {
-      if (res.value != tokenBalance) {
-        console.log(`token balance change: ${tokenBalance} → ${res.value}`);
-        updateTokenBalance(Number(formatUnits(res.value, res.decimals)));
-        tokenBalance = res.value;
-      }
     });
+    if (memeRes.value != tokenBalance) {
+      console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
+      updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
+      tokenBalance = memeRes.value;
+    }
   };
 
   async function ensureWalletUnlocked() {
@@ -358,14 +391,6 @@ export const useWalletStore = defineStore("walletStore", () => {
   };
 
   watch(
-    () => address,
-    async (newAddress) => {
-      setWalletAddress(newAddress || "");
-    },
-    { immediate: true }
-  );
-
-  watch(
     () => isConnected,
     async (isConnected: boolean) => {
       setWalletConnected(isConnected);
@@ -386,14 +411,19 @@ export const useWalletStore = defineStore("walletStore", () => {
     walletConected,
     walletConfig,
     nonce,
+    walletClient,
     msg,
     getNonce,
     todoSign,
-    signTradeData,
     updateSign,
-    setWalletAddress,
+    signTradeData,
+    connectWallet,
     updateWalletConfig,
-    walletClient,
     queryAllowanceAndPermit,
+    updateUserBalance,
+    userBalance,
+    userCapital,
+    tokenBalance,
+    updateTokenBalance,
   });
 });

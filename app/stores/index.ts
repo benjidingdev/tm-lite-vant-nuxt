@@ -5,16 +5,7 @@ export const coreStore = defineStore("coreStore", () => {
   let userInfo = $ref({});
   let traderType = $ref({});
   let volume = $ref(1);
-  let userBalance = $ref(0);
-  let tokenBalance = $ref(0.0);
   let tokenShow = $ref(false);
-  const userCapital = $ref({
-    total: 0,
-    balance: 0,
-    freez: 0,
-    frozen: 0,
-    position: 0,
-  });
 
   // Actions
   const isToken = (flag: boolean) => {
@@ -34,15 +25,7 @@ export const coreStore = defineStore("coreStore", () => {
     console.log("updateVolume", volume_);
     volume = volume_;
   };
-
-  const updateUserBalance = (balance: number) => {
-    userBalance = balance || 0;
-    userCapital.total = userBalance + userCapital.position;
-  };
-
-  const updateTokenBalance = (balance: number) => {
-    tokenBalance = balance || 0;
-  };
+ 
 
   //refresh user info after login
   const loadUserInfo = async () => {
@@ -60,11 +43,6 @@ export const coreStore = defineStore("coreStore", () => {
     loadUserInfo,
     volume,
     updateVolume,
-    updateUserBalance,
-    userBalance,
-    userCapital,
-    tokenBalance,
-    updateTokenBalance,
     isToken,
     tokenShow,
   });

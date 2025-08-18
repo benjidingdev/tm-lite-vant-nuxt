@@ -43,6 +43,7 @@ export const authStore = defineStore("authStore", () => {
         updateToken({});
         disconnect();
         updateUserInfo({});
+        showToast('Logout successful');
       }
     } catch (e) {
       console.log('Failure message：', e)
