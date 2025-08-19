@@ -3,6 +3,8 @@ import { useAccount } from "@wagmi/vue";
 import { onMounted } from "vue";
 const { userInfo } = $(userStore());
 const { inviteCode } = userInfo;
+const startNum = $ref("00000");
+const targetNum = $ref("00050");
 console.log("userInfo", userInfo, inviteCode);
 
 const inviteUser = () => {
@@ -23,24 +25,46 @@ const inviteUser = () => {
 </script>
 
 <template>
-  <div class="invite-dashboard-container bg-gray-100">
-    <div class="emoji-container"></div>
-    <div class="content-container text-center">
-      <h1 class="text-4xl">Invite your friends to earn Tuit</h1>
-      <p>Share your invite code with friends and earn TUIT when they join.</p>
-      <van-button type="primary" size="large" @click="inviteUser"
-        >Invite Now
-      </van-button>
+  <div class="invite-dashboard-container bg-white p-2">
+    <div class="broadcast-container mb-2">
+      <van-notice-bar left-icon="volume-o" :scrollable="false">
+        <van-swipe
+          vertical
+          class="notice-swipe h-[40px] leading-10"
+          :autoplay="3000"
+          :touchable="false"
+          :show-indicators="false"
+        >
+          <van-swipe-item
+            >User1 got 1000 TUIT invited AAA successfully!</van-swipe-item
+          >
+          <van-swipe-item
+            >User1 got 1000 TUIT invited BBB successfully!</van-swipe-item
+          >
+          <van-swipe-item
+            >User1 got 1000 TUIT invited CCC successfully!</van-swipe-item
+          >
+        </van-swipe>
+      </van-notice-bar>
     </div>
-    <div class="invite-status-container">
-      <van-grid :column-num="2" :gutter="10">
-        <van-grid-item
-          v-for="value in 2"
-          :key="value"
-          icon="photo-o"
-          text="claim"
+    <div class="content-container text-center">
+      <img class="w-full mb-4 rounded-xl" src="@/assets/img/turingM.gif" />
+      <h1 class="text-3xl pt-2 font-bold">{{ $t("invite.title") }}</h1>
+      <p class="text-lg text-gray-600 my-3">{{ $t("invite.description") }}</p>
+      <div class="invite-status-container text-center text-gray-500 mt-4">
+        <div class="text-xl font-bold text-blue pt-4">
+          {{ $t("invite.TUITBalance") }}
+        </div>
+        <van-rolling-text
+          class="my-rolling-text"
+          :height="54"
+          :start-num="startnum"
+          :target-num="targetNum"
         />
-      </van-grid>
+      </div>
+      <van-button type="primary" size="large" @click="inviteUser">{{
+        $t("invite.button")
+      }}</van-button>
     </div>
   </div>
 </template>
@@ -48,5 +72,14 @@ const inviteUser = () => {
 <style>
 .invite-dashboard-container {
   height: calc(100vh - 130px);
+}
+.my-rolling-text {
+  --van-rolling-text-background: transparent;
+  --van-rolling-text-color: #1989fa;
+  --van-rolling-text-font-size: 24px;
+  --van-rolling-text-gap: 6px;
+  --van-rolling-text-item-border-radius: 5px;
+  --van-rolling-text-item-border: 1px solid #1989fa;
+  --van-rolling-text-item-width: 40px;
 }
 </style>

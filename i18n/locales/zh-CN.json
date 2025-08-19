@@ -2,5 +2,11 @@
      "welcome": "欢迎",
      "Hello": "你好",
      "i18n docs": "i18n 文档",
-     "Language": "语言"
+     "Language": "语言",
+     "invite": {
+       "title": "邀请好友赚取 Tuit",
+       "description": "与好友分享你的邀请码，好友加入时你将获得 TUIT。",
+       "button": "邀请用户",
+       "TUITBalance": "你的 TUIT 余额"
+     }
 }

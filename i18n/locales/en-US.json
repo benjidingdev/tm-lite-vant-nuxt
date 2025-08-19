@@ -1,6 +1,12 @@
 {
-     "welcome": "Welcome",
-     "Hello": "Hello",
-     "i18n docs": "i18n docs",
-     "Language": "Language"
+  "welcome": "Welcome",
+  "Hello": "Hello",
+  "i18n docs": "i18n docs",
+  "Language": "Language",
+  "invite": {
+    "title": "Invite to earn TUIT",
+    "description": "Share your invite code with friends and earn TUIT when they join.",
+    "button": "Invite Now",
+    "TUITBalance": "Your TUIT"
+  }
 }
