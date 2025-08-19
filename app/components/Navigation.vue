@@ -22,8 +22,8 @@
       <appkit-button
         v-else
         size="md"
+        :label="$t('Login')"
         class="text-white"
-        label="Login"
         loadingLabel="Connecting"
       />
       <SettingsButton />

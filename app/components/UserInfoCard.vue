@@ -1,7 +1,9 @@
 <template>
   <div class="w-full">
     <div class="w-full h-full flex flex-col">
-      <div class="user-container text-center mx-auto flex justify-center items-center pt-4">
+      <div
+        class="user-container text-center mx-auto flex justify-center items-center pt-4"
+      >
         <img
           v-if="voData.userInfo.avatar"
           class="w-16 h-16 mx-auto rounded-full"
@@ -22,7 +24,9 @@
         <ul class="my-2 grid grid-cols-2 gap-4">
           <li class="p-2 bg-sky-100 rounded-lg flex justify-center">
             <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">positionValue</p>
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Position Value") }}
+              </p>
               <p
                 v-if="voData.userInfo && voData.userInfo.positionValue"
                 class="text-xl font-bold"
@@ -37,7 +41,9 @@
 
           <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
             <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">profit</p>
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Profit") }}
+              </p>
               <p class="text-xl font-bold">
                 ＄{{ amountSeparate(voData.userInfo.profit) }}
               </p>
@@ -45,7 +51,9 @@
           </li>
           <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
             <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">tradedVolume</p>
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Traded Volume") }}
+              </p>
               <p class="text-xl font-bold">
                 ＄{{ amountSeparate(voData.userInfo.volumnTrade) }}
               </p>
@@ -53,7 +61,9 @@
           </li>
           <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
             <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">marketsTradedNum</p>
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Markets Traded") }}
+              </p>
               <p class="text-xl font-bold">
                 {{ voData.userInfo.tradeMarkets }}
               </p>
