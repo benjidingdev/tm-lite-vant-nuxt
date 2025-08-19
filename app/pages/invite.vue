@@ -4,14 +4,20 @@ import { onMounted } from "vue";
 const { userInfo } = $(userStore());
 const { inviteCode } = userInfo;
 console.log("userInfo", userInfo, inviteCode);
+
 const inviteUser = () => {
-  const tgShareUrl = `https://t.me/share?url=https://t.me/turingM_lite_bot/tmLite?startapp=${
-    inviteCode || "ChGQnC"
-  }`;
+  const botUsername = "turingM_lite_bot";
+  const appShortName = "tmLite";
+  const params = `inviteCode=${inviteCode || "ChGQnC"}`;
+  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${params}`;
+  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
+    miniAppUrl
+  )}`;
+  console.log("shareUrl", shareUrl);
   if (window.Telegram) {
-    Telegram.WebApp.openTelegramLink(tgShareUrl);
+    Telegram.WebApp.openTelegramLink(shareUrl);
   } else {
-    window.open(tgShareUrl);
+    window.open(shareUrl);
   }
 };
 </script>

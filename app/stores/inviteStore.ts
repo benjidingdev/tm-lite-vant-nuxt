@@ -5,7 +5,12 @@ export const inviteStore = defineStore("inviteStore", () => {
         "window.Telegram.WebApp.initDataUnsafe",
         window.Telegram.WebApp.initDataUnsafe
       );
-      return window?.Telegram?.WebApp?.initDataUnsafe?.start_param;
+      const str = window?.Telegram?.WebApp?.initDataUnsafe?.start_param;
+      let code = "";
+      if (str) {
+        code = str.split("inviteCode=")[1];
+      }
+      return code;
     } else {
       const urlParams = new URLSearchParams(window?.location?.search);
       const code = urlParams.get("inviteCode");
