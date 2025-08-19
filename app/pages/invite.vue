@@ -5,21 +5,15 @@ const { userInfo } = $(userStore());
 const { inviteCode } = userInfo;
 console.log("userInfo", userInfo, inviteCode);
 const inviteUser = () => {
-  window.open(
-    `https://t.me/share?url=https://t.me/turingM_lite_bot/tmLite?startapp=${
-      inviteCode || "ChGQnC"
-    }`
-  );
-};
-onMounted(() => {
+  const tgShareUrl = `https://t.me/share?url=https://t.me/turingM_lite_bot/tmLite?startapp=${
+    inviteCode || "ChGQnC"
+  }`;
   if (window.Telegram) {
-    console.log(
-      "window.Telegram.WebApp.initDataUnsafe",
-      window.Telegram.WebApp.initDataUnsafe
-    );
-    console.log("window.location", window.location.search);
+    Telegram.WebApp.openTelegramLink(tgShareUrl);
+  } else {
+    window.open(tgShareUrl);
   }
-});
+};
 </script>
 
 <template>
