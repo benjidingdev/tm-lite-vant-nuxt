@@ -1,6 +1,6 @@
 <script setup lang="ts">
     const { labelWidth, setModal } = $(uiStore())
-    const { locale, locales } = useI18n()
+    const { locale, locales} = useI18n()
     const localeName = $computed(() => locales.value.find(item => item.code === locale.value)?.language)
 </script>
 
