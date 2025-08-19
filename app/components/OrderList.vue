@@ -1,6 +1,6 @@
 <template>
   <van-tabs :active="active" :before-change="beforeChange">
-    <van-tab :title="$t('userOrder.Positions')">
+    <van-tab :title="$t('Positions')">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
         v-if="positionList.length !== 0"
@@ -20,13 +20,13 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >{{ $t("userOrder.SharesBtn") }}
+              >{{ $t("Shares") }}
             </van-button>
           </template>
         </van-card>
       </div>
     </van-tab>
-    <van-tab :title="$t('userOrder.OpenOrders')">
+    <van-tab :title="$t('Open Orders')">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
         v-if="openOrderList.length !== 0"
@@ -47,13 +47,13 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >{{ $t("userOrder.SharesBtn") }}
+              >{{ $t("Shares") }}
             </van-button>
           </template>
         </van-card>
       </div>
     </van-tab>
-    <van-tab :title="$t('userOrder.History')">
+    <van-tab :title="$t('History')">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
         v-if="historyList.length !== 0"
@@ -74,7 +74,7 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >{{ $t("userOrder.SharesBtn") }}
+              >{{ $t("Shares") }}
             </van-button>
           </template>
         </van-card>

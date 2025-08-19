@@ -6,5 +6,5 @@
 
 <template>
     <van-field input-align="right" v-model="localeName" :label-width="labelWidth" is-link readonly
-        :label="$t('TRSetting.Language')" @click="setModal('langSwitcher', true)" />
+        :label="$t('Language')" @click="setModal('langSwitcher', true)" />
 </template>

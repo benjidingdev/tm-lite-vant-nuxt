@@ -25,7 +25,7 @@
           <li class="p-2 bg-sky-100 rounded-lg flex justify-center">
             <div class="text-center">
               <p class="my-1 text-xs text-[#727272]">
-                {{ $t("userOrder.positionValue") }}
+                {{ $t("Position Value") }}
               </p>
               <p
                 v-if="voData.userInfo && voData.userInfo.positionValue"
@@ -42,7 +42,7 @@
           <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
             <div class="text-center">
               <p class="my-1 text-xs text-[#727272]">
-                {{ $t("userOrder.profit") }}
+                {{ $t("Profit") }}
               </p>
               <p class="text-xl font-bold">
                 ＄{{ amountSeparate(voData.userInfo.profit) }}
@@ -52,7 +52,7 @@
           <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
             <div class="text-center">
               <p class="my-1 text-xs text-[#727272]">
-                {{ $t("userOrder.tradedVolume") }}
+                {{ $t("Traded Volume") }}
               </p>
               <p class="text-xl font-bold">
                 ＄{{ amountSeparate(voData.userInfo.volumnTrade) }}
@@ -62,7 +62,7 @@
           <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
             <div class="text-center">
               <p class="my-1 text-xs text-[#727272]">
-                {{ $t("userOrder.marketsTradedNum") }}
+                {{ $t("Markets Traded") }}
               </p>
               <p class="text-xl font-bold">
                 {{ voData.userInfo.tradeMarkets }}

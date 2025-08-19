@@ -22,7 +22,7 @@
       <appkit-button
         v-else
         size="md"
-        :label="$t('navbar.loginBtn')"
+        :label="$t('Login')"
         class="text-white"
         loadingLabel="Connecting"
       />

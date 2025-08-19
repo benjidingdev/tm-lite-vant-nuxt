@@ -5,5 +5,5 @@
 
 <template>
     <van-field v-model="tradeVolume" :label-width="labelWidth" input-align="right" is-link readonly
-        :label="$t('TRSetting.TradeVolume')" @click="setModal('tradeSetting', true)" />
+        :label="$t('Trade Volume')" @click="setModal('tradeSetting', true)" />
 </template>

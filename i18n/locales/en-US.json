@@ -2,38 +2,26 @@
   "welcome": "Welcome",
   "Hello": "Hello",
   "i18n docs": "i18n docs",
-  "TRSetting": {
-    "Language": "Language",
-    "TradeVolume": "Trade Volume",
-    "Logout": "Logout"
-  },
-  "navbar": {
-    "loginBtn": "Login"
-  },
-  "invite": {
-    "title": "Invite to earn TUIT",
-    "description": "Share your invite code with friends and earn TUIT when they join.",
-    "button": "Invite Now",
-    "TUITBalance": "Your TUIT"
-  },
-  "tabBar": {
-    "Markets": "Markets",
-    "Earn": "Earn",
-    "Invite": "Invite",
-    "User": "User"
-  },
-  "userOrder": {
-    "positionValue": "Position Value",
-    "profit": "Profit",
-    "tradedVolume": "Traded Volume",
-    "marketsTradedNum": "Markets Traded",
-    "Positions": "Positions",
-    "OpenOrders": "Open Orders",
-    "History": "History",
-    "SharesBtn": "Shares"
-  },
-  "volumnSetting": {
-    "title": "Volume Setting",
-    "Confirm": "Confirm"
-  }
+  "Language": "Language",
+  "Trade Volume": "Trade Volume",
+  "Logout": "Logout",
+  "Login": "Login",
+  "Invite to earn TUIT": "Invite to earn TUIT",
+  "inviteDescription": "Share your invite code with friends and earn TUIT when they join.",
+  "Invite Now": "Invite Now",
+  "Your TUIT": "Your TUIT",
+  "Markets": "Markets",
+  "Earn": "Earn",
+  "Invite": "Invite",
+  "User": "User",
+  "Position Value": "Position Value",
+  "Profit": "Profit",
+  "Traded Volume": "Traded Volume",
+  "Markets Traded": "Markets Traded",
+  "Positions": "Positions",
+  "Open Orders": "Open Orders",
+  "History": "History",
+  "Shares": "Shares",
+  "Volume Setting": "Volume Setting",
+  "Confirm": "Confirm"
 }

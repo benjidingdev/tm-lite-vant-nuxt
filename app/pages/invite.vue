@@ -25,7 +25,7 @@ const inviteUser = () => {
 </script>
 
 <template>
-  <div class="invite-dashboard-container bg-white p-2">
+  <div class="invite-dashboard-container bg-white p-2 overflow-auto">
     <div class="broadcast-container mb-2">
       <van-notice-bar left-icon="volume-o" :scrollable="false">
         <van-swipe
@@ -49,11 +49,11 @@ const inviteUser = () => {
     </div>
     <div class="content-container text-center">
       <img class="w-full mb-4 rounded-xl" src="@/assets/img/turingM.gif" />
-      <h1 class="text-3xl pt-2 font-bold">{{ $t("invite.title") }}</h1>
-      <p class="text-lg text-gray-600 my-3">{{ $t("invite.description") }}</p>
+      <h1 class="text-3xl pt-2 font-bold">{{ $t("Invite to earn TUIT") }}</h1>
+      <p class="text-lg text-gray-600 my-3">{{ $t("inviteDescription") }}</p>
       <div class="invite-status-container text-center text-gray-500 mt-4">
         <div class="text-xl font-bold text-blue pt-4">
-          {{ $t("invite.TUITBalance") }}
+          {{ $t("Your TUIT") }}
         </div>
         <van-rolling-text
           class="my-rolling-text"
@@ -63,7 +63,7 @@ const inviteUser = () => {
         />
       </div>
       <van-button type="primary" size="large" @click="inviteUser">{{
-        $t("invite.button")
+        $t("Invite Now")
       }}</van-button>
     </div>
   </div>
