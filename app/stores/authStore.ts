@@ -2,7 +2,7 @@ import { getAddress } from "viem";
 import { useDisconnect, useAccount, useSignMessage } from "@wagmi/vue";
 import { createSiweMessage } from "viem/siwe";
 import type { SiweMessage } from "@/types";
-import { getUserInfo, getUserProfile } from "@/api/userInfo";
+import { getUserProfile } from "@/api/userInfo";
 import { getLogout } from "~/api/login";
 import * as walletApi from "~/api/wallet";
 
@@ -10,6 +10,7 @@ export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType, isToken } = $(coreStore());
   const { address, chainId, connector } = $(useAccount());
   const { setLoadingToast } = $(uiStore());
+  const { loadUserInfo, userInfo } = $(userStore());
   const { updateWalletBalance } = $(useWalletStore());
 
   const { signMessageAsync } = useSignMessage();
@@ -35,12 +36,10 @@ export const authStore = defineStore("authStore", () => {
   // refresh user login status after login successfully
   const afterLoginSuccess = async (data: any) => {
     updateToken(data.data);
-
-    let user = await getUserInfo();
+    await loadUserInfo();
     let userProfile = await getUserProfile({
-      proxyWallet: user.data.proxyWallet,
+      proxyWallet: userInfo.proxyWallet,
     });
-    updateUserInfo(user.data);
     updateTraderType(userProfile.data.traderType);
   };
 

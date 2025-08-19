@@ -5,8 +5,9 @@ export const userStore = defineStore("userStore", () => {
   let userInfo = $ref({});
 
   // refresh information
-  const updateUserInfo = (userInfo: any) => {
-    userInfo = userInfo;
+  const updateUserInfo = (data: any) => {
+    console.log(data);
+    userInfo = data;
   };
 
   //refresh user info after login

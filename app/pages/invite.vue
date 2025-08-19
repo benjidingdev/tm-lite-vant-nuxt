@@ -2,9 +2,13 @@
 import { useAccount } from "@wagmi/vue";
 import { onMounted } from "vue";
 const { userInfo } = $(userStore());
+const { inviteCode } = userInfo;
+console.log("userInfo", userInfo, inviteCode);
 const inviteUser = () => {
   window.open(
-    `https://t.me/share?url=https://t.me/turingM_lite_bot/tmLite?inviteCode=${userInfo.inviteCode}`
+    `https://t.me/share?url=https://t.me/turingM_lite_bot/tmLite?startapp=${
+      inviteCode || "ChGQnC"
+    }`
   );
 };
 onMounted(() => {
