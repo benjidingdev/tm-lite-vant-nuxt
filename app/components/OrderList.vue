@@ -1,6 +1,6 @@
 <template>
   <van-tabs :active="active" :before-change="beforeChange">
-    <van-tab title="Positions">
+    <van-tab :title="$t('userOrder.Positions')">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
         v-if="positionList.length !== 0"
@@ -13,7 +13,6 @@
           :desc="item.description"
           :title="item.question"
           :thumb="item.image"
-          @click="goToDetails(item)"
         >
           <template #footer>
             <van-button
@@ -21,13 +20,13 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >Shares
+              >{{ $t("userOrder.SharesBtn") }}
             </van-button>
           </template>
         </van-card>
       </div>
     </van-tab>
-    <van-tab title="Open orders">
+    <van-tab :title="$t('userOrder.OpenOrders')">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
         v-if="openOrderList.length !== 0"
@@ -48,13 +47,13 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >Shares
+              >{{ $t("userOrder.SharesBtn") }}
             </van-button>
           </template>
         </van-card>
-      </div></van-tab
-    >
-    <van-tab title="History">
+      </div>
+    </van-tab>
+    <van-tab :title="$t('userOrder.History')">
       <div
         class="w-full bg-color-white p-4 h-[calc(100vh-80px-248px-50px)] overflow-auto"
         v-if="historyList.length !== 0"
@@ -75,12 +74,12 @@
               size="mini"
               type="primary"
               @click="showShares(item)"
-              >Shares
+              >{{ $t("userOrder.SharesBtn") }}
             </van-button>
           </template>
         </van-card>
-      </div></van-tab
-    >
+      </div>
+    </van-tab>
   </van-tabs>
 
   <van-dialog v-model:show="show" title="SHARE TO" confirmButtonText="Confirm">
@@ -89,8 +88,6 @@
         SHARE TO
       </div>
       <div class="flex justify-between w-full py-4">
-        <!-- <div :class="`bg-[url('${item.icon}')]`" class="w-12 h-12 bg-cover cursor-pointer" 
-                    v-for="item in props.images" @click="goUrl(item.url)"/> -->
         <img
           class="w-12 h-12 bg-cover"
           src="@/assets/img/telegran.png"
@@ -170,7 +167,6 @@ const fetchOpenOrderList = async () => {
     voState.total = res.data.total;
     voState.isLoading = false;
   } catch (error) {
-    //console.log(error)
     voState.isLoading = false;
   }
 };
@@ -181,7 +177,6 @@ const fetchOpenOrderList = async () => {
 const fetchHistoryList = async () => {
   try {
     const res = await userTradeInfo(voState.queryParams);
-    // .then(res => {
     if (voState.queryParams.pageNo === 1) {
       historyList = res.data.list;
     } else {
@@ -189,9 +184,7 @@ const fetchHistoryList = async () => {
     }
     voState.total = res.data.total;
     voState.isLoading = false;
-    // })
   } catch (error) {
-    //console.log(error)
     voState.isLoading = false;
   }
 };
@@ -201,7 +194,6 @@ const goUrl = (url) => {
   origin = `${origin}/marketsDetails`;
   path = `${url}?url=${origin}?id=${marketId}`;
   window.open(path);
-  // handleClose();
 };
 
 const goToDetails = (item) => {

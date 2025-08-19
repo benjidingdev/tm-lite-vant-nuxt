@@ -10,7 +10,7 @@ const triggerLogOut = () => {
   <van-field
     input-align="right"
     readonly
-    :label="$t('Logout')"
+    :label="$t('TRSetting.Logout')"
     @click="triggerLogOut"
   />
 </template>

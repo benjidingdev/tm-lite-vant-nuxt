@@ -1,23 +1,25 @@
 <template>
   <van-tabbar v-model="active" safe-area-inset-bottom>
     <van-tabbar-item @click="goToLInk('/')" icon="chart-trending-o">
-      Markets</van-tabbar-item
+      {{ $t("tabBar.Markets") }}</van-tabbar-item
     >
-    <van-tabbar-item @click="goToLInk('/earn')" icon="balance-o"
-      >Earn</van-tabbar-item
+    <van-tabbar-item @click="goToLInk('/earn')" icon="balance-o">
+      {{ $t("tabBar.Earn") }}</van-tabbar-item
     >
-    <van-tabbar-item @click="goToLInk('/invite')" icon="hot-o"
-      >Invite</van-tabbar-item
-    >
-    <van-tabbar-item @click="goToLInk('/user')" icon="user-o"
-      >User</van-tabbar-item
-    >
+    <van-tabbar-item @click="goToLInk('/invite')" icon="hot-o">{{
+      $t("tabBar.Invite")
+    }}</van-tabbar-item>
+    <van-tabbar-item @click="goToLInk('/user')" icon="user-o">{{
+      $t("tabBar.User")
+    }}</van-tabbar-item>
   </van-tabbar>
 </template>
 
 <script setup lang="ts">
 const active = ref(0);
+const { locale } = $(useI18n());
 const goToLInk = async (path: string) => {
-  await navigateTo(path);
+  const url = locale === "en" ? path : `/${locale}${path}`;
+  await navigateTo(url);
 };
 </script>
