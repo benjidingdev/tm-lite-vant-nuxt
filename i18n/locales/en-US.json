@@ -31,5 +31,9 @@
     "OpenOrders": "Open Orders",
     "History": "History",
     "SharesBtn": "Shares"
+  },
+  "volumnSetting": {
+    "title": "Volume Setting",
+    "Confirm": "Confirm"
   }
 }

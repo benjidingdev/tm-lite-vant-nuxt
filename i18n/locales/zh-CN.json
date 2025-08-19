@@ -31,6 +31,11 @@
     "Positions": "头寸",
     "OpenOrders": "未完成订单",
     "History": "历史",
-    "SharesBtn": "分享" 
+    "SharesBtn": "分享"
+  },
+  "volumnSetting": {
+    "title": "交易量设置",
+    "Confirm": "确认"
   }
+  
 }

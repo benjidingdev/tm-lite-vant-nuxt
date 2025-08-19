@@ -32,5 +32,9 @@
     "OpenOrders": "未完成訂單",
     "History": "歷史",
     "SharesBtn": "分享"
+  },
+  "volumnSetting": {
+    "title": "交易量設定",
+    "Confirm": "確認"
   }
 }
