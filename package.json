@@ -22,6 +22,7 @@
     "@wagmi/core": "^2.19.0",
     "@wagmi/vue": "^0.1.24",
     "axios": "^1.11.0",
+    "decimal.js": "^10.6.0",
     "lodash": "^4.17.21",
     "logrocket": "^10.1.0",
     "moment": "^2.30.1",

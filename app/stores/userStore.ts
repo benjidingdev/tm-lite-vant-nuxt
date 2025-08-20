@@ -6,7 +6,6 @@ export const userStore = defineStore("userStore", () => {
 
   // refresh information
   const updateUserInfo = (data: any) => {
-    console.log(data);
     userInfo = data;
   };
 

@@ -1,8 +1,5 @@
-import * as userApi from "~/api/userInfo";
-
 export const coreStore = defineStore("coreStore", () => {
   let traderType = $ref({});
-  let volume = $ref(1);
   let tokenShow = $ref(false);
 
   // Actions
@@ -14,17 +11,10 @@ export const coreStore = defineStore("coreStore", () => {
     traderType = type;
   };
 
-  const updateVolume = (volume_: any) => {
-    console.log("updateVolume", volume_);
-    volume = volume_;
-  };
- 
 
   return $$({
     updateTraderType,
     traderType,
-    volume,
-    updateVolume,
     isToken,
     tokenShow,
   });

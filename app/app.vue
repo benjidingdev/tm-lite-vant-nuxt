@@ -56,6 +56,7 @@ createAppKit({
         <SettingsRightDrawer />
         <LangSwitcherPopup />
         <TradeSettingPopup />
+        <OrderSharePopup />
       </NuxtLayout>
     </div>
   </van-config-provider>

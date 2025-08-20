@@ -1,3 +1,8 @@
+<script setup lang="ts">
+  const { modalIsShow, setModal } = $(uiStore());
+  const { tradeVolume, updateVolume } = $(tradeStore())
+</script>
+
 <template>
   <van-dialog @confirm="setModal('tradeSetting', false)" v-model:show="modalIsShow.tradeSetting"
     :title="$t('Volume Setting')" :confirmButtonText="$t('Confirm')" :cancelButtonText="$t('Cancel')">
@@ -11,8 +16,3 @@
     </div>
   </van-dialog>
 </template>
-
-<script setup lang="ts">
-  const { modalIsShow, setModal } = $(uiStore());
-  const { tradeVolume, updateVolume } = $(tradeStore())
-</script>

@@ -1,9 +1,5 @@
 <script setup lang="ts">
 const { logOut } = $(authStore());
-
-const triggerLogOut = () => {
-  logOut();
-};
 </script>
 
 <template>
@@ -11,6 +7,6 @@ const triggerLogOut = () => {
     input-align="right"
     readonly
     :label="$t('Logout')"
-    @click="triggerLogOut"
+    @click="logOut"
   />
 </template>

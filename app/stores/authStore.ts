@@ -133,13 +133,12 @@ export const authStore = defineStore("authStore", () => {
           console.log("the last step before loggin", signData);
           await todoLogin(signData);
         }
-        closeToast();
       }
     } catch (error) {
       console.log("todoSign error", error);
-      closeToast();
     } finally {
       isSign = false;
+      closeToast();
     }
   };
 

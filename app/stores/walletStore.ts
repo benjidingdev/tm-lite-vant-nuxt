@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { useAccount, useSignMessage, useSignTypedData } from "@wagmi/vue";
+import { useAccount, useSignTypedData } from "@wagmi/vue";
 import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
 import { getBalance, readContract } from "@wagmi/core";
@@ -160,7 +160,6 @@ export const useWalletStore = defineStore("walletStore", () => {
     const provider = window.ethereum as EIP1193Provider;
     if (!provider) throw new Error("MetaMask is not installed");
   }
-
   /**
    * Query the user's token authorization
    * @param coinType
@@ -172,7 +171,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     const result = await readContract(config, {
       abi: market,
       address: coinInfo.address,
-      args: [address.value, walletConfig!.contract.address],
+      args: [address, walletConfig!.contract.address],
       functionName: "allowance",
     });
     return result as bigint;
@@ -224,7 +223,6 @@ export const useWalletStore = defineStore("walletStore", () => {
         allowanceAmount.toString(),
         coinType == 0 ? 6 : 18
       );
-      //console.log('user allowance amount:', allowanced, "request allowance amount:", minValue)
 
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
