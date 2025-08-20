@@ -8,7 +8,7 @@ import { createSmartAccountClient } from "permissionless";
 import { useAccount, useSignMessage, useSignTypedData } from "@wagmi/vue";
 
 export const pimlicoStore = defineStore("pimlicoStore", () => {
-  const { walletClient, walletAddress } = $(useWalletStore());
+  const { shortWalletAddress } = $(walletStore());
   let smartAccountClient = $ref(null);
 
   
@@ -36,12 +36,11 @@ export const pimlicoStore = defineStore("pimlicoStore", () => {
         version: "0.7",
       },
     });
-    console.log("walletClient", walletClient, "walletAddress", walletAddress,'pimlicoClient',pimlicoClient.account?.address);
     const ssAccount = await toSafeSmartAccount({
       client: publicClient,
       // owners: [account],
       owners: [privateKeyToAccount(privateKey)],
-      address: walletAddress,
+      address: shortWalletAddress,
       entryPoint: {
         address: entryPoint07Address,
         version: "0.7",

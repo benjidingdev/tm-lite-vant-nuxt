@@ -31,7 +31,7 @@ const {
   userBalance,
   queryAllowanceAndPermit,
   connectWallet,
-} = $(useWalletStore());
+} = $(walletStore());
 const { isToken } = $(coreStore());
 const { tradeVolume } = $(tradeStore());
 const { token } = $(authStore());
