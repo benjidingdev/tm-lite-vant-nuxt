@@ -121,7 +121,7 @@ export const authStore = defineStore("authStore", () => {
    * @returns
    */
   const todoSign = async () => {
-    setLoadingToast("start to sign");
+    setLoadingToast("Start to sign");
     if (isSign) return;
     try {
       isSign = true;
@@ -133,13 +133,12 @@ export const authStore = defineStore("authStore", () => {
           console.log("the last step before loggin", signData);
           await todoLogin(signData);
         }
-        closeToast();
       }
     } catch (error) {
       console.log("todoSign error", error);
-      closeToast();
     } finally {
       isSign = false;
+      closeToast();
     }
   };
 
@@ -148,7 +147,7 @@ export const authStore = defineStore("authStore", () => {
     message: SiweMessage;
     signature: string;
   }) => {
-    setLoadingToast("start to login");
+    setLoadingToast("Start to login");
     let inviteCode = localStorage.getItem("inviteCode") || "";
     let result = await walletApi.loginByWallet({
       proxyWallet: address,
