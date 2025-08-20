@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import { userConfig } from "~/api/userInfo";
 
-const { updateWalletConfig } = $(useWalletStore());
+const { updateWalletConfig } = $(walletStore());
 const loadWalletConfig = async () => {
   try {
     const res = await userConfig();

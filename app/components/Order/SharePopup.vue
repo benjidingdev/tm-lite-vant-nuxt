@@ -10,8 +10,6 @@ const goUrl = (url) => {
   path = `${url}?url=${origin}?id=${marketId}`;
   window.open(path);
 };
-
-
 </script>
 
 <template>

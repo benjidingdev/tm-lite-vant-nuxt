@@ -7,7 +7,7 @@
 
     <div class="flex items-center space-x-2">
       <button
-        v-if="token?.accessToken && isConnected"
+        v-if="token?.accessToken"
         class="px-3 py-1 bg-gray-500/20 rounded-xl transition-colors"
       >
         <div class="flex items-center">
@@ -16,7 +16,7 @@
             src="https://mallbucket-pub.s3.us-west-1.amazonaws.com/5d91f04442c8d6f585479c37e916596110bdf1cfcbc1d60cfd9d971ae1bf0815.jpg"
             alt=""
           />
-          <span class="text-white/80">{{ walletAddress }}</span>
+          <span class="text-white/80">{{ shortWalletAddress }}</span>
         </div>
       </button>
       <appkit-button
@@ -36,7 +36,7 @@ import { computed } from "vue";
 import { useBalance, useAccount } from "@wagmi/vue";
 import { shortenNumber } from "@/utils/processing";
 
-const { walletAddress, userBalance } = $(useWalletStore());
+const { shortWalletAddress, userBalance } = $(walletStore());
 const { setSettingModalShow } = $(uiStore());
 const { token } = $(authStore());
 const { address, isConnected, chainId } = $(useAccount());

@@ -8,12 +8,12 @@ import * as walletApi from "~/api/wallet";
 
 export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType, isToken } = $(coreStore());
-  const { address, chainId, connector } = $(useAccount());
   const { setLoadingToast } = $(uiStore());
   const { loadUserInfo, userInfo } = $(userStore());
-  const { updateWalletBalance } = $(useWalletStore());
+  const { updateWalletBalance, wallet, walletClient, account } = $(
+    walletStore()
+  );
 
-  const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   let token = $ref({
     accessToken: "",
@@ -63,6 +63,9 @@ export const authStore = defineStore("authStore", () => {
    * Then request the signature, get the signature string, and call the backend interface to verify the signature
    */
   const signLoginMessage = async (nonce: string) => {
+    const address = wallet?.address;
+    const chainId = walletClient.chain?.id;
+    const connector = walletClient.connector;
     const messageObj = {
       address: getAddress(address),
       chainId: chainId as number,
@@ -78,22 +81,11 @@ export const authStore = defineStore("authStore", () => {
     const message = createSiweMessage(messageObj);
 
     try {
-      let res = await signMessageAsync(
+      let res = await account.signMessage(
         {
           connector: connector,
           account: address,
           message: message,
-        },
-        {
-          onSuccess: (data: any, variables: any, context: any) => {
-            isSign = true;
-            return data;
-          },
-          onError: (error: any, variables: any, context: any) => {
-            isSign = false;
-            isToken(false);
-            throw error;
-          },
         }
       );
       return { message: messageObj, signature: res };
@@ -125,6 +117,7 @@ export const authStore = defineStore("authStore", () => {
     if (isSign) return;
     try {
       isSign = true;
+      const address = wallet?.address;
       if (address) {
         console.log("todoSign address:", address);
         const nonceRes = await getNonce(address);
@@ -148,6 +141,7 @@ export const authStore = defineStore("authStore", () => {
     signature: string;
   }) => {
     setLoadingToast("Start to login");
+    const address = wallet?.address;
     let inviteCode = localStorage.getItem("inviteCode") || "";
     let result = await walletApi.loginByWallet({
       proxyWallet: address,

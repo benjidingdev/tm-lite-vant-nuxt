@@ -4,7 +4,7 @@ import { onMounted } from "vue";
 
 const { userInfo } = $(userStore());
 const { token } = $(authStore());
-const { connectWallet } = $(useWalletStore());
+const { connectWallet } = $(walletStore());
 const defaultTUIT = $ref("00000");
 
 const { inviteCode, inviteCount } = userInfo;
