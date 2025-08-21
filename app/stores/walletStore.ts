@@ -2,7 +2,13 @@ import { defineStore } from "pinia";
 import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
 import type { EIP1193Provider } from "viem";
-import { createWalletClient, http, formatUnits, parseUnits } from "viem";
+import {
+  createWalletClient,
+  http,
+  formatUnits,
+  parseUnits,
+  createPublicClient,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { useAccount } from "@wagmi/vue";
 import { getBalance, readContract } from "@wagmi/core";
@@ -31,9 +37,11 @@ export const walletStore = defineStore("walletStore", () => {
   let nonce = $ref("");
   let walletConfig = $ref({});
   let walletClient = $ref(null);
+  let publicClient = $ref(null);
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
+  let account = $ref(null);
 
   const { $wagmiAdapter } = useNuxtApp();
   const { open } = useAppKit();
@@ -52,7 +60,6 @@ export const walletStore = defineStore("walletStore", () => {
     chainId: "",
     connector: "",
   });
-  let account = $ref(null);
 
   let shortWalletAddress = $computed(() => {
     return shortenAddress(wallet.address || "", 4, 4);
@@ -61,6 +68,10 @@ export const walletStore = defineStore("walletStore", () => {
   const initWalletClient = async () => {
     const pcode = import.meta.env.NUXT_PUBLIC_P_KEY;
     account = privateKeyToAccount(pcode);
+    publicClient = createPublicClient({
+      chain: avalancheFuji,
+      transport: http(),
+    });
     walletClient = createWalletClient({
       account,
       chain: avalancheFuji,
@@ -146,26 +157,26 @@ export const walletStore = defineStore("walletStore", () => {
       token: walletConfig.main.address,
     });
     // get USDT balance
-    const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
+    const mainRes = await publicClient.getBalance({
       chainId: walletConfig.chain.id,
       address: wallet.address as any,
       token: walletConfig!.main.address,
     });
-    if (mainRes.value != usdtBalance) {
-      updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
+    if (mainRes != usdtBalance) {
       console.log("mainRes", mainRes);
-      usdtBalance = mainRes.value;
+      updateUserBalance(Number(formatUnits(mainRes, 6)));
+      usdtBalance = mainRes;
     }
     // get MEME balance
-    const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
+    const memeRes = await publicClient.getBalance({
       chainId: walletConfig.chain.id,
       address: wallet.address as any,
       token: walletConfig!.meme.address,
     });
-    if (memeRes.value != tokenBalance) {
+    if (memeRes != tokenBalance) {
       console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
-      updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
-      tokenBalance = memeRes.value;
+      updateTokenBalance(Number(formatUnits(memeRes, memeRes.decimals)));
+      tokenBalance = memeRes;
     }
   };
 
@@ -285,7 +296,7 @@ export const walletStore = defineStore("walletStore", () => {
       setWalletConnected(isConnected);
       if (isConnected) {
         let vConsole = new window.VConsole();
-        todoSign();
+        // todoSign();
       }
     }
   );
