@@ -7,7 +7,7 @@ import {
   http,
   formatUnits,
   parseUnits,
-  createPublicClient,
+  // createPublicClient,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { useAccount } from "@wagmi/vue";
@@ -37,7 +37,7 @@ export const walletStore = defineStore("walletStore", () => {
   let nonce = $ref("");
   let walletConfig = $ref({});
   let walletClient = $ref(null);
-  let publicClient = $ref(null);
+  // let publicClient = $ref(null);
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
@@ -68,10 +68,10 @@ export const walletStore = defineStore("walletStore", () => {
   const initWalletClient = async () => {
     const pcode = import.meta.env.NUXT_PUBLIC_P_KEY;
     account = privateKeyToAccount(pcode);
-    publicClient = createPublicClient({
-      chain: avalancheFuji,
-      transport: http(),
-    });
+    // publicClient = createPublicClient({
+    //   chain: avalancheFuji,
+    //   transport: http(),
+    // });
     walletClient = createWalletClient({
       account,
       chain: avalancheFuji,
@@ -157,26 +157,26 @@ export const walletStore = defineStore("walletStore", () => {
       token: walletConfig.main.address,
     });
     // get USDT balance
-    const mainRes = await publicClient.getBalance({
+    const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
       address: wallet.address as any,
       token: walletConfig!.main.address,
     });
-    if (mainRes != usdtBalance) {
+    if (mainRes.value != usdtBalance) {
       console.log("mainRes", mainRes);
-      updateUserBalance(Number(formatUnits(mainRes, 6)));
-      usdtBalance = mainRes;
+      updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
+      usdtBalance = mainRes.value;
     }
     // get MEME balance
-    const memeRes = await publicClient.getBalance({
+    const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
       address: wallet.address as any,
       token: walletConfig!.meme.address,
     });
-    if (memeRes != tokenBalance) {
+    if (memeRes.value != tokenBalance) {
       console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
-      updateTokenBalance(Number(formatUnits(memeRes, memeRes.decimals)));
-      tokenBalance = memeRes;
+      updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
+      tokenBalance = memeRes.value;
     }
   };
 

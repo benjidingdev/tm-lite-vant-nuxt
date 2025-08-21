@@ -227,10 +227,12 @@ const goDeposit = async () => {
     await connectWallet();
     isToken(true);
     closeToast();
+    resetCard();
   } else {
     // balance check
     if (userBalance < transaction.textPrice) {
       showFailToast("Insufficient balance");
+      resetCard();
       return false;
     }
     try {
@@ -294,11 +296,11 @@ const goDeposit = async () => {
           }
         }
       }
-      resetCard();
     } finally {
       resetCard();
     }
   }
+  resetCard();
 };
 
 onMounted((e) => {
@@ -350,11 +352,11 @@ onMounted((e) => {
             </div>
           </div>
         </van-image>
-        <div class="px-4 pt-4 h-[50%]">
+        <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
           <div class="h-[85%] overflow-auto">
             <text class="name mt-4">{{ card.title }}</text>
-            <text v-if="card.markets.length" class="desc">{{
-              card.markets[0].question
+            <text v-if="card?.markets.length" class="desc">{{
+              card?.markets[0].question
             }}</text>
           </div>
           <div class="h-[15%] flex justify-between">
@@ -363,11 +365,11 @@ onMounted((e) => {
               class="bottom-5"
               v-model:current-rate="currentRate"
               :stroke-width="80"
-              :rate="percentage(card.markets[0].lastTradePrice, 'num')"
+              :rate="percentage(card?.markets[0].lastTradePrice, 'num')"
               :speed="100"
               size="42px"
               layer-color="#d8d8d8"
-              :text="percentage(card.markets[0].lastTradePrice, 'num') + '%'"
+              :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'"
             />
           </div>
         </div>
