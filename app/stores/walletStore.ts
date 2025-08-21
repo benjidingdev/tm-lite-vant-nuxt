@@ -1,17 +1,18 @@
 import { defineStore } from "pinia";
-import { useAccount, useSignMessage, useSignTypedData } from "@wagmi/vue";
 import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
-import { getBalance, readContract } from "@wagmi/core";
-import { createWalletClient, http, formatUnits, parseUnits } from "viem";
 import type { EIP1193Provider } from "viem";
-import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
-import type { SignTradeDataOptions } from "@/types/sign";
+import { createWalletClient, http, formatUnits, parseUnits } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { useAccount, useSignTypedData } from "@wagmi/vue";
+import { getBalance, readContract } from "@wagmi/core";
+
 import {
   TYPEHASH_DOMAIN,
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
-
+import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
+import type { SignTradeDataOptions } from "@/types/sign";
 import { approveSign } from "@/api/userInfo";
 import { market } from "@/config/abis";
 import { shortenAddress } from "@/utils/processing";
@@ -23,7 +24,7 @@ type contentType = {
   message: any;
 };
 
-export const useWalletStore = defineStore("walletStore", () => {
+export const walletStore = defineStore("walletStore", () => {
   const { logOut, todoSign } = $(authStore());
   // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
@@ -48,15 +49,27 @@ export const useWalletStore = defineStore("walletStore", () => {
     position: 0,
   });
 
-  let walletAddress = $computed(() => {
-    return shortenAddress(address || "", 4, 4);
+  let wallet = $ref({
+    address: "",
+    chainId: "",
+    connector: "",
+  });
+  let account = $ref(null);
+
+  let shortWalletAddress = $computed(() => {
+    return shortenAddress(wallet.address || "", 4, 4);
   });
 
-  const initWalletClient = () => {
+  const initWalletClient = async () => {
+    const pcode = import.meta.env.NUXT_PUBLIC_P_KEY;
+    account = privateKeyToAccount(pcode);
     walletClient = createWalletClient({
-      account: walletAddress,
-      transport: http(avalancheFuji.rpcUrls.default.http[0]),
+      account,
+      chain: avalancheFuji,
+      transport: http(),
     });
+    const [address] = await walletClient.getAddresses();
+    wallet.address = address;
   };
 
   const setWalletConnected = (connected: boolean) => {
@@ -160,7 +173,6 @@ export const useWalletStore = defineStore("walletStore", () => {
     const provider = window.ethereum as EIP1193Provider;
     if (!provider) throw new Error("MetaMask is not installed");
   }
-
   /**
    * Query the user's token authorization
    * @param coinType
@@ -172,7 +184,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     const result = await readContract(config, {
       abi: market,
       address: coinInfo.address,
-      args: [address.value, walletConfig!.contract.address],
+      args: [address, walletConfig!.contract.address],
       functionName: "allowance",
     });
     return result as bigint;
@@ -224,7 +236,6 @@ export const useWalletStore = defineStore("walletStore", () => {
         allowanceAmount.toString(),
         coinType == 0 ? 6 : 18
       );
-      //console.log('user allowance amount:', allowanced, "request allowance amount:", minValue)
 
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
@@ -274,22 +285,23 @@ export const useWalletStore = defineStore("walletStore", () => {
       setWalletConnected(isConnected);
       if (isConnected) {
         let vConsole = new window.VConsole();
-        initWalletClient();
-        // await createPimlicoClientInstance();
         todoSign();
       }
     }
   );
 
   return $$({
-    walletAddress,
+    shortWalletAddress,
     walletConected,
     walletConfig,
+    wallet,
     nonce,
     walletClient,
     msg,
+    account,
     userBalance,
     userCapital,
+    initWalletClient,
     tokenBalance,
     updateWalletBalance,
     signTradeData,
@@ -300,3 +312,7 @@ export const useWalletStore = defineStore("walletStore", () => {
     updateTokenBalance,
   });
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(walletStore, import.meta.hot));
+}

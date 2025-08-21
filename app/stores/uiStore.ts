@@ -4,16 +4,29 @@ export const uiStore = defineStore("uiStore", () => {
     tradeSetting: false,
     langSwitcher: false,
     authLogout: false,
+    share: false,
   });
+
   let labelWidth = $ref("12em");
+
   const setModal = (name: keyof typeof modalIsShow, isShow: boolean) => {
     modalIsShow[name] = isShow;
   };
+
   const setLoadingToast = (message: string) =>
     showLoadingToast({
       message,
       forbidClick: true,
       loadingType: "spinner",
+      duration: 0,
+      wordBreak: "normal",
+    });
+
+  const showMsgDialog = (title: string, message: string) =>
+    showDialog({
+      title,
+      message,
+      confirmButtonText: "OK",
     });
 
   return $$({
@@ -21,6 +34,7 @@ export const uiStore = defineStore("uiStore", () => {
     modalIsShow,
     setModal,
     setLoadingToast,
+    showMsgDialog,
   });
 });
 

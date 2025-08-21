@@ -23,6 +23,9 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(
         import.meta.env.NUXT_PUBLIC_API_PREFIX
       ),
+      "import.meta.env.NUXT_PUBLIC_P_KEY": JSON.stringify(
+        import.meta.env.NUXT_PUBLIC_P_KEY
+      ),
       envName: process.env.ENV_NAME,
     },
   },

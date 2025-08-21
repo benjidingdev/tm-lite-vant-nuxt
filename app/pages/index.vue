@@ -1,3 +1,17 @@
+<script setup>
+const { inviteCode } = $(inviteStore());
+const { initWalletClient } = $(walletStore());
+const { todoSign } = $(authStore());
+
+console.log("inviteCode", inviteCode);
+window?.localStorage.setItem("inviteCode", inviteCode);
+
+onMounted(async () => {
+  await initWalletClient();
+  await todoSign();
+});
+</script>
+
 <template>
   <div>
     <!--swipe card-->
@@ -7,15 +21,8 @@
   </div>
 </template>
 
-<script setup>
-const { inviteCode } = $(inviteStore());
-console.log("inviteCode", inviteCode);
-window?.localStorage.setItem("inviteCode", inviteCode);
-</script>
-
 <style>
 .swipe-card-container {
   height: calc(100vh - 130px);
-  /* Adjust height based on nav bar and tab bar */
 }
 </style>

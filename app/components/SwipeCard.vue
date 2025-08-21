@@ -22,17 +22,20 @@ let startY = $ref(0); // The value of startY
 let lastPage = $ref(false);
 let refresherTriggered = $ref(false);
 let animationFrame = $ref(null);
+let currentRate = $ref(0);
 
 // The data from store
-const { token } = $(authStore());
 const {
   signTradeData,
   walletConfig,
   userBalance,
   queryAllowanceAndPermit,
   connectWallet,
-} = $(useWalletStore());
-const { volume, isToken } = $(coreStore());
+} = $(walletStore());
+const { isToken } = $(coreStore());
+const { tradeVolume } = $(tradeStore());
+const { token } = $(authStore());
+const { showMsgDialog, setLoadingToast } = $(uiStore());
 
 const recommondQueryParams = $ref({
   pageNo: 1,
@@ -176,7 +179,6 @@ const resetCard = () => {
 };
 
 const buyYes = (card) => {
-  console.log(card);
   const { title } = card;
   transaction = {
     parentId: null,
@@ -194,7 +196,7 @@ const buyYes = (card) => {
 };
 
 const buyNo = (card) => {
-  const { title, type } = card;
+  const { title } = card;
   transaction = {
     parentId: null,
     textName: card.markets[0].noName,
@@ -217,64 +219,41 @@ const pickNext = () => {
   swipeCard(statusList[3], () => {});
 };
 
-const showMsgDialog = (title, message, confirmButtonText) => {
-  showDialog({
-    title,
-    message,
-    confirmButtonText: "OK",
-  });
-};
-
 // start transcation
 const goDeposit = async () => {
   if (token.accessToken === "") {
-    showMsgDialog("Please Login!", "Help you login now");
+    showFailToast("Logging in Now...");
     await connectWallet();
-    resetCard();
     isToken(true);
+    closeToast();
   } else {
     // balance check
     if (userBalance < transaction.textPrice) {
-      showMsgDialog(
-        "Insufficient balance",
-        "Insufficient balance, please recharge first!"
-      );
-      resetCard();
+      showFailToast("Insufficient balance");
       return false;
     }
     try {
-      // switchLoading(true);
+      setLoadingToast("Processing transaction");
       const amountRes = await getOrderAmount();
-      // if (amountRes.code === 0) {
-      //   const allowanceAmount =
-      //     (transaction.textPrice + transaction.fee) * volume;
-      //   amountRes.data.totalAmount;
-      //   let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
-      //   if (!allowanceRes) {
-      //     // return ElMessage.error("Permit authorization failed!");
-      //     showMsgDialog({
-      //       title: "Permit Authorization Failed",
-      //       message:
-      //         "Please authorize the permit to proceed with the transaction.",
-      //       confirmButtonText: "OK",
-      //     });
-      //     return false;
-      //   }
-      // } else {
-      //   showMsgDialog({
-      //     title: "Permit Authorization Failed",
-      //     message:
-      //       "Please authorize the permit to proceed with the transaction.",
-      //     confirmButtonText: "OK",
-      //   });
-      //   return false;
-      // }
+      if (amountRes.code === 0) {
+        const allowanceAmount =
+          (transaction.textPrice + transaction.fee) * tradeVolume +
+          amountRes.data.totalAmount;
+        let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
+        if (!allowanceRes) {
+          showFailToast("Permit Authorization Failed");
+          return false;
+        }
+      } else {
+        showFailToast("Permit Authorization Failed");
+        return false;
+      }
 
       const req = {
         marketId: transaction.marketsId || 1012110,
         type: transaction.type, //1-YES；2-NO,
         amount: null,
-        volume: volume,
+        volume: tradeVolume,
         priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
         orderType: 1, //1: buy, 2: sell
         price: transaction.textPrice * 100,
@@ -306,20 +285,16 @@ const goDeposit = async () => {
             } else {
               swipeCard(statusList[1], () => {});
             }
-            showMsgDialog(
-              "Transaction Successful",
-              "Your transaction has been successfully processed."
-            );
+            showSuccessToast("Transaction Successful");
           } else {
-            showMsgDialog(
-              "Transaction Failed",
-              res.message || "An error occurred during the transaction."
+            showFailToast(
+              "Transaction Failed" + `: ${res.message || "Unknown error"}`
             );
           }
         }
       }
     } finally {
-      // switchLoading(false);
+      resetCard();
     }
   }
 };
