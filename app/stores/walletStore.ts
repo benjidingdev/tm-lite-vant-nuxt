@@ -39,7 +39,7 @@ export const walletStore = defineStore("walletStore", () => {
   const { $wagmiAdapter } = useNuxtApp();
   const { open } = useAppKit();
   const { isConnected, address } = $(useAccount());
-  const { signTypedDataAsync } = useSignTypedData();
+  // const { signTypedDataAsync } = useSignTypedData();
 
   const userCapital = $ref({
     total: 0,
@@ -125,7 +125,7 @@ export const walletStore = defineStore("walletStore", () => {
         message: order,
       };
       // signature returned result
-      const result = await signTypedDataAsync(content);
+      const result = await account.signTypedData(content);
       console.log("result:", result);
 
       return result;
@@ -201,7 +201,7 @@ export const walletStore = defineStore("walletStore", () => {
         chainId: parseUnits(walletConfig.chain.id.toString(), 0),
         verifyingContract: coinInfo.address,
       };
-      const result = await signTypedDataAsync({
+      const result = await walletClient.signTypedData({
         domain: typeDomain,
         types: TYPEHASH_PERMIT,
         primaryType: "Permit",
