@@ -66,7 +66,6 @@ export const walletStore = defineStore("walletStore", () => {
       chain: avalancheFuji,
       transport: http(),
     });
-    // await walletClient.switchChain({ id: avalancheFuji.id });
     const [address] = await walletClient.getAddresses();
     // switch the chain to congiguration chain
     wallet.address = address;
