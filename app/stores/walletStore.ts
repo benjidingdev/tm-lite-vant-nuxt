@@ -296,7 +296,7 @@ export const walletStore = defineStore("walletStore", () => {
       setWalletConnected(isConnected);
       if (isConnected) {
         let vConsole = new window.VConsole();
-        // todoSign();
+        todoSign();
       }
     }
   );
