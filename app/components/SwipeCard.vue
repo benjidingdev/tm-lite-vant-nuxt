@@ -31,6 +31,8 @@ const {
   userBalance,
   queryAllowanceAndPermit,
   connectWallet,
+  walletClient,
+  account,
 } = $(walletStore());
 const { isToken } = $(coreStore());
 const { tradeVolume } = $(tradeStore());
@@ -98,7 +100,6 @@ const touchStart = (e) => {
     startY = e.touches[0].clientY;
     offsetX = 0;
     offsetY = 0;
-    console.log(startX, startY);
     animationFrame = null;
   });
 };
@@ -293,6 +294,7 @@ const goDeposit = async () => {
           }
         }
       }
+      resetCard();
     } finally {
       resetCard();
     }
