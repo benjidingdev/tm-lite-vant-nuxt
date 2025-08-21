@@ -26,7 +26,6 @@ type contentType = {
 
 export const walletStore = defineStore("walletStore", () => {
   const { logOut, todoSign } = $(authStore());
-  // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
@@ -67,7 +66,9 @@ export const walletStore = defineStore("walletStore", () => {
       chain: avalancheFuji,
       transport: http(),
     });
+    // await walletClient.switchChain({ id: avalancheFuji.id });
     const [address] = await walletClient.getAddresses();
+    // switch the chain to congiguration chain
     wallet.address = address;
   };
 
@@ -138,16 +139,16 @@ export const walletStore = defineStore("walletStore", () => {
    * get wallet balance and update store
    */
   const updateWalletBalance = async () => {
-    if (!address) return;
+    if (!wallet.address) return;
     console.log("params", {
       chainId: walletConfig.chain.id,
-      address: address as any,
+      address: wallet.address as any,
       token: walletConfig.main.address,
     });
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
-      address: address as any,
+      address: wallet.address as any,
       token: walletConfig!.main.address,
     });
     if (mainRes.value != usdtBalance) {
@@ -158,7 +159,7 @@ export const walletStore = defineStore("walletStore", () => {
     // get MEME balance
     const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
-      address: address as any,
+      address: wallet.address as any,
       token: walletConfig!.meme.address,
     });
     if (memeRes.value != tokenBalance) {
