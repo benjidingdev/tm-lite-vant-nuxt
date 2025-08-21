@@ -9,30 +9,8 @@
       </van-cell-group>
     </div>
 
-    <div class="p-4">
-      <van-tabs v-model:active="active">
-        <van-tab title="Hot task">
-          <div class="Task container mt-1">
-            <van-card
-              desc="+100TUIT"
-              title="Trade to earn TUIT"
-              thumb="https://fastly.jsdelivr.net/npm/@vant/assets/ipad.jpeg"
-            >
-              <template #footer>
-                <van-button size="small" type="primary">Earn</van-button>
-              </template>
-            </van-card>
-          </div>
-        </van-tab>
-        <van-tab title="Invitations"></van-tab>
-      </van-tabs>
-    </div>
+    <Task />
   </div>
 </template>
 
-<style>
-.earn-dashboard-container {
-  height: calc(100vh - 130px);
-  /* Adjust height based on nav bar and tab bar */
-}
-</style>
+<style></style>
