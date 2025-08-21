@@ -4,7 +4,7 @@ import { avalancheFuji } from "viem/chains";
 import type { EIP1193Provider } from "viem";
 import { createWalletClient, http, formatUnits, parseUnits } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { useAccount, useSignTypedData } from "@wagmi/vue";
+import { useAccount } from "@wagmi/vue";
 import { getBalance, readContract } from "@wagmi/core";
 
 import {
@@ -26,7 +26,6 @@ type contentType = {
 
 export const walletStore = defineStore("walletStore", () => {
   const { logOut, todoSign } = $(authStore());
-  // const { createPimlicoClientInstance, smartAccountClient } = $(pimlicoStore());
   let walletConected = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
@@ -39,7 +38,6 @@ export const walletStore = defineStore("walletStore", () => {
   const { $wagmiAdapter } = useNuxtApp();
   const { open } = useAppKit();
   const { isConnected, address } = $(useAccount());
-  // const { signTypedDataAsync } = useSignTypedData();
 
   const userCapital = $ref({
     total: 0,
@@ -68,7 +66,9 @@ export const walletStore = defineStore("walletStore", () => {
       chain: avalancheFuji,
       transport: http(),
     });
+    // await walletClient.switchChain({ id: avalancheFuji.id });
     const [address] = await walletClient.getAddresses();
+    // switch the chain to congiguration chain
     wallet.address = address;
   };
 
@@ -139,16 +139,16 @@ export const walletStore = defineStore("walletStore", () => {
    * get wallet balance and update store
    */
   const updateWalletBalance = async () => {
-    if (!address) return;
+    if (!wallet.address) return;
     console.log("params", {
       chainId: walletConfig.chain.id,
-      address: address as any,
+      address: wallet.address as any,
       token: walletConfig.main.address,
     });
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
-      address: address as any,
+      address: wallet.address as any,
       token: walletConfig!.main.address,
     });
     if (mainRes.value != usdtBalance) {
@@ -159,7 +159,7 @@ export const walletStore = defineStore("walletStore", () => {
     // get MEME balance
     const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
-      address: address as any,
+      address: wallet.address as any,
       token: walletConfig!.meme.address,
     });
     if (memeRes.value != tokenBalance) {
@@ -201,7 +201,7 @@ export const walletStore = defineStore("walletStore", () => {
         chainId: parseUnits(walletConfig.chain.id.toString(), 0),
         verifyingContract: coinInfo.address,
       };
-      const result = await walletClient.signTypedData({
+      const result = await account.signTypedData({
         domain: typeDomain,
         types: TYPEHASH_PERMIT,
         primaryType: "Permit",
