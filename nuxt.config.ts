@@ -71,5 +71,5 @@ export default defineNuxtConfig({
         process.env.NUXT_PUBLIC_API_PREFIX || "http://192.168.1.82:48082",
     },
   },
-  sourcemap: true, // Enable source maps for easier debugging
+  sourcemap: true,
 });
