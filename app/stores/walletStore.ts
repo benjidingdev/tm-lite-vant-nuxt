@@ -179,10 +179,10 @@ export const walletStore = defineStore("walletStore", () => {
     }
   };
 
-  async function ensureWalletUnlocked() {
-    const provider = window.ethereum as EIP1193Provider;
-    if (!provider) throw new Error("MetaMask is not installed");
-  }
+  // async function ensureWalletUnlocked() {
+  //   const provider = window.ethereum as EIP1193Provider;
+  //   if (!provider) throw new Error("MetaMask is not installed");
+  // }
   /**
    * Query the user's token authorization
    * @param coinType
@@ -236,7 +236,7 @@ export const walletStore = defineStore("walletStore", () => {
     allowanceAmount: number
   ) => {
     try {
-      await ensureWalletUnlocked();
+      // await ensureWalletUnlocked();
 
       const config = $wagmiAdapter.wagmiConfig;
       const coinInfo = coinType == 0 ? walletConfig!.main : walletConfig!.meme;
