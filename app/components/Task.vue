@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { getUserTask, userTaskReceive } from '@/api/userInfo'
+import { getUserTask, userTaskReceive } from "@/api/userInfo";
 
+const { modalIsShow } = $(uiStore());
+const router = useRouter()
 const voData = $ref({
   taskList: [],
   chooseTask: null,
@@ -76,7 +78,7 @@ onMounted(() => {
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
                 type="primary"
-                @click="voState.openShare = true"
+                @click="modalIsShow.share = true"
                 class="w-[30%] text-sm font-bold rounded-full border-0 mt-2"
               >
                 Go To Invite

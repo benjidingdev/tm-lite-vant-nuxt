@@ -45,7 +45,7 @@ export const walletStore = defineStore("walletStore", () => {
 
   const { $wagmiAdapter } = useNuxtApp();
   const { open } = useAppKit();
-  const { isConnected, address } = $(useAccount());
+  const { isConnected } = $(useAccount());
 
   const userCapital = $ref({
     total: 0,
@@ -194,7 +194,7 @@ export const walletStore = defineStore("walletStore", () => {
     const result = await readContract(config, {
       abi: market,
       address: coinInfo.address,
-      args: [address, walletConfig!.contract.address],
+      args: [wallet.address, walletConfig!.contract.address],
       functionName: "allowance",
     });
     return result as bigint;
@@ -253,12 +253,12 @@ export const walletStore = defineStore("walletStore", () => {
         const nonce = (await readContract(config, {
           abi: market,
           address: coinInfo.address,
-          args: [address],
+          args: [wallet.address],
           functionName: "nonces",
         })) as bigint;
         // Query nonce first
         const param = {
-          owner: address,
+          owner: wallet.address,
           spender: walletConfig!.contract.address,
           value: minValue,
           nonce: nonce,
@@ -274,7 +274,7 @@ export const walletStore = defineStore("walletStore", () => {
           type: coinType,
           sign: permitSig,
           deadline: param.deadline,
-          owner: address,
+          owner: wallet.address,
           spender: walletConfig!.contract.address,
         };
         const res = await approveSign(approveParam);
