@@ -363,9 +363,9 @@ onMounted((e) => {
             <text> ${{ convertCurrency(card.volume) }} Vol.</text>
             <van-circle
               class="bottom-5"
-              v-model:current-rate="currentRate"
+              :current-rate="percentage(card?.markets[0].lastTradePrice, 'num')"
               :stroke-width="80"
-              :rate="percentage(card?.markets[0].lastTradePrice, 'num')"
+              rate="100"
               :speed="100"
               size="42px"
               layer-color="#d8d8d8"
