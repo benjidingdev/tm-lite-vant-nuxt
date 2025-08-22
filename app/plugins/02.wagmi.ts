@@ -2,7 +2,7 @@ import { WagmiPlugin } from "@wagmi/vue";
 import { http } from "viem";
 import { defineNuxtPlugin } from "nuxt/app";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { networks, avaxTest } from "@/config/networks";
+import { networks } from "@/config/networks";
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
