@@ -16,7 +16,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   const wagmiAdapter = new WagmiAdapter({
     networks,
     projectId,
-    transports: { [avaxTest.id]: http(avaxTest.rpcUrls.default.http[0]) },
   });
   nuxtApp.vueApp.use(WagmiPlugin, {
     config: wagmiAdapter.wagmiConfig,
