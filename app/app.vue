@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createAppKit, useAppKitTheme } from "@reown/appkit/vue";
-import { networks, localHardhat, avaxTest } from "./config/networks";
+import { networks, avaxTest } from "./config/networks";
 import '@vant/touch-emulator';
 
 useHead({
