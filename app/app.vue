@@ -22,7 +22,8 @@ const config = useRuntimeConfig();
 const { $wagmiAdapter, $metadata } = useNuxtApp();
 createAppKit({
   adapters: [$wagmiAdapter],
-  networks: [localHardhat, avaxTest],
+  networks: [avaxTest],
+  defaultNetwork: avaxTest,
   projectId: config.public.reownProjectId,
   features: {
     email: false,
