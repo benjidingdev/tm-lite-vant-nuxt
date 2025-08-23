@@ -103,8 +103,8 @@ export const avaxTest = defineChain({
 
 export const networks = [
     // jdDevnet,
-    polygon,
-    localHardhat,
-    avalanche,
+    // polygon,
+    // localHardhat,
+    // avalanche,
     avaxTest,
 ]

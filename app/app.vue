@@ -46,8 +46,23 @@
     // privacyPolicyUrl: "https://TuringM.io/privacy",
   });
 
-  const { setupEmbeddedWalletIframe } = $(privyStore())
-  onMounted(setupEmbeddedWalletIframe)
+  const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore())
+  const iframeRef = ref<HTMLIFrameElement | null>(null);
+  let cleanupIframe: (() => void) | null = null;
+
+  onMounted(() => {
+    refreshSession()
+    if (iframeRef.value) {
+      cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
+    }
+  });
+
+  onUnmounted(() => {
+    if (cleanupIframe) {
+      cleanupIframe();
+      cleanupIframe = null;
+    }
+  });
 </script>
 
 <template>
@@ -63,5 +78,5 @@
       </NuxtLayout>
     </div>
   </van-config-provider>
-  <iframe ref="iframe" />
+  <iframe ref="iframeRef" />
 </template>

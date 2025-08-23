@@ -1,3 +1,6 @@
+import { createWalletClient, custom } from 'viem'
+import { networks } from '~/config/networks'
+
 export const privyStore = defineStore("privyStore", () => {
   const { $privy, $PrivySDK } = useNuxtApp();
 
@@ -7,7 +10,6 @@ export const privyStore = defineStore("privyStore", () => {
   let isLoading = $ref(false)
   let session = $ref(null)
   const doLogin = async () => {
-    console.log('xxxx', session)
     if(session) return
     if (isLoading) return
     isLoading = true
@@ -23,25 +25,41 @@ export const privyStore = defineStore("privyStore", () => {
     console.log('session', session);
     isLoading = false
   };
-
+  const refreshSession = async () => {
+    session = await $privy.user.get()
+    // console.log('refreshSession', session, walletClient)
+    await initWallet()
+  }
+  const wallet = $computed(() => {
+    const rz = session?.user?.linked_accounts?.find(item => item.type === 'wallet') || null
+    // console.log('wallet', rz)
+    return rz
+  })
+  let walletClient = $ref(null)
   const userId = $computed(() => session?.user?.id || false)
-  let wallet = $ref(null)
-  const doCreateWallet = async () => {
-    if (!userId || isLoading || wallet) return
+  const initWallet = async () => {
+    if (!userId || isLoading) return
     isLoading = true
-    console.log('doCreateWallet')
-    wallet = await $privy.embeddedWallet.create({});
-    console.log('wallet', wallet)
-    return
-    wallet = $PrivySDK.getUserEmbeddedEthereumWallet(user);
-    const {entropyId, entropyIdVerifier} = $PrivySDK.getEntropyDetailsFromUser(user);
+  
+    let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
+
+    if (!theWallet) {
+      theWallet = await $privy.embeddedWallet.create({});
+      session = await $privy.user.get()
+    }
+
+    const {entropyId, entropyIdVerifier} = $PrivySDK.getEntropyDetailsFromUser(session?.user);
     const provider = await $privy.embeddedWallet.getEthereumProvider({
       wallet,
       entropyId,
       entropyIdVerifier
     });
-    console.log('doCreateWallet end', provider, wallet, entropyId, entropyIdVerifier)
-        
+    walletClient = createWalletClient({
+      account: wallet.address,
+      chain: networks[0],
+      transport: custom(provider),
+    });
+      
     isLoading = false
   }
 
@@ -49,17 +67,22 @@ export const privyStore = defineStore("privyStore", () => {
     return session?.user?.linked_accounts?.find(item => item.type === 'email')?.address || ''
   })
 
-  const setupEmbeddedWalletIframe = () => {
+  const setupEmbeddedWalletIframe = (iframe: HTMLIFrameElement) => {
       const iframeUrl = $privy.embeddedWallet.getURL();
-      const iframe = document.createElement('iframe');
       iframe.src = iframeUrl;
-      document.body.appendChild(iframe);
       $privy.setMessagePoster(iframe.contentWindow);
-      const listener = (e) => {
-        console.log('xxxx', e.data)
-        $privy.embeddedWallet.onMessage(e.data)
+    const listener = (e) => {
+        try {
+          $privy.embeddedWallet.onMessage(e.data)
+          console.log(`privy.onEmbeddedWalletMessage: ${e.data.event}`, e.data)
+        } catch (err) {
+          // console.log('xxxx', err, e)
+        }
       };
       window.addEventListener('message', listener);
+      return () => {
+        window.removeEventListener('message', listener);
+      }
   }
 
   return $$({
@@ -69,14 +92,17 @@ export const privyStore = defineStore("privyStore", () => {
     isLoading,
     session,
     userId,
+    wallet,
     userEmail,
+    walletClient,
     doLogin,
-    doCreateWallet,
+    initWallet,
+    refreshSession,
     setupEmbeddedWalletIframe,
   });
 }, {
   persist: {
-    omit: ['isLoading'],
+    omit: ['isLoading', 'wallet'],
     debug: true,
   },
 });

@@ -1,5 +1,5 @@
-import Privy, {avalancheFuji, LocalStorage} from '@privy-io/js-sdk-core';
-
+import Privy, * as PrivySDK from '@privy-io/js-sdk-core'
+import { networks } from '~/config/networks'
 import type { Plugin as NuxtPlugin } from '#app'
 
 const plugin: NuxtPlugin = defineNuxtPlugin(() => {
@@ -8,11 +8,10 @@ const plugin: NuxtPlugin = defineNuxtPlugin(() => {
   const privy = new Privy({
     appId,
     clientId,
-    supportedChains: [avalancheFuji],
-    storage: new LocalStorage()
+    supportedChains: networks,
+    storage: new PrivySDK.LocalStorage()
   });
-  
-  return { provide: { privy, PrivySDK: Privy } }
+  return { provide: { privy, PrivySDK } }
 
 })
 
