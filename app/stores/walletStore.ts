@@ -3,13 +3,9 @@ import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
 import type { EIP1193Provider } from "viem";
 import {
-  createWalletClient,
-  http,
   formatUnits,
   parseUnits,
-  // createPublicClient,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
 import { useAccount } from "@wagmi/vue";
 import { getBalance, readContract } from "@wagmi/core";
 
@@ -37,7 +33,6 @@ export const walletStore = defineStore("walletStore", () => {
   let nonce = $ref("");
   let walletConfig = $ref({});
   // let walletClient = $ref(null);
-  // let publicClient = $ref(null);
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
@@ -57,33 +52,9 @@ export const walletStore = defineStore("walletStore", () => {
 
   const { walletClient, wallet } = $(privyStore())
 
-
-  // let wallet = $ref({
-  //   address: "",
-  //   chainId: "",
-  //   connector: "",
-  // });
-
   let shortWalletAddress = $computed(() => {
     return shortenAddress(wallet?.address || "", 4, 4);
   });
-
-  // const initWalletClient = async () => {
-  //   const pcode = import.meta.env.NUXT_PUBLIC_P_KEY;
-  //   account = privateKeyToAccount(pcode);
-  //   // publicClient = createPublicClient({
-  //   //   chain: avalancheFuji,
-  //   //   transport: http(),
-  //   // });
-  //   walletClient = createWalletClient({
-  //     account,
-  //     chain: avalancheFuji,
-  //     transport: http(),
-  //   });
-  //   const [address] = await walletClient.getAddresses();
-  //   // switch the chain to congiguration chain
-  //   wallet.address = address;
-  // };
 
   const setWalletConnected = (connected: boolean) => {
     walletConected = connected;
@@ -138,7 +109,7 @@ export const walletStore = defineStore("walletStore", () => {
         message: order,
       };
       // signature returned result
-      const result = await account.signTypedData(content);
+      const result = await walletClient.signTypedData(content);
       console.log("result:", result);
 
       return result;
@@ -214,7 +185,7 @@ export const walletStore = defineStore("walletStore", () => {
         chainId: parseUnits(walletConfig.chain.id.toString(), 0),
         verifyingContract: coinInfo.address,
       };
-      const result = await account.signTypedData({
+      const result = await walletClient.signTypedData({
         domain: typeDomain,
         types: TYPEHASH_PERMIT,
         primaryType: "Permit",

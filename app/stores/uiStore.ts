@@ -6,12 +6,20 @@ export const uiStore = defineStore("uiStore", () => {
     authLogout: false,
     share: false,
     showTradePicker: false,
+    loginModal: false,
+  });
+  let keyBoardIsShow = $ref({
+    settings: false,
   });
 
   let labelWidth = $ref("12em");
 
   const setModal = (name: keyof typeof modalIsShow, isShow: boolean) => {
     modalIsShow[name] = isShow;
+  };
+
+  const setKeyBoard = (name: keyof typeof keyBoardIsShow, isShow: boolean) => {
+    keyBoardIsShow[name] = isShow;
   };
 
   const setLoadingToast = (message: string) =>
@@ -36,6 +44,8 @@ export const uiStore = defineStore("uiStore", () => {
     setModal,
     setLoadingToast,
     showMsgDialog,
+    keyBoardIsShow,
+    setKeyBoard,
   });
 });
 

@@ -1,5 +1,5 @@
 import { getAddress } from "viem";
-import { useDisconnect, useAccount, useSignMessage } from "@wagmi/vue";
+import { useDisconnect } from "@wagmi/vue";
 import { createSiweMessage } from "viem/siwe";
 import type { SiweMessage } from "@/types";
 import { getUserProfile } from "@/api/userInfo";
@@ -10,9 +10,7 @@ export const authStore = defineStore("authStore", () => {
   const { updateUserInfo, updateTraderType, isToken } = $(coreStore());
   const { setLoadingToast } = $(uiStore());
   const { loadUserInfo, userInfo } = $(userStore());
-  const { updateWalletBalance, wallet, walletClient, account } = $(
-    walletStore()
-  );
+  const { updateWalletBalance, wallet, walletClient } = $(walletStore());
 
   const { disconnect } = useDisconnect();
   let token = $ref({
@@ -81,13 +79,11 @@ export const authStore = defineStore("authStore", () => {
     const message = createSiweMessage(messageObj);
 
     try {
-      let res = await account.signMessage(
-        {
-          connector: connector,
-          account: address,
-          message: message,
-        }
-      );
+      let res = await walletClient.signMessage({
+        connector: connector,
+        account: address,
+        message: message,
+      });
       return { message: messageObj, signature: res };
     } catch (err) {
       isSign = false; // Ensure isSign is false when signing fails
@@ -123,7 +119,6 @@ export const authStore = defineStore("authStore", () => {
         const nonceRes = await getNonce(address);
         if (nonceRes) {
           const signData = await signLoginMessage(nonceRes.data);
-          console.log("the last step before loggin", signData);
           await todoLogin(signData);
         }
       }
