@@ -387,8 +387,6 @@ onMounted((e) => {
       />
     </div>
   </div>
-  <!--trade modal-->
-  <TradeModal />
 </template>
 
 <style>

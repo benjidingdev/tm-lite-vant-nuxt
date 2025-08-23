@@ -54,23 +54,28 @@ onMounted(() => {
 
 <template>
   <div
-    class="w-full bg-color-white p-4 h-[calc(100vh-80px-264px-50px)] overflow-auto"
+    class="w-full bg-color-white p-4 overflow-auto"
     v-if="openOrderList.length !== 0"
   >
-    <van-card
-      v-for="item in openOrderList"
-      currency=""
-      :key="item.marketId"
-      :price="dollars2cents(item.price || 0) + '€'"
-      :desc="item.orderType == 1 ? 'Buy' : 'Sell' + item.typeName"
-      :title="item.question"
-      :thumb="item.image"
-    >
-      <template #footer>
-        <van-button plain size="mini" type="primary" @click="showShares(item)"
-          >{{ $t("Shares") }}
-        </van-button>
+    <van-swipe-cell v-for="item in openOrderList" :key="item.marketId">
+      <van-card
+        currency=""
+        :key="item.marketId"
+        :price="dollars2cents(item.price || 0) + '€'"
+        :desc="item.orderType == 1 ? 'Buy' : 'Sell' + item.typeName"
+        :title="item.question"
+        :thumb="item.image"
+      >
+        <template #footer>
+          <van-button plain size="mini" type="primary" @click="showShares(item)"
+            >{{ $t("Shares") }}
+          </van-button>
+        </template>
+      </van-card>
+      <template #right>
+        <van-button square type="danger" text="BUY NO" />
+        <van-button square type="primary" text="BUY YES" />
       </template>
-    </van-card>
+    </van-swipe-cell>
   </div>
 </template>

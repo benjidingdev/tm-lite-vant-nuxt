@@ -1,18 +1,37 @@
 <script setup lang="ts">
-  const { modalIsShow, setModal } = $(uiStore());
-  const { tradeVolume, updateVolume } = $(tradeStore())
+import { onMounted } from "vue";
+
+let { modalIsShow, setModal } = $(uiStore());
+let { tradeVolume, updateVolume } = $(tradeStore());
+const columns = [];
+//create an object array that contains text and value and the text is from 1 to 100 and the value is the same as text
+const initColumns = () => {
+  for (let i = 1; i <= 100; i++) {
+    columns.push({ text: i.toString(), value: i.toString() });
+  }
+};
+const setVolume = (val) => {
+  updateVolume(Number(val.selectedValues[0]));
+  setModal("tradeSetting", false);
+};
+
+onMounted(() => {
+  initColumns();
+});
 </script>
 
 <template>
-  <van-dialog @confirm="setModal('tradeSetting', false)" v-model:show="modalIsShow.tradeSetting"
-    :title="$t('Volume Setting')" :confirmButtonText="$t('Confirm')" :cancelButtonText="$t('Cancel')">
+  <van-popup position="bottom" v-model:show="modalIsShow.tradeSetting">
     <div class="text-center px-4 pt-4">
-      <div class="align-center mt-4">
-        <van-stepper class="w-[40%]" min="1" max="100" v-model="tradeVolume" @change="updateVolume" />
-      </div>
-      <div class="p-4">
-        <van-slider bar-height="4px" class="mt-2" v-model="tradeVolume" @change="updateVolume" />
-      </div>
+      <van-picker
+        v-model="volume"
+        :columns="columns"
+        title="Set Volume"
+        :confirm-button-text="$t('Confirm')"
+        :cancel-button-text="$t('Cancel')"
+        @confirm="setVolume"
+        @cancel="setModal('tradeSetting', false)"
+      />
     </div>
-  </van-dialog>
+  </van-popup>
 </template>

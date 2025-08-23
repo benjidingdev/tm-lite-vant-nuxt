@@ -26,6 +26,7 @@
         class="text-white"
         loadingLabel="Connecting"
       />
+      <SettingsVolumeButton />
       <SettingsButton />
     </div>
   </div>

@@ -41,23 +41,32 @@ onMounted(() => {
 
 <template>
   <div
-    class="w-full bg-color-white p-4 h-[calc(100vh-80px-264px-50px)] overflow-auto"
+    class="w-full bg-color-white p-4 overflow-auto"
     v-if="positionList.length !== 0"
   >
-    <van-card
-      v-for="item in positionList"
-      currency="$"
-      :key="item.marketId"
-      :price="item.profit + '(' + item.profitRate + '%)'"
-      :desc="item.description"
-      :title="item.question"
-      :thumb="item.image"
-    >
-      <template #footer>
-        <van-button plain size="mini" type="primary" @click="showShares(item)"
-          >{{ $t("Shares") }}
-        </van-button>
+    <van-swipe-cell v-for="item in positionList" :key="item.marketId">
+      <van-card
+        currency="$"
+        :key="item.marketId"
+        :price="item.profit + '(' + item.profitRate + '%)'"
+        :desc="item.description"
+        :title="item.question"
+        :thumb="item.image"
+      >
+        <template #footer>
+          <van-button plain size="mini" type="primary" @click="showShares(item)"
+            >{{ $t("Shares") }}
+          </van-button>
+        </template>
+      </van-card>
+      <template #right>
+        <van-button
+          square
+          type="primary"
+          text="Trade"
+          @click="setModal('showTradePicker', true)"
+        />
       </template>
-    </van-card>
+    </van-swipe-cell>
   </div>
 </template>
