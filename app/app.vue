@@ -75,6 +75,8 @@
         <LangSwitcherPopup />
         <TradeSettingPopup />
         <OrderSharePopup />
+        <AuthLoginModal />
+        <SettingsNumberKeyBoard />
       </NuxtLayout>
     </div>
   </van-config-provider>

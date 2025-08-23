@@ -1,3 +1,30 @@
+<script setup>
+import { computed } from "vue";
+import { useBalance, useAccount } from "@wagmi/vue";
+import { shortenNumber } from "@/utils/processing";
+
+const { shortWalletAddress, userBalance } = $(walletStore());
+const { setModal } = $(uiStore());
+const { token } = $(authStore());
+const { address, isConnected, chainId } = $(useAccount());
+
+const shortUserBalance = computed(() => {
+  return userBalance ? shortenNumber(userBalance) : "0.00";
+});
+
+const login = () => {
+  setModal("loginModal", true);
+};
+
+watch(
+  () => isConnected,
+  (newVal) => {
+    // refreshBalance();
+  },
+  { immediate: true }
+);
+</script>
+
 <template>
   <div class="h-20 flex items-center justify-between px-2">
     <div class="flex items-center flex-1">
@@ -19,45 +46,20 @@
           <span class="text-white/80">{{ shortWalletAddress }}</span>
         </div>
       </button>
-      <appkit-button
+      <van-button
+        size="small"
         v-else
-        size="md"
-        :label="$t('Login')"
-        class="text-white"
-        loadingLabel="Connecting"
-      />
+        round
+        type="primary"
+        class="px-3 text-white/80 right mr-2!"
+        @click="login"
+        >Log in</van-button
+      >
       <SettingsVolumeButton />
       <SettingsButton />
     </div>
   </div>
 </template>
-
-<script setup>
-import { computed } from "vue";
-import { useBalance, useAccount } from "@wagmi/vue";
-import { shortenNumber } from "@/utils/processing";
-
-const { shortWalletAddress, userBalance } = $(walletStore());
-const { setSettingModalShow } = $(uiStore());
-const { token } = $(authStore());
-const { address, isConnected, chainId } = $(useAccount());
-
-const shortUserBalance = computed(() => {
-  return userBalance ? shortenNumber(userBalance) : "0.00";
-});
-
-const openSettingModal = () => {
-  setSettingModalShow(true);
-};
-
-watch(
-  () => isConnected,
-  (newVal) => {
-    // refreshBalance();
-  },
-  { immediate: true }
-);
-</script>
 
 <style>
 wui-flex > wui-text {

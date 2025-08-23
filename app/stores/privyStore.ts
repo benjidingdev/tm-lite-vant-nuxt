@@ -5,12 +5,12 @@ export const privyStore = defineStore("privyStore", () => {
   const { $privy, $PrivySDK } = useNuxtApp();
   const { todoSign } = $(authStore());
 
-  let email = $ref('Adam.Ma@TuringM.IO');
+  let email = $ref('');
   let hasSend = $ref(false)
   let oneTimePassword = $ref('');
   let isLoading = $ref(false)
   let session = $ref(null)
-  const doLogin = async () => {
+  const doLoginPrivy = async () => {
     if(session) return
     if (isLoading) return
     isLoading = true
@@ -30,7 +30,7 @@ export const privyStore = defineStore("privyStore", () => {
     session = await $privy.user.get()
     // console.log('refreshSession', session, walletClient)
     await initWallet()
-    await todoSign()
+    // await todoSign()
   }
   const wallet = $computed(() => {
     const rz = session?.user?.linked_accounts?.find(item => item.type === 'wallet') || null
@@ -97,7 +97,7 @@ export const privyStore = defineStore("privyStore", () => {
     wallet,
     userEmail,
     walletClient,
-    doLogin,
+    doLoginPrivy,
     initWallet,
     refreshSession,
     setupEmbeddedWalletIframe,
