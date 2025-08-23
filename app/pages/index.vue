@@ -1,15 +1,9 @@
 <script setup>
-const { inviteCode } = $(inviteStore());
-const { initWalletClient } = $(walletStore());
-const { todoSign } = $(authStore());
+  const { inviteCode } = $(inviteStore());
 
-console.log("inviteCode", inviteCode);
-window?.localStorage.setItem("inviteCode", inviteCode);
+  console.log("inviteCode", inviteCode);
+  window?.localStorage.setItem("inviteCode", inviteCode);
 
-onMounted(async () => {
-  await initWalletClient();
-  await todoSign();
-});
 </script>
 
 <template>
@@ -22,7 +16,7 @@ onMounted(async () => {
 </template>
 
 <style>
-.swipe-card-container {
-  height: calc(100vh - 130px);
-}
+  .swipe-card-container {
+    height: calc(100vh - 130px);
+  }
 </style>

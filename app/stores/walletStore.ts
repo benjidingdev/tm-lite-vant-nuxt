@@ -36,7 +36,7 @@ export const walletStore = defineStore("walletStore", () => {
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
-  let walletClient = $ref(null);
+  // let walletClient = $ref(null);
   // let publicClient = $ref(null);
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
@@ -55,32 +55,35 @@ export const walletStore = defineStore("walletStore", () => {
     position: 0,
   });
 
-  let wallet = $ref({
-    address: "",
-    chainId: "",
-    connector: "",
-  });
+  const { walletClient, wallet } = $(privyStore())
+
+
+  // let wallet = $ref({
+  //   address: "",
+  //   chainId: "",
+  //   connector: "",
+  // });
 
   let shortWalletAddress = $computed(() => {
-    return shortenAddress(wallet.address || "", 4, 4);
+    return shortenAddress(wallet?.address || "", 4, 4);
   });
 
-  const initWalletClient = async () => {
-    const pcode = import.meta.env.NUXT_PUBLIC_P_KEY;
-    account = privateKeyToAccount(pcode);
-    // publicClient = createPublicClient({
-    //   chain: avalancheFuji,
-    //   transport: http(),
-    // });
-    walletClient = createWalletClient({
-      account,
-      chain: avalancheFuji,
-      transport: http(),
-    });
-    const [address] = await walletClient.getAddresses();
-    // switch the chain to congiguration chain
-    wallet.address = address;
-  };
+  // const initWalletClient = async () => {
+  //   const pcode = import.meta.env.NUXT_PUBLIC_P_KEY;
+  //   account = privateKeyToAccount(pcode);
+  //   // publicClient = createPublicClient({
+  //   //   chain: avalancheFuji,
+  //   //   transport: http(),
+  //   // });
+  //   walletClient = createWalletClient({
+  //     account,
+  //     chain: avalancheFuji,
+  //     transport: http(),
+  //   });
+  //   const [address] = await walletClient.getAddresses();
+  //   // switch the chain to congiguration chain
+  //   wallet.address = address;
+  // };
 
   const setWalletConnected = (connected: boolean) => {
     walletConected = connected;
@@ -311,7 +314,6 @@ export const walletStore = defineStore("walletStore", () => {
     account,
     userBalance,
     userCapital,
-    initWalletClient,
     tokenBalance,
     updateWalletBalance,
     signTradeData,

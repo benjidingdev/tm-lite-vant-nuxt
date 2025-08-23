@@ -3,6 +3,7 @@ import { networks } from '~/config/networks'
 
 export const privyStore = defineStore("privyStore", () => {
   const { $privy, $PrivySDK } = useNuxtApp();
+  const { todoSign } = $(authStore());
 
   let email = $ref('Adam.Ma@TuringM.IO');
   let hasSend = $ref(false)
@@ -29,6 +30,7 @@ export const privyStore = defineStore("privyStore", () => {
     session = await $privy.user.get()
     // console.log('refreshSession', session, walletClient)
     await initWallet()
+    await todoSign()
   }
   const wallet = $computed(() => {
     const rz = session?.user?.linked_accounts?.find(item => item.type === 'wallet') || null
