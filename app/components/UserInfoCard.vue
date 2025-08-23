@@ -6,15 +6,15 @@
       >
         <img
           v-if="voData.userInfo.avatar"
-          class="w-16 h-16 mx-auto rounded-full"
+          class="w-8 h-8 mx-auto rounded-full"
           :src="voData.userInfo.avatar"
         />
         <img
           v-else
-          class="w-16 h-16 mx-auto rounded-full"
+          class="w-8 h-8 mx-auto rounded-full"
           src="@/assets/img/default.webp"
         />
-        <div class="flex-1 h-6 flex flex-col">
+        <div class="flex-1 h-6 flex flex-col pl-2">
           <p class="text-xl font-bold">
             {{ voData.userInfo.nickname }}
           </p>
@@ -27,15 +27,10 @@
               <p class="my-1 text-xs text-[#727272]">
                 {{ $t("Position Value") }}
               </p>
-              <p
-                v-if="voData.userInfo && voData.userInfo.positionValue"
-                class="text-xl font-bold"
-              >
-                ＄{{ voData.userInfo.positionValue.toFixed(2) }}
+              <p v-if="positionValue" class="text-xl font-bold">
+                {{ positionValueFiexed }}
               </p>
-              <p v-else class="text-xl font-bold">
-                ＄{{ voData.userInfo.positionValue }}
-              </p>
+              <p v-else class="text-xl font-bold">{{ positionValue }}</p>
             </div>
           </li>
 
@@ -45,7 +40,7 @@
                 {{ $t("Profit") }}
               </p>
               <p class="text-xl font-bold">
-                ＄{{ amountSeparate(voData.userInfo.profit) }}
+                {{ profit }}
               </p>
             </div>
           </li>
@@ -55,7 +50,7 @@
                 {{ $t("Traded Volume") }}
               </p>
               <p class="text-xl font-bold">
-                ＄{{ amountSeparate(voData.userInfo.volumnTrade) }}
+                {{ volumnTrade }}
               </p>
             </div>
           </li>
@@ -65,7 +60,7 @@
                 {{ $t("Markets Traded") }}
               </p>
               <p class="text-xl font-bold">
-                {{ voData.userInfo.tradeMarkets }}
+                {{ tradeMarkets }}
               </p>
             </div>
           </li>
@@ -87,6 +82,7 @@ import {
   unitConvert,
 } from "@/utils/processing";
 
+const { wallet } = $(walletStore());
 let voData = $ref({
   userInfo: {},
   pageNo: 1,
@@ -98,12 +94,51 @@ let voData = $ref({
   showShare: false,
   shareId: "",
 });
-const { address } = $(useAccount());
+
+const positionValueFiexed = $computed(() => {
+  if (voData.userInfo && voData.userInfo.positionValue) {
+    return `$${voData.userInfo.positionValue.toFixed(2)}`;
+  } else {
+    return 0;
+  }
+});
+
+const positionValue = $computed(() => {
+  if (voData.userInfo && voData.userInfo.positionValue) {
+    return `$${voData.userInfo.positionValue}`;
+  } else {
+    return 0;
+  }
+});
+
+const profit = $computed(() => {
+  if (voData.userInfo && voData.userInfo.profit) {
+    return `$${amountSeparate(voData.userInfo.profit)}`;
+  } else {
+    return 0;
+  }
+});
+
+const volumnTrade = $computed(() => {
+  if (voData.userInfo && voData.userInfo.volumnTrade) {
+    return `$${amountSeparate(voData.userInfo.volumnTrade)}`;
+  } else {
+    return 0;
+  }
+});
+
+const tradeMarkets = $computed(() => {
+  if (voData.userInfo && voData.userInfo.tradeMarkets) {
+    return voData.userInfo.tradeMarkets;
+  } else {
+    return 0;
+  }
+});
 
 const getUserInfo = async () => {
   try {
     let res = await getUserProfile({
-      proxyWallet: address,
+      proxyWallet: wallet.address,
     });
     if (res.code === 0) {
       voData.userInfo = res.data;
@@ -117,3 +152,9 @@ onMounted(() => {
   getUserInfo();
 });
 </script>
+
+<style>
+.van-swipe-cell__right button {
+  height: 100% !important;
+}
+</style>

@@ -5,6 +5,7 @@ export const uiStore = defineStore("uiStore", () => {
     langSwitcher: false,
     authLogout: false,
     share: false,
+    showTradePicker: false,
   });
 
   let labelWidth = $ref("12em");
