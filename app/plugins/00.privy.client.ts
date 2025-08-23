@@ -11,15 +11,8 @@ const plugin: NuxtPlugin = defineNuxtPlugin(() => {
     supportedChains: [avalancheFuji],
     storage: new LocalStorage()
   });
-  // const iframeUrl = privy.embeddedWallet.getURL();
-  // const iframe = document.createElement('iframe');
-  // iframe.src = iframeUrl;
-  // document.body.appendChild(iframe);
-  // privy.setMessagePoster(iframe.contentWindow);
-  // const listener = (e) => privy.embeddedWallet.onMessage(e.data);
-  // window.addEventListener('message', listener);
-
-  return { provide: { privy } }
+  
+  return { provide: { privy, PrivySDK: Privy } }
 
 })
 
