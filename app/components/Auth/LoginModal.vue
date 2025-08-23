@@ -26,13 +26,6 @@ const login = async () => {
   setModal("loginModal", false);
 };
 
-watch(otpValue, (newOtpValue) => {
-  if (newOtpValue.length === 6 && newOtpValue !== "123456") {
-    errorInfo = "OPT code is incorrect, please try again.";
-  } else {
-    errorInfo = "";
-  }
-});
 </script>
 
 <template>
@@ -40,7 +33,7 @@ watch(otpValue, (newOtpValue) => {
     v-model:show="modalIsShow.loginModal"
     closeable
     :show-confirm-button="false"
-    title="Login in or sign up"
+    :title="$t('Login in or sign up')"
   >
     <div v-if="!userId" class="step-one">
       <img
