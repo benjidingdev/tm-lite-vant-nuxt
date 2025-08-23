@@ -26,6 +26,9 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_P_KEY": JSON.stringify(
         import.meta.env.NUXT_PUBLIC_P_KEY
       ),
+      "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(
+        import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID
+      ),
       envName: process.env.ENV_NAME,
     },
   },
@@ -58,6 +61,7 @@ export default defineNuxtConfig({
       siteDescription: "",
       branch: process.env.VERCEL_GIT_COMMIT_REF || "localDev",
       hash: process.env.VERCEL_GIT_COMMIT_SHA || "localDev",
+      privyClientId: process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID,
 
       // all options can be found here: https://www.npmjs.com/package/logrocket?activeTab=code
       // dist/types.d.ts --> interface IOptions
