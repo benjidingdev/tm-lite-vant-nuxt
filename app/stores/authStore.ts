@@ -63,7 +63,6 @@ export const authStore = defineStore("authStore", () => {
   const signLoginMessage = async (nonce: string) => {
     const address = wallet?.address;
     const chainId = walletClient.chain?.id;
-    const connector = walletClient.connector;
     const messageObj = {
       address: getAddress(address),
       chainId: chainId as number,
@@ -80,7 +79,6 @@ export const authStore = defineStore("authStore", () => {
 
     try {
       let res = await walletClient.signMessage({
-        connector: connector,
         account: address,
         message: message,
       });

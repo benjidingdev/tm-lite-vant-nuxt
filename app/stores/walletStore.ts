@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { useAppKit } from "@reown/appkit/vue";
 import { avalancheFuji } from "viem/chains";
 import type { EIP1193Provider } from "viem";
 import {
@@ -27,7 +26,6 @@ type contentType = {
 };
 
 export const walletStore = defineStore("walletStore", () => {
-  const { logOut, todoSign } = $(authStore());
   let walletConected = $ref<boolean>(false);
   let msg = $ref("");
   let nonce = $ref("");
@@ -38,7 +36,6 @@ export const walletStore = defineStore("walletStore", () => {
   let account = $ref(null);
 
   const { $wagmiAdapter } = useNuxtApp();
-  const { open } = useAppKit();
   const { isConnected } = $(useAccount());
 
   const userCapital = $ref({
@@ -66,22 +63,6 @@ export const walletStore = defineStore("walletStore", () => {
 
   const updateTokenBalance = (balance: number) => {
     tokenBalance = balance || 0;
-  };
-
-  /**
-   * Connect wallet
-   */
-  const connectWallet = async () => {
-    if (!isConnected) {
-      await logOut();
-      open({ view: "Connect", namespace: "eip155" });
-    } else {
-      if (isConnected) {
-        todoSign();
-      } else {
-        open({ view: "Connect", namespace: "eip155" });
-      }
-    }
   };
 
   // transcation signature
@@ -272,7 +253,7 @@ export const walletStore = defineStore("walletStore", () => {
     tokenBalance,
     updateWalletBalance,
     signTradeData,
-    connectWallet,
+    // connectWallet,
     updateWalletConfig,
     queryAllowanceAndPermit,
     updateUserBalance,
