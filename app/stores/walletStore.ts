@@ -32,7 +32,6 @@ export const walletStore = defineStore("walletStore", () => {
   let msg = $ref("");
   let nonce = $ref("");
   let walletConfig = $ref({});
-  // let walletClient = $ref(null);
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
@@ -55,10 +54,6 @@ export const walletStore = defineStore("walletStore", () => {
   let shortWalletAddress = $computed(() => {
     return shortenAddress(wallet?.address || "", 4, 4);
   });
-
-  const setWalletConnected = (connected: boolean) => {
-    walletConected = connected;
-  };
 
   const updateWalletConfig = (data: any) => {
     walletConfig = data;
@@ -262,17 +257,6 @@ export const walletStore = defineStore("walletStore", () => {
     }
     return false;
   };
-
-  watch(
-    () => isConnected,
-    async (isConnected: boolean) => {
-      setWalletConnected(isConnected);
-      if (isConnected) {
-        let vConsole = new window.VConsole();
-        todoSign();
-      }
-    }
-  );
 
   return $$({
     shortWalletAddress,
