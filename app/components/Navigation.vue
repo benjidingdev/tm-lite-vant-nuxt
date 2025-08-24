@@ -12,7 +12,7 @@ const shortUserBalance = computed(() => {
   return userBalance ? shortenNumber(userBalance) : "0.00";
 });
 
-const login = () => {
+const showloginModal = () => {
   setModal("loginModal", true);
 };
 
@@ -52,8 +52,8 @@ watch(
         round
         type="primary"
         class="px-3 text-white/80 right mr-2!"
-        @click="login"
-        >Log in</van-button
+        @click="showloginModal"
+        >{{$t('Login')}}</van-button
       >
       <SettingsVolumeButton />
       <SettingsButton />

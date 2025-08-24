@@ -30,14 +30,13 @@ const {
   walletConfig,
   userBalance,
   queryAllowanceAndPermit,
-  connectWallet,
   walletClient,
   account,
 } = $(walletStore());
 const { isToken } = $(coreStore());
 const { tradeVolume } = $(tradeStore());
 const { token } = $(authStore());
-const { showMsgDialog, setLoadingToast } = $(uiStore());
+const { showMsgDialog, setLoadingToast, setModal } = $(uiStore());
 
 const recommondQueryParams = $ref({
   pageNo: 1,
@@ -223,8 +222,7 @@ const pickNext = () => {
 // start transcation
 const goDeposit = async () => {
   if (token.accessToken === "") {
-    showFailToast("Logging in Now...");
-    await connectWallet();
+    setModal("loginModal", true);
     isToken(true);
     closeToast();
     resetCard();
