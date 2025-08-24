@@ -29,7 +29,8 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(
         import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID
       ),
-      envName: process.env.ENV_NAME,
+      "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_REF || "localDev"),
+      "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA || "localDev"),
     },
   },
   i18n: {
