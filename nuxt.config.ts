@@ -31,6 +31,7 @@ export default defineNuxtConfig({
       ),
       "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_REF || "localDev"),
       "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA || "localDev"),
+      "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""),
     },
   },
   i18n: {
