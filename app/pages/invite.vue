@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 const { userInfo } = $(userStore());
 const { token } = $(authStore());
 const { connectWallet } = $(walletStore());
+const { setModal } = $(uiStore());
 const defaultTUIT = $ref("00000");
 
 const { inviteCode, inviteCount } = userInfo;
@@ -53,14 +54,20 @@ const inviteUser = () => {
       </van-notice-bar>
     </div>
     <div class="content-container text-center">
-      <img class="w-full mb-4 rounded-xl" src="@/assets/img/turingM.gif" />
+      <img
+        class="w-[70px] m-auto rounded-full transform transition-transform duration-1000 hover:rotate-y-180"
+        src="@/assets/img/gold-coins.jpg"
+      />
       <h1 class="text-3xl pt-2 font-bold">{{ $t("Invite to earn TUIT") }}</h1>
       <p class="text-lg text-gray-600 my-3">{{ $t("inviteDescription") }}</p>
 
       <div v-if="!token.accessToken">
-        <van-button type="primary" size="large" @click="connectWallet">{{
-          $t("Login")
-        }}</van-button>
+        <van-button
+          type="primary"
+          size="large"
+          @click="setModal('loginModal', true)"
+          >{{ $t("Login") }}</van-button
+        >
       </div>
       <div v-else>
         <div class="invite-status-container text-center text-gray-500 mt-4">

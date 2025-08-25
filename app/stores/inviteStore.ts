@@ -1,5 +1,7 @@
 export const inviteStore = defineStore("inviteStore", () => {
   const inviteCode = $computed(() => {
+    const urlParams = new URLSearchParams(window?.location?.search);
+    let code = urlParams.get("inviteCode");
     if (window?.Telegram) {
       console.log(
         "window.Telegram.WebApp.initDataUnsafe",
@@ -10,12 +12,8 @@ export const inviteStore = defineStore("inviteStore", () => {
       if (str) {
         code = str.split("inviteCode=")[1];
       }
-      return code;
-    } else {
-      const urlParams = new URLSearchParams(window?.location?.search);
-      const code = urlParams.get("inviteCode");
-      return code;
     }
+    return code;
   });
 
   return $$({

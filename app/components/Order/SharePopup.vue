@@ -6,8 +6,6 @@ const { userInfo } = $(userStore());
 
 const goUrl = (url) => {
   let path = `${url}?url=${origin}?inviteCode=${userInfo.inviteCode}&text=Get Start With Turing Market`;
-  origin = `${origin}/marketsDetails`;
-  path = `${url}?url=${origin}?id=${marketId}`;
   window.open(path);
 };
 </script>
