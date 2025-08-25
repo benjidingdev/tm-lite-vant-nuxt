@@ -71,7 +71,7 @@ const login = async () => {
       </van-form>
     </div>
 
-    <div v-else class="step-two" >
+    <div v-else class="step-two">
       <van-cell-group v-if="wallet">
         <van-cell :title="$t('Wallet')" :label="wallet?.address" />
         <div class="flex justify-evenly py-4">

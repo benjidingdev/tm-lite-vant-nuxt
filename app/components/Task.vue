@@ -3,7 +3,7 @@ import { onMounted } from "vue";
 import { getUserTask, userTaskReceive } from "@/api/userInfo";
 
 const { modalIsShow } = $(uiStore());
-const router = useRouter()
+const router = useRouter();
 const voData = $ref({
   taskList: [],
   chooseTask: null,
@@ -50,6 +50,8 @@ onMounted(() => {
         >
           <van-card
             :desc="sub.description"
+            currency="Obtained: "
+            :price="sub.rewardNumber * sub.finishedCount + ' ' + sub.rewardType"
             :title="sub.name"
             :thumb="task.image"
           >
@@ -62,7 +64,7 @@ onMounted(() => {
               <van-button
                 v-if="sub.isFinish"
                 type="primary"
-                class="w-[30%] text-sm font-bold rounded-full border-0 mt-2"
+                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="receiveTask(sub)"
               >
                 Get Rewards
@@ -70,7 +72,7 @@ onMounted(() => {
               <van-button
                 v-else-if="sub.eventTasks[0]?.currentEventValue > 0"
                 type="primary"
-                class="w-[30%] text-sm font-bold rounded-full border-0 mt-2"
+                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="router.push(sub.skipUrl)"
               >
                 In Progress
@@ -79,21 +81,21 @@ onMounted(() => {
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
                 type="primary"
                 @click="modalIsShow.share = true"
-                class="w-[30%] text-sm font-bold rounded-full border-0 mt-2"
+                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
               >
                 Go To Invite
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'"
                 type="primary"
-                class="w-[30%] text-sm font-bold rounded-full border-0"
+                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
               >
                 Go To Trade
               </van-button>
               <van-button
                 v-else
                 type="primary"
-                class="w-[30%] text-sm font-bold rounded-full border-0 mt-2"
+                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="router.push(sub.skipUrl)"
               >
                 {{ sub.skipTip }}
@@ -110,5 +112,8 @@ onMounted(() => {
 .earn-dashboard-container {
   height: calc(100vh - 130px);
   /* Adjust height based on nav bar and tab bar */
+}
+.van-tag--primary.van-tag--plain {
+  color: #00c58d;
 }
 </style>
