@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { useBalance, useAccount } from "@wagmi/vue";
+import { useAccount } from "@wagmi/vue";
 import { shortenNumber } from "@/utils/processing";
 
 const { shortWalletAddress, userBalance } = $(walletStore());
@@ -53,7 +53,7 @@ watch(
         type="primary"
         class="px-3 text-white/80 right mr-2!"
         @click="showloginModal"
-        >{{$t('Login')}}</van-button
+        >{{ $t("Login") }}</van-button
       >
       <SettingsVolumeButton />
       <SettingsButton />

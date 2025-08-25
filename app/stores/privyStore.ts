@@ -1,9 +1,9 @@
-import { createWalletClient, custom } from 'viem'
+import { createWalletClient, createPublicClient, custom } from 'viem'
 import { networks } from '~/config/networks'
 
 export const privyStore = defineStore("privyStore", () => {
   const { $privy, $PrivySDK } = useNuxtApp();
-  const { todoSign } = $(authStore());
+  const { updateWalletBalance } = $(walletStore());
 
   let email = $ref('');
   let hasSend = $ref(false)
@@ -29,8 +29,8 @@ export const privyStore = defineStore("privyStore", () => {
   const refreshSession = async () => {
     session = await $privy.user.get()
     // console.log('refreshSession', session, walletClient)
-    await initWallet()
-    // await todoSign()
+    await initWallet();
+    await updateWalletBalance();
   }
   const wallet = $computed(() => {
     const rz = session?.user?.linked_accounts?.find(item => item.type === 'wallet') || null
@@ -38,6 +38,7 @@ export const privyStore = defineStore("privyStore", () => {
     return rz
   })
   let walletClient = $ref(null)
+  let publicClient = $ref(null)
   const userId = $computed(() => session?.user?.id || false)
   const initWallet = async () => {
     if (!userId || isLoading) return
@@ -61,7 +62,11 @@ export const privyStore = defineStore("privyStore", () => {
       chain: networks[0],
       transport: custom(provider),
     });
-      
+    publicClient = createPublicClient({
+      chain: networks[0],
+      transport: custom(provider),
+    });
+    
     isLoading = false
   }
 
@@ -87,6 +92,10 @@ export const privyStore = defineStore("privyStore", () => {
       }
   }
 
+  const logoutPrivy = async () => {
+   await $privy.auth.logout();
+  }
+
   return $$({
     email,
     hasSend,
@@ -97,10 +106,12 @@ export const privyStore = defineStore("privyStore", () => {
     wallet,
     userEmail,
     walletClient,
+    publicClient,
     doLoginPrivy,
     initWallet,
     refreshSession,
     setupEmbeddedWalletIframe,
+    logoutPrivy,
   });
 }, {
   persist: {

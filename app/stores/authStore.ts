@@ -13,6 +13,7 @@ export const authStore = defineStore(
     const { setLoadingToast } = $(uiStore());
     const { loadUserInfo, userInfo } = $(userStore());
     const { updateWalletBalance, wallet, walletClient } = $(walletStore());
+    const { logoutPrivy } = $(privyStore());
 
     const { disconnect } = useDisconnect();
     let token = $ref({
@@ -33,6 +34,17 @@ export const authStore = defineStore(
       }
     };
 
+    const deleteAllCookies = () => {
+      let cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie =
+          name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+      }
+    };
+
     // refresh user login status after login successfully
     const afterLoginSuccess = async (data: any) => {
       updateToken(data.data);
@@ -46,11 +58,14 @@ export const authStore = defineStore(
     // disconnect wallet and log out
     const logOut = async () => {
       try {
+        await logoutPrivy();
         let res: any = await getLogout();
         if (res?.code === 0) {
           updateToken({});
           disconnect();
-          updateUserInfo({});
+          await updateUserInfo({});
+          deleteAllCookies();
+          await updateWalletBalance();
           showToast("Logout successful");
         }
       } catch (e) {
