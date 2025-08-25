@@ -1,12 +1,7 @@
 import { defineStore } from "pinia";
-import { avalancheFuji } from "viem/chains";
 import type { EIP1193Provider } from "viem";
-import {
-  formatUnits,
-  parseUnits,
-} from "viem";
-import { useAccount } from "@wagmi/vue";
-import { getBalance, readContract } from "@wagmi/core";
+import { formatUnits, parseUnits } from "viem";
+import { getBalance } from "@wagmi/core";
 
 import {
   TYPEHASH_DOMAIN,
@@ -27,8 +22,6 @@ type contentType = {
 
 export const walletStore = defineStore("walletStore", () => {
   let walletConected = $ref<boolean>(false);
-  let msg = $ref("");
-  let nonce = $ref("");
   let walletConfig = $ref({});
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
@@ -36,7 +29,6 @@ export const walletStore = defineStore("walletStore", () => {
   let account = $ref(null);
 
   const { $wagmiAdapter } = useNuxtApp();
-  const { isConnected } = $(useAccount());
 
   const userCapital = $ref({
     total: 0,
@@ -46,7 +38,7 @@ export const walletStore = defineStore("walletStore", () => {
     position: 0,
   });
 
-  const { walletClient, wallet } = $(privyStore())
+  const { walletClient, publicClient, wallet } = $(privyStore());
 
   let shortWalletAddress = $computed(() => {
     return shortenAddress(wallet?.address || "", 4, 4);
@@ -100,11 +92,6 @@ export const walletStore = defineStore("walletStore", () => {
    */
   const updateWalletBalance = async () => {
     if (!wallet.address) return;
-    console.log("params", {
-      chainId: walletConfig.chain.id,
-      address: wallet.address as any,
-      token: walletConfig.main.address,
-    });
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: walletConfig.chain.id,
@@ -139,9 +126,8 @@ export const walletStore = defineStore("walletStore", () => {
    * @returns
    */
   const queryAllowance = async (coinType: any) => {
-    const config = $wagmiAdapter.wagmiConfig;
     const coinInfo = coinType == 0 ? walletConfig!.main : walletConfig!.meme;
-    const result = await readContract(config, {
+    const result = await publicClient.readContract({
       abi: market,
       address: coinInfo.address,
       args: [wallet.address, walletConfig!.contract.address],
@@ -186,8 +172,6 @@ export const walletStore = defineStore("walletStore", () => {
     allowanceAmount: number
   ) => {
     try {
-      await ensureWalletUnlocked();
-
       const config = $wagmiAdapter.wagmiConfig;
       const coinInfo = coinType == 0 ? walletConfig!.main : walletConfig!.meme;
 
@@ -200,7 +184,7 @@ export const walletStore = defineStore("walletStore", () => {
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
         // If the authorization is insufficient, a signature is required
-        const nonce = (await readContract(config, {
+        const nonce = (await publicClient.readContract({
           abi: market,
           address: coinInfo.address,
           args: [wallet.address],
@@ -244,16 +228,13 @@ export const walletStore = defineStore("walletStore", () => {
     walletConected,
     walletConfig,
     wallet,
-    nonce,
     walletClient,
-    msg,
     account,
     userBalance,
     userCapital,
     tokenBalance,
     updateWalletBalance,
     signTradeData,
-    // connectWallet,
     updateWalletConfig,
     queryAllowanceAndPermit,
     updateUserBalance,
