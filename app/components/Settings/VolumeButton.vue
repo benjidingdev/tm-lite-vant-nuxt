@@ -10,6 +10,6 @@ const { tradeVolume } = $(tradeStore());
     round
     hairline
     @click="setModal('tradeSetting', true)"
-    >{{ tradeVolume }}</van-button
+    >{{ tradeVolume }}x</van-button
   >
 </template>

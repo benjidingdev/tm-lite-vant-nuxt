@@ -14,8 +14,15 @@ export const uiStore = defineStore("uiStore", () => {
 
   let labelWidth = $ref("12em");
 
-  const setModal = (name: keyof typeof modalIsShow, isShow: boolean) => {
+  const setModal = (
+    name: keyof typeof modalIsShow,
+    isShow: boolean,
+    cb: () => {}
+  ) => {
     modalIsShow[name] = isShow;
+    if (typeof cb === "function") {
+      cb();
+    }
   };
 
   const setKeyBoard = (name: keyof typeof keyBoardIsShow, isShow: boolean) => {
@@ -47,6 +54,11 @@ export const uiStore = defineStore("uiStore", () => {
     keyBoardIsShow,
     setKeyBoard,
   });
+}, {
+  persist: {
+    omit: ['isLoading', 'wallet'],
+    debug: true,
+  },
 });
 
 if (import.meta.hot) {

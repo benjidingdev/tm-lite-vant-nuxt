@@ -58,7 +58,7 @@ const inviteUser = () => {
         class="w-[70px] m-auto rounded-full transform transition-transform duration-1000 hover:rotate-y-180"
         src="@/assets/img/gold-coins.jpg"
       />
-      <h1 class="text-3xl pt-2 font-bold">{{ $t("Invite to earn TUIT") }}</h1>
+      <h1 class="text-3xl pt-2 font-bold">{{ $t("GOT 100 TUIT NOW") }}</h1>
       <p class="text-lg text-gray-600 my-3">{{ $t("inviteDescription") }}</p>
 
       <div v-if="!token.accessToken">
@@ -69,7 +69,7 @@ const inviteUser = () => {
           >{{ $t("Login") }}</van-button
         >
       </div>
-      <div v-else>
+      <div v-else class="px-4">
         <div class="invite-status-container text-center text-gray-500 mt-4">
           <div class="text-xl font-bold text-blue pt-4">
             {{ $t("Your TUIT") }}
@@ -85,6 +85,13 @@ const inviteUser = () => {
           $t("Invite Now")
         }}</van-button>
       </div>
+    </div>
+    <div class="invite-info-container mt-6">
+      <p class="px-4 pb-2 text-gray-400">You have invited:</p>
+      <van-cell-group>
+        <van-cell title="1. Ben" value="+10 TUIT" />
+        <van-cell title="2. Prediction" value="+20 TUIT" />
+      </van-cell-group>
     </div>
   </div>
 </template>
