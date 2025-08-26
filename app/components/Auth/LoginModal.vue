@@ -104,8 +104,7 @@ watch(
             :rules="[{ required: true, message: $t('Please enter email') }]"
           />
           <span
-            v-if="isLoading || errorInfo"
-            :class="`text-xs float-right pr-4 ${
+            :class="`text-sm my-4 float-right pr-4 ${
               errorInfo ? 'text-red-400' : 'text-gray-500'
             }`"
             >{{ errorInfo ? errorInfo : "Sending..." }}</span
@@ -118,7 +117,7 @@ watch(
             @focus="setKeyBoard('settings', true)"
           />
         </van-cell-group>
-        <div v-if="hasSend">
+        <div v-if="hasSend" class="flex justify-end">
           <button
             :class="`px-4 py-2 underline ${underlineColor}`"
             @click="resend"
@@ -142,7 +141,6 @@ watch(
           </van-button>
         </div>
         <div class="mt-8 mb-4 text-center font-bold">
-          <!--term-->
           Supported by TuringM
         </div>
       </van-form>

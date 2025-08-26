@@ -150,7 +150,10 @@ export const authStore = defineStore(
     }) => {
       setLoadingToast("Start to login");
       const address = wallet?.address;
-      let inviteCode = localStorage.getItem("inviteCode") || "";
+      let inviteCode = "";
+      try {
+        inviteCode = JSON.parse(localStorage.getItem("inviteCode") || "");
+      } catch (error) {}
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
         ivcode: inviteCode,
