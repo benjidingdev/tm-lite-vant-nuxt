@@ -11,7 +11,7 @@ export const authStore = defineStore(
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
     const { loadUserInfo, userInfo, updateUserInfo } = $(userStore());
-    const { updateWalletBalance, wallet, walletClient } = $(walletStore());
+    const { updateWalletBalance, wallet, walletClient, amountPermit } = $(walletStore());
     const { logoutPrivy } = $(privyStore());
 
     let token = $ref({
@@ -52,6 +52,8 @@ export const authStore = defineStore(
         proxyWallet: userInfo.proxyWallet,
       });
       updateTraderType(userProfile.data.traderType);
+
+      await amountPermit();
     };
 
     // disconnect wallet and log out
