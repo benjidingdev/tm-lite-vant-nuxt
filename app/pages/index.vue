@@ -1,9 +1,8 @@
 <script setup>
-  const { inviteCode } = $(inviteStore());
+const { inviteCode } = $(inviteStore());
 
-  console.log("inviteCode", inviteCode);
-  window?.localStorage.setItem("inviteCode", inviteCode);
-
+console.log("inviteCode", inviteCode);
+window?.localStorage.setItem("inviteCode", inviteCode || "");
 </script>
 
 <template>
@@ -16,7 +15,7 @@
 </template>
 
 <style>
-  .swipe-card-container {
-    height: calc(100vh - 130px);
-  }
+.swipe-card-container {
+  height: calc(100vh - 130px);
+}
 </style>
