@@ -1,18 +1,12 @@
 <script setup>
-import axios from "axios";
-import { showDialog } from "vant";
 import _ from "lodash";
 import {
   getTopicsRecommend,
-  getTopicsOrderPreview,
-  getTopicsOrderCreate,
-  getOrderAmount,
 } from "~/api/market";
 import { convertCurrency, percentage } from "@/utils/processing";
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
-let cards = $ref([]);
 let currentIndex = $ref(0); // The index of current card
 let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
@@ -25,17 +19,12 @@ let currentRate = $ref(0);
 
 // The data from store
 const {
-  signTradeData,
   userBalance,
-  queryAllowanceAndPermit,
-  walletClient,
-  account,
 } = $(walletStore());
-const { addRequest } = $(requestQueueStore());
+let { addRequest, cardCount, cards } = $(requestQueueStore());
 const { isToken } = $(coreStore());
-const { tradeVolume } = $(tradeStore());
 const { token } = $(authStore());
-const { showMsgDialog, setLoadingToast, setModal } = $(uiStore());
+const { setModal } = $(uiStore());
 
 const recommondQueryParams = $ref({
   pageNo: 1,
@@ -49,17 +38,6 @@ const recommondQueryParams = $ref({
   tagId: null,
   followed: false,
 });
-let transaction = $ref({
-  parentId: null,
-  textName: "",
-  textColor: "",
-  textPrice: "",
-  marketsId: null,
-  marketsTitle: "",
-  type: null,
-  fee: null,
-  marketsItem: {},
-});
 
 // get the list of cards
 const getInfoList = async (refresh) => {
@@ -69,6 +47,7 @@ const getInfoList = async (refresh) => {
   }
   const res = await getTopicsRecommend(recommondQueryParams);
   if (res.code === 0) {
+    cardCount = res.data.list.length;
     cards = res.data.list;
   }
 };
@@ -178,48 +157,42 @@ const resetCard = () => {
 };
 
 const buyYes = (card) => {
-  const { title } = card;
-  transaction = {
-    parentId: null,
-    textName: card.markets[0].yesName,
-    textColor: "",
-    textPrice: card.markets[0].yesPrice,
-    marketsId: card.markets[0].id,
-    marketsTitle: title,
-    type: 1, //1-YES；2-NO,
-    fee: null,
-    marketsItem: {},
-  };
-  goDeposit();
-  // sendPimlicoTranscation();
+  goDeposit(card, true);
 };
 
 const buyNo = (card) => {
-  const { title } = card;
-  transaction = {
-    parentId: null,
-    textName: card.markets[0].noName,
-    textColor: "",
-    textPrice: card.markets[0].noPrice,
-    marketsId: card.markets[0].id,
-    marketsTitle: title,
-    type: 2, //1-YES；2-NO,
-    fee: null,
-    marketsItem: {},
-  };
-  goDeposit();
+  goDeposit(card, false);
 };
 
 const bookmark = () => {
-  swipeCard(statusList[2], () => {});
+  swipeCard(statusList[2], () => { });
 };
 
 const pickNext = () => {
-  swipeCard(statusList[3], () => {});
+  swipeCard(statusList[3], () => { });
 };
 
 // start transcation
-const goDeposit = async () => {
+const goDeposit = async (card, isYes) => {
+  const transaction = {
+    parentId: null,
+    textColor: "",
+    marketsId: card.markets[0].id,
+    marketsTitle: card.title,
+    fee: null,
+    marketsItem: {},
+  };
+
+  if (isYes) {
+    transaction.textName = card.markets[0].yesName;
+    transaction.textPrice = card.markets[0].yesPrice;
+    transaction.type = 1;
+  } else {
+    transaction.textName = card.markets[0].noName;
+    transaction.textPrice = card.markets[0].noPrice;
+    transaction.type = 2;
+  }
+
   if (token.accessToken === "") {
     setModal("loginModal", true);
     isToken(true);
@@ -235,7 +208,7 @@ const goDeposit = async () => {
     try {
 
       // add request to queue
-      addRequest(transaction.marketsId, transaction);
+      addRequest(transaction, card);
 
       if (transaction.type === 1) {
         swipeCard(statusList[0]);
@@ -243,7 +216,7 @@ const goDeposit = async () => {
         swipeCard(statusList[1], () => { });
       }
 
-      
+
     } finally {
       resetCard();
     }
@@ -259,42 +232,22 @@ onMounted((e) => {
 <template>
   <div class="w-full h-[90%] relative">
     <div v-if="cards.length">
-      <div
-        v-for="(card, index) in cards"
-        :key="card.id"
-        :class="['card', { active: currentIndex === index }]"
-        :style="getCardStyle(index)"
-        class="draggable-element shadow-md"
-        @touchstart.prevent="touchStart"
-        @touchmove.prevent="touchMove"
-        @touchend.prevent="touchEnd(card, event)"
-      >
-        <van-image
-          width="100%"
-          height="50%"
-          :src="card['image']"
-          class="p-2"
-          fit="cover"
-        >
+      <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
+        :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart.prevent="touchStart"
+        @touchmove.prevent="touchMove" @touchend.prevent="touchEnd(card, event)">
+        <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="cover">
           <div class="absolute -bottom-8 h-16 w-full">
             <div class="flex justify-between items-center h-full px-6">
-              <div
-                class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="buyYes(card)"
-              >
+              <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                @click="buyYes(card)">
                 <van-icon name="checked" size="66" color="#97dbb4" />
               </div>
 
-              <div
-                class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="bookmark"
-              >
+              <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg" @click="bookmark">
                 <van-icon size="30" name="star-o" color="#c4c406" />
               </div>
-              <div
-                class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="buyNo(card)"
-              >
+              <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                @click="buyNo(card)">
                 <van-icon name="clear" size="66" color="#fe9595" />
               </div>
             </div>
@@ -305,20 +258,13 @@ onMounted((e) => {
             <text class="name mt-4">{{ card.title }}</text>
             <text v-if="card?.markets.length" class="desc">{{
               card?.markets[0].question
-            }}</text>
+              }}</text>
           </div>
           <div class="h-[15%] flex justify-between">
             <text> ${{ convertCurrency(card.volume) }} Vol.</text>
-            <van-circle
-              class="bottom-5"
-              v-model:current-rate="currentRate"
-              :stroke-width="80"
-              :rate="percentage(card?.markets[0].lastTradePrice, 'num')"
-              :speed="100"
-              size="42px"
-              layer-color="#d8d8d8"
-              :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'"
-            />
+            <van-circle class="bottom-5" v-model:current-rate="currentRate" :stroke-width="80"
+              :rate="percentage(card?.markets[0].lastTradePrice, 'num')" :speed="100" size="42px" layer-color="#d8d8d8"
+              :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'" />
           </div>
         </div>
 
@@ -330,9 +276,7 @@ onMounted((e) => {
     </div>
 
     <div v-else>
-      <van-empty
-        description="If you are interested in Turing Market, please go to our official version"
-      />
+      <van-empty description="If you are interested in Turing Market, please go to our official version" />
     </div>
   </div>
 </template>
@@ -387,6 +331,7 @@ onMounted((e) => {
 .btn.like {
   border: 2px solid #52c41a;
 }
+
 .van-image img {
   border-radius: 15px;
 }
