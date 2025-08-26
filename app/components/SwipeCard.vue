@@ -27,7 +27,6 @@ let currentRate = $ref(0);
 // The data from store
 const {
   signTradeData,
-  walletConfig,
   userBalance,
   queryAllowanceAndPermit,
   walletClient,

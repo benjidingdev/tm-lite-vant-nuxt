@@ -72,7 +72,6 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useAccount } from "@wagmi/vue";
 import moment from "moment";
 import { getUserProfile } from "@/api/userInfo";
 import {
