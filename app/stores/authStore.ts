@@ -12,7 +12,7 @@ export const authStore = defineStore(
     const { setLoadingToast, setModal } = $(uiStore());
     const { loadUserInfo, userInfo, updateUserInfo } = $(userStore());
     const { updateWalletBalance, wallet, walletClient } = $(walletStore());
-    const { logoutPrivy } = $(privyStore());
+    let { logoutPrivy, hasSend, isLoading } = $(privyStore());
 
     let token = $ref({
       accessToken: "",
@@ -57,6 +57,8 @@ export const authStore = defineStore(
     // disconnect wallet and log out
     const logOut = async () => {
       try {
+        hasSend = false;
+        isLoading = false;
         await logoutPrivy();
         let res: any = await getLogout();
         if (res?.code === 0) {
@@ -164,7 +166,7 @@ export const authStore = defineStore(
         console.log("login success");
         afterLoginSuccess(result);
         // Update wallet balance
-        updateWalletBalance();
+        await updateWalletBalance();
       } else {
         console.error("Login failed:");
       }

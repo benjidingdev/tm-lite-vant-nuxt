@@ -104,6 +104,7 @@ watch(
             :rules="[{ required: true, message: $t('Please enter email') }]"
           />
           <span
+            v-if="isLoading || errorInfo"
             :class="`text-sm my-4 float-right pr-4 ${
               errorInfo ? 'text-red-400' : 'text-gray-500'
             }`"
@@ -140,9 +141,7 @@ watch(
             {{ $t("Submit") }}
           </van-button>
         </div>
-        <div class="mt-8 mb-4 text-center font-bold">
-          Supported by TuringM
-        </div>
+        <div class="mt-8 mb-4 text-center font-bold">Supported by TuringM</div>
       </van-form>
     </div>
   </van-dialog>
