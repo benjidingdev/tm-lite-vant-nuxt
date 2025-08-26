@@ -54,11 +54,6 @@ export const uiStore = defineStore("uiStore", () => {
     keyBoardIsShow,
     setKeyBoard,
   });
-}, {
-  persist: {
-    omit: ['isLoading', 'wallet'],
-    debug: true,
-  },
 });
 
 if (import.meta.hot) {

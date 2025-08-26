@@ -1,5 +1,4 @@
 import { getAddress } from "viem";
-import { useDisconnect } from "@wagmi/vue";
 import { createSiweMessage } from "viem/siwe";
 import type { SiweMessage } from "@/types";
 import { getUserProfile } from "@/api/userInfo";
@@ -9,13 +8,12 @@ import * as walletApi from "~/api/wallet";
 export const authStore = defineStore(
   "authStore",
   () => {
-    const { updateUserInfo, updateTraderType, isToken } = $(coreStore());
-    const { setLoadingToast } = $(uiStore());
-    const { loadUserInfo, userInfo } = $(userStore());
+    const { updateTraderType, isToken } = $(coreStore());
+    const { setLoadingToast, setModal } = $(uiStore());
+    const { loadUserInfo, userInfo, updateUserInfo } = $(userStore());
     const { updateWalletBalance, wallet, walletClient } = $(walletStore());
     const { logoutPrivy } = $(privyStore());
 
-    const { disconnect } = useDisconnect();
     let token = $ref({
       accessToken: "",
       expiresTime: "",
@@ -48,6 +46,7 @@ export const authStore = defineStore(
     // refresh user login status after login successfully
     const afterLoginSuccess = async (data: any) => {
       updateToken(data.data);
+      setModal("loginModal", false);
       await loadUserInfo();
       let userProfile = await getUserProfile({
         proxyWallet: userInfo.proxyWallet,
@@ -62,9 +61,8 @@ export const authStore = defineStore(
         let res: any = await getLogout();
         if (res?.code === 0) {
           updateToken({});
-          disconnect();
-          await updateUserInfo({});
           deleteAllCookies();
+          updateUserInfo({});
           await updateWalletBalance();
           showToast("Logout successful");
         }

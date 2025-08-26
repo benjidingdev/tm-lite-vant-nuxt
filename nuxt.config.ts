@@ -6,7 +6,6 @@ const modules = [
   "@vant/nuxt",
   "@vue-macros/nuxt",
   "@pinia/nuxt",
-  "@wagmi/vue/nuxt",
   "@nuxtjs/i18n",
   "pinia-plugin-persistedstate/nuxt",
   "@vueuse/motion/nuxt",
@@ -71,11 +70,6 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: ["form-data"],
-  },
-  vue: {
-    compilerOptions: {
-      isCustomElement: (tag) => ["appkit-button"].includes(tag),
-    },
   },
   runtimeConfig: {
     public: {

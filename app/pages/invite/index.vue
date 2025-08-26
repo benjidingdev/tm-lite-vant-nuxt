@@ -1,5 +1,4 @@
 <script setup>
-import { useAccount } from "@wagmi/vue";
 import { onMounted } from "vue";
 
 const { userInfo } = $(userStore());
