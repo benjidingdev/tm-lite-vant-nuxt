@@ -1,7 +1,6 @@
 <script setup>
 import axios from "axios";
 import { showDialog } from "vant";
-import { parseUnits } from "viem";
 import _ from "lodash";
 import {
   getTopicsRecommend,
@@ -32,6 +31,7 @@ const {
   walletClient,
   account,
 } = $(walletStore());
+const { addRequest } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { tradeVolume } = $(tradeStore());
 const { token } = $(authStore());
@@ -233,66 +233,17 @@ const goDeposit = async () => {
       return false;
     }
     try {
-      setLoadingToast("Processing transaction");
-      const amountRes = await getOrderAmount();
-      if (amountRes.code === 0) {
-        const allowanceAmount =
-          (transaction.textPrice + transaction.fee) * tradeVolume +
-          amountRes.data.totalAmount;
-        let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
-        if (!allowanceRes) {
-          showFailToast("Permit Authorization Failed");
-          return false;
-        }
+
+      // add request to queue
+      addRequest(transaction.marketsId, transaction);
+
+      if (transaction.type === 1) {
+        swipeCard(statusList[0]);
       } else {
-        showFailToast("Permit Authorization Failed");
-        return false;
+        swipeCard(statusList[1], () => { });
       }
 
-      const req = {
-        marketId: transaction.marketsId || 1012110,
-        type: transaction.type, //1-YES；2-NO,
-        amount: null,
-        volume: tradeVolume,
-        priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
-        orderType: 1, //1: buy, 2: sell
-        price: transaction.textPrice * 100,
-        isDeduction: false,
-      };
-      let result = await getTopicsOrderPreview(req);
-      if (result.code === 0) {
-        const order = { ...result.data };
-        let tradeSign;
-        try {
-          result.data.slippageBps = parseUnits(result.data.slippageBps + "", 4);
-          result.data.tokenAmount = parseUnits(result.data.tokenAmount + "", 6);
-          result.data.tokenPriceInPaymentToken = parseUnits(
-            result.data.tokenPriceInPaymentToken + "",
-            6
-          );
-          tradeSign = await signTradeData({ order: result.data });
-        } catch (e) {}
-        if (tradeSign) {
-          const params = {
-            salt: order.salt,
-            message: JSON.stringify(order),
-            signContent: tradeSign,
-          };
-          let res = await getTopicsOrderCreate(params);
-          if (res.code === 0) {
-            if (transaction.type === 1) {
-              swipeCard(statusList[0]);
-            } else {
-              swipeCard(statusList[1], () => {});
-            }
-            showSuccessToast("Transaction Successful");
-          } else {
-            showFailToast(
-              "Transaction Failed" + `: ${res.message || "Unknown error"}`
-            );
-          }
-        }
-      }
+      
     } finally {
       resetCard();
     }
