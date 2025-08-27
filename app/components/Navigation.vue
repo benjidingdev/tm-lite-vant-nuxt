@@ -46,6 +46,7 @@ const showloginModal = () => {
         @click="showloginModal"
         >{{ $t("Login") }}</van-button
       >
+      <ReqestQueueButton />
       <SettingsVolumeButton />
       <SettingsButton />
     </div>

@@ -53,6 +53,8 @@ export const authStore = defineStore(
         proxyWallet: userInfo.proxyWallet,
       });
       updateTraderType(userProfile.data.traderType);
+
+      await amountPermit();
     };
 
     // disconnect wallet and log out

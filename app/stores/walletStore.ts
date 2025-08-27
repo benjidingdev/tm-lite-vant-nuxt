@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { EIP1193Provider } from "viem";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits, parseEther, parseUnits } from "viem";
 import { getBalance } from "@wagmi/core";
 
 import {
@@ -245,6 +245,14 @@ export const walletStore = defineStore("walletStore", () => {
       throw err;
     }
   };
+  const amountPermit = async () => {
+    const allowanceAmount = 2 ** 256 - 1;
+    let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
+    if (!allowanceRes) {
+      await queryAllowanceAndPermit(0, allowanceAmount);
+    }
+  }
+
   return $$({
     shortWalletAddress,
     walletConected,
@@ -262,6 +270,7 @@ export const walletStore = defineStore("walletStore", () => {
     queryAllowanceAndPermit,
     updateUserBalance,
     updateTokenBalance,
+    amountPermit,
   });
 });
 
