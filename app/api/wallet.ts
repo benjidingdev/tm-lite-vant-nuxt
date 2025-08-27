@@ -18,3 +18,12 @@ export const loginByWallet = (params = {}) => {
   });
 };
 
+//withdraw
+export const withdrawRequest = (params = {}) => {
+  return Request({
+    url: `/app-api/topic/user/withdraw`,
+    method: "post",
+    data: params,
+  });
+}
+

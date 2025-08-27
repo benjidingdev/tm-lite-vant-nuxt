@@ -22,6 +22,7 @@ export const authStore = defineStore(
       userId: "",
     });
     let isSign = $ref<boolean>(false); // Whether to sign successfully
+    let nonce = $ref<string>(""); // nonce value for signature
 
     // refresh local cache token
     const updateToken = (tokenInfo: any) => {
@@ -133,6 +134,7 @@ export const authStore = defineStore(
           console.log("todoSign address:", address);
           const nonceRes = await getNonce(address);
           if (nonceRes) {
+            nonce = nonceRes.data;
             const signData = await signLoginMessage(nonceRes.data);
             await todoLogin(signData);
           }
@@ -180,12 +182,13 @@ export const authStore = defineStore(
 
     return $$({
       token,
-      afterLoginSuccess,
+      nonce,
       logOut,
       todoSign,
       updateToken,
       updateSign,
       getNonce,
+      afterLoginSuccess,
     });
   },
   {
