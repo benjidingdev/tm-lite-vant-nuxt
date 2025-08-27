@@ -21,7 +21,7 @@ let currentRate = $ref(0);
 const {
   userBalance,
 } = $(walletStore());
-let { addRequest, cardCount, cards } = $(requestQueueStore());
+let { addRequest, cardCount, cards, isLoading } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
@@ -45,11 +45,13 @@ const getInfoList = async (refresh) => {
     lastPage = false;
     refresherTriggered = true;
   }
+  isLoading = true;
   const res = await getTopicsRecommend(recommondQueryParams);
   if (res.code === 0) {
     cardCount = res.data.list.length;
     cards = res.data.list;
   }
+  isLoading = false;
 };
 
 // Obtain the style of card
@@ -231,6 +233,23 @@ onMounted((e) => {
 
 <template>
   <div class="w-full h-[90%] relative">
+    <van-skeleton :loading="isLoading">
+      <template #template>
+        <div
+          :style="{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '80vh' }">
+
+          <van-skeleton-image image-size="70vw" image-shape="round" />
+
+          <div :style="{ marginTop: '32px', width: '100%' }">
+            <van-skeleton-paragraph row-width="60%" />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+          </div>
+        </div>
+      </template>
+    </van-skeleton>
+
     <div v-if="cards.length">
       <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
         :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart.prevent="touchStart"
@@ -258,7 +277,7 @@ onMounted((e) => {
             <text class="name mt-4">{{ card.title }}</text>
             <text v-if="card?.markets.length" class="desc">{{
               card?.markets[0].question
-              }}</text>
+            }}</text>
           </div>
           <div class="h-[15%] flex justify-between">
             <text> ${{ convertCurrency(card.volume) }} Vol.</text>

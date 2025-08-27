@@ -13,7 +13,8 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
   const { tradeVolume } = $(tradeStore());
   const { signTradeData } = $(walletStore());
 
-  const cards = $ref([]);
+  let isLoading = $ref(true);
+  let cards = $ref([]);
   const queue = $ref([]);
   // const failCards = $ref([]);
   let isProcessing = false;
@@ -96,6 +97,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
   };
 
   return $$({
+    isLoading,
     cards,
     addRequest,
     cardCount,
@@ -104,6 +106,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
 }, {
   persist: {
     omit: [
+      'isLoading',
       'successCount'
     ],
     debug: true,
