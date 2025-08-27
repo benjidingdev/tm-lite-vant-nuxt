@@ -3,10 +3,10 @@ import { withdrawRequest } from "@/api/wallet";
 import { parseUnits } from "viem";
 
 const { wallet, publicClient } = $(privyStore());
-const { signWithdraw, walletConfig } = $(walletStore());
+const { signWithdraw, walletConfig, userBalance } = $(walletStore());
 const { getNonce } = $(authStore());
 
-let toAddress = $ref("");
+// let toAddress = $ref("");
 let tokenAmount = $ref(1);
 let currentStep = $ref(1);
 let status = $ref("processing");
@@ -27,7 +27,9 @@ const waitTransaction = async (hash: string) => {
   }
 };
 
-const withdraw = async () => {
+const withdraw = async (form) => {
+  console.log(form);
+  const { toAddress } = form;
   currentStep = 2;
   // get a new nonce here
   const { data: nonce } = await getNonce(wallet.address);
@@ -55,27 +57,57 @@ const withdraw = async () => {
 
 <template>
   <div v-if="currentStep === 1" class="step-one w-full">
-    <van-form @submit="onSubmit">
-      <van-field
-        v-model="toAddress"
-        name="username"
-        label="Reciplent address"
-        placeholder="Reciplent address"
-        :rules="[{ required: true, message: 'Reciplent address' }]"
-      />
-      <van-field
-        v-model="tokenAmount"
-        name="Amount"
-        label="Amount"
-        placeholder="Amount"
-        :rules="[{ required: true, message: 'Amount' }]"
-      />
+    <van-form @submit="withdraw">
+      <van-field name="toAddress">
+        <template #input>
+          <BalanceForm
+            v-model="toAddress"
+            label="Recipient address"
+            name="toAddress"
+            placeholder="0x..."
+          />
+        </template>
+      </van-field>
+      <van-field name="tokenAmount">
+        <template #input>
+          <BalanceForm
+            v-model="tokenAmount"
+            label="Amount"
+            name="tokenAmount"
+            placeholder="0.00"
+          >
+            <template #input-right>
+              <div
+                class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2"
+              >
+                <span class="text-gray-500 font-medium">USDC</span>
+                <button
+                  type="button"
+                  class="px-3 bg-blue-50 text-blue-600 text-xs font-semibold rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
+                >
+                  MAX
+                </button>
+              </div>
+            </template>
+            <template #input-tips>
+              <div class="flex justify-between space-x-2">
+                <span class="text-gray-400 font-medium text-xs"
+                  >${{ tokenAmount }}</span
+                >
+                <span class="text-gray-400 text-xs ml-2"
+                  >Balance:{{ userBalance }}
+                </span>
+              </div>
+            </template>
+          </BalanceForm>
+        </template>
+      </van-field>
       <van-cell>
         <van-button
+          class="rounded-lg"
           block
           type="primary"
           native-type="submit"
-          @click="withdraw"
         >
           Withdraw
         </van-button>
@@ -83,34 +115,41 @@ const withdraw = async () => {
     </van-form>
   </div>
   <div v-if="currentStep === 2" class="step-two w-full">
-    <van-count-down :time="time">
-      <template #default="timeData">
-        <span class="block">{{ timeData.hours }}</span>
-        <span class="colon">:</span>
-        <span class="block">{{ timeData.minutes }}</span>
-        <span class="colon">:</span>
-        <span class="block">{{ timeData.seconds }}</span>
-      </template>
-    </van-count-down>
     <van-cell-group>
+      <van-cell>
+        <van-count-down :time="time">
+          <template #default="timeData">
+            <span class="block">{{ timeData.hours }}</span>
+            <span class="colon">:</span>
+            <span class="block">{{ timeData.minutes }}</span>
+            <span class="colon">:</span>
+            <span class="block">{{ timeData.seconds }}</span>
+          </template>
+        </van-count-down>
+      </van-cell>
       <van-cell title="Fill status" :value="status" />
       <van-cell title="You receive" value="1.0007" />
       <van-cell title="Transcation ID" value="0x123qsdq123sdad" />
+      <van-notice-bar color="#a7a7a7" background="#f9f9f9" left-icon="info-o">
+        <span class="font-xs">Experiencing problems?</span> <a>Get help</a>
+      </van-notice-bar>
     </van-cell-group>
-    <div class="flex mt-2">
-      <van-button round block type="primary" native-type="submit">
-        Close
-      </van-button>
-      <van-button
-        round
-        block
-        type="primary"
-        native-type="submit"
-        @click="currentStep = 1"
-      >
-        New Withdrawal
-      </van-button>
-    </div>
+    <van-cell>
+      <div class="flex mt-2 gap-2">
+        <van-button round block type="primary" native-type="submit">
+          Close
+        </van-button>
+        <van-button
+          round
+          block
+          type="primary"
+          native-type="submit"
+          @click="currentStep = 1"
+        >
+          New Withdrawal
+        </van-button>
+      </div>
+    </van-cell>
   </div>
 </template>
 

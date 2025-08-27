@@ -1,7 +1,18 @@
 <script setup lang="ts">
-const { modalIsShow, setModal } = $(uiStore());
+const { userBalance, shortWalletAddress } = $(walletStore());
 </script>
-
 <template>
-  <div class="w-full">111</div>
+  <van-cell-group>
+    <van-cell>
+      <div class="w-full text-center">
+        TuringMarket Balance: ${{ userBalance }}
+      </div>
+    </van-cell>
+    <van-cell title="Wallet Address" :value="shortWalletAddress" />
+    <van-cell title="Wallet Address Copy">
+      <template #right-icon>
+        <van-button size="small" type="primary">Copy</van-button>
+      </template>
+    </van-cell>
+  </van-cell-group>
 </template>
