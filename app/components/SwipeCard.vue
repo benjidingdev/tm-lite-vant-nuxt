@@ -21,7 +21,7 @@ let currentRate = $ref(0);
 const {
   userBalance,
 } = $(walletStore());
-let { addRequest, cardCount, cards, isLoading } = $(requestQueueStore());
+let { addRequest, cards, isLoading } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
@@ -48,7 +48,6 @@ const getInfoList = async (refresh) => {
   isLoading = true;
   const res = await getTopicsRecommend(recommondQueryParams);
   if (res.code === 0) {
-    cardCount = res.data.list.length;
     cards = res.data.list;
   }
   isLoading = false;

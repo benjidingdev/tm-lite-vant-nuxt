@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const { setModal } = $(uiStore());
-const { cardCount, successCount } = $(requestQueueStore());
+const { requestCount, successCount } = $(requestQueueStore());
 </script>
 <template>
-  <van-button size="small" class="mr-1! w-8 h-8" plain round hairline>{{
-    successCount }}/{{ cardCount }}</van-button>
+  <van-button v-if="requestCount > 0" size="small" class="mr-1! w-8 h-8" plain round hairline>{{
+    successCount }}/{{ requestCount }}</van-button>
 </template>
