@@ -15,6 +15,7 @@ const {
   userId,
   initWallet,
   errorInfo,
+  sendEmail,
 } = $(privyStore());
 
 let otpValue = $ref("");
@@ -43,10 +44,6 @@ const login = async () => {
 const resend = async () => {
   startCountdown();
   await sendEmail();
-};
-
-const sendEmail = async () => {
-  await $privy.auth.email.sendCode(email);
 };
 
 function updateButtonState() {
@@ -136,7 +133,7 @@ watch(
             type="primary"
             native-type="submit"
             :loading="isLoading"
-            @click="doLogin"
+            @click="sendEmail"
           >
             {{ $t("Submit") }}
           </van-button>

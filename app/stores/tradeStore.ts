@@ -1,5 +1,5 @@
 export const tradeStore = defineStore("tradeStore", () => {
-  let tradeVolume = $ref(1)
+  let tradeVolume = $ref(5)
   const updateVolume = (volume: number) => {
     tradeVolume = volume
   }
