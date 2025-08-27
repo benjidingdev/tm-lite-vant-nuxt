@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { EIP1193Provider } from "viem";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits, parseEther, parseUnits } from "viem";
 import { getBalance, writeContract } from "@wagmi/core";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/vue";
 
@@ -8,7 +8,11 @@ import {
   TYPEHASH_DOMAIN,
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
-import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
+import {
+  TYPEHASH_PERMIT,
+  TYPEHASH_ORDER,
+  TYPEHASH_WITHDRAW,
+} from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
 import { approveSign } from "@/api/userInfo";
 import { market, usdtAbi } from "@/config/abis";
@@ -64,7 +68,7 @@ export const walletStore = defineStore("walletStore", () => {
 
   // transcation signature
   const signTradeData = async (options: SignTradeDataOptions) => {
-    const { domain, types, order } = options;
+    const { order } = options;
     try {
       const typeDomain = {
         name: walletConfig.contract.name,
@@ -121,10 +125,6 @@ export const walletStore = defineStore("walletStore", () => {
     }
   };
 
-  async function ensureWalletUnlocked() {
-    const provider = window.ethereum as EIP1193Provider;
-    if (!provider) throw new Error("MetaMask is not installed");
-  }
   /**
    * Query the user's token authorization
    * @param coinType
@@ -311,6 +311,36 @@ export const walletStore = defineStore("walletStore", () => {
     return false;
   };
 
+  const signWithdraw = async (params: any) => {
+    try {
+      const typeDomain = {
+        name: walletConfig.contract.name,
+        version: walletConfig.contract.version.toString(),
+        chainId: walletConfig.chain.id,
+        verifyingContract: walletConfig.contract.address,
+      } as const;
+      // signature trade data
+      const content = {
+        domain: typeDomain,
+        types: TYPEHASH_WITHDRAW,
+        primaryType: "Withdraw",
+        message: params,
+      };
+      const result = await walletClient.signTypedData(content);
+      console.log("result:", result, "typeDomain:", typeDomain);
+    } catch (err) {
+      console.error("Error signing typed data:", err);
+      throw err;
+    }
+  };
+  const amountPermit = async () => {
+    const allowanceAmount = 2 ** 256 - 1;
+    let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
+    if (!allowanceRes) {
+      await queryAllowanceAndPermit(0, allowanceAmount);
+    }
+  }
+
   return $$({
     shortWalletAddress,
     walletConected,
@@ -321,12 +351,14 @@ export const walletStore = defineStore("walletStore", () => {
     userBalance,
     userCapital,
     tokenBalance,
+    signWithdraw,
     updateWalletBalance,
     signTradeData,
     updateWalletConfig,
     queryAllowanceAndPermit,
     updateUserBalance,
     updateTokenBalance,
+    amountPermit,
   });
 });
 

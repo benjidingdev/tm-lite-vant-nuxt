@@ -61,7 +61,7 @@ export const TYPEHASH_WITHDRAW = {
     { name: 'from', type: 'address' },
     { name: 'to', type: 'address' },
     { name: 'amount', type: 'uint256' },
-    { name: 'fee', type: 'uint256' },
+    // { name: 'fee', type: 'uint256' },
     { name: 'tokenAddress', type: 'address' },
     { name: 'nonce', type: 'uint256' }
   ]

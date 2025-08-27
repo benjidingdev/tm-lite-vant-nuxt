@@ -7,6 +7,7 @@ export const uiStore = defineStore("uiStore", () => {
     share: false,
     showTradePicker: false,
     loginModal: false,
+    balanceModal: false,
   });
   let keyBoardIsShow = $ref({
     settings: false,

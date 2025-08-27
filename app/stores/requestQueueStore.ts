@@ -11,42 +11,38 @@ import { parseUnits } from "viem";
 export const requestQueueStore = defineStore("requestQueueStore", () => {
 
   const { tradeVolume } = $(tradeStore());
-  const {signTradeData, queryAllowanceAndPermit} = $(walletStore());
+  const { signTradeData } = $(walletStore());
 
-  const queueMap = $ref({});
+  let isLoading = $ref(true);
+  let cards = $ref([]);
+  const queue = $ref([]);
+  // const failCards = $ref([]);
+  let isProcessing = false;
+  let cardCount = $ref(0);
+  let successCount = $ref(0);
+  // const failCount = $computed(() => queue.filter((item: any) => item.status === 'fail').length);
 
-  const addRequest = (key: number, request: any) => {
-    queueMap[key] = request;
-    processRequest(key);
+  const addRequest = (transaction: any, card: any) => {
+    queue.push({ transaction, card, status: 'init', createdAt: Date.now() });
+    processRequest();
   };
 
-  const getRequest = (key: number) => {
-    return queueMap[key];
-  };
-
-  const removeRequest = (key: number) => {
-    delete queueMap[key];
-  };
-
-  const processRequest = async (key: number) => {
-
-    const transaction = getRequest(key);
-
+  const processRequest = async () => {
+    if (isProcessing || queue.length === 0) {
+      return;
+    }
+    isProcessing = true;
+    const payload = queue[0];
+    const transaction = payload.transaction;
+    console.log('processRequest', transaction, payload);
+    if (!payload) {
+      return;
+    }
+    if (payload.status === 'processing') {
+      return;
+    }
+    payload.status = 'processing';
     // setLoadingToast("Processing transaction");
-      const amountRes = await getOrderAmount();
-      if (amountRes.code === 0) {
-        const allowanceAmount =
-          (transaction.textPrice + transaction.fee) * tradeVolume +
-          amountRes.data.totalAmount;
-        let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
-        if (!allowanceRes) {
-          showFailToast("Permit Authorization Failed");
-          return false;
-        }
-      } else {
-        showFailToast("Permit Authorization Failed");
-        return false;
-      }
 
     const req = {
       marketId: transaction.marketsId || 1012110,
@@ -80,21 +76,41 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
         let res = await getTopicsOrderCreate(params);
         console.log("create order res:", res);
         if (res.code === 0) {
+          payload.status = 'success';
+          successCount++;
           // showSuccessToast("Transaction Successful");
+          // showNotify({ type: 'success', message: `${Object.keys(queueMap).length}` + " Transaction Successful" });
         } else {
-          showFailToast(
-            "Transaction Failed" + `: ${res.message || "Unknown error"}`
+          payload.status = 'fail';
+          cards.unshift({ ...payload.card, retry: true })
+
+          showNotify(
+            { type: 'danger', message: transaction.marketsTitle + " Transaction Failed" + `: ${res.message || "Unknown error"}` }
           );
         }
       }
     }
+
+    queue.shift()
+    isProcessing = false;
+    processRequest();
   };
 
   return $$({
+    isLoading,
+    cards,
     addRequest,
-    getRequest,
-    removeRequest,
+    cardCount,
+    successCount,
   });
+}, {
+  persist: {
+    omit: [
+      'isLoading',
+      'successCount'
+    ],
+    debug: true,
+  },
 });
 
 if (import.meta.hot) {
