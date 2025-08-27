@@ -74,6 +74,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
+      testnet: true,
       siteUrl: "",
       siteName: "",
       siteSlogan: "",

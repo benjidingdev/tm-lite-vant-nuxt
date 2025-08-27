@@ -1,11 +1,12 @@
 import { createWalletClient, createPublicClient, custom } from "viem";
-import { networks } from "~/config/networks";
+import { getNetworks } from "~/config/networks";
 
 export const privyStore = defineStore(
   "privyStore",
   () => {
     const { $privy, $PrivySDK } = useNuxtApp();
     const { updateWalletBalance } = $(walletStore());
+    const networks = getNetworks(useRuntimeConfig().public.testnet as boolean)
 
     let email = $ref("");
     let hasSend = $ref(false);

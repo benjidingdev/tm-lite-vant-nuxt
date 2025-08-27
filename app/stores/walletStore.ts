@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import type { EIP1193Provider } from "viem";
 import { formatUnits, parseUnits } from "viem";
-import { getBalance } from "@wagmi/core";
+import { getBalance, writeContract } from "@wagmi/core";
+import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/vue";
 
 import {
   TYPEHASH_DOMAIN,
@@ -10,8 +11,9 @@ import {
 import { TYPEHASH_PERMIT, TYPEHASH_ORDER } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
 import { approveSign } from "@/api/userInfo";
-import { market } from "@/config/abis";
+import { market, usdtAbi } from "@/config/abis";
 import { shortenAddress } from "@/utils/processing";
+import { getUsdcAddress, getDomain, getTokenMessager, getMessageTransmitter } from "@/config/networks"
 
 type contentType = {
   domain: typeof TYPEHASH_DOMAIN;
@@ -29,6 +31,9 @@ export const walletStore = defineStore("walletStore", () => {
   let account = $ref(null);
 
   const { $wagmiAdapter } = useNuxtApp();
+
+  const networkData = $ref(useAppKitNetwork());
+  const accountData = $ref(useAppKitAccount());
 
   const userCapital = $ref({
     total: 0,
@@ -135,6 +140,89 @@ export const walletStore = defineStore("walletStore", () => {
     });
     return result as bigint;
   };
+
+  /**
+    * Signature authorization
+    */
+  const approveUSDC = async (amount: number) => {
+    try {
+      const usdcAddress = getUsdcAddress(networkData.caipNetwork!)
+      const tokenMessager = getTokenMessager(networkData.caipNetwork!)
+
+      const tx = await writeContract($wagmiAdapter.wagmiConfig, {
+        abi: usdtAbi,
+        address: usdcAddress,
+        args: [
+          tokenMessager,
+          parseUnits(amount.toString(), 6)
+        ],
+        functionName: 'approve'
+      })
+      console.log('approve usdc result', tx)
+      return tx
+    } catch (err) {
+      console.error("Error signing approve:", err)
+      return undefined
+    }
+  }
+
+  /**
+    *
+    */
+  const burnUSDC = async (amount: number) => {
+    try {
+      const usdcAddress = getUsdcAddress(networkData.caipNetwork!)
+      const tokenMessager = getTokenMessager(networkData.caipNetwork!)
+      const domain = getDomain(networkData.caipNetwork!)
+      const connectAddress = accountData.address
+      const destinationAddress_bytes32 = `0x000000000000000000000000${connectAddress.slice(2)}`
+      const destinationCaller_bytes32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
+      const tx = await writeContract($wagmiAdapter.wagmiConfig, {
+        abi: usdtAbi,
+        address: tokenMessager,
+        args: [
+          parseUnits(amount.toString(), 6),
+          domain,
+          destinationAddress_bytes32,
+          usdcAddress,
+          destinationCaller_bytes32,
+          500n, // Set fast transfer max fee in 10^6 subunits (0.0005 USDC; change as needed)
+          1000 // minFinalityThreshold (1000 or less for Fast Transfer)
+        ],
+        functionName: 'depositForBurn'
+      })
+      console.log(`burn usdc from domain: ${domain} and return transactionHash: ${tx}`)
+      return { domain: domain, transactionHash: tx }
+    } catch (err) {
+      console.error("Error signing approve:", err)
+      return undefined
+    }
+  }
+
+  /**
+   *
+   */
+  const mintUSDC = async (attestation: any) => {
+    try {
+      const messageTransmitter = getMessageTransmitter(networkData.caipNetwork!)
+
+      const tx = await writeContract($wagmiAdapter.wagmiConfig, {
+        abi: usdtAbi,
+        address: messageTransmitter,
+        args: [
+          attestation.message,
+          attestation.attestation
+        ],
+        functionName: 'receiveMessage'
+      })
+      console.log(`receive message: ${attestation} and mint usdc: ${tx}`)
+      return tx
+    } catch (err) {
+      console.error("Error signing approve:", err)
+      return undefined
+    }
+  }
 
   /**
    * Sign the permit

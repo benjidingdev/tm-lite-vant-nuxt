@@ -1,6 +1,8 @@
 import Privy, * as PrivySDK from '@privy-io/js-sdk-core'
-import { networks } from '~/config/networks'
+// import { networks } from '~/config/networks'
 import type { Plugin as NuxtPlugin } from '#app'
+import type { Chain } from 'viem'
+import { getWagmiAdapter } from '@/config/reown'
 
 const plugin: NuxtPlugin = defineNuxtPlugin(() => {
   const appId = 'cmenkmv1900dzla0b7lyg397f';
@@ -8,7 +10,7 @@ const plugin: NuxtPlugin = defineNuxtPlugin(() => {
   const privy = new Privy({
     appId,
     clientId,
-    supportedChains: networks,
+    supportedChains: [getWagmiAdapter().networks[0] as Chain],
     storage: new PrivySDK.LocalStorage()
   });
   return { provide: { privy, PrivySDK } }
