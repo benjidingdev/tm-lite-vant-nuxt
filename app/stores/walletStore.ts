@@ -223,10 +223,6 @@ export const walletStore = defineStore("walletStore", () => {
     return false;
   };
 
-  const permitMax = async () => {
-
-  }
-
   const amountPermit = async () => {
     // const amountRes = await getOrderAmount();
     // if (amountRes.code === 0) {
@@ -246,8 +242,7 @@ export const walletStore = defineStore("walletStore", () => {
     const allowanceAmount = 2 ** 256 - 1;
     let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
     if (!allowanceRes) {
-      showFailToast("Permit Authorization Failed sign");
-      await permitMax();
+      await queryAllowanceAndPermit(0, allowanceAmount);
     }
   }
 
