@@ -136,11 +136,10 @@ const withdraw = async (form) => {
     </van-cell-group>
     <van-cell>
       <div class="flex mt-2 gap-2">
-        <van-button round block type="primary" native-type="submit">
+        <van-button block type="primary" plain native-type="submit">
           Close
         </van-button>
         <van-button
-          round
           block
           type="primary"
           native-type="submit"

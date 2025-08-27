@@ -11,7 +11,9 @@ export const authStore = defineStore(
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
     const { loadUserInfo, userInfo, updateUserInfo } = $(userStore());
-    const { updateWalletBalance, wallet, walletClient } = $(walletStore());
+    const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
+      walletStore()
+    );
     let { logoutPrivy, hasSend, isLoading } = $(privyStore());
 
     let token = $ref({
@@ -60,6 +62,7 @@ export const authStore = defineStore(
     // disconnect wallet and log out
     const logOut = async () => {
       try {
+        showToast("Logging out...");
         hasSend = false;
         isLoading = false;
         await logoutPrivy();

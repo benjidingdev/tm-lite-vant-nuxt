@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { modalIsShow, setModal } = $(uiStore());
+const { modalIsShow } = $(uiStore());
 </script>
 
 <template>

@@ -106,6 +106,14 @@ export const privyStore = defineStore(
       };
     };
 
+    const sendEmail = async () => {
+      await $privy.auth.email.sendCode(email);
+      hasSend = true;
+      isLoading = false;
+      oneTimePassword = "";
+      errorInfo = "";
+    };
+
     const logoutPrivy = async () => {
       await $privy.auth.logout();
     };
@@ -127,6 +135,7 @@ export const privyStore = defineStore(
       refreshSession,
       setupEmbeddedWalletIframe,
       logoutPrivy,
+      sendEmail,
     });
   },
   {
