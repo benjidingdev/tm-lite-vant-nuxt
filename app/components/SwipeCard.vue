@@ -248,55 +248,55 @@ onMounted((e) => {
           </div>
         </div>
       </template>
-    </van-skeleton>
+      <div v-if="cards.length">
+        <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
+          :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart.prevent="touchStart"
+          @touchmove.prevent="touchMove" @touchend.prevent="touchEnd(card, event)">
+          <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="cover">
+            <div class="absolute -bottom-8 h-16 w-full">
+              <div class="flex justify-between items-center h-full px-6">
+                <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                  @click="buyYes(card)">
+                  <van-icon name="checked" size="66" color="#97dbb4" />
+                </div>
 
-    <div v-if="cards.length">
-      <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
-        :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart.prevent="touchStart"
-        @touchmove.prevent="touchMove" @touchend.prevent="touchEnd(card, event)">
-        <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="cover">
-          <div class="absolute -bottom-8 h-16 w-full">
-            <div class="flex justify-between items-center h-full px-6">
-              <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="buyYes(card)">
-                <van-icon name="checked" size="66" color="#97dbb4" />
-              </div>
-
-              <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg" @click="bookmark">
-                <van-icon size="30" name="star-o" color="#c4c406" />
-              </div>
-              <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                @click="buyNo(card)">
-                <van-icon name="clear" size="66" color="#fe9595" />
+                <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                  @click="bookmark">
+                  <van-icon size="30" name="star-o" color="#c4c406" />
+                </div>
+                <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                  @click="buyNo(card)">
+                  <van-icon name="clear" size="66" color="#fe9595" />
+                </div>
               </div>
             </div>
+          </van-image>
+          <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
+            <div class="h-[85%] overflow-auto">
+              <text class="name mt-4">{{ card.title }}</text>
+              <text v-if="card?.markets.length" class="desc">{{
+                card?.markets[0].question
+                }}</text>
+            </div>
+            <div class="h-[15%] flex justify-between">
+              <text> ${{ convertCurrency(card.volume) }} Vol.</text>
+              <van-circle class="bottom-5" v-model:current-rate="currentRate" :stroke-width="80"
+                :rate="percentage(card?.markets[0].lastTradePrice, 'num')" :speed="100" size="42px"
+                layer-color="#d8d8d8" :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'" />
+            </div>
           </div>
-        </van-image>
-        <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
-          <div class="h-[85%] overflow-auto">
-            <text class="name mt-4">{{ card.title }}</text>
-            <text v-if="card?.markets.length" class="desc">{{
-              card?.markets[0].question
-            }}</text>
-          </div>
-          <div class="h-[15%] flex justify-between">
-            <text> ${{ convertCurrency(card.volume) }} Vol.</text>
-            <van-circle class="bottom-5" v-model:current-rate="currentRate" :stroke-width="80"
-              :rate="percentage(card?.markets[0].lastTradePrice, 'num')" :speed="100" size="42px" layer-color="#d8d8d8"
-              :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'" />
-          </div>
-        </div>
 
-        <div v-if="currentIndex === index" class="hint-box">
-          <div class="hint like" :style="{ opacity: -offsetX / 150 }">YES</div>
-          <div class="hint nope" :style="{ opacity: offsetX / 150 }">NO</div>
+          <div v-if="currentIndex === index" class="hint-box">
+            <div class="hint like" :style="{ opacity: -offsetX / 150 }">YES</div>
+            <div class="hint nope" :style="{ opacity: offsetX / 150 }">NO</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-else>
-      <van-empty description="If you are interested in Turing Market, please go to our official version" />
-    </div>
+      <div v-else>
+        <van-empty description="If you are interested in Turing Market, please go to our official version" />
+      </div>
+    </van-skeleton>
   </div>
 </template>
 
