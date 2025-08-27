@@ -11,13 +11,8 @@ export const authStore = defineStore(
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
     const { loadUserInfo, userInfo, updateUserInfo } = $(userStore());
-<<<<<<< HEAD
     const { updateWalletBalance, wallet, walletClient } = $(walletStore());
     let { logoutPrivy, hasSend, isLoading } = $(privyStore());
-=======
-    const { updateWalletBalance, wallet, walletClient, amountPermit } = $(walletStore());
-    const { logoutPrivy } = $(privyStore());
->>>>>>> request queue update
 
     let token = $ref({
       accessToken: "",
