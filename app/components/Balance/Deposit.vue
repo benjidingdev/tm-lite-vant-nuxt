@@ -1,21 +1,11 @@
 <script setup lang="ts">
 import { showToast } from "vant";
-const { userBalance, shortWalletAddress, wallet } = $(walletStore());
+const { userBalance } = $(walletStore());
 let { depositData } = $(depositStore());
 
 const currentStep = $ref(1);
 
-const copyToClipboard = async (text) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast("Copied to clipboard");
-  } catch (err) {
-    console.error("copy failed:", err);
-  }
-};
-
 let result = $ref("");
-let pickerValue = $ref([]);
 let showChainPicker = $ref(false);
 let columns = [
   { text: "AVALANCHE", value: "avalanche" },
@@ -24,7 +14,7 @@ let columns = [
 
 const onConfirm = ({ selectedValues, selectedOptions }) => {
   result = selectedOptions[0]?.text;
-  pickerValue = selectedValues;
+  depositData.chain = selectedValues;
   showChainPicker = false;
 };
 
@@ -117,7 +107,7 @@ const deposit = async () => {
         >
           <van-picker
             :columns="columns"
-            :model-value="pickerValue"
+            :model-value="depositData.chain"
             @confirm="onConfirm"
             @cancel="showChainPicker = false"
           />
