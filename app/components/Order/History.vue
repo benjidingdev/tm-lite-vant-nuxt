@@ -4,9 +4,9 @@ import { amountMoney } from "@/utils/processing";
 import { multiply } from "@/utils/decimal";
 import { onMounted } from "vue";
 
-const { setModal } = $(uiStore());
+const { setModal, triggerCallDuration, firstCall } = $(uiStore());
+let { order } = $(userStore());
 
-let historyList = $ref([]);
 const voState = $ref({
   isLoading: false,
   queryParams: {
@@ -31,9 +31,9 @@ const fetchHistoryList = async () => {
   try {
     const res = await userTradeInfo(voState.queryParams);
     if (voState.queryParams.pageNo === 1) {
-      historyList = res?.data?.list;
+      order.historyList = res?.data?.list;
     } else {
-      historyList = historyList.concat(res.data.list);
+      order.historyList = order?.historyList?.concat(res.data.list);
     }
     voState.total = res.data.total;
     voState.isLoading = false;
@@ -47,13 +47,17 @@ const dollars2cents = (value) => {
 };
 
 onMounted(() => {
+  const isCallNow = triggerCallDuration(Date.now(), 10);
+  if (firstCall.history && !isCallNow) {
+    return;
+  }
   fetchHistoryList();
 });
 </script>
 
 <template>
-  <div class="w-full bg-color-white p-4" v-if="historyList.length !== 0">
-    <van-swipe-cell v-for="item in historyList" :key="item.marketId">
+  <div class="w-full bg-color-white p-4" v-if="order?.historyList.length !== 0">
+    <van-swipe-cell v-for="item in order?.historyList" :key="item.marketId">
       <van-card
         :key="item.marketId"
         :price="
@@ -65,6 +69,7 @@ onMounted(() => {
         :desc="'Buy ' + item.yesName"
         :title="item.question"
         :thumb="item.image"
+        class="mt-2"
       >
         <template #footer>
           <van-button plain size="mini" type="primary" @click="showShares(item)"

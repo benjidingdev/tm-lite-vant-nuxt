@@ -3,9 +3,9 @@ import { userHoldInfoList } from "@/api/positions";
 import { formatTitle } from "@/utils/processing";
 import { onMounted } from "vue";
 
-const { setModal } = $(uiStore());
+const { setModal, triggerCallDuration, firstCall } = $(uiStore());
+let { order } = $(userStore());
 
-let positionList = $ref([]);
 const voState = $ref({
   isLoading: false,
   queryParams: {
@@ -26,15 +26,20 @@ const showShares = (item) => {
 const fetchUserHoldInfoList = async () => {
   const res = await userHoldInfoList(voState.queryParams);
   if (voState.queryParams.pageNo === 1 && res?.data) {
-    positionList = res?.data?.list;
+    order.positionList = res?.data?.list;
   } else {
-    positionList = positionList.concat(res?.data?.list);
+    order.positionList = order?.positionList?.concat(res?.data?.list);
   }
   voState.total = res?.data?.total;
   voState.isLoading = false;
+  firstCall.position = true;
 };
 
 onMounted(() => {
+  const isCallNow = triggerCallDuration(Date.now(), 10);
+  if (firstCall.position && !isCallNow) {
+    return;
+  }
   fetchUserHoldInfoList();
 });
 </script>
@@ -42,9 +47,9 @@ onMounted(() => {
 <template>
   <div
     class="w-full bg-color-white p-4 overflow-auto"
-    v-if="positionList.length !== 0"
+    v-if="order?.positionList.length !== 0"
   >
-    <van-swipe-cell v-for="item in positionList" :key="item.marketId">
+    <van-swipe-cell v-for="item in order?.positionList" :key="item.marketId">
       <van-card
         currency="$"
         :key="item.marketId"
@@ -52,6 +57,7 @@ onMounted(() => {
         :desc="item.description"
         :title="item.question"
         :thumb="item.image"
+        class="mt-2"
       >
         <template #footer>
           <van-button plain size="mini" type="primary" @click="showShares(item)"

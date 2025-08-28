@@ -4,6 +4,11 @@ export const userStore = defineStore("userStore", () => {
   const { token } = $(authStore());
   let userInfo = $ref({});
   let hasSetLocale = $ref(false);
+  let order = $ref({
+    positionList: [],
+    openOrderList: [],
+    historyList: [],
+  });
 
   // refresh information
   const updateUserInfo = (data: any) => {
@@ -19,9 +24,10 @@ export const userStore = defineStore("userStore", () => {
   };
 
   return $$({
-    updateUserInfo,
     userInfo,
+    order,
     hasSetLocale,
+    updateUserInfo,
     loadUserInfo,
   });
 },

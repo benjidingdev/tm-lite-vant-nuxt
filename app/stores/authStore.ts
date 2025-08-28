@@ -14,7 +14,7 @@ export const authStore = defineStore(
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
-    let { logoutPrivy, hasSend, isLoading } = $(privyStore());
+    let { logoutPrivy, hasSend, isLoading, session, errorInfo } = $(privyStore());
 
     let token = $ref({
       accessToken: "",
@@ -66,12 +66,14 @@ export const authStore = defineStore(
         hasSend = false;
         isLoading = false;
         await logoutPrivy();
+
         let res: any = await getLogout();
         if (res?.code === 0) {
-          updateToken({});
           deleteAllCookies();
+          updateToken({});
           updateUserInfo({});
-          await updateWalletBalance();
+          session = null;
+          errorInfo = null;
           showToast("Logout successful");
         }
       } catch (e) {

@@ -4,11 +4,10 @@ const emailPattern =
 
 const { $privy } = useNuxtApp();
 const { todoSign } = $(authStore());
-const { setModal, modalIsShow, keyBoardIsShow, setKeyBoard } = $(uiStore());
+const { modalIsShow, setKeyBoard } = $(uiStore());
 const {
   email,
   hasSend,
-  oneTimePassword,
   isLoading,
   doLogin,
   wallet,
@@ -17,6 +16,7 @@ const {
   errorInfo,
   sendEmail,
 } = $(privyStore());
+let { oneTimePassword } = $(privyStore());
 
 let otpValue = $ref("");
 let showKeyboard = $ref(false);
@@ -24,6 +24,7 @@ let currentStep = $ref(1);
 let countdown = $ref(0);
 let resendDisabled = $ref(false);
 let countdownInterval = null;
+const code = ref("");
 
 const resendBtnColor = $computed(() => {
   return countdown > 0 ? "text-gray-500" : "text-blue-500";
@@ -69,6 +70,17 @@ const startCountdown = () => {
   }, 1000);
 };
 
+const handleFocus = async () => {
+  const pastedText = await navigator.clipboard.readText();
+  const extractedCode = pastedText.match(/\d{6}/);
+
+  if (extractedCode) {
+    oneTimePassword = extractedCode[0];
+  } else {
+    setKeyBoard("settings", true);
+  }
+};
+
 watch(
   () => oneTimePassword,
   (newVal: string) => {
@@ -112,7 +124,7 @@ watch(
             :value="oneTimePassword"
             :mask="false"
             :focused="true"
-            @focus="setKeyBoard('settings', true)"
+            @focus="handleFocus"
           />
         </van-cell-group>
         <div v-if="hasSend" class="flex justify-end">
