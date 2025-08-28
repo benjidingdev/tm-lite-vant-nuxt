@@ -48,6 +48,7 @@ const getInfoList = async (refresh) => {
     }
     recommondQueryParams.pageNo++;
   } else {
+    isLoading = true;
     cards = [];
   }
 
