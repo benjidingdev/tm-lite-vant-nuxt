@@ -249,7 +249,8 @@ onMounted((e) => {
         <div
           :style="{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '80vh' }">
 
-          <div :style="{ width: '100%', height: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--van-active-color)', borderRadius: '24px' }">
+          <div
+            :style="{ width: '100%', height: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--van-active-color)', borderRadius: '24px' }">
             <van-loading size="48" />
           </div>
 
@@ -295,7 +296,7 @@ onMounted((e) => {
               <text class="name mt-4">{{ card.title }}</text>
               <text v-if="card?.markets.length" class="desc">{{
                 card?.markets[0].question
-              }}</text>
+                }}</text>
             </div>
             <div class="h-[15%] flex justify-between">
               <text> ${{ convertCurrency(card.volume) }} Vol.</text>
@@ -313,7 +314,14 @@ onMounted((e) => {
       </div>
 
       <div v-else>
-        <van-empty description="If you are interested in Turing Market, please go to our official version" />
+        <van-empty description="If you are interested in Turing Market, please go to our official version"
+          style="--van-empty-description-color: #323232;">
+          <template #image>
+             <img src="/assets/icon/logo.svg" />
+           </template>
+
+           <van-button round type="primary" class="bottom-button">Launch App</van-button>
+        </van-empty>
       </div>
     </van-skeleton>
   </div>

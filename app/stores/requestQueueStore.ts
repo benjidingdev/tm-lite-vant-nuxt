@@ -17,7 +17,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
   let cards = $ref([]);
   const queue = $ref([]);
   // const failCards = $ref([]);
-  let isProcessing = false;
+  let isProcessing = $ref(false);
   let requestCount = $ref(0);
   let successCount = $ref(0);
   // const failCount = $computed(() => queue.filter((item: any) => item.status === 'fail').length);
@@ -98,6 +98,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
   };
 
   return $$({
+    isProcessing,
     isLoading,
     cards,
     addRequest,
