@@ -70,9 +70,8 @@ const startCountdown = () => {
   }, 1000);
 };
 
-const handleFocus = (event) => {
-  event.preventDefault();
-  const pastedText = event.clipboardData.getData("text");
+const handleFocus = async () => {
+  const pastedText = await navigator.clipboard.readText();
   const extractedCode = pastedText.match(/\d{6}/);
 
   if (extractedCode) {
