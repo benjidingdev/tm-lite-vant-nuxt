@@ -1,7 +1,8 @@
 import { WagmiPlugin } from '@wagmi/vue'
 import { defineNuxtPlugin } from 'nuxt/app'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { networks } from '@/config/networks'
+// import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+// import { networks } from '@/config/networks'
+import { getWagmiAdapter } from '@/config/reown'
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig()
@@ -12,10 +13,11 @@ export default defineNuxtPlugin(nuxtApp => {
     url: config.public.siteUrl as string, // origin must match your domain & subdomain
     icons: [`${config.public.siteUrl}/favicon.ico`]
   }
-  const wagmiAdapter = new WagmiAdapter({
-    networks,
-    projectId,
-  })
+  const wagmiAdapter = getWagmiAdapter()
+  // const wagmiAdapter = new WagmiAdapter({
+  //   networks,
+  //   projectId,
+  // })
   nuxtApp.vueApp.use(WagmiPlugin, { 
     config: wagmiAdapter.wagmiConfig,
   })
