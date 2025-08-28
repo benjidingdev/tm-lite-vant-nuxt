@@ -9,6 +9,7 @@ const { modalIsShow } = $(uiStore());
     title="Balance"
     :showConfirmButton="false"
     :showCancelButton="false"
+    :z-index="50"
   >
     <van-tabs v-model:active="active">
       <van-tab title="Deposit"><BalanceDeposit /></van-tab>

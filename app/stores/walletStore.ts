@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import type { EIP1193Provider } from "viem";
 import { formatUnits, parseEther, parseUnits } from "viem";
-import { getBalance, writeContract } from "@wagmi/core";
-import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/vue";
+import { getBalance, readContract, writeContract } from "@wagmi/core";
+import { useAccount, useAccountEffect } from "@wagmi/vue";
+import { useAppKit, useAppKitNetwork } from "@reown/appkit/vue";
 
 import {
   TYPEHASH_DOMAIN,
@@ -17,7 +18,7 @@ import type { SignTradeDataOptions } from "@/types/sign";
 import { approveSign } from "@/api/userInfo";
 import { market, usdtAbi } from "@/config/abis";
 import { shortenAddress } from "@/utils/processing";
-import { getUsdcAddress, getDomain, getTokenMessager, getMessageTransmitter } from "@/config/networks"
+import { getNetworks, getUsdcAddress, getDomain, getTokenMessager, getMessageTransmitter } from "@/config/networks"
 
 type contentType = {
   domain: typeof TYPEHASH_DOMAIN;
@@ -32,12 +33,15 @@ export const walletStore = defineStore("walletStore", () => {
   let usdtBalance = $ref<bigint | null>(null); // USDT balance
   let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
-  let account = $ref(null);
+  let usdcBalance = $ref(0);
+  let selfBalance = $ref(0);
 
   const { $wagmiAdapter } = useNuxtApp();
+  const networks = getNetworks(useRuntimeConfig().public.testnet as boolean)
 
-  const networkData = $ref(useAppKitNetwork());
-  const accountData = $ref(useAppKitAccount());
+  const { open } = useAppKit();
+  const account = useAccount();
+  const networkData = useAppKitNetwork();
 
   const userCapital = $ref({
     total: 0,
@@ -49,9 +53,66 @@ export const walletStore = defineStore("walletStore", () => {
 
   const { walletClient, publicClient, wallet } = $(privyStore());
 
+  let loginAddress = $computed(() => {
+    return wallet?.address;
+  })
   let shortWalletAddress = $computed(() => {
     return shortenAddress(wallet?.address || "", 4, 4);
   });
+
+  useAccountEffect({
+    config: $wagmiAdapter.wagmiConfig,
+    onConnect(data: any) {
+      console.log("Wallet connected:", data);
+      walletConected = true;
+      getSelfBalance();
+    },
+    onDisconnect() {
+      console.log("Wallet disconnected");
+      walletConected = false;
+      selfBalance = 0;
+    },
+  });
+
+  const connectWallet = async () => {
+    if (account.status.value != 'connected') {
+      await open({ view: 'Connect' })
+    } else {
+      await open({ view: 'Account' })
+    }
+  }
+
+  const switchNetwork = async (networkName: string) => {
+    const network = $wagmiAdapter.wagmiChains!.find((chain) => chain.name === networkName);
+    if (network) {
+      networkData.value.switchNetwork(network);
+    }
+  }
+
+  const getSelfBalance = async () => {
+    if (account.status.value != 'connected') return;
+    const usdcAddress = getUsdcAddress(account.chain.value!)
+    // get USDT balance
+    const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
+      chainId: account.chainId.value,
+      address: account.address.value as `0x${string}`,
+      token: usdcAddress
+    });
+    selfBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
+  }
+
+  const getSelfAllowance = async () => {
+    if (account.status.value != 'connected') return;
+    const usdcAddress = getUsdcAddress(account.chain.value!)
+    const tokenMessager = getTokenMessager(account.chain.value!)
+    const result = await readContract($wagmiAdapter.wagmiConfig, {
+      abi: usdtAbi,
+      address: usdcAddress,
+      args: [account.address.value, tokenMessager],
+      functionName: 'allowance'
+    })
+    return Number(formatUnits(result as bigint, 6))
+  }
 
   const updateWalletConfig = (data: any) => {
     walletConfig = data;
@@ -110,7 +171,7 @@ export const walletStore = defineStore("walletStore", () => {
     if (mainRes.value != usdtBalance) {
       console.log("mainRes", mainRes);
       updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
-      usdtBalance = mainRes.value;
+      usdtBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
     }
     // get MEME balance
     const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
@@ -121,7 +182,18 @@ export const walletStore = defineStore("walletStore", () => {
     if (memeRes.value != tokenBalance) {
       console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
       updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
-      tokenBalance = memeRes.value;
+      tokenBalance = Number(formatUnits(memeRes.value, memeRes.decimals));
+    }
+    // get USDC balance
+    const usdcAddress = getUsdcAddress(walletClient.chain!)
+    const usdcRes = await getBalance($wagmiAdapter.wagmiConfig, {
+      chainId: walletConfig.chain.id,
+      address: wallet.address as any,
+      token: usdcAddress,
+    });
+    if (usdcRes.value != usdcBalance) {
+      console.log("usdcRes", usdcRes);
+      usdcBalance = Number(formatUnits(usdcRes.value, usdcRes.decimals));
     }
   };
 
@@ -146,8 +218,8 @@ export const walletStore = defineStore("walletStore", () => {
     */
   const approveUSDC = async (amount: number) => {
     try {
-      const usdcAddress = getUsdcAddress(networkData.caipNetwork!)
-      const tokenMessager = getTokenMessager(networkData.caipNetwork!)
+      const usdcAddress = getUsdcAddress(account.chain.value!)
+      const tokenMessager = getTokenMessager(account.chain.value!)
 
       const tx = await writeContract($wagmiAdapter.wagmiConfig, {
         abi: usdtAbi,
@@ -171,11 +243,12 @@ export const walletStore = defineStore("walletStore", () => {
     */
   const burnUSDC = async (amount: number) => {
     try {
-      const usdcAddress = getUsdcAddress(networkData.caipNetwork!)
-      const tokenMessager = getTokenMessager(networkData.caipNetwork!)
-      const domain = getDomain(networkData.caipNetwork!)
-      const connectAddress = accountData.address
-      const destinationAddress_bytes32 = `0x000000000000000000000000${connectAddress.slice(2)}`
+      const network = account.chain.value!
+      const usdcAddress = getUsdcAddress(network)
+      const tokenMessager = getTokenMessager(network)
+      const originDomain = getDomain(network)
+      const destinationDomain = getDomain(walletClient.chain!)
+      const destinationAddress_bytes32 = `0x000000000000000000000000${wallet.address!.slice(2)}`
       const destinationCaller_bytes32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
       const tx = await writeContract($wagmiAdapter.wagmiConfig, {
@@ -183,7 +256,7 @@ export const walletStore = defineStore("walletStore", () => {
         address: tokenMessager,
         args: [
           parseUnits(amount.toString(), 6),
-          domain,
+          destinationDomain,
           destinationAddress_bytes32,
           usdcAddress,
           destinationCaller_bytes32,
@@ -192,8 +265,8 @@ export const walletStore = defineStore("walletStore", () => {
         ],
         functionName: 'depositForBurn'
       })
-      console.log(`burn usdc from domain: ${domain} and return transactionHash: ${tx}`)
-      return { domain: domain, transactionHash: tx }
+      console.log(`burn usdc from domain: ${destinationDomain} and return transactionHash: ${tx}`)
+      return { originDomain: originDomain, destinationDomain: destinationDomain, transactionHash: tx }
     } catch (err) {
       console.error("Error signing approve:", err)
       return undefined
@@ -205,9 +278,9 @@ export const walletStore = defineStore("walletStore", () => {
    */
   const mintUSDC = async (attestation: any) => {
     try {
-      const messageTransmitter = getMessageTransmitter(networkData.caipNetwork!)
+      const messageTransmitter = getMessageTransmitter(account.chain.value!)
 
-      const tx = await writeContract($wagmiAdapter.wagmiConfig, {
+      const tx = await walletClient.writeContract({
         abi: usdtAbi,
         address: messageTransmitter,
         args: [
@@ -333,6 +406,7 @@ export const walletStore = defineStore("walletStore", () => {
       throw err;
     }
   };
+
   const amountPermit = async () => {
     const allowanceAmount = 2 ** 256 - 1;
     let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
@@ -342,6 +416,8 @@ export const walletStore = defineStore("walletStore", () => {
   }
 
   return $$({
+    networks,
+    loginAddress,
     shortWalletAddress,
     walletConected,
     walletConfig,
@@ -351,10 +427,18 @@ export const walletStore = defineStore("walletStore", () => {
     userBalance,
     userCapital,
     tokenBalance,
+    usdcBalance,
+    selfBalance,
+    connectWallet,
+    switchNetwork,
+    getSelfAllowance,
     signWithdraw,
     updateWalletBalance,
     signTradeData,
     updateWalletConfig,
+    approveUSDC,
+    burnUSDC,
+    mintUSDC,
     queryAllowanceAndPermit,
     updateUserBalance,
     updateTokenBalance,

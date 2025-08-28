@@ -30,6 +30,30 @@ export const usdtAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "spender",
         "type": "address"
       },
@@ -95,10 +119,10 @@ export const usdtAbi = [
     "type": "function"
   },
   {
-    type: "function",
-    name: "receiveMessage",
-    stateMutability: "nonpayable",
-    inputs: [
+    "type": "function",
+    "name": "receiveMessage",
+    "stateMutability": "nonpayable",
+    "inputs": [
       {
         "internalType": "bytes",
         "name": "message",
@@ -110,7 +134,7 @@ export const usdtAbi = [
         "type": "bytes"
       },
     ],
-    outputs: [],
+    "outputs": [],
   },
 ]
 

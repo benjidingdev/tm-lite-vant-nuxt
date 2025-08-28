@@ -33,10 +33,10 @@ export function createModal() {
   }
   return createAppKit({
     adapters: [wagmiAdapter],
-    networks: wagmiAdapter.networks as [AppKitNetwork, ...AppKitNetwork[]],
+    networks: wagmiAdapter.wagmiChains as [AppKitNetwork, ...AppKitNetwork[]],
     projectId,
     metadata,
-    defaultNetwork: wagmiAdapter.networks[0],
+    //defaultNetwork: wagmiAdapter.networks[0],
     themeMode: 'dark',
     featuredWalletIds: [],
     enableWalletConnect: true,
