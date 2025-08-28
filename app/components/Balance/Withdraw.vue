@@ -27,6 +27,10 @@ const waitTransaction = async (hash: string) => {
   }
 };
 
+const newWithdrawal = () => {
+  currentStep = 1;
+};
+
 const withdraw = async (form) => {
   console.log(form);
   const { toAddress } = form;
@@ -50,25 +54,30 @@ const withdraw = async (form) => {
     userSign,
   };
   const hash = withdrawRequest(requestParams);
-  const ts = await waitTransaction(hash);
-  console.log(ts);
+  const tx = await waitTransaction(hash);
+  console.log(tx);
 };
 </script>
 
 <template>
   <div v-if="currentStep === 1" class="step-one w-full">
     <van-form @submit="withdraw">
-      <van-field name="toAddress">
+      <van-field
+        name="toAddress"
+      >
         <template #input>
           <BalanceForm
             v-model="toAddress"
+            maxlength="42"
             label="Recipient address"
             name="toAddress"
             placeholder="0x..."
           />
         </template>
       </van-field>
-      <van-field name="tokenAmount">
+      <van-field
+        name="tokenAmount"
+      >
         <template #input>
           <BalanceForm
             v-model="tokenAmount"
@@ -82,8 +91,9 @@ const withdraw = async (form) => {
               >
                 <span class="text-gray-500 font-medium">USDC</span>
                 <button
-                  type="button"
                   class="px-3 bg-blue-50 text-blue-600 text-xs font-semibold rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
+                  type="button"
+                  @click="tokenAmount = userBalance"
                 >
                   MAX
                 </button>
@@ -143,7 +153,7 @@ const withdraw = async (form) => {
           block
           type="primary"
           native-type="submit"
-          @click="currentStep = 1"
+          @click="newWithdrawal"
         >
           New Withdrawal
         </van-button>
