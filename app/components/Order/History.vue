@@ -7,7 +7,6 @@ import { onMounted } from "vue";
 const { setModal, triggerCallDuration, firstCall } = $(uiStore());
 let { order } = $(userStore());
 
-let historyList = $ref([]);
 const voState = $ref({
   isLoading: false,
   queryParams: {
@@ -49,7 +48,7 @@ const dollars2cents = (value) => {
 
 onMounted(() => {
   const isCallNow = triggerCallDuration(Date.now(), 10);
-  if (firstCall.position && !isCallNow) {
+  if (firstCall.history && !isCallNow) {
     return;
   }
   fetchHistoryList();
