@@ -1,74 +1,3 @@
-<template>
-  <div class="w-full">
-    <div class="w-full h-full flex flex-col">
-      <div
-        class="user-container text-center mx-auto flex justify-center items-center pt-4"
-      >
-        <img
-          v-if="voData.userInfo.avatar"
-          class="w-8 h-8 mx-auto rounded-full"
-          :src="voData.userInfo.avatar"
-        />
-        <img
-          v-else
-          class="w-8 h-8 mx-auto rounded-full"
-          src="@/assets/img/default.webp"
-        />
-        <div class="flex-1 h-6 flex flex-col pl-2">
-          <p class="text-xl font-bold">
-            {{ voData.userInfo.nickname }}
-          </p>
-        </div>
-      </div>
-      <div class="potifolio-container p-4">
-        <ul class="my-2 grid grid-cols-2 gap-4">
-          <li class="p-2 bg-sky-100 rounded-lg flex justify-center">
-            <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">
-                {{ $t("Position Value") }}
-              </p>
-              <p v-if="positionValue" class="text-xl font-bold">
-                {{ positionValueFiexed }}
-              </p>
-              <p v-else class="text-xl font-bold">{{ positionValue }}</p>
-            </div>
-          </li>
-
-          <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
-            <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">
-                {{ $t("Profit") }}
-              </p>
-              <p class="text-xl font-bold">
-                {{ profit }}
-              </p>
-            </div>
-          </li>
-          <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
-            <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">
-                {{ $t("Traded Volume") }}
-              </p>
-              <p class="text-xl font-bold">
-                {{ volumnTrade }}
-              </p>
-            </div>
-          </li>
-          <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
-            <div class="text-center">
-              <p class="my-1 text-xs text-[#727272]">
-                {{ $t("Markets Traded") }}
-              </p>
-              <p class="text-xl font-bold">
-                {{ tradeMarkets }}
-              </p>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</template>
 
 <script setup lang="ts">
 import { onMounted } from "vue";
@@ -142,15 +71,85 @@ const getUserInfo = async () => {
     if (res.code === 0) {
       voData.userInfo = res.data;
     }
-  } catch (e) {
-    //console.log('Failure message：', e)
-  }
+  } catch (e) {}
 };
 
 onMounted(() => {
   getUserInfo();
 });
 </script>
+
+<template>
+  <div class="w-full">
+    <div class="w-full h-full flex flex-col">
+      <div
+        class="user-container text-center mx-auto flex justify-center items-center pt-4"
+      >
+        <img
+          v-if="voData.userInfo.avatar"
+          class="w-8 h-8 mx-auto rounded-full"
+          :src="voData.userInfo.avatar"
+        />
+        <img
+          v-else
+          class="w-8 h-8 mx-auto rounded-full"
+          src="@/assets/img/default.webp"
+        />
+        <div class="flex-1 h-6 flex flex-col pl-2">
+          <p class="text-xl font-bold">
+            {{ voData.userInfo.nickname }}
+          </p>
+        </div>
+      </div>
+      <div class="potifolio-container p-4">
+        <ul class="my-2 grid grid-cols-2 gap-4">
+          <li class="p-2 bg-sky-100 rounded-lg flex justify-center">
+            <div class="text-center">
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Position Value") }}
+              </p>
+              <p v-if="positionValue" class="text-xl font-bold">
+                {{ positionValueFiexed }}
+              </p>
+              <p v-else class="text-xl font-bold">{{ positionValue }}</p>
+            </div>
+          </li>
+
+          <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
+            <div class="text-center">
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Profit") }}
+              </p>
+              <p class="text-xl font-bold">
+                {{ profit }}
+              </p>
+            </div>
+          </li>
+          <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
+            <div class="text-center">
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Traded Volume") }}
+              </p>
+              <p class="text-xl font-bold">
+                {{ volumnTrade }}
+              </p>
+            </div>
+          </li>
+          <li class="p-2 bg-sky-100 rounded-lg flex flex-col justify-center">
+            <div class="text-center">
+              <p class="my-1 text-xs text-[#727272]">
+                {{ $t("Markets Traded") }}
+              </p>
+              <p class="text-xl font-bold">
+                {{ tradeMarkets }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style>
 .van-swipe-cell__right button {

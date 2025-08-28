@@ -30,7 +30,7 @@ const inviteUser = () => {
 </script>
 
 <template>
-  <div class="invite-dashboard-container bg-white p-2 overflow-auto">
+  <div class="layout-height bg-white p-2 overflow-auto">
     <div class="broadcast-container mb-2">
       <van-notice-bar left-icon="volume-o" :scrollable="false">
         <van-swipe
@@ -96,9 +96,6 @@ const inviteUser = () => {
 </template>
 
 <style>
-.invite-dashboard-container {
-  height: calc(100vh - 130px);
-}
 .my-rolling-text {
   --van-rolling-text-background: transparent;
   --van-rolling-text-color: #1989fa;

@@ -3,7 +3,7 @@ let active = $ref(0);
 </script>
 
 <template>
-  <van-tabs :active="active">
+  <van-tabs :active="active" sticky offset-top="60px">
     <van-tab :title="$t('Positions')">
       <OrderPosition />
     </van-tab>

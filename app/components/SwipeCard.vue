@@ -12,24 +12,24 @@ let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
-let lastPage = $ref(false);
-let refresherTriggered = $ref(false);
-let animationFrame = $ref(null);
+let animationFrame;
 let currentRate = $ref(0);
 
 // The data from store
 const {
   userBalance,
 } = $(walletStore());
-let { addRequest, cardCount, cards, isLoading } = $(requestQueueStore());
+let { addRequest, cards, isLoading } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
+const pageSize = 12;
+let total = 0;
 const recommondQueryParams = $ref({
   pageNo: 1,
-  pageSize: 12,
-  title: "",
+  pageSize,
+  title: null,
   active: null,
   closed: null,
   order: "trending",
@@ -42,14 +42,21 @@ const recommondQueryParams = $ref({
 // get the list of cards
 const getInfoList = async (refresh) => {
   if (refresh) {
-    lastPage = false;
-    refresherTriggered = true;
+    isLoading = false;
+    if (recommondQueryParams.pageNo * pageSize >= total) {
+      return;
+    }
+    recommondQueryParams.pageNo++;
+  } else {
+    cards = [];
   }
-  isLoading = true;
+
   const res = await getTopicsRecommend(recommondQueryParams);
+  // console.log(res);
+  total = res.data.total;
+
   if (res.code === 0) {
-    cardCount = res.data.list.length;
-    cards = res.data.list;
+    cards.push(...res.data.list);
   }
   isLoading = false;
 };
@@ -112,6 +119,10 @@ const touchMove = (e) => {
 // Touch end
 const touchEnd = (card, event) => {
   if (currentIndex >= cards.length) return;
+
+  if (cards.length <= pageSize / 2) {
+    getInfoList(true);
+  }
 
   const threshold = 100; // Threshold of swiping
   if (animationFrame) {
@@ -238,9 +249,14 @@ onMounted((e) => {
         <div
           :style="{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '80vh' }">
 
-          <van-skeleton-image image-size="70vw" image-shape="round" />
+          <div
+            :style="{ width: '100%', height: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--van-active-color)', borderRadius: '24px' }">
+            <van-loading size="48" />
+          </div>
 
-          <div :style="{ marginTop: '32px', width: '100%' }">
+          <!-- <van-skeleton-image /> -->
+
+          <div :style="{ marginTop: '42px', width: '100%' }">
             <van-skeleton-paragraph row-width="60%" />
             <van-skeleton-paragraph />
             <van-skeleton-paragraph />
@@ -248,10 +264,12 @@ onMounted((e) => {
           </div>
         </div>
       </template>
+
       <div v-if="cards.length">
         <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
-          :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart.prevent="touchStart"
-          @touchmove.prevent="touchMove" @touchend.prevent="touchEnd(card, event)">
+          :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart="touchStart"
+          @touchmove="touchMove" @touchend="touchEnd(card, event)">
+
           <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="cover">
             <div class="absolute -bottom-8 h-16 w-full">
               <div class="flex justify-between items-center h-full px-6">
@@ -264,6 +282,7 @@ onMounted((e) => {
                   @click="bookmark">
                   <van-icon size="30" name="star-o" color="#c4c406" />
                 </div>
+
                 <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
                   @click="buyNo(card)">
                   <van-icon name="clear" size="66" color="#fe9595" />
@@ -271,6 +290,7 @@ onMounted((e) => {
               </div>
             </div>
           </van-image>
+
           <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
             <div class="h-[85%] overflow-auto">
               <text class="name mt-4">{{ card.title }}</text>
@@ -294,7 +314,14 @@ onMounted((e) => {
       </div>
 
       <div v-else>
-        <van-empty description="If you are interested in Turing Market, please go to our official version" />
+        <van-empty description="If you are interested in Turing Market, please go to our official version"
+          style="--van-empty-description-color: #323232;">
+          <template #image>
+             <img src="/assets/icon/logo.svg" />
+           </template>
+
+           <van-button round type="primary" class="bottom-button">Launch App</van-button>
+        </van-empty>
       </div>
     </van-skeleton>
   </div>
