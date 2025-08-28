@@ -1,8 +1,9 @@
 <script setup lang="ts">
-const { setModal } = $(uiStore());
-const { cardCount, successCount } = $(requestQueueStore());
+const { requestCount, successCount, isProcessing } = $(requestQueueStore());
 </script>
 <template>
-  <van-button size="small" class="mr-1! w-8 h-8" plain round hairline>{{
-    successCount }}/{{ cardCount }}</van-button>
+  <button v-if="requestCount > 0" class="flex justify-center items-center space-x-2 px-2 border-1 border-solid border-gray-100 rounded-full">
+    <van-loading size="12" v-if="isProcessing" />
+    <span class="text-sm text-black">{{ successCount }}/{{ requestCount }}</span>
+  </button>
 </template>
