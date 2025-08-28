@@ -76,9 +76,8 @@ const handleFocus = async () => {
 
   if (extractedCode) {
     oneTimePassword = extractedCode[0];
-  } else {
-    setKeyBoard("settings", true);
   }
+  setKeyBoard("settings", true);
 };
 
 watch(
