@@ -1,5 +1,4 @@
 <script setup>
-import _ from "lodash";
 import {
   getTopicsRecommend,
 } from "~/api/market";
