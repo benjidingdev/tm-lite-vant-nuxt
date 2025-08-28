@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCustomFieldValue } from "@vant/use";
+let errorInfo = $ref("");
 
 const props = defineProps({
   modelValue: {
@@ -20,18 +20,43 @@ const props = defineProps({
     required: false,
     default: "",
   },
-});
-
-const emit = defineEmits(["update:modelValue"]);
-
-const dynamicModel = $computed({
-  get: () => props.modelValue,
-  set: (newValue) => {
-    emit("update:modelValue", newValue);
+  maxlength: {
+    type: [Number],
+    required: false,
+    default: 10,
   },
 });
 
-useCustomFieldValue(() => dynamicModel);
+let modelValue = $(defineModel());
+
+const onInput = (event) => {
+  const value = event.target.value;
+  modelValue =  value;
+;
+  if (event.target.value === "") {
+    errorInfo = "";
+    return;
+  }
+  switch (props.name) {
+    case "depositToAddress":
+    case "depositFromAddress":
+      if (!/^0x[a-fA-F0-9]{0,40}$/.test(value)) {
+        errorInfo = "Please enter a valid address";
+      } else {
+        errorInfo = "";
+      }
+      break;
+    case "tokenAmount":
+      if (!/^\d*\.?\d{0,18}$/.test(value)) {
+        errorInfo = "Please enter a valid amount";
+      } else {
+        errorInfo = "";
+      }
+      break;
+    default:
+      errorInfo = "";
+  }
+};
 </script>
 
 <template>
@@ -39,15 +64,20 @@ useCustomFieldValue(() => dynamicModel);
     <label class="font-bold" :for="name">{{ label }}</label>
     <div class="relative w-full">
       <input
-        maxlength="10"
-        class="w-full border-1 border-solid border-gray-300 h-[38px] px-2 rounded-lg focus:border-black"
+        :key="name"
+        :maxlength="maxlength"
+        :class="`w-full border-1 border-solid border-gray-300 h-[38px] px-2 rounded-lg ${
+          errorInfo ? 'focus:border-red' : 'focus:border-black'
+        }`"
         type="text"
         :name="name"
-        v-model="dynamicModel"
         :placeholder="placeholder"
+        :value="modelValue"
+        @input="onInput"
       />
       <slot name="input-right" />
     </div>
     <slot name="input-tips" />
+    <div v-if="errorInfo" class="errorInfo text-red-500">{{ errorInfo }}</div>
   </div>
 </template>
