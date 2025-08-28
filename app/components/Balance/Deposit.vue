@@ -79,7 +79,7 @@ watch([() => account.status, () => account.address, () => account.chain],
       }
       if (newChain) {
         result = newChain.name;
-        pickerValue = [...newChain.name];
+        depositData.chain = [...newChain.name];
       }
     }
   }, { immediate: true })
