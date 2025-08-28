@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { showToast } from "vant";
 const { userBalance } = $(walletStore());
 let { depositData } = $(depositStore());
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white overflow-auto h-[calc(100vh-80px-50px)]">
+  <div class="layout-height bg-white overflow-auto">
     <UserInfoCard />
     <OrderList />
     <TradeOrderPopup />
