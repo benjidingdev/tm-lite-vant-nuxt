@@ -49,6 +49,7 @@ onUnmounted(() => {
         <OrderSharePopup />
         <AuthLoginModal />
         <SettingsNumberKeyBoard />
+        <BalancePopup />
       </NuxtLayout>
     </div>
   </van-config-provider>
