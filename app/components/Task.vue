@@ -109,10 +109,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.earn-dashboard-container {
-  height: calc(100vh - 130px);
-  /* Adjust height based on nav bar and tab bar */
-}
 .van-tag--primary.van-tag--plain {
   color: #00c58d;
 }

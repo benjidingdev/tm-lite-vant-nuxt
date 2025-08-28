@@ -14,7 +14,7 @@
 <script setup lang="ts">
 const tabList = $ref([
   { name: "Markets", icon: "chart-trending-o", path: "/" },
-  { name: "Earn", icon: "balance-o", path: "/earn" },
+  // { name: "Earn", icon: "balance-o", path: "/earn" },
   { name: "Invite", icon: "hot-o", path: "/invite" },
   { name: "User", icon: "user-o", path: "/user" },
 ]);

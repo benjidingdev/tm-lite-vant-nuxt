@@ -8,14 +8,14 @@ window?.localStorage.setItem("inviteCode", inviteCode || "");
 <template>
   <div>
     <!--swipe card-->
-    <div class="swipe-card-container px-10">
+    <div class="layout-height px-10">
       <SwipeCard />
     </div>
   </div>
 </template>
 
 <style>
-.swipe-card-container {
-  height: calc(100vh - 130px);
+.layout-height {
+  height: calc(100vh - 60px - 50px);
 }
 </style>

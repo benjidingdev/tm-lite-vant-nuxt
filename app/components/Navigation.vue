@@ -1,5 +1,5 @@
 <template>
-  <div class="h-20 flex items-center justify-between px-4">
+  <div class="h-16 flex items-center justify-between px-4">
     <div>
       <BalanceNavButton />
     </div>
