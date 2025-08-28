@@ -6,5 +6,3 @@
   </div>
 </template>
 <script setup />
-
-<style></style>

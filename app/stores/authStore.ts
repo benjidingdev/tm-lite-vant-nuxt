@@ -10,7 +10,7 @@ export const authStore = defineStore(
   () => {
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
-    const { loadUserInfo, userInfo, updateUserInfo } = $(userStore());
+    const { loadUserInfo, userInfo, updateUserInfo, initLocale } = $(userStore());
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
@@ -55,7 +55,7 @@ export const authStore = defineStore(
         proxyWallet: userInfo.proxyWallet,
       });
       updateTraderType(userProfile.data.traderType);
-
+      initLocale();
       await amountPermit();
     };
 
@@ -162,7 +162,7 @@ export const authStore = defineStore(
       let inviteCode = "";
       try {
         inviteCode = JSON.parse(localStorage.getItem("inviteCode") || "");
-      } catch (error) {}
+      } catch (error) { }
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
         ivcode: inviteCode,

@@ -163,3 +163,13 @@ export const shortenAddress = (
   const end = address.substring(address.length - endLength);
   return `${start}...${end}`;
 };
+
+export const shortenHash = (
+  hash: string,
+  endLength = 4
+) => {
+  if (!hash) return "";
+  const end = hash.substring(hash.length - endLength);
+  return `${end}`;
+};
+

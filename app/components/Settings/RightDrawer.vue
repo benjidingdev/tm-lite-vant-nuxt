@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { shortenHash } from "@/utils/processing";
 const { modalIsShow } = $(uiStore());
 const hash = import.meta.env.NUXT_PUBLIC_HASH;
 const branch = import.meta.env.NUXT_PUBLIC_BRANCH;
+let clickNum = 0;
+
+const shortHash = $computed(() => shortenHash(hash, 4));
 
 const initVconsole = async () => {
+  clickNum++;
+  if (clickNum < 3) return;
   const vConsole = new VConsole();
 };
 </script>
@@ -17,9 +23,8 @@ const initVconsole = async () => {
     <TradeSettingLabel />
     <AuthLogoutLabel />
     <van-cell-group>
-      <van-cell :title="$t('Hash')" :value="hash" />
-      <van-cell :title="$t('Branch')" :value="branch" />
-      <van-cell title="vconsole" value="open vconsole" @click="initVconsole" />
+      <van-cell :title="$t('Hash')" :value="shortHash" />
+      <van-cell :title="$t('Branch')" :value="branch" @click="initVconsole" />
     </van-cell-group>
   </van-popup>
 </template>
