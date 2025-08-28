@@ -1,7 +1,6 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import moment from "moment";
 import { getUserProfile } from "@/api/userInfo";
 import {
   encryptMiddle,
