@@ -74,6 +74,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
+      testnet: true,
       siteUrl: "",
       siteName: "",
       siteSlogan: "",
@@ -93,6 +94,5 @@ export default defineNuxtConfig({
       apiPrefix:
         process.env.NUXT_PUBLIC_API_PREFIX || "http://192.168.1.82:48082",
     },
-  },
-  sourcemap: true,
+  }
 });

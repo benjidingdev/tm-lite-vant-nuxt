@@ -2,6 +2,9 @@
 // import { createAppKit } from "@reown/appkit/vue";
 // import { networks, localHardhat, avaxTest } from "./config/networks";
 import "@vant/touch-emulator";
+import { createModal } from '@/config/reown'
+
+createModal()
 
 useHead({
   title: "Turing Market",

@@ -5,9 +5,10 @@ import { formatTitle } from "@/utils/processing";
 import { multiply } from "@/utils/decimal";
 import { onMounted } from "vue";
 
-const { setModal } = $(uiStore());
+const { setModal, triggerCallDuration, firstCall } = $(uiStore());
+let { order } = $(userStore());
 
-let openOrderList = $ref([]);
+// let openOrderList = $ref([]);
 const voState = $ref({
   isLoading: false,
   queryParams: {
@@ -32,12 +33,13 @@ const fetchOpenOrderList = async () => {
   try {
     const res = await userOrderList(voState.queryParams);
     if (voState.queryParams.pageNo === 1) {
-      openOrderList = res.data.list;
+      order.openOrderList = res.data.list;
     } else {
-      openOrderList = openOrderList.concat(res.data.list);
+       order.openOrderList =  order?.openOrderList?.concat(res.data.list);
     }
     voState.total = res.data.total;
     voState.isLoading = false;
+    firstCall.openOrder = true;
   } catch (error) {
     voState.isLoading = false;
   }
@@ -48,6 +50,10 @@ const dollars2cents = (value) => {
 };
 
 onMounted(() => {
+  const isCallNow = triggerCallDuration(Date.now(), 10);
+  if (firstCall.openOrder && !isCallNow) {
+    return;
+  }
   fetchOpenOrderList();
 });
 </script>
@@ -55,9 +61,9 @@ onMounted(() => {
 <template>
   <div
     class="w-full bg-color-white p-4 overflow-auto"
-    v-if="openOrderList.length !== 0"
+    v-if="order?.openOrderList.length !== 0"
   >
-    <van-swipe-cell v-for="item in openOrderList" :key="item.marketId">
+    <van-swipe-cell v-for="item in order?.openOrderList" :key="item.marketId">
       <van-card
         currency=""
         :key="item.marketId"
@@ -65,6 +71,7 @@ onMounted(() => {
         :desc="item.orderType == 1 ? 'Buy' : 'Sell' + item.typeName"
         :title="item.question"
         :thumb="item.image"
+        class="mt-2"
       >
         <template #footer>
           <van-button plain size="mini" type="primary" @click="showShares(item)"
