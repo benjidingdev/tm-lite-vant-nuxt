@@ -87,13 +87,13 @@ watch([() => account.status, () => account.address, () => account.chain],
 <template>
   <van-cell-group>
     <van-notice-bar class="my-2" color="#a7a7a7" background="#f9f9f9" left-icon="balance-pay">
-      <span class="font-xs">TuringMarket Balance:${{ usdcBalance }}</span>
+      <span class="font-xs">Balance:${{ usdcBalance }}</span>
     </van-notice-bar>
     <div v-if="currentStep === 1" class="step-one w-full">
       <van-form @submit="deposit">
         <van-field name="toAddress">
           <template #input>
-            <BalanceForm v-model="depositData.depositFromAddress" maxlength="42" label="Sender address"
+            <BalanceForm v-model="depositData.depositFromAddress" maxlength="42" label="Sender address" :disabled="true"
               name="depositToAddress" placeholder="0x...">
               <template #input-right>
                 <div class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
@@ -136,7 +136,7 @@ watch([() => account.status, () => account.address, () => account.chain],
             </BalanceForm>
           </template>
         </van-field>
-        <van-field v-model="result" is-link readonly name="picker" label="Receive Chain" placeholder="Receive Chain"
+        <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain"
           @click="showChainPicker = true" />
         <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
           <van-picker :columns="columns" :model-value="depositData.chain" @confirm="onConfirm"
