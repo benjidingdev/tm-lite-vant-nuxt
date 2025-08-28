@@ -1,5 +1,6 @@
 export const depositStore = defineStore("depositStore", () => {
   let depositData = $ref({
+    depositFromAddress: "",
     depositToAddress: "",
   });
 
