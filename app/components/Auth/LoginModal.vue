@@ -73,14 +73,15 @@ const startCountdown = () => {
 
 const handleFocus = async () => {
   try {
-    const permissionStatus = await navigator.permissions.query({ name: 'clipboard-read' });
-    if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
-      const pastedText = await navigator.clipboard.readText();
-      const extractedCode = pastedText.match(/\d{6}/);
+    // const permissionStatus = await navigator.permissions.query({ name: 'clipboard-read' });
+    // if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
+    // }
 
-      if (extractedCode) {
-        oneTimePassword = extractedCode[0];
-      }
+    const pastedText = await navigator.clipboard.readText();
+    const extractedCode = pastedText.match(/\d{6}/);
+
+    if (extractedCode) {
+      oneTimePassword = extractedCode[0];
     }
   } catch (error) {
     console.error(error);
@@ -99,61 +100,28 @@ watch(
 </script>
 
 <template>
-  <van-dialog
-    v-model:show="modalIsShow.loginModal"
-    closeable
-    :show-confirm-button="false"
-    :title="$t('Login in or sign up')"
-  >
+  <van-dialog v-model:show="modalIsShow.loginModal" closeable :show-confirm-button="false"
+    :title="$t('Login in or sign up')">
     <div class="step-one">
-      <img
-        class="w-[60%] py-8 rounded-xl m-auto"
-        src="@/assets/img/logo-light.png"
-      />
+      <img class="w-[60%] py-8 rounded-xl m-auto" src="@/assets/img/logo-light.png" />
       <van-form @submit="login">
         <van-cell-group inset>
-          <van-field
-            v-model="email"
-            name="email"
-            :label="$t('Email')"
-            :placeholder="$t('Email')"
-            :rules="[{ required: true, message: $t('Please enter email') }]"
-          />
-          <span
-            v-if="isLoading || errorInfo"
-            :class="`text-sm my-4 float-right pr-4 ${
-              errorInfo ? 'text-red-400' : 'text-gray-500'
-            }`"
-            >{{ errorInfo ? errorInfo : "Sending..." }}</span
-          >
-          <van-password-input
-            v-if="hasSend"
-            :value="oneTimePassword"
-            :mask="false"
-            :focused="true"
-            @focus="handleFocus"
-          />
+          <van-field v-model="email" name="email" :label="$t('Email')" :placeholder="$t('Email')"
+            :rules="[{ required: true, message: $t('Please enter email') }]" />
+          <span v-if="isLoading || errorInfo" :class="`text-sm my-4 float-right pr-4 ${errorInfo ? 'text-red-400' : 'text-gray-500'
+            }`">{{ errorInfo ? errorInfo : "Sending..." }}</span>
+          <van-password-input v-if="hasSend" :value="oneTimePassword" :mask="false" :focused="true"
+            @focus="handleFocus" />
         </van-cell-group>
         <div v-if="hasSend" class="flex justify-end">
-          <button
-            :class="`px-4 py-2 underline ${underlineColor}`"
-            @click="resend"
-            :disabled="resendDisabled"
-          >
+          <button :class="`px-4 py-2 underline ${underlineColor}`" @click="resend" :disabled="resendDisabled">
             <span :class="`text-sm ${resendBtnColor}`">{{
               countdown > 0 ? `Resend (${countdown}s)` : "Resend Code"
             }}</span>
           </button>
         </div>
         <div v-if="!hasSend" style="margin: 16px">
-          <van-button
-            round
-            block
-            type="primary"
-            native-type="submit"
-            :loading="isLoading"
-            @click="sendEmail"
-          >
+          <van-button round block type="primary" native-type="submit" :loading="isLoading" @click="sendEmail">
             {{ $t("Submit") }}
           </van-button>
         </div>
