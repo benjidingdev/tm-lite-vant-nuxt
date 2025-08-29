@@ -23,12 +23,19 @@ export const userStore = defineStore("userStore", () => {
     }
   };
 
+  const initLocale = () => {
+    // if (userInfo?.locale) {
+    //   hasSetLocale = true;
+    // }
+  };
+
   return $$({
     userInfo,
     order,
     hasSetLocale,
     updateUserInfo,
     loadUserInfo,
+    initLocale,
   });
 },
   {
