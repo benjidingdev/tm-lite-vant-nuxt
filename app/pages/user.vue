@@ -1,8 +1,8 @@
 <template>
   <div class="layout-height bg-white overflow-auto">
     <UserInfoCard />
-    <OrderList />
-    <TradeOrderPopup />
+    <!-- <OrderList /> -->
+    <!-- <TradeOrderPopup /> -->
   </div>
 </template>
 <script setup />

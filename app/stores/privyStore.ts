@@ -14,6 +14,7 @@ export const privyStore = defineStore(
     let isLoading = $ref(false);
     let session = $ref(null);
     let errorInfo = $ref("");
+
     const doLogin = async () => {
       if (session) return;
       if (isLoading) return;
@@ -35,11 +36,17 @@ export const privyStore = defineStore(
         isLoading = false;
       }
     };
+
     const refreshSession = async () => {
-      session = await $privy.user.get();
-      await initWallet();
-      await updateWalletBalance();
+      try {
+        session = await $privy.user.get();
+        await initWallet();
+        await updateWalletBalance();
+      } catch (error) {
+        console.error("privy get user error", error);
+      }
     };
+
     const wallet = $computed(() => {
       const rz =
         session?.user?.linked_accounts?.find(
