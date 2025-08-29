@@ -444,6 +444,8 @@ export const walletStore = defineStore("walletStore", () => {
     updateTokenBalance,
     amountPermit,
   });
+}, {
+  persist: true,
 });
 
 if (import.meta.hot) {
