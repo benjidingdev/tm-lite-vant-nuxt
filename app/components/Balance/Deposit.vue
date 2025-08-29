@@ -2,6 +2,8 @@
 import { showToast } from "vant";
 import { retrieveAttestation } from "@/api/cctp"
 import { encryptMiddle } from "@/utils/processing";
+import { getMessageTransmitter } from "@/config/networks"
+import { userMint } from "@/api/wallet";
 
 const {
   loginAddress,
@@ -20,7 +22,6 @@ const {
 } = $(walletStore());
 
 let { depositData } = $(depositStore());
-
 const { copy, copied, text } = useClipboard()
 
 let currentStep = $ref(1);
@@ -67,6 +68,7 @@ const deposit = async () => {
     //3. 查询结果
     checkHash(originDomain, transactionHash)
     startCountdown()
+    rateCountdown()
     currentStep = 2
     status = "Processing"
   } catch (error) {
@@ -79,29 +81,38 @@ const deposit = async () => {
 const checkHash = async (originDomain: number, transactionHash: string) => {
   const attestion = await retrieveAttestation(originDomain, transactionHash);
   if (attestion) {
-    //4. 接收消息
-    const tx = await mintUSDC(attestion);
-    if (tx) {
+    const messageTransmitter = getMessageTransmitter(account.chain)
+    const res = await userMint({
+      messageTransmitter: messageTransmitter,
+      message: attestion.message,
+      attestation: attestion.attestation
+    })
+    // const tx = await mintUSDC(attestion);
+    if (res.code === 0) {
       status = "Successful";
-      transactionTx = tx;
+      transactionTx = res.data;
       updateWalletBalance();
     } else {
       status = "Failed";
     }
     clearInterval(timer)
+    clearInterval(rateTimer)
   }
 }
 
 const newWithdrawal = () => {
   currentStep = 1;
   depositData.tokenAmount = 0;
+  timeLeft = duration
 };
 
-const duration = 30 // Countdown seconds
+const duration = 60 // Countdown seconds
 let timeLeft = $ref(duration)
+let rateLeft = $ref(duration)
 let timer: any = null
+let rateTimer: any = null
 
-const percentage = computed(() => ((duration - timeLeft) / duration) * 100)
+const percentage = computed(() => ((duration - rateLeft) / duration) * 100)
 
 const formattedTime = computed(() => {
   const m = String(Math.floor(timeLeft / 60)).padStart(2, "0")
@@ -117,6 +128,16 @@ const startCountdown = () => {
       clearInterval(timer)
     }
   }, 1000)
+}
+
+const rateCountdown = () => {
+  rateTimer = setInterval(() => {
+    if (rateLeft > 0) {
+      rateLeft-=0.1
+    } else {
+      clearInterval(rateTimer)
+    }
+  }, 100)
 }
 
 watch(() => loginAddress, (newAddress) => {
@@ -210,7 +231,7 @@ watch([() => account.status, () => account.address, () => account.chain],
       <div class="flex justify-center my-2">
         <van-icon v-if="status == 'Successful'" name="checked" size="60" class="text-green-500" />
         <van-icon v-else-if="status == 'Failed'" name="clear" size="60" class="text-red-500" />
-        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" size="60" />
+        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" />
       </div>
       <van-cell-group>
         <van-cell title="Fill status" :value="status" :value-class="{'!text-green-500': status == 'Successful', '!text-red-500': status == 'Failed'}" />
@@ -230,7 +251,7 @@ watch([() => account.status, () => account.address, () => account.chain],
       </van-cell-group>
       <van-cell-group>
         <div class="flex mt-2 px-4 gap-3">
-          <van-button block type="primary" plain native-type="submit" @click="$emit('close');newWithdrawal">
+          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal;$emit('close')">
             Close
           </van-button>
           <van-button block type="primary" native-type="submit" @click="newWithdrawal">

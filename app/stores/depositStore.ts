@@ -7,8 +7,6 @@ export const depositStore = defineStore("depositStore", () => {
   return $$({
     depositData,
   });
-}, {
-  persist: true,
 });
 
 if (import.meta.hot) {

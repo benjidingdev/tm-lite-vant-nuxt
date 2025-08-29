@@ -27,3 +27,12 @@ export const withdrawRequest = (params = {}) => {
   });
 }
 
+//mint
+export const userMint = (params = {}) => {
+  return Request({
+    url: `/app-api/topic/user/mint`,
+    method: "post",
+    data: params,
+  });
+}
+
