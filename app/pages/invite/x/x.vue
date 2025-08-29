@@ -1,13 +1,57 @@
 <script setup>
+import domtoimage from 'dom-to-image';
+
 definePageMeta({
   layout: "x",
 });
+
+async function getImageFromProxy(img) {
+  console.log('load img from proxy:', img.src);
+  return $fetch('/api/proxy/image', {
+    method: 'POST',
+    body: {
+      url: img.src
+    },
+  });
+}
+
+async function capture(targetId = 'my-div', name = 'shareImageName') {
+  if (!targetId) {
+    return;
+  }
+
+  const target = document.getElementById(targetId);
+  if (!target) {
+    console.log('target not found');
+    return;
+  }
+
+  const imgElements = target.querySelectorAll('img');
+  const promises = Array.from(imgElements).filter(img => img.src.startsWith('http')).map(img => getImageFromProxy(img));
+
+  const base64Urls = await Promise.all(promises);
+
+  imgElements.forEach((img, index) => {
+    if (base64Urls[index]) {
+      img.src = URL.createObjectURL(base64Urls[index]);
+    }
+  });
+
+  const blob = await domtoimage.toBlob(target);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = `${name}.png`;
+  link.href = url;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 </script>
 
 <template>
   <article class="w-full h-full flex flex-col justify-center items-center pt-4">
 
-    <div class="relative w-[320px] rounded-2xl pt-8 pb-6 px-8 bg
+    <div id="my-div" class="relative w-[320px] rounded-2xl pt-8 pb-6 px-8 bg
       border border-[#16653480] text-center text-white shadow-lg">
 
       <div class="text-center text-sm text-gray-400">
@@ -19,6 +63,10 @@ definePageMeta({
         <h2 class="mt-4 text-xl font-bold">john roosevelt</h2>
         <p class="text-sm text-gray-400">@johnroosev18541</p>
       </div>
+
+      <img
+        src="https://mallbucket-pub.s3.us-west-1.amazonaws.com/d4278b107c70ba2c9f7e0fc23bf9647abb9f670c1b7fc958b6e1efcbb62a6693.png"
+        class="w-full h-auto" alt="">
 
       <button
         class="mt-8 w-full rounded-full bg-gradient-to-r from-green-500 to-green-700 py-3 font-semibold text-black">
@@ -58,25 +106,25 @@ definePageMeta({
     </div>
 
     <div class="flex flex-col items-center justify-center bg-[#000000] text-white p-2 mt-4">
-        <div class="relative flex items-center rounded-xl bg-[#090b0e] p-4 text-sm font-semibold text-gray-400">
-          <span class="flex-grow text-left">https://mindoshare.ai/kol?ref=cm...</span>
-          <div class="ml-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[#14181a] p-2 text-green-500">
-            <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M19 12h-2v2h-2v-2h-2v2h-2v-2h-2v-2h2V8h2V6h2v2h2V6h2v6zM7 6h2V4H7v2zM5 6h2V4H5v2zM3 6h2V4H3v2zM1 6h2V4H1v2z">
-              </path>
-            </svg>
-          </div>
+      <div class="relative flex items-center rounded-xl bg-[#090b0e] p-4 text-sm font-semibold text-gray-400">
+        <span class="flex-grow text-left">https://mindoshare.ai/kol?ref=cm...</span>
+        <div class="ml-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[#14181a] p-2 text-green-500">
+          <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M19 12h-2v2h-2v-2h-2v2h-2v-2h-2v-2h2V8h2V6h2v2h2V6h2v6zM7 6h2V4H7v2zM5 6h2V4H5v2zM3 6h2V4H3v2zM1 6h2V4H1v2z">
+            </path>
+          </svg>
         </div>
+      </div>
 
-        <button class="mt-2 w-full rounded-full bg-[#1ce4a8] py-4 font-bold text-black">
-          <div class="flex items-center justify-center space-x-2">
-            <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
-            </svg>
-            <span>Invite your friends</span>
-          </div>
-        </button>
+      <button class="mt-2 w-full rounded-full bg-[#1ce4a8] py-4 font-bold text-black" @click="capture('my-div', 'shareImageName')">
+        <div class="flex items-center justify-center space-x-2">
+          <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
+          </svg>
+          <span>Invite your friends</span>
+        </div>
+      </button>
     </div>
 
   </article>
