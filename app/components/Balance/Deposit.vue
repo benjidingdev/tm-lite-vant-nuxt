@@ -149,7 +149,7 @@ watch([() => account.status, () => account.address, () => account.chain],
       <van-form @submit="deposit">
         <van-field name="toAddress">
           <template #input>
-            <BalanceForm v-model="depositData.depositFromAddress" maxlength="42" label="Sender address" :disabled="true"
+            <BalanceForm v-model="depositData.depositFromAddress" :maxlength="42" label="Sender address" :disabled="true"
               name="depositToAddress" placeholder="0x...">
               <template #input-right>
                 <div class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
@@ -165,7 +165,7 @@ watch([() => account.status, () => account.address, () => account.chain],
         </van-field>
         <van-field name="fromAddress">
           <template #input>
-            <BalanceForm v-model="depositData.depositToAddress" maxlength="42" label="Recipient address"
+            <BalanceForm v-model="depositData.depositToAddress" :maxlength="42" label="Recipient address"
               name="depositFromAddress" placeholder="0x..." />
           </template>
         </van-field>

@@ -21,12 +21,13 @@ useHead({
   ],
 });
 
-const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore());
+const { setupEmbeddedWalletIframe, refreshSession, session } = $(privyStore());
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 let cleanupIframe: (() => void) | null = null;
 
 onMounted(() => {
   refreshSession();
+
   if (iframeRef.value) {
     cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
   }
@@ -41,20 +42,22 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <van-config-provider>
-    <div>
-      <NuxtLoadingIndicator />
-      <NuxtLayout>
-        <NuxtPage />
-        <SettingsRightDrawer />
-        <LangSwitcherPopup />
-        <TradeSettingPopup />
-        <OrderSharePopup />
-        <AuthLoginModal />
-        <SettingsNumberKeyBoard />
-        <BalancePopup />
-      </NuxtLayout>
-    </div>
-  </van-config-provider>
+  <ClientOnly>
+    <van-config-provider>
+      <div>
+        <NuxtLoadingIndicator />
+        <NuxtLayout>
+          <NuxtPage />
+          <SettingsRightDrawer />
+          <LangSwitcherPopup />
+          <TradeSettingPopup />
+          <OrderSharePopup />
+          <AuthLoginModal />
+          <SettingsNumberKeyBoard />
+          <BalancePopup />
+        </NuxtLayout>
+      </div>
+    </van-config-provider>
+  </ClientOnly>
   <iframe ref="iframeRef" />
 </template>

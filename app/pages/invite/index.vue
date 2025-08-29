@@ -1,16 +1,13 @@
 <script setup>
-import { onMounted } from "vue";
-
 const { userInfo } = $(userStore());
 const { token } = $(authStore());
-const { connectWallet } = $(walletStore());
 const { setModal } = $(uiStore());
-const defaultTUIT = $ref("00000");
+const defaultTUIT = $ref(0);
 
 const { inviteCode, inviteCount } = userInfo;
 
 const earnedTUIT = $computed(() => {
-  return !!inviteCount ? inviteCount * 5 : "00000";
+  return !!inviteCount ? inviteCount * 5 : 99999;
 });
 
 const inviteUser = () => {
