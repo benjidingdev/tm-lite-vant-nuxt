@@ -26,9 +26,7 @@ const iframeRef = ref<HTMLIFrameElement | null>(null);
 let cleanupIframe: (() => void) | null = null;
 
 onMounted(() => {
-  if (session) {
-    refreshSession();
-  }
+  refreshSession();
 
   if (iframeRef.value) {
     cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);

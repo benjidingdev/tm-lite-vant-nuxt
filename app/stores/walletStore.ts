@@ -330,15 +330,14 @@ export const walletStore = defineStore("walletStore", () => {
    */
   const queryAllowanceAndPermit = async (
     coinType: any,
-    allowanceAmount: number
+    allowanceAmount: string
   ) => {
     try {
-      const config = $wagmiAdapter.wagmiConfig;
       const coinInfo = coinType == 0 ? walletConfig!.main : walletConfig!.meme;
 
       const allowanced = await queryAllowance(coinType);
       const minValue = parseUnits(
-        allowanceAmount.toString(),
+        allowanceAmount,
         coinType == 0 ? 6 : 18
       );
 
@@ -408,10 +407,12 @@ export const walletStore = defineStore("walletStore", () => {
   };
 
   const amountPermit = async () => {
-    const allowanceAmount = 2 ** 256 - 1;
-    let allowanceRes = await queryAllowanceAndPermit(0, allowanceAmount);
-    if (!allowanceRes) {
+    try {
+      const allowanceAmount = parseEther('1').toString();
       await queryAllowanceAndPermit(0, allowanceAmount);
+      await queryAllowanceAndPermit(1, allowanceAmount);
+    } catch (err) {
+      console.error("Error amount permit:", err);
     }
   }
 

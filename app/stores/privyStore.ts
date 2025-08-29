@@ -43,7 +43,7 @@ export const privyStore = defineStore(
         await initWallet();
         await updateWalletBalance();
       } catch (error) {
-        console.error("privy get user error", error);
+        console.log("privy get user error", error);
       }
     };
 
