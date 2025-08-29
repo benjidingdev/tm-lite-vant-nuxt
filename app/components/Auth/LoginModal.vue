@@ -38,6 +38,7 @@ const login = async () => {
     return;
   }
   await doLogin();
+  setKeyBoard('settings', false);
   await initWallet();
   await todoSign();
 };
@@ -71,11 +72,18 @@ const startCountdown = () => {
 };
 
 const handleFocus = async () => {
-  const pastedText = await navigator.clipboard.readText();
-  const extractedCode = pastedText.match(/\d{6}/);
+  try {
+    const permissionStatus = await navigator.permissions.query({ name: 'clipboard-read' });
+    if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
+      const pastedText = await navigator.clipboard.readText();
+      const extractedCode = pastedText.match(/\d{6}/);
 
-  if (extractedCode) {
-    oneTimePassword = extractedCode[0];
+      if (extractedCode) {
+        oneTimePassword = extractedCode[0];
+      }
+    }
+  } catch (error) {
+    console.error(error);
   }
   setKeyBoard("settings", true);
 };
