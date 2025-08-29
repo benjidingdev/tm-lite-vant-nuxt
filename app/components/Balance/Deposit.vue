@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { showToast } from "vant";
 import { retrieveAttestation } from "@/api/cctp"
+import { encryptMiddle } from "@/utils/processing";
 
 const {
   loginAddress,
@@ -20,10 +21,15 @@ const {
 
 let { depositData } = $(depositStore());
 
-const currentStep = $ref(1);
+const { copy, copied, text } = useClipboard()
 
+let currentStep = $ref(1);
 let result = $ref("");
 let showChainPicker = $ref(false);
+let loading = $ref(false);
+let status = $ref("");
+let transactionTx = $ref("");
+
 let columns = networks.map((item) => ({
   text: item.name,
   value: item.name,
@@ -38,30 +44,80 @@ const onConfirm = ({ selectedValues, selectedOptions }) => {
 
 const deposit = async () => {
   console.log("depositData", depositData);
+  loading = true;
+  try {
+    //1. 授权usdc
+    const allowance = await getSelfAllowance();
+    if (allowance < depositData.tokenAmount) {
+      const res = await approveUSDC(10000000); //depositData.tokenAmount
+      if (!res) {
+        showToast("Approve failed");
+        return;
+      }
+    }
+    //2. 燃烧usdc
+    const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
+    // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
 
-  //1. 授权usdc
-  const allowance = await getSelfAllowance();
-  if (allowance < depositData.tokenAmount) {
-    const res = await approveUSDC(10000000); //depositData.tokenAmount
-    if (!res) {
-      showToast("Approve failed");
+    if (!transactionHash) {
+      showToast("Burn failed");
       return;
     }
+
+    //3. 查询结果
+    checkHash(originDomain, transactionHash)
+    startCountdown()
+    currentStep = 2
+    status = "Processing"
+  } catch (error) {
+    showToast("Deposit failed");
+  } finally {
+    loading = false;
   }
-  //2. 燃烧usdc
-  const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
-  // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
-  //3. 请求接口
+};
+
+const checkHash = async (originDomain: number, transactionHash: string) => {
   const attestion = await retrieveAttestation(originDomain, transactionHash);
   if (attestion) {
     //4. 接收消息
     const tx = await mintUSDC(attestion);
     if (tx) {
+      status = "Successful";
+      transactionTx = tx;
       updateWalletBalance();
-      showToast("Deposit success");
+    } else {
+      status = "Failed";
     }
+    clearInterval(timer)
   }
+}
+
+const newWithdrawal = () => {
+  currentStep = 1;
+  depositData.tokenAmount = 0;
 };
+
+const duration = 30 // Countdown seconds
+let timeLeft = $ref(duration)
+let timer: any = null
+
+const percentage = computed(() => ((duration - timeLeft) / duration) * 100)
+
+const formattedTime = computed(() => {
+  const m = String(Math.floor(timeLeft / 60)).padStart(2, "0")
+  const s = String(timeLeft % 60).padStart(2, "0")
+  return `${m}:${s}`
+})
+
+const startCountdown = () => {
+  timer = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--
+    } else {
+      clearInterval(timer)
+    }
+  }, 1000)
+}
 
 watch(() => loginAddress, (newAddress) => {
   if (newAddress) {
@@ -128,15 +184,15 @@ watch([() => account.status, () => account.address, () => account.chain],
               </template>
               <template #input-tips>
                 <div class="flex justify-between space-x-2">
-                  <span class="text-gray-400 font-medium text-xs">${{ depositData.tokenAmount }}</span>
-                  <span class="text-gray-400 text-xs ml-2">Balance:{{ selfBalance }}
+                  <!-- <span class="text-gray-400 font-medium text-xs">${{ depositData.tokenAmount }}</span> -->
+                  <span class="text-gray-400 text-xs">Balance:{{ selfBalance }}
                   </span>
                 </div>
               </template>
             </BalanceForm>
           </template>
         </van-field>
-        <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain"
+        <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain" input-align="right"
           @click="showChainPicker = true" />
         <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
           <van-picker :columns="columns" :model-value="depositData.chain" @confirm="onConfirm"
@@ -144,35 +200,37 @@ watch([() => account.status, () => account.address, () => account.chain],
         </van-popup>
 
         <van-cell>
-          <van-button class="rounded-lg" block type="primary" native-type="submit">
+          <van-button class="rounded-lg" block type="primary" native-type="submit" :loading="loading">
             Deposit
           </van-button>
         </van-cell>
       </van-form>
     </div>
-    <div v-if="currentStep === 2" class="step-two w-full">
+    <div v-if="currentStep === 2" class="step-two w-full pb-3">
+      <div class="flex justify-center my-2">
+        <van-icon v-if="status == 'Successful'" name="checked" size="60" class="text-green-500" />
+        <van-icon v-else-if="status == 'Failed'" name="clear" size="60" class="text-red-500" />
+        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" size="60" />
+      </div>
       <van-cell-group>
-        <van-cell>
-          <van-count-down :time="time">
-            <template #default="timeData">
-              <span class="block">{{ timeData.hours }}</span>
-              <span class="colon">:</span>
-              <span class="block">{{ timeData.minutes }}</span>
-              <span class="colon">:</span>
-              <span class="block">{{ timeData.seconds }}</span>
-            </template>
-          </van-count-down>
+        <van-cell title="Fill status" :value="status" :value-class="{'!text-green-500': status == 'Successful', '!text-red-500': status == 'Failed'}" />
+        <van-cell title="You receive" :value="`≈ ${depositData.tokenAmount}`" />
+        <van-cell title="Transcation ID" >
+          <template #value>
+            <a class="text-primary" target="_blank">{{ encryptMiddle(transactionTx) }}</a>
+          </template>
+          <template #right-icon>
+            <span v-if="copied && text == transactionTx" class="w-4 text-green-500 ml-1">✔</span>
+            <img v-else class="w-4 h-4 ml-1 mt-1" src="/icons/copy.svg" @click="copy(transactionTx)" />
+          </template>
         </van-cell>
-        <van-cell title="Fill status" :value="status" />
-        <van-cell title="You receive" value="1.0007" />
-        <van-cell title="Transcation ID" value="0x123qsdq123sdad" />
         <van-notice-bar color="#a7a7a7" background="#f9f9f9" left-icon="info-o">
-          <span class="font-xs">Experiencing problems?</span> <a>Get help</a>
+          <span class="font-xs">Experiencing problems?</span> <a class="text-black !underline" href="" target="_blank">Get help</a>
         </van-notice-bar>
       </van-cell-group>
       <van-cell-group>
-        <div class="flex mt-2 gap-2">
-          <van-button block type="primary" plain native-type="submit">
+        <div class="flex mt-2 px-4 gap-3">
+          <van-button block type="primary" plain native-type="submit" @click="$emit('close');newWithdrawal">
             Close
           </van-button>
           <van-button block type="primary" native-type="submit" @click="newWithdrawal">

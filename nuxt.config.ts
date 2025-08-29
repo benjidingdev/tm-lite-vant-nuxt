@@ -9,6 +9,7 @@ const modules = [
   "@nuxtjs/i18n",
   "pinia-plugin-persistedstate/nuxt",
   "@vueuse/motion/nuxt",
+  "@vueuse/nuxt",
 ];
 
 export default defineNuxtConfig({
