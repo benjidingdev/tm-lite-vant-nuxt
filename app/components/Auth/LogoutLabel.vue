@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const { logOut } = $(authStore());
+const { setModal } = $(uiStore());
+
+const onClick = async () => {
+  await logOut();
+  setModal('settings', false);
+};
 </script>
 
 <template>
@@ -7,6 +13,6 @@ const { logOut } = $(authStore());
     input-align="right"
     readonly
     :label="$t('Logout')"
-    @click="logOut"
+    @click="onClick"
   />
 </template>
