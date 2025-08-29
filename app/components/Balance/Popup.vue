@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const { modalIsShow } = $(uiStore());
+const closeModal = () => {
+  modalIsShow.balanceModal = false;
+}
 </script>
 
 <template>
@@ -11,9 +14,9 @@ const { modalIsShow } = $(uiStore());
     :showCancelButton="false"
     :z-index="50"
   >
-    <van-tabs v-model:active="active">
-      <van-tab title="Deposit"><BalanceDeposit /></van-tab>
-      <van-tab title="Withdraw"><BalanceWithdraw /></van-tab>
+    <van-tabs>
+      <van-tab title="Deposit"><BalanceDeposit @close="closeModal" /></van-tab>
+      <van-tab title="Withdraw"><BalanceWithdraw @close="closeModal" /></van-tab>
     </van-tabs>
   </van-dialog>
 </template>
