@@ -25,5 +25,12 @@
   "Confirm": "Confirm",
   "Cancel": "Cancel",
   "SHARE TO": "SHARE TO",
-  "Login in or sign up": "Login in or sign up"
+  "Login in or sign up": "Login in or sign up",
+  "Balance": "Balance",
+  "Transfer Crypto": "Transfer Crypto",
+  "Supported token": "Supported token",
+  "Supported chain": "Supported chain",
+  "Your deposit address": "Your deposit address",
+  "Copy address": "Copy address",
+  "Terms apply": "Terms apply"
 }

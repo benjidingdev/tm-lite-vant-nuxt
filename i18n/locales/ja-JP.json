@@ -25,5 +25,12 @@
   "Confirm": "確認",
   "Cancel": "キャンセル",
   "SHARE TO": "共有先",
-  "Login in or sign up": "ログインまたはサインアップ"
+  "Login in or sign up": "ログインまたはサインアップ",
+  "Balance": "残高",
+  "Transfer Crypto": "暗号通貨を転送",
+  "Supported token": "サポートされているトークン",
+  "Supported chain": "サポートされているチェーン",
+  "Your deposit address": "あなたの入金アドレス",
+  "Copy address": "アドレスをコピー",
+  "Terms apply": "利用規約が適用されます"
 }
