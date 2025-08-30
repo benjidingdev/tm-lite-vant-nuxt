@@ -6,10 +6,6 @@ if [ -z "$1" ]; then
 fi
 
 branch_mode=$1
-# 原路径
-# tmp_env="./.nuxt/.env.combined"
-
-# 新路径（兼容 Vercel 环境）
 tmp_env="/tmp/env.combined"
 
 if [ ! -f .env ]; then
