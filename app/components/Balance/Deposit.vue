@@ -225,8 +225,7 @@
         <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain"
           input-align="right" @click="showChainPicker = true" />
         <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
-          <van-picker :columns="columns" v-model="chain" @confirm="onConfirm"
-            @cancel="showChainPicker = false" />
+          <van-picker :columns="columns" v-model="chain" @confirm="onConfirm" @cancel="showChainPicker = false" />
         </van-popup>
 
         <van-cell>
@@ -240,7 +239,7 @@
       <div class="flex justify-center my-2">
         <van-icon v-if="status == 'Successful'" name="checked" size="60" class="text-green-500" />
         <van-icon v-else-if="status == 'Failed'" name="clear" size="60" class="text-red-500" />
-        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" />
+        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" class="my-4" />
       </div>
       <van-cell-group>
         <van-cell title="Fill status" :value="status"
@@ -263,7 +262,7 @@
       </van-cell-group>
       <van-cell-group>
         <div class="flex mt-2 px-4 gap-3">
-          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal();$emit('close')">
+          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal(); $emit('close')">
             Close
           </van-button>
           <van-button block type="primary" native-type="submit" @click="newWithdrawal">
