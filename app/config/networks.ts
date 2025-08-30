@@ -5,13 +5,11 @@ import type { CaipNetwork } from '@reown/appkit'
 export const getNetworks = (testnet: boolean) => {
     if (testnet) {
         return [
-            avalancheFuji,
             sepolia,
             polygonAmoy
         ]
     } else {
         return [
-            avalanche,
             mainnet,
             polygon
         ]
