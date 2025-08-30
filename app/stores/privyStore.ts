@@ -6,7 +6,7 @@ export const privyStore = defineStore(
   () => {
     const { $privy, $PrivySDK } = useNuxtApp();
     const { updateWalletBalance } = $(walletStore());
-    const networks = getNetworks(useRuntimeConfig().public.testnet as boolean)
+    const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
     let email = $ref("");
     let hasSend = $ref(false);

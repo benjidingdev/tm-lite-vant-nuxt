@@ -14,6 +14,7 @@
     switchNetwork,
     account,
     getSelfAllowance,
+    getSelfBalance,
     approveUSDC,
     burnUSDC,
     updateWalletBalance
@@ -29,16 +30,24 @@
   let status = $ref("");
   let transactionTx = $ref("");
 
-  let columns = networks.filter((item, index) => index !== 0).map((item) => ({
+  let columns = networks.filter((item: any, index: number) => index !== 0).map((item: { name: string }) => ({
     text: item.name,
     value: item.name,
   }));
+  let chain = $ref([columns[0]?.value]);
 
-  const onConfirm = ({ selectedValues, selectedOptions }) => {
+  const onConfirm = async ({
+    selectedValues,
+    selectedOptions,
+  }: {
+    selectedValues: string[];
+    selectedOptions: Array<{ text: string; value: string }>;
+  }) => {
     result = selectedOptions[0]?.text;
     depositData.chain = selectedValues;
     showChainPicker = false;
-    switchNetwork(result);
+    await switchNetwork(result);
+    getSelfBalance();
   };
 
   const deposit = async () => {
@@ -99,9 +108,11 @@
   }
 
   const newWithdrawal = () => {
-    currentStep = 1;
-    depositData.tokenAmount = 0;
+    currentStep = 1
+    depositData.tokenAmount = 0
     timeLeft = duration
+    rateLeft = duration
+    getSelfBalance()
   };
 
   const duration = 60 // Countdown seconds
@@ -214,8 +225,7 @@
         <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain"
           input-align="right" @click="showChainPicker = true" />
         <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
-          <van-picker :columns="columns" :model-value="depositData.chain" @confirm="onConfirm"
-            @cancel="showChainPicker = false" />
+          <van-picker :columns="columns" v-model="chain" @confirm="onConfirm" @cancel="showChainPicker = false" />
         </van-popup>
 
         <van-cell>
@@ -229,7 +239,7 @@
       <div class="flex justify-center my-2">
         <van-icon v-if="status == 'Successful'" name="checked" size="60" class="text-green-500" />
         <van-icon v-else-if="status == 'Failed'" name="clear" size="60" class="text-red-500" />
-        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" />
+        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" class="my-4" />
       </div>
       <van-cell-group>
         <van-cell title="Fill status" :value="status"
@@ -252,7 +262,7 @@
       </van-cell-group>
       <van-cell-group>
         <div class="flex mt-2 px-4 gap-3">
-          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal; $emit('close')">
+          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal(); $emit('close')">
             Close
           </van-button>
           <van-button block type="primary" native-type="submit" @click="newWithdrawal">

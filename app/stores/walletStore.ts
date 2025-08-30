@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { EIP1193Provider } from "viem";
 import { formatUnits, parseEther, parseUnits } from "viem";
-import { getBalance, readContract, writeContract } from "@wagmi/core";
+import { getBalance, readContract, writeContract, switchChain } from "@wagmi/core";
 import { useAccount, useAccountEffect } from "@wagmi/vue";
 import { useAppKit, useAppKitNetwork } from "@reown/appkit/vue";
 
@@ -37,7 +37,7 @@ export const walletStore = defineStore("walletStore", () => {
   let selfBalance = $ref(0);
 
   const { $wagmiAdapter } = useNuxtApp();
-  const networks = getNetworks(useRuntimeConfig().public.testnet as boolean)
+  const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
   const { open } = useAppKit();
   const account = useAccount();
@@ -85,7 +85,8 @@ export const walletStore = defineStore("walletStore", () => {
   const switchNetwork = async (networkName: string) => {
     const network = $wagmiAdapter.wagmiChains!.find((chain) => chain.name === networkName);
     if (network) {
-      networkData.value.switchNetwork(network);
+      await switchChain($wagmiAdapter.wagmiConfig, { chainId: network.id });
+      // await networkData.value.switchNetwork(network);
     }
   }
 
@@ -432,6 +433,7 @@ export const walletStore = defineStore("walletStore", () => {
     connectWallet,
     switchNetwork,
     getSelfAllowance,
+    getSelfBalance,
     signWithdraw,
     updateWalletBalance,
     signTradeData,

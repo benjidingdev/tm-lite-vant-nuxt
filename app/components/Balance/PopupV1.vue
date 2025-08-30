@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { getNetworks } from '~/config/networks';
-const { modalIsShow } = $(uiStore());
-const { usdcBalance, loginAddress } = $(walletStore());
+  import { getNetworks } from '~/config/networks';
+  const { modalIsShow } = $(uiStore());
+  const { usdcBalance, loginAddress } = $(walletStore());
 
-const config = useRuntimeConfig()
-const testnet = config.public.testnet as boolean
-const chainName = getNetworks(testnet)[0]?.name
-const { copy, copied, text } = useClipboard()
-const selectedText = ref('USDC')
-const showPicker = ref(false)
-const selectedToken = ref(['USDC'])
-const showChainPicker = ref(false)
+  const config = useRuntimeConfig()
+  const testnet = config.public.testnet as boolean
+  const chainName = getNetworks(testnet)[0]?.name
+  const { copy, copied, text } = useClipboard()
+  const selectedText = ref('USDC')
+  const showPicker = ref(false)
+  const selectedToken = ref(['USDC'])
+  const showChainPicker = ref(false)
 
-const tokenColumns = [
-  {
-    text: 'USDC',
-    img: '/icons/usdc.svg',
-  },
-]
+  const tokenColumns = [
+    {
+      text: 'USDC',
+      img: '/icons/usdc.svg',
+    },
+  ]
 
-const chainColumns = [
-  {
-    text: chainName,
-    img: '/icons/avalanche.svg',
-  },
-]
+  const chainColumns = [
+    {
+      text: chainName,
+      img: '/icons/avalanche.svg',
+    },
+  ]
 
-const closeModal = () => {
-  modalIsShow.balanceModal = false;
-}
+  const closeModal = () => {
+    modalIsShow.balanceModal = false;
+  }
 </script>
 
 <template>
@@ -49,9 +49,10 @@ const closeModal = () => {
         <a class="!underline" href="https://turingm.io/terms" target="_blank">{{ $t('Terms apply') }}</a>
       </div>
       <div class="">
-        <p class="break-words text-center px-3 py-2 border border-b-0 border-gray-200 rounded-lg rounded-b-none mt-1">
-          {{
-            loginAddress }}</p>
+        <p
+          class="break-words text-center px-3 py-2 border border-b-0 border-gray-200 rounded-lg rounded-b-none mt-1 text-gray-500">
+          {{ loginAddress }}
+        </p>
         <div
           class="flex justify-center items-center bg-[var(--van-button-primary-background)] text-white rounded-b-lg font-semibold px-3 py-2"
           @click="copy(loginAddress)">

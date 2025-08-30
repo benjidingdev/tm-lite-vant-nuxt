@@ -11,10 +11,10 @@ export function getWagmiAdapter() {
   if (!wagmiAdapter) {
     const config = useRuntimeConfig()
     const projectId = config.public.reownProjectId as string
-    const testnet = config.public.testnet as boolean
-    const networks = getNetworks(testnet)
+    const isTestnet = config.public.isTestnet as boolean
+    const networks = getNetworks(isTestnet)
     wagmiAdapter = new WagmiAdapter({
-      networks: networks,
+      networks,
       projectId,
     })
   }
