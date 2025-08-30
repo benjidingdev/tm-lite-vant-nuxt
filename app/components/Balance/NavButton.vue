@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { shortenNumber } from "@/utils/processing";
 
-const { shortWalletAddress } = $(walletStore());
+const { usdcBalance, shortWalletAddress } = $(walletStore());
 const { setModal } = $(uiStore());
 const { token } = $(authStore());
 
@@ -18,10 +18,10 @@ const { token } = $(authStore());
       <div class="flex items-center">
         <img
           class="w-5 h-5 rounded-full mr-2"
-          src="https://mallbucket-pub.s3.us-west-1.amazonaws.com/5d91f04442c8d6f585479c37e916596110bdf1cfcbc1d60cfd9d971ae1bf0815.jpg"
+          src="/icons/usdc.svg"
           alt=""
         />
-        <span class="text-white/80">{{ shortWalletAddress }}</span>
+        <span class="text-white/80">${{ Math.floor(usdcBalance * 100) / 100 }}</span>
       </div>
     </button>
     <van-button

@@ -25,5 +25,12 @@
   "Confirm": "확인",
   "Cancel": "취소",
   "SHARE TO": "공유하기",
-  "Login in or sign up": "로그인 또는 회원가입"
+  "Login in or sign up": "로그인 또는 회원가입",
+  "Balance": "잔액",
+  "Transfer Crypto": "암호화폐 전송",
+  "Supported token": "지원되는 토큰",
+  "Supported chain": "지원되는 체인",
+  "Your deposit address": "당신의 입금 주소",
+  "Copy address": "주소 복사",
+  "Terms apply": "약관이 적용됩니다"
 }
