@@ -169,7 +169,6 @@ export const walletStore = defineStore("walletStore", () => {
       token: walletConfig!.main.address,
     });
     if (mainRes.value != usdtBalance) {
-      console.log("mainRes", mainRes);
       updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
       usdtBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
     }
