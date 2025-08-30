@@ -69,7 +69,7 @@
           <OrderSharePopup />
           <AuthLoginModal />
           <SettingsNumberKeyBoard />
-          <BalancePopup />
+          <BalancePopupV1 />
         </NuxtLayout>
       </div>
     </van-config-provider>

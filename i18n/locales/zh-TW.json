@@ -25,5 +25,12 @@
   "Confirm": "確認",
   "Cancel": "取消",
   "SHARE TO": "分享至",
-  "Login in or sign up": "登入或註冊"
+  "Login in or sign up": "登入或註冊",
+  "Balance": "餘額",
+  "Transfer Crypto": "轉帳加密貨幣",
+  "Supported token": "支持的代幣",
+  "Supported chain": "支持的鏈",
+  "Your deposit address": "你的存款地址",
+  "Copy address": "複製地址",
+  "Terms apply": "條款適用"
 }
