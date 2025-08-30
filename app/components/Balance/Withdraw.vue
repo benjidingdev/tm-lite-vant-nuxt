@@ -10,6 +10,7 @@
   let tokenAmount = $ref(1);
   let currentStep = $ref(1);
   let status = $ref("processing");
+  let toAddress = $ref('');
 
   const waitTransaction = async (hash: string) => {
     try {
@@ -64,7 +65,7 @@
     <van-form @submit="withdraw">
       <van-field name="toAddress">
         <template #input>
-          <BalanceForm v-model="toAddress" maxlength="42" label="Recipient address" name="toAddress"
+          <BalanceForm v-model="toAddress" :maxlength="42" label="Recipient address" name="toAddress"
             placeholder="0x..." />
         </template>
       </van-field>

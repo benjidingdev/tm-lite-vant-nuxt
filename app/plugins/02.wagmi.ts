@@ -6,7 +6,6 @@ import { getWagmiAdapter } from '@/config/reown'
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig()
-  const projectId = config.public.reownProjectId as string
   const metadata = {
     name: config.public.siteName as string,
     description: config.public.siteDescription as string,
@@ -14,11 +13,7 @@ export default defineNuxtPlugin(nuxtApp => {
     icons: [`${config.public.siteUrl}/favicon.ico`]
   }
   const wagmiAdapter = getWagmiAdapter()
-  // const wagmiAdapter = new WagmiAdapter({
-  //   networks,
-  //   projectId,
-  // })
-  nuxtApp.vueApp.use(WagmiPlugin, { 
+  nuxtApp.vueApp.use(WagmiPlugin, {
     config: wagmiAdapter.wagmiConfig,
   })
 

@@ -29,7 +29,7 @@
   let status = $ref("");
   let transactionTx = $ref("");
 
-  let columns = networks.map((item) => ({
+  let columns = networks.filter((item, index) => index !== 0).map((item) => ({
     text: item.name,
     value: item.name,
   }));
