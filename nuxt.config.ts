@@ -61,9 +61,10 @@ export default defineNuxtConfig({
     defaultLocale: "en",
     locales: [
       { code: "en", language: "English", file: "en-US.json" },
-      { code: "zh", language: "简体中文", file: "zh-CN.json" },
+      // { code: "zh", language: "简体中文", file: "zh-CN.json" },
       { code: "zh-tw", language: "繁體中文", file: "zh-TW.json" },
-      // { code: 'ja', language: '日本語', file: 'ja-JP.json' }
+      { code: 'ja', language: '日本語', file: 'ja-JP.json' },
+      { code: 'ko', language: '한국어', file: 'ko-KR.json' },
     ],
   },
   vueuse: {
