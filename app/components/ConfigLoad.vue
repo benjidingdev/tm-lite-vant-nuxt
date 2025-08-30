@@ -1,22 +1,22 @@
 <template />
 
 <script setup lang="ts">
-import { userConfig } from "~/api/userInfo";
+  import { userConfig } from "~/api/userInfo";
 
-const { updateWalletConfig } = $(walletStore());
-const loadWalletConfig = async () => {
-  try {
-    const res = await userConfig();
-    if (res.data) {
-      // Update the global store with the contract configuration
-      updateWalletConfig(res.data);
+  const { updateWalletConfig } = $(walletStore());
+  const loadWalletConfig = async () => {
+    try {
+      const res = await userConfig();
+      if (res.data) {
+        // Update the global store with the contract configuration
+        updateWalletConfig(res.data);
+      }
+    } catch (error) {
+      console.error("Failed to load contract configuration:", error);
     }
-  } catch (error) {
-    console.error("Failed to load contract configuration:", error);
-  }
-};
+  };
 
-onMounted(() => {
-  loadWalletConfig();
-});
+  onMounted(() => {
+    loadWalletConfig();
+  });
 </script>

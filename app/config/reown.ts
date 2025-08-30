@@ -33,7 +33,7 @@ export function createModal() {
   }
   return createAppKit({
     adapters: [wagmiAdapter],
-    networks: wagmiAdapter.wagmiChains as [AppKitNetwork, ...AppKitNetwork[]],
+    networks: wagmiAdapter?.wagmiChains?.filter((chain, index) => index !== 0) as [AppKitNetwork, ...AppKitNetwork[]],
     projectId,
     metadata,
     //defaultNetwork: wagmiAdapter.networks[0],
