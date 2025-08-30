@@ -4,8 +4,9 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
+    "build": "./scripts/build.sh",
+    "dev": "./scripts/dev.sh",
+    "dev2": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -17,6 +18,7 @@
     "@reown/appkit": "^1.7.16",
     "@reown/appkit-adapter-wagmi": "^1.7.16",
     "@tailwindcss/vite": "^4.1.11",
+    "@tanstack/vue-query": "^5.85.6",
     "@vant/nuxt": "1.0.7",
     "@vant/touch-emulator": "^1.4.0",
     "@vueuse/core": "^13.8.0",

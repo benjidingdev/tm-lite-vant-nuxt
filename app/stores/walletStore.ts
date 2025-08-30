@@ -37,7 +37,7 @@ export const walletStore = defineStore("walletStore", () => {
   let selfBalance = $ref(0);
 
   const { $wagmiAdapter } = useNuxtApp();
-  const networks = getNetworks(useRuntimeConfig().public.testnet as boolean)
+  const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
   const { open } = useAppKit();
   const account = useAccount();

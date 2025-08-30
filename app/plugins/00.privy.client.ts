@@ -4,12 +4,11 @@ import type { Plugin as NuxtPlugin } from '#app'
 import { getNetworks } from '@/config/networks'
 
 const plugin: NuxtPlugin = defineNuxtPlugin(() => {
-  const appId = 'cmenkmv1900dzla0b7lyg397f';
-  const clientId = 'client-WY6PqaLdqE9izqnHkFcspb3m8Feh5A3EWqGudW4Cxqw91';
+  const { appId, clientId } = useRuntimeConfig()?.public?.privy || {}
   const privy = new Privy({
     appId,
     clientId,
-    supportedChains: getNetworks(useRuntimeConfig().public.testnet as boolean),
+    supportedChains: getNetworks(useRuntimeConfig().public.isTestnet as boolean),
     storage: new PrivySDK.LocalStorage()
   });
   return { provide: { privy, PrivySDK } }

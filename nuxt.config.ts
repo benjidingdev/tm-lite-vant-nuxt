@@ -46,9 +46,6 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(
         import.meta.env.NUXT_PUBLIC_API_PREFIX
       ),
-      "import.meta.env.NUXT_PUBLIC_P_KEY": JSON.stringify(
-        import.meta.env.NUXT_PUBLIC_P_KEY
-      ),
       "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(
         import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID
       ),
@@ -75,14 +72,17 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
-      testnet: true,
+      isTestnet: process.env.NUXT_PUBLIC_IS_TESTNET === 'true',
       siteUrl: "",
       siteName: "",
       siteSlogan: "",
       siteDescription: "",
       branch: process.env.VERCEL_GIT_COMMIT_REF || "localDev",
       hash: process.env.VERCEL_GIT_COMMIT_SHA || "localDev",
-      privyClientId: process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID,
+      privy: {
+        appId: process.env.NUXT_PUBLIC_PRIVY_APP_ID || "",
+        clientId: process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID || "",
+      },
 
       // all options can be found here: https://www.npmjs.com/package/logrocket?activeTab=code
       // dist/types.d.ts --> interface IOptions
