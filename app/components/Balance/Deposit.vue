@@ -1,177 +1,175 @@
 <script setup lang="ts">
-import { showToast } from "vant";
-import { retrieveAttestation } from "@/api/cctp"
-import { encryptMiddle } from "@/utils/processing";
-import { getMessageTransmitter } from "@/config/networks"
-import { userMint } from "@/api/wallet";
+  import { showToast } from "vant";
+  import { retrieveAttestation } from "@/api/cctp"
+  import { encryptMiddle } from "@/utils/processing";
+  import { getMessageTransmitter } from "@/config/networks"
+  import { userMint } from "@/api/wallet";
 
-const {
-  loginAddress,
-  networks,
-  userBalance,
-  usdcBalance,
-  selfBalance,
-  connectWallet,
-  switchNetwork,
-  account,
-  getSelfAllowance,
-  approveUSDC,
-  burnUSDC,
-  mintUSDC,
-  updateWalletBalance
-} = $(walletStore());
+  const {
+    loginAddress,
+    networks,
+    usdcBalance,
+    selfBalance,
+    connectWallet,
+    switchNetwork,
+    account,
+    getSelfAllowance,
+    approveUSDC,
+    burnUSDC,
+    updateWalletBalance
+  } = $(walletStore());
 
-let { depositData } = $(depositStore());
-const { copy, copied, text } = useClipboard()
+  let { depositData } = $(depositStore());
+  const { copy, copied, text } = useClipboard()
 
-let currentStep = $ref(1);
-let result = $ref("");
-let showChainPicker = $ref(false);
-let loading = $ref(false);
-let status = $ref("");
-let transactionTx = $ref("");
+  let currentStep = $ref(1);
+  let result = $ref("");
+  let showChainPicker = $ref(false);
+  let loading = $ref(false);
+  let status = $ref("");
+  let transactionTx = $ref("");
 
-let columns = networks.map((item) => ({
-  text: item.name,
-  value: item.name,
-}));
+  let columns = networks.map((item) => ({
+    text: item.name,
+    value: item.name,
+  }));
 
-const onConfirm = ({ selectedValues, selectedOptions }) => {
-  result = selectedOptions[0]?.text;
-  depositData.chain = selectedValues;
-  showChainPicker = false;
-  switchNetwork(result);
-};
+  const onConfirm = ({ selectedValues, selectedOptions }) => {
+    result = selectedOptions[0]?.text;
+    depositData.chain = selectedValues;
+    showChainPicker = false;
+    switchNetwork(result);
+  };
 
-const deposit = async () => {
-  console.log("depositData", depositData);
-  loading = true;
-  try {
-    //1. 授权usdc
-    const allowance = await getSelfAllowance();
-    if (allowance < depositData.tokenAmount) {
-      const res = await approveUSDC(10000000); //depositData.tokenAmount
-      if (!res) {
-        showToast("Approve failed");
+  const deposit = async () => {
+    console.log("depositData", depositData);
+    loading = true;
+    try {
+      //1. 授权usdc
+      const allowance = await getSelfAllowance();
+      if (allowance < depositData.tokenAmount) {
+        const res = await approveUSDC(10000000); //depositData.tokenAmount
+        if (!res) {
+          showToast("Approve failed");
+          return;
+        }
+      }
+      //2. 燃烧usdc
+      const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
+      // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
+
+      if (!transactionHash) {
+        showToast("Burn failed");
         return;
       }
+
+      //3. 查询结果
+      checkHash(originDomain, transactionHash)
+      startCountdown()
+      rateCountdown()
+      currentStep = 2
+      status = "Processing"
+    } catch (error) {
+      showToast("Deposit failed");
+    } finally {
+      loading = false;
     }
-    //2. 燃烧usdc
-    const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
-    // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
+  };
 
-    if (!transactionHash) {
-      showToast("Burn failed");
-      return;
-    }
-
-    //3. 查询结果
-    checkHash(originDomain, transactionHash)
-    startCountdown()
-    rateCountdown()
-    currentStep = 2
-    status = "Processing"
-  } catch (error) {
-    showToast("Deposit failed");
-  } finally {
-    loading = false;
-  }
-};
-
-const checkHash = async (originDomain: number, transactionHash: string) => {
-  const attestion = await retrieveAttestation(originDomain, transactionHash);
-  if (attestion) {
-    const messageTransmitter = getMessageTransmitter(account.chain)
-    const res = await userMint({
-      messageTransmitter: messageTransmitter,
-      message: attestion.message,
-      attestation: attestion.attestation
-    })
-    // const tx = await mintUSDC(attestion);
-    if (res.code === 0) {
-      status = "Successful";
-      transactionTx = res.data;
-      updateWalletBalance();
-    } else {
-      status = "Failed";
-    }
-    clearInterval(timer)
-    clearInterval(rateTimer)
-  }
-}
-
-const newWithdrawal = () => {
-  currentStep = 1;
-  depositData.tokenAmount = 0;
-  timeLeft = duration
-};
-
-const duration = 60 // Countdown seconds
-let timeLeft = $ref(duration)
-let rateLeft = $ref(duration)
-let timer: any = null
-let rateTimer: any = null
-
-const percentage = computed(() => ((duration - rateLeft) / duration) * 100)
-
-const formattedTime = computed(() => {
-  const m = String(Math.floor(timeLeft / 60)).padStart(2, "0")
-  const s = String(timeLeft % 60).padStart(2, "0")
-  return `${m}:${s}`
-})
-
-const startCountdown = () => {
-  timer = setInterval(() => {
-    if (timeLeft > 0) {
-      timeLeft--
-    } else {
+  const checkHash = async (originDomain: number, transactionHash: string) => {
+    const attestion = await retrieveAttestation(originDomain, transactionHash);
+    if (attestion) {
+      const messageTransmitter = getMessageTransmitter(account.chain)
+      const res = await userMint({
+        messageTransmitter: messageTransmitter,
+        message: attestion.message,
+        attestation: attestion.attestation
+      })
+      // const tx = await mintUSDC(attestion);
+      if (res.code === 0) {
+        status = "Successful";
+        transactionTx = res.data;
+        updateWalletBalance();
+      } else {
+        status = "Failed";
+      }
       clearInterval(timer)
-    }
-  }, 1000)
-}
-
-const rateCountdown = () => {
-  rateTimer = setInterval(() => {
-    if (rateLeft > 0) {
-      rateLeft-=0.1
-    } else {
       clearInterval(rateTimer)
     }
-  }, 100)
-}
-
-watch(() => loginAddress, (newAddress) => {
-  if (newAddress) {
-    depositData.depositToAddress = newAddress;
   }
-}, { immediate: true })
 
-watch([() => account.status, () => account.address, () => account.chain],
-  ([newStatus, newAddress, newChain]) => {
-    if (newStatus != 'connected') {
-      depositData.depositFromAddress = '';
-    } else {
-      if (newAddress) {
-        depositData.depositFromAddress = newAddress;
+  const newWithdrawal = () => {
+    currentStep = 1;
+    depositData.tokenAmount = 0;
+    timeLeft = duration
+  };
+
+  const duration = 60 // Countdown seconds
+  let timeLeft = $ref(duration)
+  let rateLeft = $ref(duration)
+  let timer: any = null
+  let rateTimer: any = null
+
+  const percentage = computed(() => ((duration - rateLeft) / duration) * 100)
+
+  const formattedTime = computed(() => {
+    const m = String(Math.floor(timeLeft / 60)).padStart(2, "0")
+    const s = String(timeLeft % 60).padStart(2, "0")
+    return `${m}:${s}`
+  })
+
+  const startCountdown = () => {
+    timer = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--
+      } else {
+        clearInterval(timer)
       }
-      if (newChain) {
-        result = newChain.name;
-        depositData.chain = [...newChain.name];
+    }, 1000)
+  }
+
+  const rateCountdown = () => {
+    rateTimer = setInterval(() => {
+      if (rateLeft > 0) {
+        rateLeft -= 0.1
+      } else {
+        clearInterval(rateTimer)
       }
+    }, 100)
+  }
+
+  watch(() => loginAddress, (newAddress) => {
+    if (newAddress) {
+      depositData.depositToAddress = newAddress;
     }
   }, { immediate: true })
+
+  watch([() => account.status, () => account.address, () => account.chain],
+    ([newStatus, newAddress, newChain]) => {
+      if (newStatus != 'connected') {
+        depositData.depositFromAddress = '';
+      } else {
+        if (newAddress) {
+          depositData.depositFromAddress = newAddress;
+        }
+        if (newChain) {
+          result = newChain.name;
+          depositData.chain = [...newChain.name];
+        }
+      }
+    }, { immediate: true })
 </script>
 <template>
   <van-cell-group>
     <van-notice-bar class="my-2" color="#a7a7a7" background="#f9f9f9" left-icon="balance-pay">
       <span class="font-xs">Balance:${{ usdcBalance }}</span>
     </van-notice-bar>
-    <div v-if="currentStep === 1" class="step-one w-full">
+    <div v-if="currentStep === 1" class="step-one w-full pb-3">
       <van-form @submit="deposit">
         <van-field name="toAddress">
           <template #input>
-            <BalanceForm v-model="depositData.depositFromAddress" :maxlength="42" label="Sender address" :disabled="true"
-              name="depositToAddress" placeholder="0x...">
+            <BalanceForm v-model="depositData.depositFromAddress" :maxlength="42" label="Sender address"
+              :disabled="true" name="depositToAddress" placeholder="0x...">
               <template #input-right>
                 <div class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
                   <button
@@ -213,8 +211,8 @@ watch([() => account.status, () => account.address, () => account.chain],
             </BalanceForm>
           </template>
         </van-field>
-        <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain" input-align="right"
-          @click="showChainPicker = true" />
+        <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain"
+          input-align="right" @click="showChainPicker = true" />
         <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
           <van-picker :columns="columns" :model-value="depositData.chain" @confirm="onConfirm"
             @cancel="showChainPicker = false" />
@@ -234,9 +232,10 @@ watch([() => account.status, () => account.address, () => account.chain],
         <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" />
       </div>
       <van-cell-group>
-        <van-cell title="Fill status" :value="status" :value-class="{'!text-green-500': status == 'Successful', '!text-red-500': status == 'Failed'}" />
+        <van-cell title="Fill status" :value="status"
+          :value-class="{ '!text-green-500': status == 'Successful', '!text-red-500': status == 'Failed' }" />
         <van-cell title="You receive" :value="`≈ ${depositData.tokenAmount}`" />
-        <van-cell title="Transcation ID" >
+        <van-cell title="Transcation ID">
           <template #value>
             <a class="text-primary" target="_blank">{{ encryptMiddle(transactionTx) }}</a>
           </template>
@@ -246,12 +245,14 @@ watch([() => account.status, () => account.address, () => account.chain],
           </template>
         </van-cell>
         <van-notice-bar color="#a7a7a7" background="#f9f9f9" left-icon="info-o">
-          <span class="font-xs">Experiencing problems?</span> <a class="text-black !underline" href="" target="_blank">Get help</a>
+          <span class="font-xs">Experiencing problems?</span> <a class="text-black !underline" href=""
+            target="_blank">Get
+            help</a>
         </van-notice-bar>
       </van-cell-group>
       <van-cell-group>
         <div class="flex mt-2 px-4 gap-3">
-          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal;$emit('close')">
+          <van-button block type="primary" plain native-type="submit" @click="newWithdrawal; $emit('close')">
             Close
           </van-button>
           <van-button block type="primary" native-type="submit" @click="newWithdrawal">
