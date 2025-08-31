@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "./scripts/build.sh",
-    "dev2": "./scripts/dev.sh",
-    "dev": "nuxt dev",
+    "dev": "./scripts/dev.sh",
+    "dev2": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"

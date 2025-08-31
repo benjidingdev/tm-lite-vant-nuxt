@@ -54,7 +54,6 @@
     console.log("depositData", depositData);
     loading = true;
     try {
-      //1. 授权usdc
       const allowance = await getSelfAllowance();
       if (allowance < depositData.tokenAmount) {
         const res = await approveUSDC(10000000); //depositData.tokenAmount
@@ -63,7 +62,6 @@
           return;
         }
       }
-      //2. 燃烧usdc
       const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
       // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
 
@@ -72,7 +70,6 @@
         return;
       }
 
-      //3. 查询结果
       checkHash(originDomain, transactionHash)
       startCountdown()
       rateCountdown()
