@@ -350,7 +350,6 @@ export const walletStore = defineStore("walletStore", () => {
         allowanceAmount,
         coinType == 0 ? 6 : 18
       );
-      console.log('allowanced', allowanced, allowanced < minValue, minValue)
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
         // If the authorization is insufficient, a signature is required
@@ -382,7 +381,6 @@ export const walletStore = defineStore("walletStore", () => {
           spender: walletConfig!.contract.address,
         };
         const res = await approveSign(approveParam);
-        console.log("allowance success:", res);
         if (res) return true;
       } else {
         return true; // Authorization is sufficient, no need to sign
