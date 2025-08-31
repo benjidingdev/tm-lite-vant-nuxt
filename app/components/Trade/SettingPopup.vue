@@ -6,7 +6,7 @@
   const columns = [];
   //create an object array that contains text and value and the text is from 1 to 100 and the value is the same as text
   const initColumns = () => {
-    for (let i = 5; i <= 100; i++) {
+    for (let i = 1; i <= 100; i++) {
       columns.push({ text: i.toString(), value: i.toString() });
     }
   };
