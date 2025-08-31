@@ -1,9 +1,7 @@
 import * as userApi from "~/api/userInfo";
 import {
-  getTopicsRecommend,
   getTopicsOrderPreview,
   getTopicsOrderCreate,
-  getOrderAmount,
 } from "~/api/market";
 import { parseUnits } from "viem";
 
@@ -15,7 +13,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
 
   let isLoading = $ref(true);
   let cards = $ref([]);
-  const queue = $ref([]);
+  const queue: any[] = $ref([]);
   // const failCards = $ref([]);
   let isProcessing = $ref(false);
   let requestCount = $ref(0);
