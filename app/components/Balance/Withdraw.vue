@@ -33,7 +33,6 @@
   };
 
   const withdraw = async (form) => {
-    console.log(form);
     const { toAddress } = form;
     currentStep = 2;
     // get a new nonce here
@@ -85,7 +84,8 @@
               </template>
               <template #input-tips>
                 <div class="flex justify-between space-x-2">
-                  <span class="text-gray-400 font-medium text-xs">${{ tokenAmount }}</span>
+                  <span></span>
+                  <!-- <span class="text-gray-400 font-medium text-xs">${{ tokenAmount }}</span> -->
                   <span class="text-gray-400 text-xs ml-2">Balance:{{ userBalance }}
                   </span>
                 </div>
@@ -95,7 +95,7 @@
         </van-field>
         <van-cell>
           <van-button class="rounded-lg" block type="primary" native-type="submit">
-            Withdraw
+            {{ $t('withdraw') }}
           </van-button>
         </van-cell>
       </van-form>

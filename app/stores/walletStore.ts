@@ -253,7 +253,14 @@ export const walletStore = defineStore("walletStore", () => {
       const destinationDomain = getDomain(walletClient.chain!)
       const destinationAddress_bytes32 = `0x000000000000000000000000${wallet.address!.slice(2)}`
       const destinationCaller_bytes32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
-
+      console.log('xxx', {
+        tokenMessager,
+        destinationDomain,
+          destinationAddress_bytes32,
+          usdcAddress,
+        destinationCaller_bytes32,
+          amount,
+      })
       const tx = await writeContract($wagmiAdapter.wagmiConfig, {
         abi: usdtAbi,
         address: tokenMessager,
