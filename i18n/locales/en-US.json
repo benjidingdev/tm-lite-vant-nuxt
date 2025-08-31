@@ -37,5 +37,9 @@
   "Email": "Email",
   "Please enter email": "Please enter email",
   "Please enter a valid email address": "Please enter a valid email address",
-  "Submit": "Submit"
+  "Submit": "Submit",
+
+  "Request Queue Error": "Request Queue Error",
+  "Close": "Close",
+  "No data": "No data"
 }

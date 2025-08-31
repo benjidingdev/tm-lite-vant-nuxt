@@ -13,8 +13,8 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
 
   let isLoading = $ref(true);
   let cards = $ref([]);
-  const queue: any[] = $ref([]);
-  const failCards = $ref([]);
+  let queue: any[] = $ref([]);
+  let failCards = $ref([]);
   let isProcessing = $ref(false);
   let requestCount = $ref(0);
   let successCount = $ref(0);
@@ -101,7 +101,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
       payload.status = 'fail';
       // cards.unshift({ ...payload.card, retry: true })
       failCards.unshift({ ...payload.card, transaction: payload.transaction, error })
-      console.log('error', error);
+      console.error('error', error);
       showNotify(
         { type: 'danger', message: transaction.marketsTitle + " Transaction Failed" }
       );
