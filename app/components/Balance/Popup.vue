@@ -16,7 +16,7 @@
     <div class="text-gray-500 font-xs mt-4 py-2 px-4 text-xs bg-gray-100 space-y-2">
       <div class="flex justify-between">
         <div>{{ $t('Your Wallet Address:') }}</div>
-        <div> {{ shortenAddress(wallet.address) }}</div>
+        <div> {{ shortenAddress(wallet?.address) }}</div>
       </div>
       <div class="flex justify-between ">
         <div>{{ $t('Your Wallet Cash:') }}</div>
