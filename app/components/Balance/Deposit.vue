@@ -119,7 +119,8 @@
   let timer: any = null
   let rateTimer: any = null
 
-  const percentage = computed(() => ((duration - rateLeft) / duration) * 100)
+  const rate = computed(() => ((duration - rateLeft) / duration) * 100)
+  let percentage = $ref(0)
 
   const formattedTime = computed(() => {
     const m = String(Math.floor(timeLeft / 60)).padStart(2, "0")
@@ -239,7 +240,8 @@
       <div class="flex justify-center my-2">
         <van-icon v-if="status == 'Successful'" name="checked" size="60" class="text-green-500" />
         <van-icon v-else-if="status == 'Failed'" name="clear" size="60" class="text-red-500" />
-        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" class="my-4" />
+        <van-circle v-else v-model:current-rate="percentage" :rate="rate" :text="formattedTime" speed="10" size="60"
+          class="my-4" />
       </div>
       <van-cell-group>
         <van-cell title="Fill status" :value="status"
