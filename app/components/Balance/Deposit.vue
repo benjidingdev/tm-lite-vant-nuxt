@@ -62,9 +62,8 @@
           return;
         }
       }
-      console.log('xxx', depositData.tokenAmount)
+
       const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
-      // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
 
       if (!transactionHash) {
         showToast("Burn failed");
@@ -119,7 +118,8 @@
   let timer: any = null
   let rateTimer: any = null
 
-  const percentage = computed(() => ((duration - rateLeft) / duration) * 100)
+  const rate = computed(() => ((duration - rateLeft) / duration) * 100)
+  let percentage = $ref(0)
 
   const formattedTime = computed(() => {
     const m = String(Math.floor(timeLeft / 60)).padStart(2, "0")
@@ -239,7 +239,8 @@
       <div class="flex justify-center my-2">
         <van-icon v-if="status == 'Successful'" name="checked" size="60" class="text-green-500" />
         <van-icon v-else-if="status == 'Failed'" name="clear" size="60" class="text-red-500" />
-        <van-circle v-else v-model:current-rate="percentage" :text="formattedTime" speed="10" size="60" class="my-4" />
+        <van-circle v-else v-model:current-rate="percentage" :rate="rate" :text="formattedTime" speed="10" size="60"
+          class="my-4" />
       </div>
       <van-cell-group>
         <van-cell title="Fill status" :value="status"

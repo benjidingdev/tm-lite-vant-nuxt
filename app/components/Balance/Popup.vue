@@ -11,9 +11,9 @@
 </script>
 
 <template>
-  <van-dialog closeable v-model:show="modalIsShow.balanceModal" :title="$t('Deposit & Withdraw')"
-    :showConfirmButton="false" :showCancelButton="false" :z-index="50">
-    <div class="text-gray-500 font-xs mt-4 py-2 px-4 text-xs bg-gray-100 space-y-2">
+  <van-dialog closeable v-model:show="modalIsShow.balanceModal" :showConfirmButton="false" :showCancelButton="false"
+    :z-index="50">
+    <div class="text-gray-500 font-xs mt-4 py-2 px-4 text-xs bg-gray-100 space-y-2 mt-10">
       <div class="flex justify-between">
         <div>{{ $t('Your Wallet Address:') }}</div>
         <div> {{ shortenAddress(wallet?.address) }}</div>

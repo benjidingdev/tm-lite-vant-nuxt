@@ -277,7 +277,7 @@ export const walletStore = defineStore("walletStore", () => {
         ],
         functionName: 'depositForBurn'
       })
-      console.log(`burn usdc from domain: ${destinationDomain} and return transactionHash: ${tx}`)
+      // console.log(`burn usdc from domain: ${destinationDomain} and return transactionHash: ${tx}`)
       return { originDomain: originDomain, destinationDomain: destinationDomain, transactionHash: tx }
     } catch (err) {
       console.error("Error signing approve:", err)
@@ -352,7 +352,6 @@ export const walletStore = defineStore("walletStore", () => {
         allowanceAmount,
         coinType == 0 ? 6 : 18
       );
-
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
         // If the authorization is insufficient, a signature is required
@@ -384,7 +383,6 @@ export const walletStore = defineStore("walletStore", () => {
           spender: walletConfig!.contract.address,
         };
         const res = await approveSign(approveParam);
-        console.log("allowance success:", res);
         if (res) return true;
       } else {
         return true; // Authorization is sufficient, no need to sign
