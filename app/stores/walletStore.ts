@@ -93,7 +93,6 @@ export const walletStore = defineStore("walletStore", () => {
   let isGetSelfBalanceLoading = $ref(false);
   const getSelfBalance = async () => {
     if (account.status.value != 'connected' || isGetSelfBalanceLoading) return;
-    console.log('isGetSelfBalanceLoading', isGetSelfBalanceLoading)
     isGetSelfBalanceLoading = true;
     const usdcAddress = getUsdcAddress(account.chain.value!)
     // get USDT balance

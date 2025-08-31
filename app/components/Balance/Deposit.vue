@@ -155,7 +155,6 @@
 
   watch([() => account.status, () => account.address, () => account.chain],
     ([newStatus, newAddress, newChain]) => {
-      console.log('account', account, newStatus)
       if (newStatus != 'connected') {
         depositData.depositFromAddress = '';
       } else {
