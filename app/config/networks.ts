@@ -54,7 +54,7 @@ export const getDomain = (network: AppKitNetwork) => {
 }
 
 export const getTokenMessager = (network: AppKitNetwork) => {
-  if (network.isTestnet === true) {
+  if (network.testnet === true) {
     return "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA";
   } else {
     return "0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d";
@@ -62,7 +62,7 @@ export const getTokenMessager = (network: AppKitNetwork) => {
 }
 
 export const getMessageTransmitter = (network: AppKitNetwork) => {
-  if (network.isTestnet === true) {
+  if (network.testnet === true) {
     return "0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275";
   } else {
     return "0x81D40F21F12A8F0E3252Bccb954D722d4c464B64";

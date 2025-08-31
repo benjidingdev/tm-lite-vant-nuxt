@@ -4,7 +4,7 @@
   import { encryptMiddle } from "@/utils/processing";
   import { getMessageTransmitter } from "@/config/networks"
   import { userMint } from "@/api/wallet";
-
+  const { t } = useI18n()
   const {
     loginAddress,
     networks,
@@ -62,6 +62,7 @@
           return;
         }
       }
+      console.log('xxx', depositData.tokenAmount)
       const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
       // const { originDomain, transactionHash } = { originDomain: 0, transactionHash: "0xd3f5d247f265fe3cec3a46c3ac4fec0c7a16a4ab6a41d6c443a4a6d775b1d204" }
 

@@ -115,6 +115,8 @@ export const privyStore = defineStore(
     };
 
     const sendEmail = async () => {
+      if (isLoading) return;
+      isLoading = true;
       await $privy.auth.email.sendCode(email);
       hasSend = true;
       isLoading = false;
