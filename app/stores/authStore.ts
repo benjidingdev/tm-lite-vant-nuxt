@@ -10,7 +10,7 @@ export const authStore = defineStore(
   () => {
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
-    const { loadUserInfo, userInfo, updateUserInfo, initLocale } = $(userStore());
+    let { loadUserInfo, userInfo, initLocale } = $(userStore());
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
@@ -71,7 +71,7 @@ export const authStore = defineStore(
         if (res?.code === 0) {
           deleteAllCookies();
           updateToken({});
-          updateUserInfo({});
+          userInfo = {}
           session = null;
           errorInfo = null;
           showToast("Logout successful");

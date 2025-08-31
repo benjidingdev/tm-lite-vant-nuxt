@@ -23,6 +23,7 @@ let { addRequest, cards, isLoading } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
+const { userOrderAmount } = $(userStore());
 
 const pageSize = 12;
 let total = 0;
@@ -236,26 +237,23 @@ const goDeposit = async (card, isYes) => {
     resetCard();
   } else {
     // balance check
-    if (userBalance < transaction.textPrice) {
+    const userCanUseBalance = userBalance - userOrderAmount;
+    console.log({userBalance, textPrice: transaction.textPrice, userOrderAmount, userCanUseBalance});
+    if (userCanUseBalance < transaction.textPrice) {
       showFailToast("Insufficient balance");
       resetCard();
       return false;
     }
-    try {
 
-      // add request to queue
-      addRequest(transaction, card);
+    // add request to queue
+    addRequest(transaction, card);
 
-      if (transaction.type === 1) {
-        swipeCard(statusList[0]);
-      } else {
-        swipeCard(statusList[1], () => { });
-      }
-
-
-    } finally {
-      resetCard();
+    if (transaction.type === 1) {
+      swipeCard(statusList[0]);
+    } else {
+      swipeCard(statusList[1], () => { });
     }
+
   }
   resetCard();
 };
@@ -340,10 +338,10 @@ onMounted((e) => {
         <van-empty description="If you are interested in Turing Market, please go to our official version"
           style="--van-empty-description-color: #323232;">
           <template #image>
-             <img src="/assets/icon/logo.svg" />
-           </template>
+            <img src="/assets/icon/logo.svg" />
+          </template>
 
-           <van-button round type="primary" class="bottom-button">Launch App</van-button>
+          <van-button round type="primary" class="bottom-button">Launch App</van-button>
         </van-empty>
       </div>
     </van-skeleton>

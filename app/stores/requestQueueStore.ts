@@ -10,6 +10,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
 
   const { tradeVolume } = $(tradeStore());
   const { signTradeData, updateWalletBalance } = $(walletStore());
+  const { updateUserOrderAmountInfo } = $(userStore());
 
   let isLoading = $ref(true);
   let cards = $ref([]);
@@ -92,6 +93,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
             successCount++;
 
             updateWalletBalance();
+            updateUserOrderAmountInfo();
             // showSuccessToast("Transaction Successful");
             // showNotify({ type: 'success', message: `${Object.keys(queueMap).length}` + " Transaction Successful" });
           }
