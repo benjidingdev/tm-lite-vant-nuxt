@@ -165,38 +165,40 @@ export const walletStore = defineStore("walletStore", () => {
    * get wallet balance and update store
    */
   const updateWalletBalance = async () => {
-    if (!wallet.address) return;
-    // get USDT balance
-    const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: walletConfig.chain.id,
-      address: wallet.address as any,
-      token: walletConfig!.main.address,
-    });
-    if (mainRes.value != usdtBalance) {
-      updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
-      usdtBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
-    }
-    // get MEME balance
-    const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: walletConfig.chain.id,
-      address: wallet.address as any,
-      token: walletConfig!.meme.address,
-    });
-    if (memeRes.value != tokenBalance) {
-      console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
-      updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
-      tokenBalance = Number(formatUnits(memeRes.value, memeRes.decimals));
-    }
-    // get USDC balance
-    const usdcAddress = getUsdcAddress(walletClient.chain!)
-    const usdcRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: walletConfig.chain.id,
-      address: wallet.address as any,
-      token: usdcAddress,
-    });
-    if (usdcRes.value != usdcBalance) {
-      usdcBalance = Number(formatUnits(usdcRes.value, usdcRes.decimals));
-    }
+    useDebounceFn(async () => {
+      if (!wallet.address) return;
+      // get USDT balance
+      const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
+        chainId: walletConfig.chain.id,
+        address: wallet.address as any,
+        token: walletConfig!.main.address,
+      });
+      if (mainRes.value != usdtBalance) {
+        updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
+        usdtBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
+      }
+      // get MEME balance
+      const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
+        chainId: walletConfig.chain.id,
+        address: wallet.address as any,
+        token: walletConfig!.meme.address,
+      });
+      if (memeRes.value != tokenBalance) {
+        console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
+        updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
+        tokenBalance = Number(formatUnits(memeRes.value, memeRes.decimals));
+      }
+      // get USDC balance
+      const usdcAddress = getUsdcAddress(walletClient.chain!)
+      const usdcRes = await getBalance($wagmiAdapter.wagmiConfig, {
+        chainId: walletConfig.chain.id,
+        address: wallet.address as any,
+        token: usdcAddress,
+      });
+      if (usdcRes.value != usdcBalance) {
+        usdcBalance = Number(formatUnits(usdcRes.value, usdcRes.decimals));
+      }
+    }, 2000)
   };
 
   /**
@@ -256,10 +258,10 @@ export const walletStore = defineStore("walletStore", () => {
       console.log('xxx', {
         tokenMessager,
         destinationDomain,
-          destinationAddress_bytes32,
-          usdcAddress,
+        destinationAddress_bytes32,
+        usdcAddress,
         destinationCaller_bytes32,
-          amount,
+        amount,
       })
       const tx = await writeContract($wagmiAdapter.wagmiConfig, {
         abi: usdtAbi,

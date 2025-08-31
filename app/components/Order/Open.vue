@@ -45,10 +45,6 @@ const fetchOpenOrderList = async () => {
   }
 };
 
-const dollars2cents = (value) => {
-  return multiply(value, 100);
-};
-
 onMounted(() => {
   const isCallNow = triggerCallDuration(Date.now(), 10);
   if (firstCall.openOrder && !isCallNow) {
@@ -67,7 +63,7 @@ onMounted(() => {
       <van-card
         currency=""
         :key="item.marketId"
-        :price="dollars2cents(item.price || 0) + '€'"
+        :price="multiply(item.price || 0, 100) + '€'"
         :desc="item.orderType == 1 ? 'Buy' : 'Sell' + item.typeName"
         :title="item.question"
         :thumb="item.image"

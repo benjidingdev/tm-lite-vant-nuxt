@@ -70,6 +70,7 @@
           <AuthLoginModal />
           <SettingsNumberKeyBoard />
           <BalancePopup />
+          <RequestQueueError />
         </NuxtLayout>
       </div>
     </van-config-provider>
