@@ -2,6 +2,7 @@
 const emailPattern =
   /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+
 const { $privy } = useNuxtApp();
 const { todoSign } = $(authStore());
 const { modalIsShow, setKeyBoard } = $(uiStore());
@@ -10,30 +11,24 @@ const {
   hasSend,
   isLoading,
   doLogin,
-  wallet,
-  userId,
   initWallet,
   errorInfo,
   sendEmail,
 } = $(privyStore());
 let { oneTimePassword } = $(privyStore());
 
-let otpValue = $ref("");
-let showKeyboard = $ref(false);
-let currentStep = $ref(1);
 let countdown = $ref(0);
-let resendDisabled = $ref(false);
-let countdownInterval = null;
-const code = ref("");
-
-const resendBtnColor = $computed(() => {
-  return countdown > 0 ? "text-gray-500" : "text-blue-500";
-});
-const underlineColor = $computed(() => {
-  return countdown > 0 ? "decoration-gray-500" : "decoration-blue-500";
-});
+let resendDisabled = $computed(() => countdown > 0);
 
 const login = async () => {
+  // van form vaddate pass; then to here
+  // 1. send email
+  if (!hasSend) {
+    resend();
+    return;
+  }
+
+  //
   if (!oneTimePassword) {
     return;
   }
@@ -48,17 +43,9 @@ const resend = async () => {
   await sendEmail();
 };
 
-function updateButtonState() {
-  if (countdown > 0) {
-    resendDisabled = true;
-  } else {
-    resendDisabled = false;
-  }
-}
-
+let countdownInterval;
 const startCountdown = () => {
   countdown = 60;
-  updateButtonState();
 
   clearInterval(countdownInterval);
   countdownInterval = setInterval(() => {
@@ -67,7 +54,6 @@ const startCountdown = () => {
     if (countdown <= 0) {
       clearInterval(countdownInterval);
     }
-    updateButtonState();
   }, 1000);
 };
 
@@ -97,36 +83,47 @@ watch(
     }
   }
 );
+
+const counterText = $computed(() => {
+  return countdown > 0 ? `Resend (${countdown}s)` : "Resend Code";
+});
 </script>
 
 <template>
-  <van-dialog v-model:show="modalIsShow.loginModal" closeable :show-confirm-button="false"
-    :title="$t('Login in or sign up')">
-    <div class="step-one">
-      <img class="w-[60%] py-8 rounded-xl m-auto" src="@/assets/img/logo-light.png" />
-      <van-form @submit="login">
-        <van-cell-group inset>
-          <van-field v-model="email" name="email" :label="$t('Email')" :placeholder="$t('Email')"
-            :rules="[{ required: true, message: $t('Please enter email') }]" />
-          <span v-if="isLoading || errorInfo" :class="`text-sm my-4 float-right pr-4 ${errorInfo ? 'text-red-400' : 'text-gray-500'
-            }`">{{ errorInfo ? errorInfo : "Sending..." }}</span>
-          <van-password-input v-if="hasSend" :value="oneTimePassword" :mask="false" :focused="true"
-            @focus="handleFocus" />
-        </van-cell-group>
-        <div v-if="hasSend" class="flex justify-end">
-          <button :class="`px-4 py-2 underline ${underlineColor}`" @click="resend" :disabled="resendDisabled">
-            <span :class="`text-sm ${resendBtnColor}`">{{
-              countdown > 0 ? `Resend (${countdown}s)` : "Resend Code"
-            }}</span>
-          </button>
-        </div>
-        <div v-if="!hasSend" style="margin: 16px">
-          <van-button round block type="primary" native-type="submit" :loading="isLoading" @click="sendEmail">
-            {{ $t("Submit") }}
-          </van-button>
-        </div>
-        <div class="mt-8 mb-4 text-center font-bold">Supported by TuringM</div>
-      </van-form>
-    </div>
-  </van-dialog>
+  <ClientOnly>
+    <van-dialog v-model:show="modalIsShow.loginModal" closeable :show-confirm-button="false"
+      :title="$t('Login in or sign up')">
+      <div class="step-one">
+        <img class="w-[60%] py-8 rounded-xl m-auto" src="@/assets/img/logo-light.png" />
+        <van-form @submit="login">
+          <van-cell-group inset>
+            <van-field v-model="email" name="email" :label="$t('Email')" :placeholder="$t('Email')"
+              :rules="[{ required: true, message: $t('Please enter email') }, { pattern: emailPattern, message: $t('Please enter a valid email address') }]" />
+
+            <span v-if="isLoading || errorInfo" :class="`text-sm my-4 float-right pr-4 ${errorInfo ? 'text-red-400' : 'text-gray-500'
+              }`">{{ errorInfo ? errorInfo : "Sending..." }}</span>
+
+
+            <template v-if="hasSend">
+              <van-password-input :value="oneTimePassword" :mask="false" :focused="true"
+                @focus="handleFocus" />
+
+                <div class="flex justify-end">
+                  <button class="px-4 py-2 underline" :class="{'decoration-gray-500': countdown > 0, 'decoration-blue-500': countdown <= 0}" @click="resend" :disabled="resendDisabled">
+                    <span class="text-sm" :class="{'text-gray-500': countdown > 0, 'text-blue-500': countdown <= 0}"> {{ counterText }}</span>
+                  </button>
+                </div>
+            </template>
+              <div v-else class="mt-4">
+                <van-button round block type="primary" native-type="submit" :loading="isLoading">
+                  {{ $t("Submit") }}
+                </van-button>
+              </div>
+          </van-cell-group>
+
+          <div class="mt-8 mb-4 text-center font-bold">Supported by TuringM</div>
+        </van-form>
+      </div>
+    </van-dialog>
+  </ClientOnly>
 </template>

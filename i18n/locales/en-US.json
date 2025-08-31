@@ -32,5 +32,10 @@
   "Supported chain": "Supported chain",
   "Your deposit address": "Your deposit address",
   "Copy address": "Copy address",
-  "Terms apply": "Terms apply"
+  "Terms apply": "Terms apply",
+
+  "Email": "Email",
+  "Please enter email": "Please enter email",
+  "Please enter a valid email address": "Please enter a valid email address",
+  "Submit": "Submit"
 }
