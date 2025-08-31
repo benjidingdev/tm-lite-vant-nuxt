@@ -350,7 +350,7 @@ export const walletStore = defineStore("walletStore", () => {
         allowanceAmount,
         coinType == 0 ? 6 : 18
       );
-
+      console.log('allowanced', allowanced, allowanced < minValue, minValue)
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
         // If the authorization is insufficient, a signature is required
