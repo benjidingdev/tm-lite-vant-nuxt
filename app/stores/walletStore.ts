@@ -90,8 +90,11 @@ export const walletStore = defineStore("walletStore", () => {
     }
   }
 
+  let isGetSelfBalanceLoading = $ref(false);
   const getSelfBalance = async () => {
-    if (account.status.value != 'connected') return;
+    if (account.status.value != 'connected' || isGetSelfBalanceLoading) return;
+    console.log('isGetSelfBalanceLoading', isGetSelfBalanceLoading)
+    isGetSelfBalanceLoading = true;
     const usdcAddress = getUsdcAddress(account.chain.value!)
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
@@ -100,6 +103,7 @@ export const walletStore = defineStore("walletStore", () => {
       token: usdcAddress
     });
     selfBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
+    isGetSelfBalanceLoading = false;
   }
 
   const getSelfAllowance = async () => {
@@ -192,7 +196,6 @@ export const walletStore = defineStore("walletStore", () => {
       token: usdcAddress,
     });
     if (usdcRes.value != usdcBalance) {
-      console.log("usdcRes", usdcRes);
       usdcBalance = Number(formatUnits(usdcRes.value, usdcRes.decimals));
     }
   };
@@ -233,8 +236,9 @@ export const walletStore = defineStore("walletStore", () => {
       console.log('approve usdc result', tx)
       return tx
     } catch (err) {
-      console.error("Error signing approve:", err)
-      return undefined
+      return {
+        error: err.shortMessage
+      }
     }
   }
 

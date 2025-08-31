@@ -8,7 +8,6 @@
   const {
     loginAddress,
     networks,
-    usdcBalance,
     selfBalance,
     connectWallet,
     switchNetwork,
@@ -55,10 +54,11 @@
     loading = true;
     try {
       const allowance = await getSelfAllowance();
+      console.log('allowance', allowance)
       if (allowance < depositData.tokenAmount) {
-        const res = await approveUSDC(10000000); //depositData.tokenAmount
-        if (!res) {
-          showToast("Approve failed");
+        const res = await approveUSDC(depositData.tokenAmount + 1); //depositData.tokenAmount
+        if (res.error) {
+          showToast(res.error);
           return;
         }
       }
@@ -147,6 +147,7 @@
   }
 
   watch(() => loginAddress, (newAddress) => {
+    console.log('loginAddress', newAddress)
     if (newAddress) {
       depositData.depositToAddress = newAddress;
     }
@@ -154,6 +155,7 @@
 
   watch([() => account.status, () => account.address, () => account.chain],
     ([newStatus, newAddress, newChain]) => {
+      console.log('account', account, newStatus)
       if (newStatus != 'connected') {
         depositData.depositFromAddress = '';
       } else {
@@ -164,26 +166,32 @@
           result = newChain.name;
           depositData.chain = [...newChain.name];
         }
+        getSelfBalance();
       }
     }, { immediate: true })
+  onMounted(() => {
+    getSelfBalance();
+  })
 </script>
 <template>
   <van-cell-group>
-    <van-notice-bar class="my-2" color="#a7a7a7" background="#f9f9f9" left-icon="balance-pay">
-      <span class="font-xs">Balance:${{ usdcBalance }}</span>
-    </van-notice-bar>
     <div v-if="currentStep === 1" class="step-one w-full pb-3">
-      <van-form @submit="deposit">
+      <van-form>
+        <van-field v-model="result" is-link readonly name="picker" :label="$t('From Chain')"
+          :placeholder="$t('From Chain')" label-class="font-bold" input-align="right" @click="showChainPicker = true" />
+        <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
+          <van-picker :columns="columns" v-model="chain" @confirm="onConfirm" @cancel="showChainPicker = false" />
+        </van-popup>
         <van-field name="toAddress">
           <template #input>
-            <BalanceForm v-model="depositData.depositFromAddress" :maxlength="42" label="Sender address"
+            <BalanceForm v-model="depositData.depositFromAddress" :maxlength="42" :label="$t('From address')"
               :disabled="true" name="depositToAddress" placeholder="0x...">
               <template #input-right>
                 <div class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
                   <button
                     class="px-3 bg-blue-50 text-blue-600 text-xs font-semibold rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
                     type="button" @click="connectWallet">
-                    Use connect
+                    {{ $t('Use connect') }}
                   </button>
                 </div>
               </template>
@@ -192,13 +200,13 @@
         </van-field>
         <van-field name="fromAddress">
           <template #input>
-            <BalanceForm v-model="depositData.depositToAddress" :maxlength="42" label="Recipient address"
+            <BalanceForm v-model="depositData.depositToAddress" :maxlength="42" :label="$t('Recipient address')"
               name="depositFromAddress" placeholder="0x..." />
           </template>
         </van-field>
         <van-field name="tokenAmount">
           <template #input>
-            <BalanceForm v-model="depositData.tokenAmount" label="Amount" name="tokenAmount" placeholder="0.00">
+            <BalanceForm v-model="depositData.tokenAmount" :label="$t('Amount')" name="tokenAmount" placeholder="0.00">
               <template #input-right>
                 <div class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
                   <span class="text-gray-500 font-medium">USDC</span>
@@ -210,24 +218,19 @@
                 </div>
               </template>
               <template #input-tips>
-                <div class="flex justify-between space-x-2">
-                  <!-- <span class="text-gray-400 font-medium text-xs">${{ depositData.tokenAmount }}</span> -->
-                  <span class="text-gray-400 text-xs">Balance:{{ selfBalance }}
-                  </span>
+                <div class="flex justify-between text-xs text-gray-400 space-x-2">
+                  <div class=" font-medium ">{{ chain[0] }}</div>
+                  <div>
+                    {{ $t('Balance') }}:{{ selfBalance }} USDC
+                  </div>
                 </div>
               </template>
             </BalanceForm>
           </template>
         </van-field>
-        <van-field v-model="result" is-link readonly name="picker" label="Chain" placeholder="Receive Chain"
-          input-align="right" @click="showChainPicker = true" />
-        <van-popup v-model:show="showChainPicker" destroy-on-close position="bottom">
-          <van-picker :columns="columns" v-model="chain" @confirm="onConfirm" @cancel="showChainPicker = false" />
-        </van-popup>
-
         <van-cell>
-          <van-button class="rounded-lg" block type="primary" native-type="submit" :loading="loading">
-            Deposit
+          <van-button class="rounded-lg" block type="primary" native-type="submit" @click="deposit" :loading="loading">
+            {{ $t('Deposit') }}
           </van-button>
         </van-cell>
       </van-form>
