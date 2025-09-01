@@ -8,6 +8,7 @@ import * as walletApi from "~/api/wallet";
 export const authStore = defineStore(
   "authStore",
   () => {
+    const { t } = useI18n();
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
     let { loadUserInfo, userInfo, initLocale } = $(userStore());
@@ -62,7 +63,7 @@ export const authStore = defineStore(
     // disconnect wallet and log out
     const logOut = async () => {
       try {
-        showToast("Logging out...");
+        showToast(t("Logging out..."));
         hasSend = false;
         isLoading = false;
         await logoutPrivy();
@@ -74,10 +75,10 @@ export const authStore = defineStore(
           userInfo = {}
           session = null;
           errorInfo = null;
-          showToast("Logout successful");
+          showToast(t("Logout successful"));
         }
       } catch (e) {
-        console.log("Failure message：", e);
+        console.error("Logout Failure message：", e);
       }
     };
 

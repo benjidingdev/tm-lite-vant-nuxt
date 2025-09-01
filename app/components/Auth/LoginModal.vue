@@ -90,42 +90,40 @@
 </script>
 
 <template>
-  <ClientOnly>
-    <van-dialog v-model:show="modalIsShow.loginModal" closeable :show-confirm-button="false"
-      :title="$t('Login in or sign up')">
-      <div class="step-one">
-        <img class="w-[60%] py-8 rounded-xl m-auto" src="@/assets/img/logo-light.png" />
-        <van-form>
-          <van-cell-group inset>
-            <van-field v-model="email" name="email" :label="$t('Email')" :placeholder="$t('Email')"
-              :rules="[{ required: true, message: $t('Please enter email') }, { pattern: emailPattern, message: $t('Please enter a valid email address') }]" />
+  <van-dialog v-model:show="modalIsShow.loginModal" closeable :show-confirm-button="false"
+    :title="$t('Login in or sign up')">
+    <div class="step-one">
+      <img class="w-[60%] py-8 rounded-xl m-auto" src="@/assets/img/logo-light.png" />
+      <van-form>
+        <van-cell-group inset>
+          <van-field v-model="email" name="email" :label="$t('Email')" :placeholder="$t('Email')"
+            :rules="[{ required: true, message: $t('Please enter email') }, { pattern: emailPattern, message: $t('Please enter a valid email address') }]" />
 
-            <span v-if="isLoading || errorInfo" :class="`text-sm my-4 float-right pr-4 ${errorInfo ? 'text-red-400' : 'text-gray-500'
-              }`">{{ errorInfo ? errorInfo : "Sending..." }}</span>
+          <span v-if="isLoading || errorInfo" :class="`text-sm my-4 float-right pr-4 ${errorInfo ? 'text-red-400' : 'text-gray-500'
+            }`">{{ errorInfo ? errorInfo : "Sending..." }}</span>
 
 
-            <template v-if="hasSend">
-              <van-password-input :value="oneTimePassword" :mask="false" :focused="true" @focus="handleFocus" />
+          <template v-if="hasSend">
+            <van-password-input :value="oneTimePassword" :mask="false" :focused="true" @focus="handleFocus" />
 
-              <div class="flex justify-end">
-                <button class="px-4 py-2 underline"
-                  :class="{ 'decoration-gray-500': countdown > 0, 'decoration-blue-500': countdown <= 0 }" @click="resend"
-                  :disabled="resendDisabled">
-                  <span class="text-sm" :class="{ 'text-gray-500': countdown > 0, 'text-blue-500': countdown <= 0 }"> {{
-                    counterText }}</span>
-                </button>
-              </div>
-            </template>
-            <div v-else class="mt-4">
-              <van-button round block type="primary" @click="login" native-type="submit" :loading="isLoading">
-                {{ $t("Submit") }}
-              </van-button>
+            <div class="flex justify-end">
+              <button class="px-4 py-2 underline"
+                :class="{ 'decoration-gray-500': countdown > 0, 'decoration-blue-500': countdown <= 0 }" @click="resend"
+                :disabled="resendDisabled">
+                <span class="text-sm" :class="{ 'text-gray-500': countdown > 0, 'text-blue-500': countdown <= 0 }"> {{
+                  counterText }}</span>
+              </button>
             </div>
-          </van-cell-group>
+          </template>
+          <div v-else class="mt-4">
+            <van-button round block type="primary" @click="login" native-type="submit" :loading="isLoading">
+              {{ $t("Submit") }}
+            </van-button>
+          </div>
+        </van-cell-group>
 
-          <div class="mt-8 mb-4 text-center font-bold">Supported by TuringM</div>
-        </van-form>
-      </div>
-    </van-dialog>
-  </ClientOnly>
+        <div class="mt-8 mb-4 text-center text-sm text-gray-500">{{ $t('Supported by TuringM') }}</div>
+      </van-form>
+    </div>
+  </van-dialog>
 </template>
