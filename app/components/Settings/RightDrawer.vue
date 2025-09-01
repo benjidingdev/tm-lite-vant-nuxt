@@ -5,7 +5,7 @@
   const branch = import.meta.env.NUXT_PUBLIC_BRANCH;
   let clickNum = 0;
 
-  const shortHash = $computed(() => shortenHash(hash, 4));
+  const shortHash = $computed(() => shortenHash(hash, 10));
 
   const initVconsole = async () => {
     clickNum++;
