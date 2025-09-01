@@ -54,7 +54,7 @@ const getInfoList = async (refresh) => {
   }
 
   const res = await getTopicsRecommend(recommondQueryParams);
-  console.log(res);
+  // console.log(res);
   total = res.data.total;
 
   if (res.code === 0) {

@@ -24,15 +24,19 @@ const showShares = (item) => {
 };
 
 const fetchUserHoldInfoList = async () => {
-  const res = await userHoldInfoList(voState.queryParams);
-  if (voState.queryParams.pageNo === 1 && res?.data) {
-    order.positionList = res?.data?.list;
-  } else {
-    order.positionList = order?.positionList?.concat(res?.data?.list);
+  try {
+    const res = await userHoldInfoList(voState.queryParams);
+    if (!res?.data) {
+      return;
+    }
+
+    order.positionList = [...order.positionList, ...res.data.list];
+    voState.total = res?.data?.total;
+    voState.isLoading = false;
+    firstCall.position = true;
+  } catch (error) {
+    console.error(error);
   }
-  voState.total = res?.data?.total;
-  voState.isLoading = false;
-  firstCall.position = true;
 };
 
 onMounted(() => {
@@ -41,37 +45,23 @@ onMounted(() => {
     return;
   }
   fetchUserHoldInfoList();
+
+  console.log(order.positionList);
 });
 </script>
 
 <template>
-  <div
-    class="w-full bg-color-white p-4 overflow-auto"
-    v-if="order?.positionList.length !== 0"
-  >
+  <div class="w-full bg-color-white p-4 overflow-auto" v-if="order?.positionList.length !== 0">
     <van-swipe-cell v-for="item in order?.positionList" :key="item.marketId">
-      <van-card
-        currency="$"
-        :key="item.marketId"
-        :price="item.profit + '(' + item.profitRate + '%)'"
-        :desc="item.description"
-        :title="item.question"
-        :thumb="item.image"
-        class="mt-2"
-      >
+      <van-card currency="$" :key="item.marketId" :price="item.profit + '(' + item.profitRate + '%)'"
+        :desc="item.description" :title="item.question" :thumb="item.image" class="mt-2">
         <template #footer>
-          <van-button plain size="mini" type="primary" @click="showShares(item)"
-            >{{ $t("Shares") }}
+          <van-button plain size="mini" type="primary" @click="showShares(item)">{{ $t("Shares") }}
           </van-button>
         </template>
       </van-card>
       <template #right>
-        <van-button
-          square
-          type="primary"
-          text="Trade"
-          @click="setModal('showTradePicker', true)"
-        />
+        <van-button square type="primary" text="Trade" @click="setModal('showTradePicker', true)" />
       </template>
     </van-swipe-cell>
   </div>

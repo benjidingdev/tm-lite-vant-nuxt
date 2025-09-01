@@ -10,9 +10,9 @@ export const userStore = defineStore("userStore", () => {
   let hasSetLocale = $ref(false);
 
   let order = $ref({
-    positionList: [],
-    openOrderList: [],
-    historyList: [],
+    positionList: [] as any[],
+    openOrderList: [] as any[],
+    historyList: [] as any[],
   });
 
   //refresh user info after login
