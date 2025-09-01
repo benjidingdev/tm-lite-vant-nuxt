@@ -36,7 +36,7 @@
     ],
   });
 
-  const { setupEmbeddedWalletIframe, refreshSession, session } = $(privyStore());
+  const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore());
   const iframeRef = ref<HTMLIFrameElement | null>(null);
   let cleanupIframe: (() => void) | null = null;
 
