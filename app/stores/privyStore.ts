@@ -76,6 +76,11 @@ export const privyStore = defineStore(
 
       const { entropyId, entropyIdVerifier } =
         $PrivySDK.getEntropyDetailsFromUser(session?.user);
+      console.log('xxx', {
+        wallet,
+        entropyId,
+        entropyIdVerifier,
+      }, session)
       const provider = await $privy.embeddedWallet.getEthereumProvider({
         wallet,
         entropyId,
