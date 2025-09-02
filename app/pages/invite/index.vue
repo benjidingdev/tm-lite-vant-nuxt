@@ -1,14 +1,11 @@
 <script setup>
+import Request from '@/utils/request'
+
 const { userInfo } = $(userStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
-const defaultTUIT = $ref(0);
 
 const { inviteCode, inviteCount } = userInfo;
-
-const earnedTUIT = $computed(() => {
-  return !!inviteCount ? inviteCount * 5 : 99999;
-});
 
 const inviteUser = () => {
   const botUsername = "turingM_lite_bot";
@@ -24,70 +21,77 @@ const inviteUser = () => {
     window.open(shareUrl);
   }
 };
+
+let shareUserList = $ref([]);
+async function loadShareUser() {
+  try {
+    const rz = await Request({
+      url: `/app-api/topic/user/shareUserPage`,
+      method: 'post',
+      data: {
+        pageNo: 1,
+        pageSize: 12
+      }
+    })
+    console.log('loadShareUser', inviteCode, rz);
+  } catch (e) {
+
+  }
+}
+
+onMounted(async () => {
+  await loadShareUser();
+})
 </script>
 
 <template>
   <div class="layout-height bg-white p-2 overflow-auto">
     <div class="broadcast-container mb-2">
       <van-notice-bar left-icon="volume-o" :scrollable="false">
-        <van-swipe
-          vertical
-          class="notice-swipe h-[40px] leading-10"
-          :autoplay="3000"
-          :touchable="false"
-          :show-indicators="false"
-        >
-          <van-swipe-item
-            >User1 got 1000 TUIT invited AAA successfully!</van-swipe-item
-          >
-          <van-swipe-item
-            >User1 got 1000 TUIT invited BBB successfully!</van-swipe-item
-          >
-          <van-swipe-item
-            >User1 got 1000 TUIT invited CCC successfully!</van-swipe-item
-          >
+        <van-swipe vertical class="notice-swipe h-[40px] leading-10" :autoplay="3000" :touchable="false"
+          :show-indicators="false">
+          <van-swipe-item>User1 got 1000 TUIT invited AAA successfully!</van-swipe-item>
+          <van-swipe-item>User1 got 1000 TUIT invited BBB successfully!</van-swipe-item>
+          <van-swipe-item>User1 got 1000 TUIT invited CCC successfully!</van-swipe-item>
         </van-swipe>
       </van-notice-bar>
     </div>
+
     <div class="content-container text-center">
-      <img
-        class="w-[70px] m-auto rounded-full transform transition-transform duration-1000 hover:rotate-y-180"
-        src="@/assets/img/gold-coins.jpg"
-      />
+      <img class="w-[70px] m-auto rounded-full transform transition-transform duration-1000 hover:rotate-y-180"
+        src="@/assets/img/gold-coins.jpg" />
       <h1 class="text-3xl pt-2 font-bold">{{ $t("GOT 100 TUIT NOW") }}</h1>
-      <p class="text-lg text-gray-600 my-3">{{ $t("inviteDescription") }}</p>
+      <p class="text-sm text-gray-600 my-3 px-4">{{ $t("inviteDescription") }}</p>
 
       <div v-if="!token.accessToken">
-        <van-button
-          type="primary"
-          size="large"
-          @click="setModal('loginModal', true)"
-          >{{ $t("Login") }}</van-button
-        >
+        <van-button type="primary" size="large" @click="setModal('loginModal', true)">{{ $t("Login") }}</van-button>
       </div>
       <div v-else class="px-4">
         <div class="invite-status-container text-center text-gray-500 mt-4">
           <div class="text-xl font-bold text-blue pt-4">
             {{ $t("Your TUIT") }}
           </div>
-          <van-rolling-text
-            class="my-rolling-text"
-            :height="54"
-            :start-num="defaultTUIT"
-            :target-num="earnedTUIT"
-          />
+          <van-rolling-text class="my-rolling-text" :height="54" :start-num="0" :target-num="inviteCount" />
         </div>
         <van-button type="primary" size="large" @click="inviteUser">{{
           $t("Invite Now")
         }}</van-button>
       </div>
     </div>
-    <div class="invite-info-container mt-6">
-      <p class="px-4 pb-2 text-gray-400">You have invited:</p>
-      <van-cell-group>
-        <van-cell title="1. Ben" value="+10 TUIT" />
-        <van-cell title="2. Prediction" value="+20 TUIT" />
-      </van-cell-group>
+
+    <div class="invite-info-container mt-6" v-if="shareUserList.length > 0">
+      <p class="px-4 pb-2 text-gray-400">{{ $t('You have invited:') }}</p>
+
+      <article>
+        <div v-for="item in shareUserList" :key="item.id">
+          <div>
+            <img :src="item.avatar" alt="">
+            <p>{{ item.nickname }}</p>
+          </div>
+
+          <div>+10 TUIT </div>
+        </div>
+      </article>
     </div>
   </div>
 </template>
