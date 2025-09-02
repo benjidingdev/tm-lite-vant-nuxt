@@ -1,52 +1,48 @@
 <script setup lang="ts">
 import { userHoldInfoList } from "@/api/positions";
-import { formatTitle } from "@/utils/processing";
 import { onMounted } from "vue";
 
-const { setModal, triggerCallDuration, firstCall } = $(uiStore());
+const { setModal } = $(uiStore());
 let { order } = $(userStore());
 
-const voState = $ref({
-  isLoading: false,
-  queryParams: {
+const queryParams = {
     pageNo: 1,
     pageSize: 20,
     orderBy: "created desc",
     key: "",
-  },
-  total: 0,
-});
-let marketId = $ref(0);
+  }
 
-const showShares = (item) => {
+let marketId = $ref(0);
+let isLoading = $ref(true);
+let total = $ref(0);
+
+const showShares = (item: any) => {
   setModal("share", true);
   marketId = item.marketId;
 };
 
 const fetchUserHoldInfoList = async () => {
+  if (queryParams.pageNo === 1) {
+    isLoading = true;
+    order.positionList = [];
+  }
   try {
-    const res = await userHoldInfoList(voState.queryParams);
-    if (!res?.data) {
+    const res = await userHoldInfoList(queryParams);
+    if (!res.data) {
       return;
     }
 
     order.positionList = [...order.positionList, ...res.data.list];
-    voState.total = res?.data?.total;
-    voState.isLoading = false;
-    firstCall.position = true;
+    total = res.data.total;
   } catch (error) {
     console.error(error);
   }
+  isLoading = false;
 };
 
 onMounted(() => {
-  const isCallNow = triggerCallDuration(Date.now(), 10);
-  if (firstCall.position && !isCallNow) {
-    return;
-  }
   fetchUserHoldInfoList();
-
-  console.log(order.positionList);
+  // console.log(order.positionList);
 });
 </script>
 

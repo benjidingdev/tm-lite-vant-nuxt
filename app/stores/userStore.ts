@@ -65,6 +65,7 @@ export const userStore = defineStore("userStore", () => {
   {
     persist: {
       debug: true,
+      omit: ['order'],
     },
   }
 );

@@ -14,17 +14,12 @@ export const uiStore = defineStore("uiStore", () => {
     settings: false,
   });
   let labelWidth = $ref("12em");
-  let firstCall = $ref({
-    position: false,
-    openOrder: false,
-    history: false,
-  });
   let timeStamp = Date.now();
 
   const setModal = (
     name: keyof typeof modalIsShow,
     isShow: boolean,
-    cb: () => {}
+    cb?: () => void
   ) => {
     modalIsShow[name] = isShow;
     if (typeof cb === "function") {
@@ -52,31 +47,14 @@ export const uiStore = defineStore("uiStore", () => {
       confirmButtonText: "OK",
     });
 
-  const triggerCallDuration = (currentTS: any, duration: number) => {
-    try {
-      const gap = currentTS - timeStamp
-      // duration is seconds
-      if (gap > duration * 1000) {
-        timeStamp = Date.now()
-        return true
-      } else {
-        return false
-      }
-    } catch (error) {
-      return true
-    }
-  }
-
   return $$({
     labelWidth,
     modalIsShow,
     keyBoardIsShow,
-    firstCall,
     setModal,
     setLoadingToast,
     showMsgDialog,
     setKeyBoard,
-    triggerCallDuration,
   });
 });
 
