@@ -16,6 +16,6 @@ window?.localStorage.setItem("inviteCode", inviteCode || "");
 
 <style>
 .layout-height {
-  height: calc(100vh - 60px - 50px);
+  height: calc(100dvh - 60px - 50px);
 }
 </style>

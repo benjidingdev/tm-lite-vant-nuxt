@@ -1,8 +1,5 @@
 <script setup>
-import {
-  getTopicsRecommend,
-  addTopicsWatchlist,
-} from "~/api/market";
+import { getTopicsRecommend, addTopicsWatchlist } from "~/api/market";
 import { convertCurrency, percentage } from "@/utils/processing";
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
@@ -16,9 +13,7 @@ let animationFrame;
 let currentRate = $ref(0);
 
 // The data from store
-const {
-  userBalance,
-} = $(walletStore());
+const { userBalance } = $(walletStore());
 let { addRequest, cards, isLoading } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { token } = $(authStore());
@@ -27,6 +22,7 @@ const { userOrderAmount } = $(userStore());
 
 const pageSize = 12;
 let total = 0;
+let isSettlement = $ref(false);
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize,
@@ -39,6 +35,8 @@ const recommondQueryParams = $ref({
   tagId: null,
   followed: false,
 });
+
+let movingYes = $computed(() => offsetX < 0);
 
 // get the list of cards
 const getInfoList = async (refresh) => {
@@ -110,6 +108,9 @@ const touchMove = (e) => {
     const maxOffsetY = 150;
     if (Math.abs(offsetX) > maxOffsetX) {
       offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
+      isSettlement = true;
+    } else {
+      isSettlement = false;
     }
     if (Math.abs(offsetY) > maxOffsetY) {
       offsetY = offsetY > 0 ? maxOffsetY : -maxOffsetY;
@@ -196,17 +197,17 @@ const bookmark = async (card) => {
     addTopicsWatchlist({
       topicId: card.id,
       actionType: card.followed ? 0 : 1,
-    })
+    });
     // console.log(res);
   } catch (error) {
     console.log(error);
   }
 
-  swipeCard(statusList[2], () => { });
+  swipeCard(statusList[2], () => {});
 };
 
 const pickNext = () => {
-  swipeCard(statusList[3], () => { });
+  swipeCard(statusList[3], () => {});
 };
 
 // start transcation
@@ -238,7 +239,12 @@ const goDeposit = async (card, isYes) => {
   } else {
     // balance check
     const userCanUseBalance = userBalance - userOrderAmount;
-    console.log({userBalance, textPrice: transaction.textPrice, userOrderAmount, userCanUseBalance});
+    console.log({
+      userBalance,
+      textPrice: transaction.textPrice,
+      userOrderAmount,
+      userCanUseBalance,
+    });
     if (userCanUseBalance < transaction.textPrice) {
       showFailToast("Insufficient balance");
       resetCard();
@@ -251,9 +257,8 @@ const goDeposit = async (card, isYes) => {
     if (transaction.type === 1) {
       swipeCard(statusList[0]);
     } else {
-      swipeCard(statusList[1], () => { });
+      swipeCard(statusList[1], () => {});
     }
-
   }
   resetCard();
 };
@@ -268,15 +273,30 @@ onMounted((e) => {
     <van-skeleton :loading="isLoading">
       <template #template>
         <div
-          :style="{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '80vh' }">
-
+          :style="{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            height: '80vh',
+          }"
+        >
           <div
-            :style="{ width: '100%', height: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--van-active-color)', borderRadius: '24px' }">
+            :style="{
+              width: '100%',
+              height: '70vw',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              background: 'var(--van-active-color)',
+              borderRadius: '24px',
+            }"
+          >
             <van-loading size="48" />
           </div>
 
           <!-- <van-skeleton-image /> -->
-
           <div :style="{ marginTop: '42px', width: '100%' }">
             <van-skeleton-paragraph row-width="60%" />
             <van-skeleton-paragraph />
@@ -287,28 +307,54 @@ onMounted((e) => {
       </template>
 
       <div v-if="cards.length">
-        <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
-          :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart="touchStart"
-          @touchmove="touchMove" @touchend="touchEnd(card, event)">
-
-          <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="cover">
-            <div class="absolute -bottom-8 h-16 w-full">
+        <div
+          v-for="(card, index) in cards"
+          :key="card.id"
+          :class="['card', { active: currentIndex === index }]"
+          :style="getCardStyle(index)"
+          class="draggable-element shadow-md"
+          @touchstart="touchStart"
+          @touchmove="touchMove"
+          @touchend="touchEnd(card, event)"
+        >
+          <van-image
+            width="100%"
+            height="50%"
+            :src="card['image']"
+            class="p-2"
+            fit="cover"
+          >
+            <div class="absolute -bottom-8 h-16 w-full z-50">
               <div class="flex justify-between items-center h-full px-6">
-                <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                  @click="buyYes(card)">
+                <div
+                  :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white`"
+                  @click="buyYes(card)"
+                >
                   <van-icon name="checked" size="66" color="#97dbb4" />
                 </div>
 
-                <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                  @click="bookmark(card)">
-                  <van-icon size="30" :name="card.followed ? 'star' : 'star-o'" color="#c4c406" />
+                <div
+                  class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                  @click="bookmark(card)"
+                >
+                  <van-icon
+                    size="30"
+                    :name="card.followed ? 'star' : 'star-o'"
+                    color="#c4c406"
+                  />
                 </div>
 
-                <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                  @click="buyNo(card)">
+                <div
+                  class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                  @click="buyNo(card)"
+                >
                   <van-icon name="clear" size="66" color="#fe9595" />
                 </div>
               </div>
+            </div>
+            <div v-if="isSettlement && index === 0" class="hint-box">
+              <div v-if="movingYes" class="hint-box hint like">YES</div>
+              <div v-else class="hint-box hint nope">NO</div>
             </div>
           </van-image>
 
@@ -317,31 +363,37 @@ onMounted((e) => {
               <text class="name mt-4">{{ card.title }}</text>
               <text v-if="card?.markets.length" class="desc">{{
                 card?.markets[0].question
-                }}</text>
+              }}</text>
             </div>
             <div class="h-[15%] flex justify-between">
               <text> ${{ convertCurrency(card.volume) }} Vol.</text>
-              <van-circle class="bottom-5" v-model:current-rate="currentRate" :stroke-width="80"
-                :rate="percentage(card?.markets[0].lastTradePrice, 'num')" :speed="100" size="42px"
-                layer-color="#d8d8d8" :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'" />
+              <van-circle
+                class="bottom-5"
+                v-model:current-rate="currentRate"
+                :stroke-width="80"
+                :rate="percentage(card?.markets[0].lastTradePrice, 'num')"
+                :speed="100"
+                size="42px"
+                layer-color="#d8d8d8"
+                :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'"
+              />
             </div>
-          </div>
-
-          <div v-if="currentIndex === index" class="hint-box">
-            <div class="hint nope" :style="{ opacity: offsetX / 150 }">NO</div>
-            <div class="hint like" :style="{ opacity: -offsetX / 150 }">YES</div>
           </div>
         </div>
       </div>
 
       <div v-else>
-        <van-empty description="If you are interested in Turing Market, please go to our official version"
-          style="--van-empty-description-color: #323232;">
+        <van-empty
+          description="If you are interested in Turing Market, please go to our official version"
+          style="--van-empty-description-color: #323232"
+        >
           <template #image>
             <img src="/assets/icon/logo.svg" />
           </template>
 
-          <van-button round type="primary" class="bottom-button">Launch App</van-button>
+          <van-button round type="primary" class="bottom-button"
+            >Launch App</van-button
+          >
         </van-empty>
       </div>
     </van-skeleton>
@@ -368,22 +420,23 @@ onMounted((e) => {
 
 .hint-box {
   position: absolute;
-  top: 30px;
-  left: 0;
-  right: 0;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  z-index: 0;
+  border-radius: 15px;
   display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
+  justify-content: center;
+  align-items: center;
 }
 
 .hint {
-  padding: 5px 15px;
-  border-radius: 5px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 36px;
   color: white;
   border: 3px solid white;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.3s;
 }
 
@@ -393,10 +446,6 @@ onMounted((e) => {
 
 .hint.nope {
   background: rgba(255, 77, 79, 0.7);
-}
-
-.btn.like {
-  border: 2px solid #52c41a;
 }
 
 .van-image img {
