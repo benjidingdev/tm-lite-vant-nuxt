@@ -127,7 +127,7 @@ const touchEnd = (card, event) => {
     getInfoList(true);
   }
 
-  const threshold = 100; // Threshold of swiping
+  const threshold = 150; // Threshold of swiping
   if (animationFrame) {
     cancelAnimationFrame(animationFrame);
   }
