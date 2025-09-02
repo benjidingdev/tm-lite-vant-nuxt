@@ -1,8 +1,4 @@
 <script setup>
-const { inviteCode } = $(inviteStore());
-
-// console.log("inviteCode", inviteCode);
-window?.localStorage.setItem("inviteCode", inviteCode || "");
 </script>
 
 <template>

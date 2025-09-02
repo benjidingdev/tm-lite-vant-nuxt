@@ -16,6 +16,7 @@ export const authStore = defineStore(
       walletStore()
     );
     let { logoutPrivy, hasSend, isLoading, session, errorInfo } = $(privyStore());
+    let { inviteCode } = $(inviteStore());
 
     let token = $ref({
       accessToken: "",
@@ -162,10 +163,9 @@ export const authStore = defineStore(
     }) => {
       setLoadingToast("Start to login");
       const address = wallet?.address;
-      let inviteCode = "";
       try {
-        inviteCode = JSON.parse(localStorage.getItem("inviteCode") || "");
       } catch (error) { }
+      console.log("inviteCode", inviteCode);
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
         ivcode: inviteCode,
