@@ -10,6 +10,8 @@ import {
 } from "@/utils/processing";
 
 const { wallet } = $(walletStore());
+const { userInfo } = $(userStore());
+
 let voData = $ref({
   userInfo: {},
   pageNo: 1,
@@ -69,6 +71,7 @@ const getUserInfo = async () => {
     });
     if (res.code === 0) {
       voData.userInfo = res.data;
+      userInfo.profile = res.data;
     }
   } catch (e) {}
 };

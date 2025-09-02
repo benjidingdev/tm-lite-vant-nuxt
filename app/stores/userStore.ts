@@ -5,7 +5,10 @@ export const userStore = defineStore("userStore", () => {
   const { token } = $(authStore());
   let userInfo = $ref({});
   let userOrderAmountInfo = $ref({ feeAmount: 0, totalAmount: 0 })
-  const userOrderAmount = $computed(() => userOrderAmountInfo.feeAmount  + userOrderAmountInfo.totalAmount);
+  const userOrderAmount = $computed(() => userOrderAmountInfo.feeAmount + userOrderAmountInfo.totalAmount);
+
+  const { userBalance } = $(walletStore())
+  const userCanUseAmount = $computed(() => userBalance - userOrderAmount);
 
   let hasSetLocale = $ref(false);
 
@@ -60,6 +63,7 @@ export const userStore = defineStore("userStore", () => {
     updateUserOrderAmountInfo,
     userOrderAmountInfo,
     userOrderAmount,
+    userCanUseAmount,
   });
 },
   {
