@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { createModal } from '@/config/reown'
   const { modalIsShow } = $(uiStore());
   const closeModal = () => {
     modalIsShow.balanceModal = false;
@@ -8,6 +9,10 @@
     wallet,
     usdcBalance,
   } = $(walletStore());
+
+  onBeforeMount(() => {
+    createModal()
+  });
 </script>
 
 <template>

@@ -2,7 +2,6 @@
   // import { createAppKit } from "@reown/appkit/vue";
   // import { networks, localHardhat, avaxTest } from "./config/networks";
   import "@vant/touch-emulator";
-  import { createModal } from '@/config/reown'
   import { Locale } from 'vant'
   import enUS from 'vant/es/locale/lang/en-US'
   import zhTW from 'vant/es/locale/lang/zh-TW'
@@ -18,8 +17,6 @@
   onMounted(() => {
     Locale.use(locale.value)
   })
-
-  createModal()
 
   useHead({
     title: "Turing Market",
