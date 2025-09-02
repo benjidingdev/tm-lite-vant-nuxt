@@ -9,7 +9,6 @@
     loginAddress,
     networks,
     selfBalance,
-    connectWallet,
     switchNetwork,
     account,
     getSelfAllowance,
@@ -18,6 +17,7 @@
     burnUSDC,
     updateWalletBalance
   } = $(walletStore());
+  const { connectWallet } = $(reownStore());
 
   let { depositData } = $(depositStore());
   const { copy, copied, text } = useClipboard()

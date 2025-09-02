@@ -7,7 +7,6 @@ definePageMeta({
 
 const { userInfo } = $(userStore());
 const { token } = $(authStore());
-const { connectWallet } = $(walletStore());
 const { setModal } = $(uiStore());
 const { locale } = $(useI18n());
 

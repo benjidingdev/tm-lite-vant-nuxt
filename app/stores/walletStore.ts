@@ -3,7 +3,6 @@ import type { EIP1193Provider } from "viem";
 import { formatUnits, parseEther, parseUnits } from "viem";
 import { getBalance, readContract, writeContract, switchChain } from "@wagmi/core";
 import { useAccount, useAccountEffect } from "@wagmi/vue";
-import { useAppKit, useAppKitNetwork } from "@reown/appkit/vue";
 
 import {
   TYPEHASH_DOMAIN,
@@ -39,9 +38,7 @@ export const walletStore = defineStore("walletStore", () => {
   const { $wagmiAdapter } = useNuxtApp();
   const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
-  const { open } = useAppKit();
   const account = useAccount();
-  const networkData = useAppKitNetwork();
 
   const userCapital = $ref({
     total: 0,
@@ -73,14 +70,6 @@ export const walletStore = defineStore("walletStore", () => {
       selfBalance = 0;
     },
   });
-
-  const connectWallet = async () => {
-    if (account.status.value != 'connected') {
-      await open({ view: 'Connect' })
-    } else {
-      await open({ view: 'Account' })
-    }
-  }
 
   const switchNetwork = async (networkName: string) => {
     const network = $wagmiAdapter.wagmiChains!.find((chain) => chain.name === networkName);
@@ -439,7 +428,6 @@ export const walletStore = defineStore("walletStore", () => {
     tokenBalance,
     usdcBalance,
     selfBalance,
-    connectWallet,
     switchNetwork,
     getSelfAllowance,
     getSelfBalance,

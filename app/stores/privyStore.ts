@@ -41,6 +41,7 @@ export const privyStore = defineStore(
     const refreshSession = async () => {
       try {
         session = await $privy.user.get();
+        console.log("session", session);
         await initWallet();
         await Promise.all([
           updateWalletBalance(),
@@ -67,7 +68,7 @@ export const privyStore = defineStore(
       isLoading = true;
 
       let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
-
+      console.log("theWallet", theWallet);
       if (!theWallet) {
         theWallet = await $privy.embeddedWallet.create({});
         session = await $privy.user.get();
@@ -75,6 +76,11 @@ export const privyStore = defineStore(
 
       const { entropyId, entropyIdVerifier } =
         $PrivySDK.getEntropyDetailsFromUser(session?.user);
+      console.log('xxx', {
+        wallet,
+        entropyId,
+        entropyIdVerifier,
+      }, session)
       const provider = await $privy.embeddedWallet.getEthereumProvider({
         wallet,
         entropyId,
