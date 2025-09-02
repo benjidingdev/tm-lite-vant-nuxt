@@ -1,16 +1,18 @@
 <script setup>
 import Request from '@/utils/request'
 
-const { userInfo } = $(userStore());
+let { userInfo } = $(userStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
-const { inviteCode, inviteCount } = userInfo;
+const inviteBalance = $computed(() => {
+  return (userInfo.inviteCount || 0) * 10;
+})
 
 const inviteUser = () => {
   const botUsername = "turingM_lite_bot";
   const appShortName = "tmLite";
-  const params = `inviteCode=${inviteCode || "ChGQnC"}`;
+  const params = `inviteCode=${userInfo.inviteCode || "ChGQnC"}`;
   const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${params}`;
   const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
     miniAppUrl
@@ -33,7 +35,14 @@ async function loadShareUser() {
         pageSize: 12
       }
     })
-    console.log('loadShareUser', inviteCode, rz);
+    console.log('loadShareUser', userInfo.inviteCode, rz);
+
+    if (rz.data.list) {
+      shareUserList = [
+        ...rz.data.list,
+      ];
+      userInfo.inviteCount = rz.data.total;
+    }
   } catch (e) {
 
   }
@@ -71,21 +80,21 @@ onMounted(async () => {
           <div class="text-xl font-bold text-blue pt-4">
             {{ $t("Your TUIT") }}
           </div>
-          <van-rolling-text class="my-rolling-text" :height="54" :start-num="0" :target-num="inviteCount" />
+          <van-rolling-text class="my-rolling-text" :height="54" :start-num="0" :target-num="inviteBalance" />
         </div>
         <van-button type="primary" size="large" @click="inviteUser">{{
           $t("Invite Now")
-        }}</van-button>
+          }}</van-button>
       </div>
     </div>
 
     <div class="invite-info-container mt-6" v-if="shareUserList.length > 0">
       <p class="px-4 pb-2 text-gray-400">{{ $t('You have invited:') }}</p>
 
-      <article>
-        <div v-for="item in shareUserList" :key="item.id">
-          <div>
-            <img :src="item.avatar" alt="">
+      <article class="space-y-4 text-gray-600">
+        <div v-for="item in shareUserList" :key="item.id" class="flex items-center justify-between px-5">
+          <div class="flex items-center space-x-1">
+            <img class="w-4 h-4 rounded-full" :src="item.avatar" alt="">
             <p>{{ item.nickname }}</p>
           </div>
 
