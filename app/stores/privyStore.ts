@@ -6,6 +6,7 @@ export const privyStore = defineStore(
   () => {
     const { $privy, $PrivySDK } = useNuxtApp();
     const { updateWalletBalance } = $(walletStore());
+    const { updateUserOrderAmountInfo } = $(userStore());
     const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
     let email = $ref("");
@@ -41,7 +42,10 @@ export const privyStore = defineStore(
       try {
         session = await $privy.user.get();
         await initWallet();
-        await updateWalletBalance();
+        await Promise.all([
+          updateWalletBalance(),
+          updateUserOrderAmountInfo(),
+        ]);
       } catch (error) {
         console.log("privy get user error", error);
       }
@@ -115,6 +119,8 @@ export const privyStore = defineStore(
     };
 
     const sendEmail = async () => {
+      if (isLoading) return;
+      isLoading = true;
       await $privy.auth.email.sendCode(email);
       hasSend = true;
       isLoading = false;

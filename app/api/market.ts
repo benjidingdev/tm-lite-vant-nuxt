@@ -19,7 +19,7 @@ export const getTopicsRecommend = (params = {}) => {
 }
 
 // add to my watchlist
-export const getTopicsWatchlist = (params = {}) => {
+export const addTopicsWatchlist = (params = {}) => {
     return Request({
         url: '/app-api/topic/user/watchlist/add',
         method: 'post',

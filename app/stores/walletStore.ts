@@ -90,8 +90,10 @@ export const walletStore = defineStore("walletStore", () => {
     }
   }
 
+  let isGetSelfBalanceLoading = $ref(false);
   const getSelfBalance = async () => {
-    if (account.status.value != 'connected') return;
+    if (account.status.value != 'connected' || isGetSelfBalanceLoading) return;
+    isGetSelfBalanceLoading = true;
     const usdcAddress = getUsdcAddress(account.chain.value!)
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
@@ -100,6 +102,7 @@ export const walletStore = defineStore("walletStore", () => {
       token: usdcAddress
     });
     selfBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
+    isGetSelfBalanceLoading = false;
   }
 
   const getSelfAllowance = async () => {
@@ -161,7 +164,8 @@ export const walletStore = defineStore("walletStore", () => {
   /**
    * get wallet balance and update store
    */
-  const updateWalletBalance = async () => {
+  const updateWalletBalance = useDebounceFn(async () => {
+    // console.log('updateWalletBalance')
     if (!wallet.address) return;
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
@@ -192,10 +196,9 @@ export const walletStore = defineStore("walletStore", () => {
       token: usdcAddress,
     });
     if (usdcRes.value != usdcBalance) {
-      console.log("usdcRes", usdcRes);
       usdcBalance = Number(formatUnits(usdcRes.value, usdcRes.decimals));
     }
-  };
+  }, 2000)
 
   /**
    * Query the user's token authorization
@@ -233,8 +236,9 @@ export const walletStore = defineStore("walletStore", () => {
       console.log('approve usdc result', tx)
       return tx
     } catch (err) {
-      console.error("Error signing approve:", err)
-      return undefined
+      return {
+        error: err.shortMessage
+      }
     }
   }
 
@@ -250,7 +254,14 @@ export const walletStore = defineStore("walletStore", () => {
       const destinationDomain = getDomain(walletClient.chain!)
       const destinationAddress_bytes32 = `0x000000000000000000000000${wallet.address!.slice(2)}`
       const destinationCaller_bytes32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
-
+      console.log('xxx', {
+        tokenMessager,
+        destinationDomain,
+        destinationAddress_bytes32,
+        usdcAddress,
+        destinationCaller_bytes32,
+        amount,
+      })
       const tx = await writeContract($wagmiAdapter.wagmiConfig, {
         abi: usdtAbi,
         address: tokenMessager,
@@ -265,7 +276,7 @@ export const walletStore = defineStore("walletStore", () => {
         ],
         functionName: 'depositForBurn'
       })
-      console.log(`burn usdc from domain: ${destinationDomain} and return transactionHash: ${tx}`)
+      // console.log(`burn usdc from domain: ${destinationDomain} and return transactionHash: ${tx}`)
       return { originDomain: originDomain, destinationDomain: destinationDomain, transactionHash: tx }
     } catch (err) {
       console.error("Error signing approve:", err)
@@ -340,7 +351,6 @@ export const walletStore = defineStore("walletStore", () => {
         allowanceAmount,
         coinType == 0 ? 6 : 18
       );
-
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
         // If the authorization is insufficient, a signature is required
@@ -372,7 +382,6 @@ export const walletStore = defineStore("walletStore", () => {
           spender: walletConfig!.contract.address,
         };
         const res = await approveSign(approveParam);
-        console.log("allowance success:", res);
         if (res) return true;
       } else {
         return true; // Authorization is sufficient, no need to sign

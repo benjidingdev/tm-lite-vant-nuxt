@@ -4,22 +4,22 @@ import { amountMoney } from "@/utils/processing";
 import { multiply } from "@/utils/decimal";
 import { onMounted } from "vue";
 
-const { setModal, triggerCallDuration, firstCall } = $(uiStore());
+const { setModal } = $(uiStore());
 let { order } = $(userStore());
 
-const voState = $ref({
-  isLoading: false,
-  queryParams: {
+
+  const queryParams = {
     pageNo: 1,
     pageSize: 20,
     orderBy: "created desc",
     key: "",
-  },
-  total: 0,
-});
-let marketId = $ref(0);
+  }
 
-const showShares = (item) => {
+let marketId = $ref(0);
+let isLoading = $ref(true);
+let total = $ref(0);
+
+const showShares = (item: any) => {
   setModal("share", true);
   marketId = item.marketId;
 };
@@ -28,29 +28,27 @@ const showShares = (item) => {
  * load user history orders
  */
 const fetchHistoryList = async () => {
-  try {
-    const res = await userTradeInfo(voState.queryParams);
-    if (voState.queryParams.pageNo === 1) {
-      order.historyList = res?.data?.list;
-    } else {
-      order.historyList = order?.historyList?.concat(res.data.list);
-    }
-    voState.total = res.data.total;
-    voState.isLoading = false;
-  } catch (error) {
-    voState.isLoading = false;
+  if (queryParams.pageNo === 1) {
+    isLoading = true;
+    order.historyList = [];
   }
+  try {
+    const res = await userTradeInfo(queryParams);
+    if (!res.data) {
+      return;
+    }
+    order.historyList = [...order.historyList, ...res.data.list]
+    total = res.data.total;
+  } catch (error) {
+  }
+  isLoading = false;
 };
 
-const dollars2cents = (value) => {
+const dollars2cents = (value: number) => {
   return multiply(value, 100);
 };
 
 onMounted(() => {
-  const isCallNow = triggerCallDuration(Date.now(), 10);
-  if (firstCall.history && !isCallNow) {
-    return;
-  }
   fetchHistoryList();
 });
 </script>
@@ -58,22 +56,13 @@ onMounted(() => {
 <template>
   <div class="w-full bg-color-white p-4" v-if="order?.historyList.length !== 0">
     <van-swipe-cell v-for="item in order?.historyList" :key="item.marketId">
-      <van-card
-        :key="item.marketId"
-        :price="
-          amountMoney(item.volume || 0) +
-          ' shares at ' +
-          dollars2cents(item.price || 0) +
-          '€'
-        "
-        :desc="'Buy ' + item.yesName"
-        :title="item.question"
-        :thumb="item.image"
-        class="mt-2"
-      >
+      <van-card :key="item.marketId" :price="amountMoney(item.volume || 0) +
+        ' shares at ' +
+        dollars2cents(item.price || 0) +
+        '€'
+        " :desc="'Buy ' + item.yesName" :title="item.question" :thumb="item.image" class="mt-2">
         <template #footer>
-          <van-button plain size="mini" type="primary" @click="showShares(item)"
-            >{{ $t("Shares") }}
+          <van-button plain size="mini" type="primary" @click="showShares(item)">{{ $t("Shares") }}
           </van-button>
         </template>
       </van-card>

@@ -1,12 +1,12 @@
 {
   "name": "nuxt-app",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "build": "./scripts/build.sh",
-    "dev2": "./scripts/dev.sh",
-    "dev": "nuxt dev",
+    "dev": "./scripts/dev.sh",
+    "dev2": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"

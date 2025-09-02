@@ -4,7 +4,7 @@
       <BalanceNavButton />
     </div>
     <div class="flex justify-center items-center space-x-2">
-      <ReqestQueueButton />
+      <RequestQueueButton />
       <SettingsVolumeButton />
       <SettingsButton />
     </div>

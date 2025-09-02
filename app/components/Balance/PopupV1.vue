@@ -22,7 +22,7 @@
   const chainColumns = [
     {
       text: chainName,
-      img: '/icons/avalanche.svg',
+      img: '/icons/Avalanche.svg',
     },
   ]
 

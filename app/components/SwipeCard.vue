@@ -1,6 +1,7 @@
 <script setup>
 import {
   getTopicsRecommend,
+  addTopicsWatchlist,
 } from "~/api/market";
 import { convertCurrency, percentage } from "@/utils/processing";
 
@@ -22,6 +23,7 @@ let { addRequest, cards, isLoading } = $(requestQueueStore());
 const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
+const { userOrderAmount } = $(userStore());
 
 const pageSize = 12;
 let total = 0;
@@ -136,7 +138,7 @@ const touchEnd = (card, event) => {
     } else if (offsetY > threshold) {
       pickNext(); // swipe down means pick next card
     } else if (offsetY < -threshold) {
-      bookmark(); // swipe up means bookmark
+      // bookmark(card); // swipe up means bookmark
     } else {
       resetCard(); // reset the position of card
     }
@@ -177,7 +179,29 @@ const buyNo = (card) => {
   goDeposit(card, false);
 };
 
-const bookmark = () => {
+const bookmark = async (card) => {
+  if (token.accessToken === "") {
+    setModal("loginModal", true);
+    isToken(true);
+    closeToast();
+    return;
+  }
+
+  console.log(card);
+  // bookmark
+  card.followed = !card.followed;
+
+  try {
+    // const res = await
+    addTopicsWatchlist({
+      topicId: card.id,
+      actionType: card.followed ? 0 : 1,
+    })
+    // console.log(res);
+  } catch (error) {
+    console.log(error);
+  }
+
   swipeCard(statusList[2], () => { });
 };
 
@@ -213,26 +237,23 @@ const goDeposit = async (card, isYes) => {
     resetCard();
   } else {
     // balance check
-    if (userBalance < transaction.textPrice) {
+    const userCanUseBalance = userBalance - userOrderAmount;
+    console.log({userBalance, textPrice: transaction.textPrice, userOrderAmount, userCanUseBalance});
+    if (userCanUseBalance < transaction.textPrice) {
       showFailToast("Insufficient balance");
       resetCard();
       return false;
     }
-    try {
 
-      // add request to queue
-      addRequest(transaction, card);
+    // add request to queue
+    addRequest(transaction, card);
 
-      if (transaction.type === 1) {
-        swipeCard(statusList[0]);
-      } else {
-        swipeCard(statusList[1], () => { });
-      }
-
-
-    } finally {
-      resetCard();
+    if (transaction.type === 1) {
+      swipeCard(statusList[0]);
+    } else {
+      swipeCard(statusList[1], () => { });
     }
+
   }
   resetCard();
 };
@@ -279,8 +300,8 @@ onMounted((e) => {
                 </div>
 
                 <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                  @click="bookmark">
-                  <van-icon size="30" name="star-o" color="#c4c406" />
+                  @click="bookmark(card)">
+                  <van-icon size="30" :name="card.followed ? 'star' : 'star-o'" color="#c4c406" />
                 </div>
 
                 <div class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
@@ -307,8 +328,8 @@ onMounted((e) => {
           </div>
 
           <div v-if="currentIndex === index" class="hint-box">
-            <div class="hint like" :style="{ opacity: -offsetX / 150 }">YES</div>
             <div class="hint nope" :style="{ opacity: offsetX / 150 }">NO</div>
+            <div class="hint like" :style="{ opacity: -offsetX / 150 }">YES</div>
           </div>
         </div>
       </div>
@@ -317,10 +338,10 @@ onMounted((e) => {
         <van-empty description="If you are interested in Turing Market, please go to our official version"
           style="--van-empty-description-color: #323232;">
           <template #image>
-             <img src="/assets/icon/logo.svg" />
-           </template>
+            <img src="/assets/icon/logo.svg" />
+          </template>
 
-           <van-button round type="primary" class="bottom-button">Launch App</van-button>
+          <van-button round type="primary" class="bottom-button">Launch App</van-button>
         </van-empty>
       </div>
     </van-skeleton>

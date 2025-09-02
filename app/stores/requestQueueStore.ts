@@ -1,9 +1,7 @@
 import * as userApi from "~/api/userInfo";
 import {
-  getTopicsRecommend,
   getTopicsOrderPreview,
   getTopicsOrderCreate,
-  getOrderAmount,
 } from "~/api/market";
 import { parseUnits } from "viem";
 
@@ -11,12 +9,13 @@ import { parseUnits } from "viem";
 export const requestQueueStore = defineStore("requestQueueStore", () => {
 
   const { tradeVolume } = $(tradeStore());
-  const { signTradeData } = $(walletStore());
+  const { signTradeData, updateWalletBalance } = $(walletStore());
+  const { updateUserOrderAmountInfo } = $(userStore());
 
   let isLoading = $ref(true);
   let cards = $ref([]);
-  const queue = $ref([]);
-  // const failCards = $ref([]);
+  let queue: any[] = $ref([]);
+  let failCards = $ref([]);
   let isProcessing = $ref(false);
   let requestCount = $ref(0);
   let successCount = $ref(0);
@@ -34,8 +33,6 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
     }
     isProcessing = true;
     const payload = queue[0];
-    const transaction = payload.transaction;
-    console.log('processRequest', transaction, payload);
     if (!payload) {
       return;
     }
@@ -45,21 +42,34 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
     payload.status = 'processing';
     // setLoadingToast("Processing transaction");
 
-    const req = {
-      marketId: transaction.marketsId || 1012110,
-      type: transaction.type, //1-YES；2-NO,
-      amount: null,
-      volume: tradeVolume,
-      priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
-      orderType: 1, //1: buy, 2: sell
-      price: transaction.textPrice * 100,
-      isDeduction: false,
-    };
-    let result = await getTopicsOrderPreview(req);
-    if (result.code === 0) {
-      const order = { ...result.data };
-      let tradeSign;
-      try {
+    await doProcess(payload);
+
+    queue.shift()
+    isProcessing = false;
+    processRequest();
+  };
+
+  async function doProcess(payload: any) {
+    const transaction = payload.transaction;
+
+    console.log('processRequest', transaction, payload);
+
+    try {
+      const req = {
+        marketId: transaction.marketsId || 1012110,
+        type: transaction.type, //1-YES；2-NO,
+        amount: null,
+        volume: tradeVolume,
+        priceType: 1, //1-market price ；2-limited price; 3-merged price; 4-split price
+        orderType: 1, //1: buy, 2: sell
+        price: transaction.textPrice * 100,
+        isDeduction: false,
+      };
+      let result = await getTopicsOrderPreview(req);
+      if (result.code === 0) {
+        const order = { ...result.data };
+        let tradeSign;
+
         result.data.slippageBps = parseUnits(result.data.slippageBps + "", 4);
         result.data.tokenAmount = parseUnits(result.data.tokenAmount + "", 6);
         result.data.tokenPriceInPaymentToken = parseUnits(
@@ -67,35 +77,38 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
           6
         );
         tradeSign = await signTradeData({ order: result.data });
-      } catch (e) { }
-      if (tradeSign) {
-        const params = {
-          salt: order.salt,
-          message: JSON.stringify(order),
-          signContent: tradeSign,
-        };
-        let res = await getTopicsOrderCreate(params);
-        console.log("create order res:", res);
-        if (res.code === 0) {
-          payload.status = 'success';
-          successCount++;
-          // showSuccessToast("Transaction Successful");
-          // showNotify({ type: 'success', message: `${Object.keys(queueMap).length}` + " Transaction Successful" });
-        } else {
-          payload.status = 'fail';
-          cards.unshift({ ...payload.card, retry: true })
 
-          showNotify(
-            { type: 'danger', message: transaction.marketsTitle + " Transaction Failed" + `: ${res.message || "Unknown error"}` }
-          );
+        if (tradeSign) {
+          const params = {
+            salt: order.salt,
+            message: JSON.stringify(order),
+            signContent: tradeSign,
+          };
+
+
+          let res = await getTopicsOrderCreate(params);
+          console.log("create order res:", res);
+          if (res.code === 0) {
+            payload.status = 'success';
+            successCount++;
+
+            updateWalletBalance();
+            updateUserOrderAmountInfo();
+            // showSuccessToast("Transaction Successful");
+            // showNotify({ type: 'success', message: `${Object.keys(queueMap).length}` + " Transaction Successful" });
+          }
         }
       }
+    } catch (error) {
+      payload.status = 'fail';
+      // cards.unshift({ ...payload.card, retry: true })
+      failCards.unshift({ ...payload.card, transaction: payload.transaction, error })
+      console.error('error', error);
+      showNotify(
+        { type: 'danger', message: transaction.marketsTitle + " Transaction Failed" }
+      );
     }
-
-    queue.shift()
-    isProcessing = false;
-    processRequest();
-  };
+  }
 
   return $$({
     isProcessing,
@@ -104,6 +117,7 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
     addRequest,
     requestCount,
     successCount,
+    failCards,
   });
 }, {
   persist: {
