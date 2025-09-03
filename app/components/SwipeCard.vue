@@ -1,6 +1,7 @@
 <script setup>
 import { getTopicsRecommend, addTopicsWatchlist } from "~/api/market";
 import { convertCurrency, percentage } from "@/utils/processing";
+import { _debounce } from "@/utils/debounce";
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
@@ -9,8 +10,10 @@ let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
-let animationFrame;
 let currentRate = $ref(0);
+const threshold = 100; // Threshold of swiping
+let currentX = 0;
+let currentY = 0;
 
 // The data from store
 const { userBalance } = $(walletStore());
@@ -37,6 +40,8 @@ const recommondQueryParams = $ref({
 });
 
 let movingYes = $computed(() => offsetX < 0);
+let movingNo = $computed(() => offsetX > 0);
+let movingNext = $computed(() => offsetY > 50);
 
 // get the list of cards
 const getInfoList = async (refresh) => {
@@ -65,7 +70,9 @@ const getInfoList = async (refresh) => {
 const getCardStyle = (index) => {
   if (index === currentIndex) {
     return {
-      transform: `translateX(${offsetX}px) translateY(${offsetY}px)`,
+      transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${
+        offsetX / 20
+      }deg)`,
       zIndex: 30 - index,
     };
   }
@@ -78,45 +85,33 @@ const getCardStyle = (index) => {
 // Touch start
 const touchStart = (e) => {
   if (currentIndex >= cards.length) return;
-  if (animationFrame) {
-    cancelAnimationFrame(animationFrame);
-  }
-  animationFrame = requestAnimationFrame(() => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    offsetX = 0;
-    offsetY = 0;
-    animationFrame = null;
-  });
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  offsetX = 0;
+  offsetY = 0;
 };
 
 // Touch move
 const touchMove = (e) => {
   if (currentIndex >= cards.length) return;
 
-  if (animationFrame) {
-    cancelAnimationFrame(animationFrame);
+  currentX = e.touches[0].clientX;
+  currentY = e.touches[0].clientY;
+
+  offsetX = currentX - startX;
+  offsetY = currentY - startY;
+
+  const maxOffsetX = 100;
+  const maxOffsetY = 100;
+  if (Math.abs(offsetX) > maxOffsetX) {
+    offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
+    isSettlement = true;
+  } else {
+    isSettlement = false;
   }
-
-  animationFrame = requestAnimationFrame(() => {
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-    offsetX = currentX - startX;
-    offsetY = currentY - startY;
-
-    const maxOffsetX = 150;
-    const maxOffsetY = 150;
-    if (Math.abs(offsetX) > maxOffsetX) {
-      offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
-      isSettlement = true;
-    } else {
-      isSettlement = false;
-    }
-    if (Math.abs(offsetY) > maxOffsetY) {
-      offsetY = offsetY > 0 ? maxOffsetY : -maxOffsetY;
-    }
-    animationFrame = null;
-  });
+  if (Math.abs(offsetY) > maxOffsetY) {
+    offsetY = offsetY > 0 ? maxOffsetY : -maxOffsetY;
+  }
 };
 
 // Touch end
@@ -126,25 +121,17 @@ const touchEnd = (card, event) => {
   if (cards.length <= pageSize / 2) {
     getInfoList(true);
   }
-
-  const threshold = 150; // Threshold of swiping
-  if (animationFrame) {
-    cancelAnimationFrame(animationFrame);
+  if (offsetX >= threshold) {
+    buyNo(card); // swipe to left means reject
+  } else if (offsetX <= -threshold) {
+    buyYes(card); // swipe to right means accept
+  } else if (offsetY >= threshold - 50) {
+    pickNext(); // swipe down means pick next card
+  } else if (offsetY <= -threshold) {
+    // bookmark(card); // swipe up means bookmark
+  } else {
+    resetCard(); // reset the position of card
   }
-  animationFrame = requestAnimationFrame(() => {
-    if (offsetX > threshold) {
-      buyNo(card); // swipe to left means reject
-    } else if (offsetX < -threshold) {
-      buyYes(card); // swipe to right means accept
-    } else if (offsetY > threshold) {
-      pickNext(); // swipe down means pick next card
-    } else if (offsetY < -threshold) {
-      // bookmark(card); // swipe up means bookmark
-    } else {
-      resetCard(); // reset the position of card
-    }
-    animationFrame = null;
-  });
 };
 
 // Card swipe Animation
@@ -313,9 +300,9 @@ onMounted((e) => {
           :class="['card', { active: currentIndex === index }]"
           :style="getCardStyle(index)"
           class="draggable-element shadow-md"
-          @touchstart="touchStart"
-          @touchmove="touchMove"
-          @touchend="touchEnd(card, event)"
+          @touchstart="(e) => _debounce(touchStart(e))"
+          @touchmove="(e) => _debounce(touchMove(e))"
+          @touchend="(e) => _debounce(touchEnd(card, e))"
         >
           <van-image
             width="100%"
@@ -352,9 +339,17 @@ onMounted((e) => {
                 </div>
               </div>
             </div>
-            <div v-if="isSettlement && index === 0" class="hint-box">
-              <div v-if="movingYes" class="hint-box hint like">YES</div>
-              <div v-else class="hint-box hint nope">NO</div>
+            <div v-if="index === 0" class="hint-box">
+              <div v-if="isSettlement && movingYes" class="hint-box hint like">
+                YES
+              </div>
+              <div
+                v-else-if="isSettlement && movingNo"
+                class="hint-box hint nope"
+              >
+                NO
+              </div>
+              <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
             </div>
           </van-image>
 
@@ -446,6 +441,10 @@ onMounted((e) => {
 
 .hint.nope {
   background: rgba(255, 77, 79, 0.7);
+}
+
+.hint.next {
+  background: rgba(173, 173, 173, 0.7);
 }
 
 .van-image img {
