@@ -56,5 +56,7 @@
   "Experiencing problems": "Experiencing problems",
   "Get help": "Get help",
   "New Withdrawal": "New Withdrawal",
-  "Deposit tx": "Deposit tx"
+  "Deposit tx": "Deposit tx",
+
+  "inviteCount": "You have invited {count} user, invite {remainCount} more to become a Leader. | You have invited {count} users, invite {remainCount} more to become a Leader."
 }

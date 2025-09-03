@@ -3,7 +3,7 @@ const { session } = $(privyStore());
 </script>
 
 <template>
-  <div class="layout-height bg-white overflow-auto">
+  <div class="h-[calc(100dvh-var(--nav-height))] bg-white overflow-auto">
     <UserInfoCard />
     <OrderList v-if="session" />
     <TradeOrderPopup />
