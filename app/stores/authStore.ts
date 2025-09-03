@@ -134,7 +134,7 @@ export const authStore = defineStore(
      * @returns
      */
     const todoSign = async () => {
-      setLoadingToast("Start to sign");
+      setLoadingToast(t("Start to sign"));
       if (isSign) return;
       try {
         isSign = true;
@@ -161,7 +161,7 @@ export const authStore = defineStore(
       message: SiweMessage;
       signature: string;
     }) => {
-      setLoadingToast("Start to login");
+      setLoadingToast(t("Start to login"));
       const address = wallet?.address;
       try {
       } catch (error) { }
@@ -173,7 +173,6 @@ export const authStore = defineStore(
         message: data.message,
       });
       if (result && result?.code === 0) {
-        console.log("login success");
         afterLoginSuccess(result);
         // Update wallet balance
         await updateWalletBalance();

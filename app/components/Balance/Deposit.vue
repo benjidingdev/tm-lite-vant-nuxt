@@ -66,7 +66,7 @@
       const { originDomain, transactionHash } = await burnUSDC(depositData.tokenAmount);
 
       if (!transactionHash) {
-        showToast("Burn failed");
+        showToast(t("Burn failed"));
         return;
       }
 
