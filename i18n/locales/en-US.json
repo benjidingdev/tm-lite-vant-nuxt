@@ -41,5 +41,13 @@
 
   "Request Queue Error": "Request Queue Error",
   "Close": "Close",
-  "No data": "No data"
+  "No data": "No data",
+
+  "Start to login": "Start to login",
+  "Start to sign": "Start to sign",
+  "Burn failed": "Burn failed",
+  "Position Trade": "Position Trade",
+  "cancel": "cancel",
+  "Buy": "Buy",
+  "Sell": "Sell"
 }

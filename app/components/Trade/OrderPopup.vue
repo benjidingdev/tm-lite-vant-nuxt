@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { showToast } from "vant";
 
+const { t } = useI18n();
 const { modalIsShow } = $(uiStore());
 
 const buyTab = ref("");
@@ -13,7 +14,7 @@ const maxDate = $ref(new Date(2025, 5, 1));
 const onConfirm = () => {};
 
 const onCancel = () => {
-  showToast("cancel");
+  showToast(t("cancel"));
 };
 </script>
 
@@ -25,8 +26,8 @@ const onCancel = () => {
     position="bottom"
   >
     <van-picker-group
-      title="Position Trade"
-      :tabs="['Buy', 'Sell']"
+      :title="$t('Position Trade')"
+      :tabs="[$t('Buy'), $('Sell')]"
       @confirm="onConfirm"
       @cancel="onCancel"
     >
@@ -41,7 +42,7 @@ const onCancel = () => {
         </van-cell-group>
         <div style="margin: 16px">
           <van-button round block type="primary" native-type="submit">
-            Buy
+            {{ $t('Buy') }}
           </van-button>
         </div>
       </van-cell-group>
@@ -49,7 +50,7 @@ const onCancel = () => {
       <van-cell-group v-model="sellTab">
         <div style="margin: 16px">
           <van-button round block type="primary" native-type="submit">
-            Sell
+            {{ $t('Sell') }}
           </van-button>
         </div>
       </van-cell-group>
