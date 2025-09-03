@@ -33,11 +33,24 @@ async function loadShareUser() {
     console.error('loadShareUser', e);
   }
 }
+
+let active = $ref(0);
 </script>
 
 <template>
-    <div class="w-full flex items-center justify-center bg-white p-4 space-x-1">
-      <div class="flex-1 text-[12px] text-gray-700">{{ $t("inviteCount", total, { count: total, remainCount: 10 - total }) }}</div>
-      <button class="bg-orange-500 px-4 py-2 rounded-[12px]" @click="inviteUser(userInfo.inviteCode)">{{ $t("invite") }}</button>
+  <div class="w-full flex flex-col items-center justify-center bg-white p-4 space-x-1">
+
+
+    <div class="w-full" v-if="total > 0">
+      <van-steps :active="active">
+        <van-step>1</van-step>
+        <van-step>5</van-step>
+        <van-step>10</van-step>
+        <van-step>50</van-step>
+      </van-steps>
     </div>
+
+    <div class="flex-1 text-[14px] text-orange-500">{{ $t("inviteCount", total, { count: total, remainCount: 10 - total })
+      }}</div>
+  </div>
 </template>

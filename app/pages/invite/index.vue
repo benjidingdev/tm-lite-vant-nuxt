@@ -1,6 +1,6 @@
 <script setup>
+const { token } = $(authStore());
 const { userInfo } = $(userStore());
-
 </script>
 
 <template>
@@ -8,13 +8,15 @@ const { userInfo } = $(userStore());
 
     <InviteNewUserNotice />
 
-    <div class="w-full flex flex-col items-center justify-center bg-white py-2">
-      <img class="size-30 rounded-full" :src="userInfo.avatar" alt="">
-      <div class="text-center">{{ userInfo.nickname }}</div>
-      <div class="text-center text-[64px] text-orange-500">750 TUIT</div>
-    </div>
+    <template v-if="token.accessToken">
+      <InviteAccountShare class="h-[calc(70dvh-var(--nav-height))]">
+      </InviteAccountShare>
 
-    <InviteUserList />
+      <InviteUserList />
+    </template>
+
+    <InviteNoAccount v-else />
+
     <InviteLeaderBoard />
   </section>
 </template>

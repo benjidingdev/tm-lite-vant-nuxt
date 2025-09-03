@@ -7,11 +7,15 @@ definePageMeta({
 });
 
 onMounted(async () => {
-  console.log({fatherInviteCode});
+  console.log({ fatherInviteCode });
 })
 </script>
 
 <template>
-  <InviteAccountShare v-if="token.accessToken && true" />
-  <InviteNoAccount v-else />
+  <InviteAccountShare class="h-[calc(100dvh)]" v-if="token.accessToken && true">
+    <InviteSkipButton />
+  </InviteAccountShare>
+  <InviteNoAccount class="h-[calc(100dvh)]" v-else>
+    <InviteSkipButton />
+  </InviteNoAccount>
 </template>
