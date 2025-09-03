@@ -2,6 +2,8 @@
   const { setModal } = $(uiStore());
   const { token } = $(authStore());
   const { userInfo, userCanUseAmount } = $(userStore())
+  const { usdcBalance } = $(walletStore());
+
   const avatar = computed(() => {
     return userInfo?.profile?.avatar || '/icons/usdc.svg'
   })
@@ -13,7 +15,7 @@
       @click="setModal('balanceModal', true)">
       <div class="flex items-center">
         <img class="w-5 h-5 rounded-full mr-2" :src="avatar" alt="" />
-        <span class="text-white/80">${{ Math.floor(userCanUseAmount * 100) / 100 }}</span>
+        <span class="text-white/80">${{ Math.floor(usdcBalance * 100) / 100 }}</span>
       </div>
     </button>
     <van-button size="small" v-else round type="primary" class="px-3 text-white/80 right mr-2!"
