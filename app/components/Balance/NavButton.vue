@@ -5,7 +5,7 @@
   const { usdcBalance } = $(walletStore());
 
   const avatar = computed(() => {
-    return userInfo?.profile?.avatar || '/icons/usdc.svg'
+    return userInfo?.profile?.avatar || '/icons/usdt.svg'
   })
 </script>
 
