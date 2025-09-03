@@ -11,12 +11,11 @@ export const authStore = defineStore(
     const { t } = useI18n();
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
-    let { loadUserInfo, userInfo, initLocale } = $(userStore());
+    let { loadUserInfo, userInfo, initLocale, fatherInviteCode } = $(userStore());
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
     let { logoutPrivy, hasSend, isLoading, session, errorInfo } = $(privyStore());
-    let { inviteCode } = $(inviteStore());
 
     let token = $ref({
       accessToken: "",
@@ -165,10 +164,9 @@ export const authStore = defineStore(
       const address = wallet?.address;
       try {
       } catch (error) { }
-      console.log("inviteCode", inviteCode);
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
-        ivcode: inviteCode,
+        ivcode: fatherInviteCode,
         signature: data.signature,
         message: data.message,
       });
