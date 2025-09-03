@@ -33,21 +33,28 @@
   "Your deposit address": "Your deposit address",
   "Copy address": "Copy address",
   "Terms apply": "Terms apply",
-
   "Email": "Email",
   "Please enter email": "Please enter email",
   "Please enter a valid email address": "Please enter a valid email address",
   "Submit": "Submit",
-
   "Request Queue Error": "Request Queue Error",
   "Close": "Close",
   "No data": "No data",
-
   "Start to login": "Start to login",
   "Start to sign": "Start to sign",
   "Burn failed": "Burn failed",
   "Position Trade": "Position Trade",
   "cancel": "cancel",
   "Buy": "Buy",
-  "Sell": "Sell"
+  "Sell": "Sell",
+  "MAX": "MAX",
+  "Withdraw": "Withdraw",
+  "Submitting transaction": "Submitting transaction",
+  "Filling your transaction on the blockchain": "Filling your transaction on the blockchain",
+  "More Details": "More Details",
+  "Order submitted": "Order submitted",
+  "Experiencing problems": "Experiencing problems",
+  "Get help": "Get help",
+  "New Withdrawal": "New Withdrawal",
+  "Deposit tx": "Deposit tx"
 }
