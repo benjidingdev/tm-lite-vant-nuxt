@@ -1,4 +1,4 @@
-export function _debounce<F extends (...args: any[]) => any>(fn: F, delay = 50) {
+export function _debounce<F extends (...args: any[]) => any>(fn: F, delay = 20) {
   let timer: NodeJS.Timeout | null = null;
 
   // Specify this type using generics

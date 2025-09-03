@@ -41,7 +41,7 @@ const recommondQueryParams = $ref({
 
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
-let movingNext = $computed(() => offsetY > 50);
+let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
 
 // get the list of cards
 const getInfoList = async (refresh) => {
@@ -127,8 +127,8 @@ const touchEnd = (card, event) => {
     buyYes(card); // swipe to right means accept
   } else if (offsetY >= threshold - 50) {
     pickNext(); // swipe down means pick next card
-  } else if (offsetY <= -threshold) {
-    // bookmark(card); // swipe up means bookmark
+  } else if (offsetY <= -threshold + 50) {
+    pickNext(); // swipe up means bookmark
   } else {
     resetCard(); // reset the position of card
   }
@@ -318,17 +318,6 @@ onMounted((e) => {
                   @click="buyYes(card)"
                 >
                   <van-icon name="checked" size="66" color="#97dbb4" />
-                </div>
-
-                <div
-                  class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                  @click="bookmark(card)"
-                >
-                  <van-icon
-                    size="30"
-                    :name="card.followed ? 'star' : 'star-o'"
-                    color="#c4c406"
-                  />
                 </div>
 
                 <div

@@ -12,7 +12,6 @@ let completionHash = ref("");
 let seconds = $ref(30);
 let timer = null;
 const activeNames = $ref(["1"]);
-let tokenAmount = $ref(1);
 let currentStep = $ref(1);
 let status = $ref("processing");
 
@@ -122,17 +121,17 @@ const resetForm = () => {
               v-model="withdrawData.tokenAmount"
               label="Amount"
               name="tokenAmount"
-              placeholder="0.00"
+              placeholder="10.00"
             >
               <template #input-right>
                 <div
                   class="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-2"
                 >
-                  <span class="text-gray-500 font-medium">USDC</span>
+                  <span class="text-gray-500 font-medium">USDT</span>
                   <button
                     class="px-3 bg-blue-50 text-blue-600 text-xs font-semibold rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
                     type="button"
-                    @click="tokenAmount = userBalance"
+                    @click="withdrawData.tokenAmount = userBalance"
                   >
                     {{ $t("MAX") }}
                   </button>
@@ -152,6 +151,7 @@ const resetForm = () => {
         </van-field>
         <van-cell>
           <van-button
+            :disabled="withdrawData.tokenAmount <= 0 || !withdrawData.toAddress"
             class="rounded-lg"
             block
             type="primary"
