@@ -49,5 +49,7 @@
   "Position Trade": "Position Trade",
   "cancel": "cancel",
   "Buy": "Buy",
-  "Sell": "Sell"
+  "Sell": "Sell",
+
+  "inviteCount": "You have invited {count} user, invite {remainCount} more to become a Leader. | You have invited {count} users, invite {remainCount} more to become a Leader."
 }
