@@ -1,5 +1,5 @@
 <script setup>
-import { getTopicsRecommend, addTopicsWatchlist } from "~/api/market";
+import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
 
@@ -197,7 +197,7 @@ const pickNext = () => {
   swipeCard(statusList[3], () => {});
 };
 
-// start transcation
+// start transaction
 const goDeposit = async (card, isYes) => {
   const transaction = {
     parentId: null,

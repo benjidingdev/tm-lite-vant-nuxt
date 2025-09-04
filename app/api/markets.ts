@@ -1,4 +1,6 @@
 import Request from '@/utils/request'
+import type { ApiResponse } from '@/types'
+import * as Types from '@/types/market'
 
 // get topics pagenations
 export const getTopicsList = (params = {}) => {
@@ -37,11 +39,10 @@ export const getSeriesList = (params = {}) => {
 }
 
 // get topic details
-export const getTopicsDetails = (params = {}) => {
-    return Request({
-        url: '/app-api/topic/get',
+export const getTopicsDetails = (id: number) => {
+    return Request<any, ApiResponse<Types.TopicsDetailRespVO>>({
+        url: `/app-api/topic/get?id=${id}`,
         method: 'get',
-        params
     })
 }
 

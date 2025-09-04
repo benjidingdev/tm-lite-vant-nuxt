@@ -6,6 +6,7 @@ export const uiStore = defineStore("uiStore", () => {
     authLogout: false,
     share: false,
     showTradePicker: false,
+    showRedeemPopup: false,
     loginModal: false,
     balanceModal: false,
     requestQueueErrorModal: false,

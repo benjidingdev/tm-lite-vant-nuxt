@@ -29,13 +29,6 @@ export interface UserInfo {
 }
 
 export interface Web3Config {
-  chain: {
-    id: number
-    rpcUrls: [string]
-    scanUrl: string
-    attempts: number
-    interval: number
-  }
   contract: {
     name: string
     version: number

@@ -246,7 +246,7 @@
         <van-cell title="Fill status" :value="status"
           :value-class="{ '!text-green-500': status == 'Successful', '!text-red-500': status == 'Failed' }" />
         <van-cell title="You receive" :value="`≈ ${depositData.tokenAmount}`" />
-        <van-cell title="Transcation ID">
+        <van-cell title="Transaction ID">
           <template #value>
             <a class="text-primary" target="_blank">{{ encryptMiddle(transactionTx) }}</a>
           </template>

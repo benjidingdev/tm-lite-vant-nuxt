@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { withdrawRequest } from "@/api/wallet";
-import { getWithdrawSign } from "@/api/transcation";
+import { getWithdrawSign } from "@/api/transaction";
 import { parseUnits } from "viem";
 
 const { wallet, publicClient } = $(privyStore());

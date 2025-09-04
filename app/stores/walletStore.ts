@@ -9,9 +9,11 @@ import {
   TYPEHASH_MERGE_SPLIT_ORDER,
 } from "@/config/tradeTypes";
 import {
-  TYPEHASH_PERMIT,
   TYPEHASH_ORDER,
-  TYPEHASH_WITHDRAW,
+  TYPEHASH_PERMIT,
+  TYPEHASH_REWARD,
+  TYPEHASH_BROKER,
+  TYPEHASH_WITHDRAW
 } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
 import { approveSign } from "@/api/userInfo";
@@ -37,9 +39,7 @@ export const walletStore = defineStore("walletStore", () => {
 
   const { $wagmiAdapter } = useNuxtApp();
   const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
-
   const account = useAccount();
-
   const userCapital = $ref({
     total: 0,
     balance: 0,
@@ -120,19 +120,14 @@ export const walletStore = defineStore("walletStore", () => {
     tokenBalance = balance || 0;
   };
 
-  // transcation signature
+  // transaction signature
   const signTradeData = async (options: SignTradeDataOptions) => {
     const { order } = options;
     try {
-      const typeDomain = {
-        name: walletConfig.contract.name,
-        version: walletConfig.contract.version.toString(),
-        chainId: walletConfig.chain.id,
-        verifyingContract: walletConfig.contract.address,
-      } as const;
+
       // signature trade data
       const content: contentType = {
-        domain: typeDomain,
+        domain: getTypedDomain(),
         types: order.hasOwnProperty("side")
           ? TYPEHASH_ORDER
           : TYPEHASH_MERGE_SPLIT_ORDER,
@@ -314,7 +309,6 @@ export const walletStore = defineStore("walletStore", () => {
         primaryType: "Permit",
         message: message,
       });
-      console.log("content:", message, "typeDomain:", typeDomain);
       return result;
     } catch (err) {
       console.error("Error signing typed data:", err);
@@ -383,21 +377,14 @@ export const walletStore = defineStore("walletStore", () => {
 
   const signWithdraw = async (params: any) => {
     try {
-      const typeDomain = {
-        name: walletConfig.contract.name,
-        version: walletConfig.contract.version.toString(),
-        chainId: walletConfig.chain.id,
-        verifyingContract: walletConfig.contract.address,
-      } as const;
       // signature trade data
       const content = {
-        domain: typeDomain,
+        domain: getTypedDomain(),
         types: TYPEHASH_WITHDRAW,
         primaryType: "Withdraw",
         message: params,
       };
       const result = await walletClient.signTypedData(content);
-      console.log("result:", result, "typeDomain:", typeDomain);
       return result;
     } catch (err) {
       console.error("Error signing typed data:", err);
@@ -413,6 +400,39 @@ export const walletStore = defineStore("walletStore", () => {
     } catch (err) {
       console.error("Error amount permit:", err);
     }
+  }
+
+  /**
+     * Sign the payout
+     */
+  const signPayout = async (message: any) => {
+    console.log('walletClient:', walletClient)
+    try {
+      const result = await walletClient.signTypedData({
+        domain: getTypedDomain(),
+        types: TYPEHASH_REWARD,
+        primaryType: "Reward",
+        message: message,
+      })
+      //console.log('content:', content, 'result:', result)
+      return result;
+    } catch (err) {
+      console.error("Error signing typed data:", err);
+      throw err;
+    }
+  }
+
+  /**
+    * Get the domain
+    * @returns
+    */
+  const getTypedDomain = () => {
+    return {
+      name: walletConfig.contract.name,
+      version: walletConfig.contract.version.toString(),
+      chainId: walletConfig.chain.id,
+      verifyingContract: walletConfig!.contract.address
+    } as const;
   }
 
   return $$({
@@ -443,6 +463,7 @@ export const walletStore = defineStore("walletStore", () => {
     updateUserBalance,
     updateTokenBalance,
     amountPermit,
+    signPayout,
   });
 }, {
   persist: true,

@@ -1,5 +1,5 @@
 import * as userApi from "~/api/userInfo";
-import { getOrderAmount } from "~/api/market";
+import { getOrderAmount } from "~/api/markets";
 
 export const userStore = defineStore("userStore", () => {
   const { token } = $(authStore());
