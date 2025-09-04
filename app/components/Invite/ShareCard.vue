@@ -6,7 +6,7 @@ const { totalInvite, totalTuit } = defineProps(['totalInvite', 'totalTuit']);
 async function handleShare() {
   // const target = document.getElementById('shareTarget');
   // await captureTargetToPng('shareImageName', target);
-  inviteUser(userInfo.inviteCode)
+  inviteUser(userInfo.inviteCode, '/invite/guide');
 }
 
 async function handelImage() {
@@ -33,7 +33,7 @@ async function handelImage() {
       <div class="w-full flex-1 flex items-center justify-between mt-4">
         <div class="flex-1 flex flex-col items-center justify-center border-0 p-2">
           <div>{{ totalInvite || '-' }}</div>
-          <div class="text-gray-500 text-[12px]">Invited</div>
+          <div class="text-gray-500 text-[12px]">{{ $t('Referrals') }}</div>
         </div>
 
         <div class="flex-1 flex flex-col items-center justify-center p-2">

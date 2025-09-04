@@ -21,7 +21,7 @@ let active = $computed(() => {
   <div class="w-full flex flex-col items-center justify-center bg-white p-4 space-x-1">
 
     <div class="border border-gray-200 rounded-[12px] w-full p-4 space-y-2">
-      <p class="font-[700] flex-shrink-0">Invite Rewards</p>
+      <p class="font-[700] flex-shrink-0">{{ $t('Referral Rewards') }}</p>
 
       <div class="w-full flex justify-between space-x-2">
         <div>
