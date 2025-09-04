@@ -1,67 +1,60 @@
 <script setup lang="ts">
-// import { createAppKit } from "@reown/appkit/vue";
-// import { networks, localHardhat, avaxTest } from "./config/networks";
-import "@vant/touch-emulator";
-import { Locale } from 'vant'
-import enUS from 'vant/es/locale/lang/en-US'
-import zhTW from 'vant/es/locale/lang/zh-TW'
-import jaJP from 'vant/es/locale/lang/ja-JP'
-import koKR from 'vant/es/locale/lang/ko-KR'
+  import "@vant/touch-emulator";
+  import { Locale } from 'vant'
+  import enUS from 'vant/es/locale/lang/en-US'
+  import zhTW from 'vant/es/locale/lang/zh-TW'
+  import jaJP from 'vant/es/locale/lang/ja-JP'
+  import koKR from 'vant/es/locale/lang/ko-KR'
 
+  useHead({
+    title: "Turing Market",
+    meta: [
+      {
+        name: "viewport",
+        content:
+          "width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover",
+      },
+    ],
+    script: [
+      // { src: "https://telegram.org/js/telegram-web-app.js" },
+      // { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js" },
+    ],
+  });
 
-useHead({
-  title: "Turing Market",
-  meta: [
-    {
-      name: "viewport",
-      content:
-        "width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover",
-    },
-  ],
-  script: [
-    { src: "https://telegram.org/js/telegram-web-app.js" },
-    { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js" },
-  ],
-});
+  const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore());
+  const iframeRef = ref<HTMLIFrameElement | null>(null);
+  let cleanupIframe: (() => void) | null = null;
 
-const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore());
-const iframeRef = ref<HTMLIFrameElement | null>(null);
-let cleanupIframe: (() => void) | null = null;
+  const { locale } = useI18n()
+  Locale.add({
+    'en-US': enUS,
+    'zh-TW': zhTW,
+    'ja-JP': jaJP,
+    'ko-KR': koKR,
+  });
 
-const { locale } = useI18n()
-Locale.add({
-  'en-US': enUS,
-  'zh-TW': zhTW,
-  'ja-JP': jaJP,
-  'ko-KR': koKR,
-});
+  let { fatherInviteCode } = $(userStore());
+  onMounted(() => {
+    Locale.use(locale.value)
+    refreshSession();
 
-let { fatherInviteCode } = $(userStore());
-onMounted(async () => {
-  Locale.use(locale.value)
-  refreshSession();
+    if (iframeRef.value) {
+      cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
+    }
 
-  if (iframeRef.value) {
-    cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
-  }
+    const code = getFatherInviteCode();
+    if (code) {
+      fatherInviteCode = code;
+      navigateTo('/invite/guide');
+    }
+  });
 
-  const { code, redirect } = getFatherInviteCode();
-  if (code) {
-    fatherInviteCode = code;
-  }
-
-  if (redirect) {
-    console.log({ redirect });
-    await navigateTo(redirect);
-  }
-});
-
-onUnmounted(() => {
-  if (cleanupIframe) {
-    cleanupIframe();
-    cleanupIframe = null;
-  }
-});
+  onUnmounted(() => {
+    if (cleanupIframe) {
+      cleanupIframe();
+      cleanupIframe = null;
+    }
+  });
 </script>
 
 <template>
@@ -87,7 +80,7 @@ onUnmounted(() => {
 </template>
 
 <style>
-:root {
-  --nav-height: 110px;
-}
+  :root {
+    --nav-height: 110px;
+  }
 </style>

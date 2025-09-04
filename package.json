@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.0.5",
+    "@nuxtjs/supabase": "^1.6.1",
     "@pinia/nuxt": "^0.11.2",
     "@privy-io/js-sdk-core": "0.52.3",
     "@reown/appkit": "^1.7.16",
