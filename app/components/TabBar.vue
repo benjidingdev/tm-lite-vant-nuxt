@@ -1,16 +1,16 @@
 <template>
   <van-tabbar v-model="active" safe-area-inset-bottom>
-    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="goToLInk(item.path)" :icon="item.icon">
+    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="goToLInk(item.path)" :icon="item.icon" :name="item.key">
       {{ $t(item.name) }}</van-tabbar-item>
   </van-tabbar>
 </template>
 
 <script setup lang="ts">
   const tabList = $ref([
-    { name: "Markets", icon: "chart-trending-o", path: "/" },
-    // { name: "Earn", icon: "balance-o", path: "/earn" },
-    { name: "Invite", icon: "hot-o", path: "/invite" },
-    { name: "User", icon: "user-o", path: "/user" },
+    { key: 'index', name: "Markets", icon: "chart-trending-o", path: "/" },
+    // { key: 'earn', name: "Earn", icon: "balance-o", path: "/earn" },
+    { key: 'invite', name: "Invite", icon: "hot-o", path: "/invite" },
+    { key: 'user', name: "User", icon: "user-o", path: "/user" },
   ]);
   const { locale } = $(useI18n());
   const { path } = $(useRoute());
@@ -20,11 +20,12 @@
     return paths[paths.length - 1];
   };
 
-  let active = $computed(() => {
-    return tabList.findIndex(
-      (item) => getLastPath(path) === getLastPath(item.path)
-    );
-  });
+  let active = $ref(tabList[0]?.key || 'index');
+
+  onMounted(() => {
+    active = tabList.find((item) => getLastPath(path) === getLastPath(item.path))?.key || tabList[0]?.key || 'index';
+    // console.log('path', path, active);
+  })
 
   const goToLInk = async (path: string) => {
     const url = locale === "en-US" ? path : `/${locale}${path}`;
