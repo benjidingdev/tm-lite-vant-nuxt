@@ -1,7 +1,7 @@
 <script setup>
 import Request from '@/utils/request'
 
-let { userInfo, fatherInviteCode } = $(userStore());
+let { userInfo } = $(userStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
@@ -49,7 +49,7 @@ async function loadShareUser() {
 }
 
 onMounted(async () => {
-  console.log('inviteCode', userInfo.inviteCode, fatherInviteCode);
+  console.log('inviteCode', userInfo.inviteCode);
 
   if (token.accessToken) {
     await loadShareUser();

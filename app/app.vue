@@ -36,7 +36,7 @@ Locale.add({
   'ko-KR': koKR,
 });
 
-let { fatherInviteCode } = $(userStore());
+let { startParam } = $(shareStore());
 onMounted(async () => {
   Locale.use(locale.value)
   refreshSession();
@@ -47,10 +47,11 @@ onMounted(async () => {
 
   const { code, redirect } = getFatherInviteCode();
   if (code) {
-    fatherInviteCode = code;
+    startParam.code = code;
   }
 
   if (redirect) {
+    startParam.redirect = redirect;
     console.log({ redirect });
     await navigateTo(redirect);
   }
