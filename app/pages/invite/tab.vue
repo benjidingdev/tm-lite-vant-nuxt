@@ -58,7 +58,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="layout-height bg-white p-2 overflow-auto">
+  <div class="h-[calc(100dvh-var(--nav-height))] bg-white p-2 overflow-auto">
     <div class="broadcast-container mb-2">
       <van-notice-bar left-icon="volume-o" :scrollable="false">
         <van-swipe vertical class="notice-swipe h-[40px] leading-10" :autoplay="3000" :touchable="false"

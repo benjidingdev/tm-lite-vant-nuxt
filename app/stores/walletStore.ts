@@ -398,6 +398,7 @@ export const walletStore = defineStore("walletStore", () => {
       };
       const result = await walletClient.signTypedData(content);
       console.log("result:", result, "typeDomain:", typeDomain);
+      return result;
     } catch (err) {
       console.error("Error signing typed data:", err);
       throw err;

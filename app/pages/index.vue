@@ -4,14 +4,11 @@
 <template>
   <div>
     <!--swipe card-->
-    <div class="layout-height px-10">
+    <div class="h-[calc(100dvh-var(--nav-height))] px-10">
       <SwipeCard />
     </div>
   </div>
 </template>
 
 <style>
-.layout-height {
-  height: calc(100dvh - 60px - 50px);
-}
 </style>

@@ -31,8 +31,7 @@ let modelValue = $(defineModel());
 
 const onInput = (event) => {
   const value = event.target.value;
-  modelValue =  value;
-;
+  modelValue = value;
   if (event.target.value === "") {
     errorInfo = "";
     return;
@@ -49,6 +48,8 @@ const onInput = (event) => {
     case "tokenAmount":
       if (!/^\d*\.?\d{0,18}$/.test(value)) {
         errorInfo = "Please enter a valid amount";
+      } else if (Number(value) < 10) {
+        errorInfo = "Please enter an amount more than 10";
       } else {
         errorInfo = "";
       }
