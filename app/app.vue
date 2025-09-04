@@ -1,13 +1,10 @@
 <script setup lang="ts">
-// import { createAppKit } from "@reown/appkit/vue";
-// import { networks, localHardhat, avaxTest } from "./config/networks";
 import "@vant/touch-emulator";
 import { Locale } from 'vant'
 import enUS from 'vant/es/locale/lang/en-US'
 import zhTW from 'vant/es/locale/lang/zh-TW'
 import jaJP from 'vant/es/locale/lang/ja-JP'
 import koKR from 'vant/es/locale/lang/ko-KR'
-
 
 useHead({
   title: "Turing Market",
@@ -19,8 +16,8 @@ useHead({
     },
   ],
   script: [
-    { src: "https://telegram.org/js/telegram-web-app.js" },
-    { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js" },
+    // { src: "https://telegram.org/js/telegram-web-app.js" },
+    // { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js" },
   ],
 });
 

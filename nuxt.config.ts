@@ -6,6 +6,7 @@ const modules = [
   "@vant/nuxt",
   "@vue-macros/nuxt",
   "@pinia/nuxt",
+  '@nuxtjs/supabase',
   "@nuxtjs/i18n",
   "pinia-plugin-persistedstate/nuxt",
   "@vueuse/motion/nuxt",
@@ -68,6 +69,22 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: ["form-data"],
+  },
+  supabase: {
+    redirect: false,
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      exclude: ['/']
+    },
+    clientOptions: {
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true
+      },
+    },
   },
   runtimeConfig: {
     public: {
