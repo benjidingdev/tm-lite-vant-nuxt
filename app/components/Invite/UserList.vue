@@ -34,7 +34,18 @@ async function loadShareUser() {
   }
 }
 
-let active = $ref(0);
+let active = $ref(-1);
+watch(() => total, (newVal) => {
+  if (newVal > 0 && newVal < 5) {
+    active = 0;
+  } else if (newVal >= 5 && newVal < 10) {
+    active = 1;
+  } else if (newVal >= 10 && newVal < 50) {
+    active = 2;
+  } else if (newVal >= 50) {
+    active = 3;
+  }
+})
 </script>
 
 <template>
@@ -50,7 +61,7 @@ let active = $ref(0);
       </van-steps>
     </div>
 
-    <div class="flex-1 text-[14px] text-orange-500">{{ $t("inviteCount", total, { count: total, remainCount: 10 - total })
+    <div class="flex-1 text-[14px] text-orange-500">{{ $t("inviteCount", { count: total, remainCount: 50 - total })
       }}</div>
   </div>
 </template>

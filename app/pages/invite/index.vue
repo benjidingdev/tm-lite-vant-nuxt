@@ -10,6 +10,9 @@ const { userInfo } = $(userStore());
 
     <template v-if="token.accessToken">
       <InviteAccountShare class="h-[calc(70dvh-var(--nav-height))]">
+        <template #coin>
+          <InviteUserCoinBalance />
+        </template>
       </InviteAccountShare>
 
       <InviteUserList />
