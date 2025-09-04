@@ -1,5 +1,5 @@
 <script setup>
-import { getTopicsRecommend, addTopicsWatchlist } from "~/api/market";
+import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
 
