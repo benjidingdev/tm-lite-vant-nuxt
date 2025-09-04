@@ -51,7 +51,7 @@ let active = $computed(() => {
               <van-step>50</van-step>
             </van-steps>
 
-            <div class="">{{ $t("inviteCount", { count: total, remainCount: 50 - total })
+            <div class="">{{ $t("inviteCount", { count: totalInvite, remainCount: 50 - totalInvite })
             }}</div>
           </div>
         </div>
