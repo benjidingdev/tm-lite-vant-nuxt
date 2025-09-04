@@ -27,7 +27,7 @@ export function getFatherInviteCode() {
     }
 
     console.log({ startParams });
-    // return startParams;
+    return startParams;
   }
 
   const urlParams = new URLSearchParams(window?.location?.search);
