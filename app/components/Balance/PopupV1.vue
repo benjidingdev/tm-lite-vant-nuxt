@@ -57,19 +57,19 @@ const closeModal = () => {
     </div>
     <div class="text-sm px-4 pb-5 !max-h-[65vh] !overflow-y-scroll">
       <div class="text-[22px] font-bold flex flex-row items-center">
-        <span>Deposit USDT to Avalanche</span>
+        <span>{{ $t('Deposit Title') }}</span>
       </div>
-      <div class="py-2 opacity-50">Choose the appropriate method to top up USDT on the Avalanche chain</div>
+      <div class="py-2 opacity-50">{{ $t('Deposit Description') }}</div>
       <div class="flex md:items-center rounded-lg bg-[#3663891A] pl-4 py-2 mb-2">
         <van-icon class="top-[1px]" name="info-o" color="#df2d00" size="16" />
         <span class="text-sm pl-1 text-[#df2d00]">
-          Target network is Avalanche (C-Chain). Incorrect transfers will result in asset loss.
+          {{ $t('Deposit Warning') }}
         </span>
       </div>
       <div class="md:flex justify-between sm:flex-row sm:gap-x-3 bg-[#0000000d] rounded-lg px-4 py-3">
         <div class="w-full">
           <p class="text-sm opacity-60 break-all">
-            This is your embedded wallet (no custodial) address on our platform:
+            {{ $t('Embedded Wallet Tips') }}
           </p>
           <p class="py-1 mb-2 sm:mb-0 flex-1 flex flex-row md:items-center">
             <span class="font-semibold break-all">{{ loginAddress }}</span>
@@ -82,20 +82,18 @@ const closeModal = () => {
             <QrcodeVue :value="loginAddress" :size="120" />
           </div>
           <p class="text-sm opacity-50 pt-4 pb-2">
-            You can directly transfer Avalanche C-Chain USDT to this address for deposit.
+            {{ $t('Wallet Deposit Tips') }}
           </p>
         </div>
       </div>
       <div class="md:flex justify-between mt-7 md:mt-11">
         <div class="md:w-1/3 mb-7 md:mb-0">
-          <p class="text-lg font-semibold">Method 1: Direct Transfer</p>
-          <p class="text-sm opacity-50">Instructions: Transfer USDT directly from an exchange or wallet to the address
-            above.</p>
+          <p class="text-lg font-semibold">{{ $t('Deposit Method 1') }}</p>
+          <p class="text-sm opacity-50">{{ $t('Deposit Method 1 Instructions') }}</p>
         </div>
         <div>
-          <p class="text-lg font-semibold">Method 2: Use a recommended third-party service</p>
-          <p class="text-sm opacity-50">Instructions: Use a recommended third-party service to facilitate the transfer.
-          </p>
+          <p class="text-lg font-semibold">{{ $t('Deposit Method 2') }}</p>
+          <p class="text-sm opacity-50">{{ $t('Deposit Method 2 Instructions') }}</p>
           <div class="grid grid-cols-3 lg:grid-cols-6 gap-3 mt-7 md:mt-4 px-4 md:px-0">
             <div class="flex flex-col justify-center py-2.5 cursor-pointer bg-[#00000005] rounded"
               :class="{ '!bg-[#0000001f]': ind == currentSite }" v-for="(item, ind) in depositPlatforms"
@@ -112,9 +110,8 @@ const closeModal = () => {
       </div>
       <van-button
         class="w-full rounded-lg text-white !font-semibold border-0 bg-[var(--van-button-primary-background)] !mt-7 md:mt-4"
-        size="large" @click="openProvider()" type="primary">Start Deposit</van-button>
-      <div class="text-sm opacity-50 mt-3">This platform does not directly host third-party deposit portals. Please
-        proceed with caution and verify transaction information.</div>
+        size="large" @click="openProvider()" type="primary">{{ $t('Start Deposit') }}</van-button>
+      <div class="text-sm opacity-50 mt-3">{{ $t('Deposit Declaration') }}</div>
     </div>
   </van-dialog>
 </template>
