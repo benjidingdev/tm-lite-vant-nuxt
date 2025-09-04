@@ -1,43 +1,64 @@
 <script setup>
-import Request from '@/utils/request'
+const { totalInvite } = defineProps(['totalInvite', 'totalTuit']);
 
-const { userInfo } = $(userStore());
-
-onMounted(() => {
-  console.log({ userInfo });
-  loadShareUser();
-})
-
-let shareUserList = $ref([]);
-let total = $ref(0);
-async function loadShareUser() {
-  try {
-    const rz = await Request({
-      url: `/app-api/topic/user/shareUserPage`,
-      method: 'post',
-      data: {
-        pageNo: 1,
-        pageSize: 12
-      }
-    })
-    console.log('loadShareUser', userInfo.inviteCode, rz);
-
-    if (rz.data.list) {
-      shareUserList = [
-        ...rz.data.list,
-      ];
-      total = rz.data.total;
-      total = 1
-    }
-  } catch (e) {
-    console.error('loadShareUser', e);
+let active = $computed(() => {
+  if (totalInvite > 0 && totalInvite < 5) {
+    return 0;
+  } else if (totalInvite >= 5 && totalInvite < 10) {
+    return 1;
+  } else if (totalInvite >= 10 && totalInvite < 50) {
+    return 2;
+  } else if (totalInvite >= 50) {
+    return 3;
+  } else {
+    return -1;
   }
-}
+});
+
 </script>
 
 <template>
-    <div class="w-full flex items-center justify-center bg-white p-4 space-x-1">
-      <div class="flex-1 text-[12px] text-gray-700">{{ $t("inviteCount", total, { count: total, remainCount: 10 - total }) }}</div>
-      <button class="bg-orange-500 px-4 py-2 rounded-[12px]" @click="inviteUser(userInfo.inviteCode)">{{ $t("invite") }}</button>
+  <div class="w-full flex flex-col items-center justify-center bg-white p-4 space-x-1">
+
+    <div class="border border-gray-200 rounded-[12px] w-full p-4 space-y-2">
+      <p class="font-[700] flex-shrink-0">Invite Rewards</p>
+
+      <div class="w-full flex justify-between space-x-2">
+        <div>
+          <van-icon name="fire-o" color="#1989fa" />
+        </div>
+
+        <div class="flex-1 ">
+          <div class="mb-1">{{ $t('Refer a friend and earn 10 tuit.') }}</div>
+          <div class="text-gray-500 text-[12px]">{{ $t(`The reward is issued to your account after the successful
+            registration of a friend.`) }}</div>
+        </div>
+      </div>
+
+      <div class="w-full flex justify-between space-x-2">
+        <div>
+          <van-icon name="gem-o" color="#ee0a24" />
+        </div>
+
+        <div class="flex-1 ">
+          <div class="mb-1">{{ $t("Become a partner after inviting 50 friends.") }}</div>
+          <div class="text-gray-500 text-[12px]">
+
+            <van-steps :active="active">
+              <van-step>1</van-step>
+              <van-step>10</van-step>
+              <van-step>25</van-step>
+              <van-step>50</van-step>
+            </van-steps>
+
+            <div class="">{{ $t("inviteCount", { count: totalInvite, remainCount: 50 - totalInvite })
+            }}</div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+
+  </div>
 </template>
