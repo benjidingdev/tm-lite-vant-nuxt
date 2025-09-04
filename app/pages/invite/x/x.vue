@@ -1,19 +1,8 @@
 <script setup>
-import domtoimage from 'dom-to-image';
 
 definePageMeta({
   layout: "x",
 });
-
-async function getImageFromProxy(img) {
-  console.log('load img from proxy:', img.src);
-  return $fetch('/api/proxy/image', {
-    method: 'POST',
-    body: {
-      url: img.src
-    },
-  });
-}
 
 async function capture(targetId = 'my-div', name = 'shareImageName') {
   if (!targetId) {
@@ -26,24 +15,7 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
     return;
   }
 
-  const imgElements = target.querySelectorAll('img');
-  const promises = Array.from(imgElements).filter(img => img.src.startsWith('http')).map(img => getImageFromProxy(img));
-
-  const base64Urls = await Promise.all(promises);
-
-  imgElements.forEach((img, index) => {
-    if (base64Urls[index]) {
-      img.src = URL.createObjectURL(base64Urls[index]);
-    }
-  });
-
-  const blob = await domtoimage.toBlob(target);
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.download = `${name}.png`;
-  link.href = url;
-  link.click();
-  URL.revokeObjectURL(url);
+  await captureTargetToPng(name, target);
 }
 
 </script>
