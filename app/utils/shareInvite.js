@@ -1,30 +1,50 @@
 import domtoimage from 'dom-to-image';
 
 export function getFatherInviteCode() {
-  let code = "";
+  const startParams = {
+    code: '',
+    redirect: ''
+  };
+
   if (window?.Telegram) {
     console.log(
       "window.Telegram.WebApp.initDataUnsafe",
       window.Telegram.WebApp.initDataUnsafe
     );
     const str = window?.Telegram?.WebApp?.initDataUnsafe?.start_param;
+    console.log({ str });
+
     if (str) {
-      code = str.split("inviteCode=")[1];
+      let regex = /(\w+)=([^&]+)/g;
+      let match;
+
+      while ((match = regex.exec(str)) !== null) {
+        let key = match[1];
+        let value = match[2];
+
+        startParams[key] = value;
+      }
     }
+
+    console.log({ startParams });
+    // return startParams;
   }
 
   const urlParams = new URLSearchParams(window?.location?.search);
-  code = urlParams.get("inviteCode");
-  return code;
+  startParams.code = urlParams.get("inviteCode");
+  startParams.redirect = urlParams.get("redirect");
+
+  console.log({ startParams });
+  return startParams;
 }
 
 
-export function inviteUser(inviteCode) {
+export function inviteUser(inviteCode, redirect) {
   console.log({ inviteCode });
 
   const botUsername = "turingM_lite_bot";
   const appShortName = "tmLite";
-  const params = `inviteCode=${inviteCode || "ChGQnC"}`;
+  const params = `inviteCode=${inviteCode || ""}&redirect=${redirect || ""}`;
   const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${params}`;
   const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
     miniAppUrl
