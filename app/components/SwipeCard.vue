@@ -197,7 +197,7 @@ const pickNext = () => {
   swipeCard(statusList[3], () => {});
 };
 
-// start transcation
+// start transaction
 const goDeposit = async (card, isYes) => {
   const transaction = {
     parentId: null,

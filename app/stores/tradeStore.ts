@@ -1,5 +1,8 @@
 export const tradeStore = defineStore("tradeStore", () => {
   let tradeVolume = $ref(5)
+  let holdResult = $ref<any>(null)
+
+
   const updateVolume = (volume: number) => {
     tradeVolume = volume
   }
@@ -7,6 +10,7 @@ export const tradeStore = defineStore("tradeStore", () => {
   return $$({
     tradeVolume,
     updateVolume,
+    holdResult,
   });
 }, {
   persist: true,

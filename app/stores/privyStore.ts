@@ -95,6 +95,7 @@ export const privyStore = defineStore(
         chain: networks[0],
         transport: custom(provider),
       });
+      console.log("walletClient", walletClient);
 
       isLoading = false;
     };
