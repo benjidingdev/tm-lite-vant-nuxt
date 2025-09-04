@@ -1,76 +1,117 @@
 <script setup lang="ts">
-  import { getNetworks } from '~/config/networks';
-  const { modalIsShow } = $(uiStore());
-  const { usdcBalance, loginAddress } = $(walletStore());
+import { getNetworks } from '~/config/networks';
+import QrcodeVue from 'qrcode.vue'
 
-  const config = useRuntimeConfig()
-  const testnet = config.public.testnet as boolean
-  const chainName = getNetworks(testnet)[0]?.name
-  const { copy, copied, text } = useClipboard()
-  const selectedText = ref('USDC')
-  const showPicker = ref(false)
-  const selectedToken = ref(['USDC'])
-  const showChainPicker = ref(false)
+const { modalIsShow } = $(uiStore());
+const { usdcBalance, loginAddress } = $(walletStore());
+const { copy, copied, text } = useClipboard()
+const currentSite = ref(0)
 
-  const tokenColumns = [
-    {
-      text: 'USDC',
-      img: '/icons/usdc.svg',
-    },
-  ]
+const depositPlatforms = [
+  {
+    icon: '/icons/houdini.png',
+    name: 'Houdini',
+    link: 'https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000'
+  },
+  {
+    icon: '/icons/transit.png',
+    name: 'Transit',
+    link: 'https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp'
+  },
+  {
+    icon: '/icons/symbiosis.png',
+    name: 'Symbiosis',
+    link: 'https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
+  },
+  {
+    icon: '/icons/rubic.png',
+    name: 'Rubic',
+    link: 'https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000'
+  },
+  {
+    icon: '/icons/rocketx.png',
+    name: 'Rocketx',
+    link: 'https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w'
+  },
+  {
+    icon: '/icons/okx.png',
+    name: 'Okx',
+    link: 'https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
+  },
+]
 
-  const chainColumns = [
-    {
-      text: chainName,
-      img: '/icons/Avalanche.svg',
-    },
-  ]
+const openProvider = async () => {
+  window.open(depositPlatforms[currentSite.value]?.link, "Turing", "width=600,height=800")
+}
 
-  const closeModal = () => {
-    modalIsShow.balanceModal = false;
-  }
+const closeModal = () => {
+  modalIsShow.balanceModal = false;
+}
 </script>
 
 <template>
-  <van-dialog closeable v-model:show="modalIsShow.balanceModal" :title="$t('Transfer Crypto')"
+  <van-dialog width="80vw" closeable v-model:show="modalIsShow.balanceModal" :title="$t('Transfer Crypto')"
     :showConfirmButton="false" :showCancelButton="false" :z-index="50">
-    <div class="text-sm px-4 pb-5">
-      <div class="text-center text-gray-400 border-b-[1px] border-gray-100 pb-3 mb-3">
-        <span>{{ $t('Balance') }}: ${{ usdcBalance }}</span>
+    <div class="text-center text-gray-400 border-b-[1px] border-gray-100 pb-3 mb-3">
+      <span>{{ $t('Balance') }}: ${{ usdcBalance }}</span>
+    </div>
+    <div class="text-sm px-4 pb-5 !max-h-[65vh] !overflow-y-scroll">
+      <div class="text-[22px] font-bold flex flex-row items-center">
+        <span>{{ $t('Deposit Title') }}</span>
       </div>
-      <div class="font-semibold">{{ $t('Supported token') }}</div>
-      <van-field class="items-center !px-0 after:!border-0" v-model="selectedText" :left-icon="tokenColumns[0]?.img"
-        is-link readonly @click="showPicker = true" />
-      <div class="font-semibold mt-2">{{ $t('Supported chain') }}</div>
-      <van-field class="items-center !px-0 after:!border-0" v-model="chainName" :left-icon="chainColumns[0]?.img"
-        is-link readonly @click="showChainPicker = true" />
-      <div class="flex justify-between mt-3">
-        <span class="font-semibold">{{ $t('Your deposit address') }}</span>
-        <a class="!underline" href="https://turingm.io/terms" target="_blank">{{ $t('Terms apply') }}</a>
+      <div class="py-2 opacity-50">{{ $t('Deposit Description') }}</div>
+      <div class="flex md:items-center rounded-lg bg-[#3663891A] pl-4 py-2 mb-2">
+        <van-icon class="top-[1px]" name="info-o" color="#df2d00" size="16" />
+        <span class="text-sm pl-1 text-[#df2d00]">
+          {{ $t('Deposit Warning') }}
+        </span>
       </div>
-      <div class="">
-        <p
-          class="break-words text-center px-3 py-2 border border-b-0 border-gray-200 rounded-lg rounded-b-none mt-1 text-gray-500">
-          {{ loginAddress }}
-        </p>
-        <div
-          class="flex justify-center items-center bg-[var(--van-button-primary-background)] text-white rounded-b-lg font-semibold px-3 py-2"
-          @click="copy(loginAddress)">
-          <span v-if="copied && text == loginAddress" class="w-4 text-green-500 ml-1">✔</span>
-          <img v-else class="w-4 h-4 mr-1" src="/icons/copy-white.svg" />
-          <span>{{ $t('Copy address') }}</span>
+      <div class="md:flex justify-between sm:flex-row sm:gap-x-3 bg-[#0000000d] rounded-lg px-4 py-3">
+        <div class="w-full">
+          <p class="text-sm opacity-60 break-all">
+            {{ $t('Embedded Wallet Tips') }}
+          </p>
+          <p class="py-1 mb-2 sm:mb-0 flex-1 flex flex-row md:items-center">
+            <span class="font-semibold break-all">{{ loginAddress }}</span>
+            <van-button @click="copy(loginAddress)" type="primary"
+              class="min-w-16 h-11 text-white !font-semibold bg-[var(--van-button-primary-background)] border-none !ml-4">
+              {{ copied ? '✔' : 'Copy' }}
+            </van-button>
+          </p>
+          <div class="w-min rounded-xl mx-auto bg-white p-3">
+            <QrcodeVue :value="loginAddress" :size="120" />
+          </div>
+          <p class="text-sm opacity-50 pt-4 pb-2">
+            {{ $t('Wallet Deposit Tips') }}
+          </p>
         </div>
       </div>
+      <div class="md:flex justify-between mt-7 md:mt-11">
+        <div class="md:w-1/3 mb-7 md:mb-0">
+          <p class="text-lg font-semibold">{{ $t('Deposit Method 1') }}</p>
+          <p class="text-sm opacity-50">{{ $t('Deposit Method 1 Instructions') }}</p>
+        </div>
+        <div>
+          <p class="text-lg font-semibold">{{ $t('Deposit Method 2') }}</p>
+          <p class="text-sm opacity-50">{{ $t('Deposit Method 2 Instructions') }}</p>
+          <div class="grid grid-cols-3 lg:grid-cols-6 gap-3 mt-7 md:mt-4 px-4 md:px-0">
+            <div class="flex flex-col justify-center py-2.5 cursor-pointer bg-[#00000005] rounded"
+              :class="{ '!bg-[#0000001f]': ind == currentSite }" v-for="(item, ind) in depositPlatforms"
+              @click="currentSite = ind">
+              <div class="h-11 md:h-8 flex justify-center items-center">
+                <img class="w-11 md:w-8" :class="{ '!w-16 md:!w-12': item.name == 'Okx' }" :src="item.icon" />
+              </div>
+              <div class="pt-2 text-sm text-center text-[var(--gent-text)] ">
+                {{ item.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <van-button
+        class="w-full rounded-lg text-white !font-semibold border-0 bg-[var(--van-button-primary-background)] !mt-7 md:mt-4"
+        size="large" @click="openProvider()" type="primary">{{ $t('Start Deposit') }}</van-button>
+      <div class="text-sm opacity-50 mt-3">{{ $t('Deposit Declaration') }}</div>
     </div>
   </van-dialog>
-  <van-popup v-model:show="showPicker" position="bottom">
-    <van-picker :columns="tokenColumns" :value-key="'text'" v-model="selectedToken" @confirm="showPicker = false"
-      @cancel="showPicker = false">
-    </van-picker>
-  </van-popup>
-  <van-popup v-model:show="showChainPicker" position="bottom">
-    <van-picker :columns="chainColumns" :value-key="'text'" v-model="selectedChain" @confirm="showChainPicker = false"
-      @cancel="showChainPicker = false">
-    </van-picker>
-  </van-popup>
 </template>

@@ -73,7 +73,7 @@ onUnmounted(() => {
           <OrderSharePopup />
           <AuthLoginModal />
           <SettingsNumberKeyBoard />
-          <BalancePopup />
+          <BalancePopupV1 />
           <RequestQueueError />
         </NuxtLayout>
       </div>
