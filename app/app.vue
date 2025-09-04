@@ -37,7 +37,7 @@ Locale.add({
 });
 
 let { fatherInviteCode } = $(userStore());
-onMounted(() => {
+onMounted(async () => {
   Locale.use(locale.value)
   refreshSession();
 
@@ -45,10 +45,14 @@ onMounted(() => {
     cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
   }
 
-  const code = getFatherInviteCode();
+  const { code, redirect } = getFatherInviteCode();
   if (code) {
     fatherInviteCode = code;
-    navigateTo('/invite/guide');
+  }
+
+  if (redirect) {
+    console.log({ redirect });
+    await navigateTo(redirect);
   }
 });
 
@@ -73,7 +77,7 @@ onUnmounted(() => {
           <OrderSharePopup />
           <AuthLoginModal />
           <SettingsNumberKeyBoard />
-          <BalancePopup />
+          <BalancePopupV1 />
           <RequestQueueError />
         </NuxtLayout>
       </div>
