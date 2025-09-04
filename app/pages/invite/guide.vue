@@ -12,13 +12,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <InviteAccountShare class="h-[calc(100dvh)]" v-if="token.accessToken && true">
+  <InviteGuideUserShare class="h-[calc(100dvh)]" v-if="token.accessToken && true">
     <InviteSkipButton />
-    <template #coin>
-      <div class="text-center text-[24px] text-orange-500">+10 TUIT</div>
-    </template>
-  </InviteAccountShare>
-  <InviteNoAccount class="h-[calc(100dvh)]" v-else>
+  </InviteGuideUserShare>
+  <InviteGuideNoAccount class="h-[calc(100dvh)]" v-else>
     <InviteSkipButton />
-  </InviteNoAccount>
+  </InviteGuideNoAccount>
 </template>

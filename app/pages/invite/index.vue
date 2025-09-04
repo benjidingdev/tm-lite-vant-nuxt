@@ -1,6 +1,5 @@
 <script setup>
 const { token } = $(authStore());
-const { userInfo } = $(userStore());
 </script>
 
 <template>
@@ -8,17 +7,9 @@ const { userInfo } = $(userStore());
 
     <InviteNewUserNotice />
 
-    <template v-if="token.accessToken">
-      <InviteAccountShare class="h-[calc(70dvh-var(--nav-height))]">
-        <template #coin>
-          <InviteUserCoinBalance />
-        </template>
-      </InviteAccountShare>
+    <InviteAccountShare v-if="token.accessToken" />
 
-      <InviteUserList />
-    </template>
-
-    <InviteNoAccount v-else />
+    <InviteGuideNoAccount v-else />
 
     <InviteLeaderBoard />
   </section>
