@@ -26,15 +26,11 @@ export function getFatherInviteCode() {
 }
 
 
-export function inviteUser(inviteCode = 'abcde', redirect) {
+export function inviteUser(inviteCode, redirect) {
   console.log({ inviteCode, redirect });
 
-  // const botUsername = "turingM_lite_bot";
-  // const appShortName = "tmLite";
-
-  const botUsername = "johnturingm_bot";
-  const appShortName = "JohnTuringmTest";
-  // johnturingm_bot/JohnTuringmTest
+  const botInfo = process.env.NUXT_PUBLIC_TG_BOT_INFO || '::'
+  const [botUsername, appShortName] = botInfo.split('::');
 
   const params = new URLSearchParams();
   params.append("inviteCode", inviteCode || "");
