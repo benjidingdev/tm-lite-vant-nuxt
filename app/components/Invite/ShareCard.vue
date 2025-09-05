@@ -13,6 +13,10 @@ async function handelImage() {
   const target = document.getElementById('shareTarget');
   await captureTargetToPng('shareImageName', target);
 }
+
+onMounted(() => {
+  // console.log({ userInfo });
+});
 </script>
 
 
@@ -26,8 +30,8 @@ async function handelImage() {
         <span class="text-orange-500">{{ $t('turingm.io') }}</span>
       </p>
       <div class="flex-1 flex flex-col items-center justify-center">
-        <img class="size-30 rounded-full" :src="userInfo.avatar" alt="">
-        <div class="text-center text-gray-700">{{ userInfo.nickname }}</div>
+        <img class="size-30 rounded-full" :src="userInfo.profile.avatar" alt="">
+        <div class="text-center text-gray-700">{{ userInfo.profile.nickname }}</div>
       </div>
 
       <div class="w-full flex-1 flex items-center justify-between mt-4">
