@@ -6,7 +6,7 @@ const { userInfo } = $(userStore());
 async function onShare() {
   // const target = document.getElementById('shareTarget');
   // await captureTargetToPng('shareImageName', target);
-  inviteUser(userInfo.inviteCode)
+  inviteUser(userInfo.inviteCode, '/invite/guide')
 }
 
 async function loadUserTasks(inviteCode) {
@@ -38,8 +38,8 @@ onMounted(() => {
       <slot />
 
       <div class="flex-1 flex flex-col items-center justify-center">
-        <img class="size-20 rounded-full" :src="userInfo.profile?.avatar" alt="">
-        <div class="text-center">{{ userInfo.profile?.nickname }}</div>
+        <img class="size-20 rounded-full" :src="userInfo.avatar" alt="">
+        <div class="text-center">{{ userInfo.nickname }}</div>
 
         <div class="text-center text-[48px] text-orange-500 mt-12">+10 TUIT</div>
       </div>
