@@ -7,7 +7,7 @@ definePageMeta({
 </script>
 
 <template>
-  <InviteGuideUserShare class="h-[calc(100dvh)]" v-if="token.accessToken && false">
+  <InviteGuideUserShare class="h-[calc(100dvh)]" v-if="token.accessToken && true">
     <InviteSkipButton />
   </InviteGuideUserShare>
   <InviteGuideNoAccount class="h-[calc(100dvh)]" v-else>
