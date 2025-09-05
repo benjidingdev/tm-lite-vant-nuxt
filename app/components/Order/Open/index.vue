@@ -76,7 +76,9 @@ onMounted(() => {
         currency=""
         :key="item.marketId"
         :price="multiply(item.price || 0, 100) + '€'"
-        :desc="item.orderType == 1 ? 'Buy' : 'Sell' + item.typeName"
+        :desc="
+          item.orderType == 1 ? `Buy ${item.typeName}` : `Sell ${item.typeName}`
+        "
         :title="item.question"
         :thumb="item.image"
         class="mt-2"
