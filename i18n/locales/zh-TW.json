@@ -30,6 +30,8 @@
   "Supported token": "支援的令牌",
   "Supported chain": "支援的鏈",
   "Your deposit address": "您的存款地址",
+  "Resend Code": "重新發送程式碼",
+  "Resend ({countdown}s)": "重新發送 ({countdown}s)",
   "Copy address": "複製地址",
   "Terms apply": "適用條款",
   "Email": "郵件",

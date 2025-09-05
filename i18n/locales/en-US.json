@@ -23,6 +23,8 @@
   "Confirm": "Confirm",
   "Cancel": "Cancel",
   "SHARE TO": "SHARE TO",
+  "Resend Code": "Resend Code",
+  "Resend ({countdown}s)": "Resend ({countdown}s)",
   "Login in or sign up": "Login in or sign up",
   "Balance": "Balance",
   "Powered by TuringM.IO": "Powered by TuringM.IO",

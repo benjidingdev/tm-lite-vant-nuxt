@@ -3,7 +3,6 @@
     /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 
-  const { $privy } = useNuxtApp();
   const { todoSign } = $(authStore());
   const { modalIsShow, setKeyBoard } = $(uiStore());
   const {
@@ -15,6 +14,7 @@
     errorInfo,
     sendEmail,
   } = $(privyStore());
+  const { t } = useI18n();
   let { oneTimePassword } = $(privyStore());
 
   let countdown = $ref(0);
@@ -85,7 +85,7 @@
   );
 
   const counterText = $computed(() => {
-    return countdown > 0 ? `Resend (${countdown}s)` : "Resend Code";
+    return countdown > 0 ? t('Resend ({countdown}s)', { countdown }) : t('Resend Code');
   });
 </script>
 
