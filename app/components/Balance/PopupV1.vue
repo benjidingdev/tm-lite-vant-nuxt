@@ -1,52 +1,52 @@
 <script setup lang="ts">
-import { getNetworks } from '~/config/networks';
-import QrcodeVue from 'qrcode.vue'
+  import { getNetworks } from '~/config/networks';
+  import QrcodeVue from 'qrcode.vue'
 
-const { modalIsShow } = $(uiStore());
-const { usdcBalance, loginAddress } = $(walletStore());
-const { copy, copied, text } = useClipboard()
-const currentSite = ref(0)
+  const { modalIsShow } = $(uiStore());
+  const { usdcBalance, loginAddress } = $(walletStore());
+  const { copy, copied, text } = useClipboard()
+  const currentSite = ref(0)
 
-const depositPlatforms = [
-  {
-    icon: '/icons/houdini.png',
-    name: 'Houdini',
-    link: 'https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000'
-  },
-  {
-    icon: '/icons/transit.png',
-    name: 'Transit',
-    link: 'https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp'
-  },
-  {
-    icon: '/icons/symbiosis.png',
-    name: 'Symbiosis',
-    link: 'https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
-  },
-  {
-    icon: '/icons/rubic.png',
-    name: 'Rubic',
-    link: 'https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000'
-  },
-  {
-    icon: '/icons/rocketx.png',
-    name: 'Rocketx',
-    link: 'https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w'
-  },
-  {
-    icon: '/icons/okx.png',
-    name: 'Okx',
-    link: 'https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
-  },
-]
+  const depositPlatforms = [
+    {
+      icon: '/icons/houdini.png',
+      name: 'Houdini',
+      link: 'https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000'
+    },
+    {
+      icon: '/icons/transit.png',
+      name: 'Transit',
+      link: 'https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp'
+    },
+    {
+      icon: '/icons/symbiosis.png',
+      name: 'Symbiosis',
+      link: 'https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
+    },
+    {
+      icon: '/icons/rubic.png',
+      name: 'Rubic',
+      link: 'https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000'
+    },
+    {
+      icon: '/icons/rocketx.png',
+      name: 'Rocketx',
+      link: 'https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w'
+    },
+    {
+      icon: '/icons/okx.png',
+      name: 'Okx',
+      link: 'https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
+    },
+  ]
 
-const openProvider = async () => {
-  window.open(depositPlatforms[currentSite.value]?.link, "Turing", "width=600,height=800")
-}
+  const openProvider = async () => {
+    window.open(depositPlatforms[currentSite.value]?.link, "Turing", "width=600,height=800")
+  }
 
-const closeModal = () => {
-  modalIsShow.balanceModal = false;
-}
+  const closeModal = () => {
+    modalIsShow.balanceModal = false;
+  }
 </script>
 
 <template>
@@ -57,7 +57,7 @@ const closeModal = () => {
     </div>
     <div class="text-sm px-4 pb-5 !max-h-[65vh] !overflow-y-scroll">
       <div class="text-[22px] font-bold flex flex-row items-center">
-        <span>{{ $t('Deposit Title') }}</span>
+        <span>{{ $t('Deposit USDT to Avalanche') }}</span>
       </div>
       <div class="py-2 opacity-50">{{ $t('Deposit Description') }}</div>
       <div class="flex md:items-center rounded-lg bg-[#3663891A] pl-4 py-2 mb-2">
