@@ -73,5 +73,13 @@
   "Deposit Method 2": "Method 2: Use a recommended third-party service",
   "Deposit Method 2 Instructions": "Instructions: Use a recommended third-party service to facilitate the transfer.",
   "Start Deposit": "Start Deposit",
-  "Deposit Declaration": "This platform does not directly host third-party deposit portals. Please proceed with caution and verify transaction information."
+  "Deposit Declaration": "This platform does not directly host third-party deposit portals. Please proceed with caution and verify transaction information.",
+
+  "Success": "Success",
+  "Failed": "Failed",
+  "Recipient address": "Recipient address",
+  "Amount": "Amount",
+  "Back": "Back",
+  "Fill status": "Fill status",
+  "You receive": "You receive"
 }
