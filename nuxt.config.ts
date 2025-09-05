@@ -19,6 +19,9 @@ export default defineNuxtConfig({
   modules,
   css: ["~/assets/css/main.css"],
   vite: {
+    server: {
+      allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app"],
+    },
     plugins: [
       tailwindcss(),
       nodePolyfills({

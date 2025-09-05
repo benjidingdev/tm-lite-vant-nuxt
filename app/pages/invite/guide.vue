@@ -1,18 +1,13 @@
 <script setup>
 const { token } = $(authStore());
 
-
 definePageMeta({
   layout: "invite",
 });
-
-onMounted(async () => {
-
-})
 </script>
 
 <template>
-  <InviteGuideUserShare class="h-[calc(100dvh)]" v-if="token.accessToken && true">
+  <InviteGuideUserShare class="h-[calc(100dvh)]" v-if="token.accessToken && false">
     <InviteSkipButton />
   </InviteGuideUserShare>
   <InviteGuideNoAccount class="h-[calc(100dvh)]" v-else>

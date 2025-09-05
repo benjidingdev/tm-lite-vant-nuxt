@@ -6,15 +6,21 @@ export function getFatherInviteCode() {
     redirect: ''
   };
 
-  let queryString = window?.location?.search || window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
-  if (!queryString) {
-    return startParams;
-  }
-  queryString = atob(queryString);
+  try {
+    let queryString = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+    // console.log(queryString);
+    if (!queryString) {
+      return startParams;
+    }
 
-  const urlParams = new URLSearchParams(queryString);
-  startParams.code = urlParams.get("inviteCode");
-  startParams.redirect = urlParams.get("redirect");
+    queryString = atob(queryString);
+
+    const urlParams = new URLSearchParams(queryString);
+    startParams.code = urlParams.get("inviteCode");
+    startParams.redirect = urlParams.get("redirect");
+  } catch (error) {
+
+  }
 
   return startParams;
 }
@@ -23,8 +29,12 @@ export function getFatherInviteCode() {
 export function inviteUser(inviteCode = 'abcde', redirect) {
   console.log({ inviteCode, redirect });
 
-  const botUsername = "turingM_lite_bot";
-  const appShortName = "tmLite";
+  // const botUsername = "turingM_lite_bot";
+  // const appShortName = "tmLite";
+
+  const botUsername = "johnturingm_bot";
+  const appShortName = "JohnTuringmTest";
+  // johnturingm_bot/JohnTuringmTest
 
   const params = new URLSearchParams();
   params.append("inviteCode", inviteCode || "");

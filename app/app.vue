@@ -16,7 +16,7 @@ useHead({
     },
   ],
   script: [
-    // { src: "https://telegram.org/js/telegram-web-app.js" },
+    { src: "https://telegram.org/js/telegram-web-app.js", defer: true },
     { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js" },
   ],
 });
