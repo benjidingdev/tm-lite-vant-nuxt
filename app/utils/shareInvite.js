@@ -29,7 +29,7 @@ export function getFatherInviteCode() {
 export function inviteUser(inviteCode, redirect) {
   console.log({ inviteCode, redirect });
 
-  const botInfo = process.env.NUXT_PUBLIC_TG_BOT_INFO || '::'
+  const botInfo = useRuntimeConfig().public.tgBotInfo || '::'
   const [botUsername, appShortName] = botInfo.split('::');
 
   const params = new URLSearchParams();
@@ -38,7 +38,7 @@ export function inviteUser(inviteCode, redirect) {
 
   const encodedParams = params.toString();
   const babse64Params = btoa(encodedParams);
-  console.log({ encodedParams, babse64Params });
+  console.log({ encodedParams, botInfo });
 
   const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
