@@ -19,6 +19,9 @@ export default defineNuxtConfig({
   modules,
   css: ["~/assets/css/main.css"],
   vite: {
+    server: {
+      allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app"],
+    },
     plugins: [
       tailwindcss(),
       nodePolyfills({
@@ -53,6 +56,7 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_REF || "localDev"),
       "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA || "localDev"),
       "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""),
+      "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(process.env.NUXT_PUBLIC_TG_BOT_INFO || "::"),
     },
   },
   i18n: {
@@ -88,6 +92,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      tgBotInfo: process.env.NUXT_PUBLIC_TG_BOT_INFO,
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
       isTestnet: process.env.NUXT_PUBLIC_IS_TESTNET === 'true',
       siteUrl: "",

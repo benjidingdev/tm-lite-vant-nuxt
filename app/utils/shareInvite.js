@@ -6,25 +6,31 @@ export function getFatherInviteCode() {
     redirect: ''
   };
 
-  let queryString = window?.location?.search || window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
-  if (!queryString) {
-    return startParams;
-  }
-  queryString = atob(queryString);
+  try {
+    let queryString = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+    // console.log(queryString);
+    if (!queryString) {
+      return startParams;
+    }
 
-  const urlParams = new URLSearchParams(queryString);
-  startParams.code = urlParams.get("inviteCode");
-  startParams.redirect = urlParams.get("redirect");
+    queryString = atob(queryString);
+
+    const urlParams = new URLSearchParams(queryString);
+    startParams.code = urlParams.get("inviteCode");
+    startParams.redirect = urlParams.get("redirect");
+  } catch (error) {
+
+  }
 
   return startParams;
 }
 
 
-export function inviteUser(inviteCode = 'abcde', redirect) {
+export function inviteUser(inviteCode, redirect) {
   console.log({ inviteCode, redirect });
 
-  const botUsername = "turingM_lite_bot";
-  const appShortName = "tmLite";
+  const botInfo = useRuntimeConfig().public.tgBotInfo || '::'
+  const [botUsername, appShortName] = botInfo.split('::');
 
   const params = new URLSearchParams();
   params.append("inviteCode", inviteCode || "");
@@ -32,7 +38,7 @@ export function inviteUser(inviteCode = 'abcde', redirect) {
 
   const encodedParams = params.toString();
   const babse64Params = btoa(encodedParams);
-  console.log({ encodedParams, babse64Params });
+  console.log({ encodedParams, botInfo });
 
   const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;

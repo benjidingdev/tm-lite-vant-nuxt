@@ -1,21 +1,25 @@
 <script setup lang="ts">
-  import { shortenHash } from "@/utils/processing";
-  const { modalIsShow } = $(uiStore());
-  const hash = import.meta.env.NUXT_PUBLIC_HASH;
-  const branch = import.meta.env.NUXT_PUBLIC_BRANCH;
-  let clickNum = 0;
+import { shortenHash } from "@/utils/processing";
+const { modalIsShow } = $(uiStore());
+const hash = import.meta.env.NUXT_PUBLIC_HASH;
+const branch = import.meta.env.NUXT_PUBLIC_BRANCH;
+let clickNum = 0;
 
-  const shortHash = $computed(() => shortenHash(hash, 10));
+const shortHash = $computed(() => shortenHash(hash, 10));
+let { startParam } = $(shareStore());
 
-  const initVconsole = async () => {
-    clickNum++;
-    if (clickNum < 3) return;
-    const vConsole = new VConsole();
-  };
+
+const initVconsole = async () => {
+  clickNum++;
+  if (clickNum < 3) return;
+  const vConsole = new VConsole();
+};
 </script>
 <template>
   <van-popup v-model:show="modalIsShow.settings" position="right" :style="{ width: '80%', height: '100%' }">
-    <div class="flex flex-col justify-around min-h-screen">
+    <div class="flex flex-col justify-around h-dvh relatvie">
+      <span class="text-gray-200 absolute z-99 opacity-70 w-full flex justify-center px-5">{{ startParam }}</span>
+
       <div class="flex-1">
         <LangSwitcherLabel />
         <TradeSettingLabel />
