@@ -471,15 +471,8 @@ const getTopicPosition = _debounce(async () => {
 }, 200);
 
 const tradeTypeClick = (label: string) => {
-  // emit('update:buySellCurrent', label)
-  // updateLimitPrice(priceType, props.yesNoCurrent)
-  // if ('Buy' == label)
-  //   voData.volumeShares = 0
-  // else
-  //   sharesMaxHandle()
-  // voData.promptShares = false
   trade.buySellCurrent = label;
-}
+};
 
 //Get results
 const getMarketResult = (
@@ -545,8 +538,6 @@ const getDetails = async () => {
           getOrderInfo();
         }
         trade.details = voData.details.markets[0];
-        //Update price limits
-        // updateLimitRate(trade.details.marketPriceLimit * 100);
 
         // Subscribe to order book
         if (
@@ -577,12 +568,7 @@ const sharesMaxHandle = () => {
 };
 
 const yesNoClick = (type) => {
-  if ("Sell" == trade.buySellCurrent) {
-    const timer = setTimeout(() => {
-      sharesMaxHandle();
-      clearTimeout(timer);
-    }, 100);
-  }
+  trade.yesNoCurrent = type;
 };
 
 watch(
@@ -645,7 +631,11 @@ watch(
           <!--Shares-->
           <van-cell title="shares">
             <template #value>
-              <input type="text" v-model="tradeVolume" />
+              <input
+                type="text"
+                v-model="tradeVolume"
+                :defaultValue="voData.volumeShares"
+              />
             </template>
           </van-cell>
           <!--Avg price-->
