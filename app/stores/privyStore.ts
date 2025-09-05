@@ -14,7 +14,7 @@ export const privyStore = defineStore(
     let oneTimePassword = $ref("");
     let isLoading = $ref(false);
     let session = $ref(null);
-    let errorInfo = $ref("");
+    let errorInfo = $ref('');
 
     const doLogin = async () => {
       if (session) return;
@@ -128,11 +128,16 @@ export const privyStore = defineStore(
     const sendEmail = async () => {
       if (isLoading) return;
       isLoading = true;
-      await $privy.auth.email.sendCode(email);
-      hasSend = true;
+      try {
+        await $privy.auth.email.sendCode(email);
+        hasSend = true;
+        errorInfo = "";
+      } catch (error) {
+        hasSend = false
+        errorInfo = error;
+      }
       isLoading = false;
       oneTimePassword = "";
-      errorInfo = "";
     };
 
     const logoutPrivy = async () => {
