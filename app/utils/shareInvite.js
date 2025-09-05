@@ -7,18 +7,21 @@ export function getFatherInviteCode() {
   };
 
   let queryString = window?.location?.search || window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+  if (!queryString) {
+    return startParams;
+  }
+  queryString = atob(queryString);
 
   const urlParams = new URLSearchParams(queryString);
   startParams.code = urlParams.get("inviteCode");
   startParams.redirect = urlParams.get("redirect");
 
-  console.log({ startParams });
   return startParams;
 }
 
 
-export function inviteUser(inviteCode, redirect) {
-  console.log({ inviteCode });
+export function inviteUser(inviteCode = 'abcde', redirect) {
+  console.log({ inviteCode, redirect });
 
   const botUsername = "turingM_lite_bot";
   const appShortName = "tmLite";
@@ -28,8 +31,10 @@ export function inviteUser(inviteCode, redirect) {
   params.append("redirect", redirect || "");
 
   const encodedParams = params.toString();
+  const babse64Params = btoa(encodedParams);
+  console.log({ encodedParams, babse64Params });
 
-  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${encodedParams}`;
+  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
   if (window.Telegram) {
     Telegram.WebApp.openTelegramLink(shareUrl);
