@@ -35,23 +35,22 @@ onMounted(async () => {
       <span class="text-[12px] text-gray-500 mt-2">{{ $t('(Top 10)') }}</span>
     </p>
 
-    <div class="w-full grid grid-cols-[2fr_1fr_1fr] justify-center items-center space-y-2 text-gray-700">
+    <div class="w-full grid grid-cols-[2fr_1fr] justify-center items-center space-y-2 text-gray-700">
       <div class="flex justify-start items-center space-x-1 border-0">
         <span>{{ $t('Rank') }}</span>
       </div>
-      <div class="text-center border-0">{{ $t('Referrals') }}</div>
-      <div class="justify-self-end border-0">{{ $t('TUIT') }}</div>
+      <div class="justify-self-end border-0">{{ $t('Referrals') }}</div>
+      <!-- <div class="justify-self-end border-0">{{ $t('TUIT') }}</div> -->
     </div>
 
-    <div class="w-full grid grid-cols-[2fr_1fr_1fr] justify-center items-center space-y-2 text-gray-700"
+    <div class="w-full grid grid-cols-[2fr_1fr] justify-center items-center space-y-6 text-gray-700"
       v-for="(user, i) in leaderBoard" :key="i">
       <div class="flex justify-start items-center space-x-1 border-0">
         <span>{{ i + 1 }}.</span>
         <img :src="user.avatar" class="rounded-full size-4" alt="">
         <span>{{ user.nickname }}</span>
       </div>
-      <div class="text-center border-0">{{ user.total }}</div>
-      <div class="justify-self-end border-0">700 TUIT</div>
+      <div class="justify-self-end border-0">{{ user.total }}</div>
     </div>
   </section>
 </template>
