@@ -29,8 +29,7 @@ export function getFatherInviteCode() {
 export function inviteUser(inviteCode, redirect) {
   console.log({ inviteCode, redirect });
 
-  const botInfo = useRuntimeConfig().public.tgBotInfo || '::'
-  const [botUsername, appShortName] = botInfo.split('::');
+  const botInfo = useRuntimeConfig().public.tgBotInfo || ''
 
   const params = new URLSearchParams();
   params.append("inviteCode", inviteCode || "");
@@ -40,7 +39,7 @@ export function inviteUser(inviteCode, redirect) {
   const babse64Params = btoa(encodedParams);
   console.log({ encodedParams, botInfo });
 
-  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${babse64Params}`;
+  const miniAppUrl = `https://t.me/${botInfo}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
   if (window.Telegram) {
     Telegram.WebApp.openTelegramLink(shareUrl);
