@@ -30,6 +30,8 @@
   "Supported token": "지원 토큰",
   "Supported chain": "지원 체인",
   "Your deposit address": "당신의 입금 주소",
+  "Resend Code": "재전송 코드",
+  "Resend ({countdown}s)": "재전송 ({countdown}s)",
   "Copy address": "주소 복사",
   "Terms apply": "약관 적용",
   "Email": "이메일",

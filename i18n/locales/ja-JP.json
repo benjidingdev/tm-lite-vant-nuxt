@@ -30,6 +30,8 @@
   "Supported token": "サポートされているトークン",
   "Supported chain": "サポートされているチェーン",
   "Your deposit address": "お預かり先のアドレス",
+  "Resend Code": "再送コード",
+  "Resend ({countdown}s)": "再送 ({countdown}s)",
   "Copy address": "アドレスをコピー",
   "Terms apply": "利用規約が適用されます",
   "Email": "Email",
