@@ -68,9 +68,7 @@ export default defineNuxtConfig({
       { code: 'ko-KR', language: '한국어', file: 'ko-KR.json' },
     ],
   },
-  vueuse: {
-    motion: true,
-  },
+  // @vueuse/motion is configured through the module in the modules array
   build: {
     transpile: ["form-data"],
   },
