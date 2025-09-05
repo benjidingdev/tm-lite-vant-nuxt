@@ -3,10 +3,12 @@ import { withdrawRequest } from "@/api/wallet";
 import { getWithdrawSign } from "@/api/transaction";
 import { parseUnits } from "viem";
 
+const { t } = useI18n();
 const { wallet, publicClient } = $(privyStore());
 const { signWithdraw, walletConfig, userBalance } = $(walletStore());
 const { getNonce } = $(authStore());
 const { withdrawData } = $(withdrawStore());
+
 let depositHash = $ref("");
 let completionHash = ref("");
 let seconds = $ref(30);
@@ -83,9 +85,9 @@ const withdraw = async (form) => {
     if (rs.code != 0) return;
     depositHash = rs.data;
     await waitTx();
-    status = "success";
+    status = t("Success");
   } catch (error) {
-    status = "failed";
+    status = t("Failed");
     resetTimer();
   }
 };
@@ -109,7 +111,7 @@ const resetForm = () => {
             <BalanceForm
               v-model="withdrawData.toAddress"
               :maxlength="42"
-              label="Recipient address"
+              :label="$t('Recipient address')"
               name="toAddress"
               placeholder="0x..."
             />
@@ -119,7 +121,7 @@ const resetForm = () => {
           <template #input>
             <BalanceForm
               v-model="withdrawData.tokenAmount"
-              label="Amount"
+              :label="$t('Amount')"
               name="tokenAmount"
               placeholder="10.00"
             >
@@ -151,7 +153,7 @@ const resetForm = () => {
         </van-field>
         <van-cell>
           <van-button
-            :disabled="withdrawData.tokenAmount <= 0 || !withdrawData.toAddress"
+            :disabled="withdrawData.tokenAmount < 10 || !withdrawData.toAddress"
             class="rounded-lg"
             block
             type="primary"
@@ -196,8 +198,8 @@ const resetForm = () => {
           <van-icon name="close" size="50" />
         </div>
 
-        <van-cell title="Fill status" :value="status" />
-        <van-cell title="You receive" :value="tokenAmount" />
+        <van-cell :title="$t('Fill status')" :value="status" />
+        <van-cell :title="$t('You receive')" :value="withdrawData.tokenAmount" />
         <van-collapse v-model="activeNames">
           <van-collapse-item name="1">
             <template #title>
@@ -211,7 +213,7 @@ const resetForm = () => {
             </div>
             <div class="flex justify-between text-xs text-gray-400">
               <span>{{ $t("Order submitted") }}</span>
-              <span>time</span>
+              <span>{{ $t("time") }}</span>
             </div>
           </van-collapse-item>
         </van-collapse>
@@ -222,8 +224,8 @@ const resetForm = () => {
       </div>
       <van-cell>
         <div class="flex mt-2 gap-2">
-          <van-button block type="primary" plain native-type="submit">
-            {{ $t("Close") }}
+          <van-button block type="primary" plain native-type="submit" @click="currentStep = 1">
+            {{ $t("Back") }}
           </van-button>
           <van-button
             block
