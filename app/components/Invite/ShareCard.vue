@@ -13,6 +13,10 @@ async function handelImage() {
   const target = document.getElementById('shareTarget');
   await captureTargetToPng('shareImageName', target);
 }
+
+onMounted(() => {
+  console.log({ userInfo });
+});
 </script>
 
 

@@ -4,7 +4,6 @@ import { getOrderAmount } from "~/api/markets";
 export const userStore = defineStore("userStore", () => {
   const { token } = $(authStore());
 
-  let fatherInviteCode = $ref('');
   let userInfo = $ref({});
   let userOrderAmountInfo = $ref({ feeAmount: 0, totalAmount: 0 })
   const userOrderAmount = $computed(() => userOrderAmountInfo.feeAmount + userOrderAmountInfo.totalAmount);
@@ -57,7 +56,6 @@ export const userStore = defineStore("userStore", () => {
   };
 
   return $$({
-    fatherInviteCode,
     userInfo,
     order,
     hasSetLocale,

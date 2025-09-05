@@ -2,13 +2,11 @@
 const { totalInvite } = defineProps(['totalInvite', 'totalTuit']);
 
 let active = $computed(() => {
-  if (totalInvite > 0 && totalInvite < 5) {
+  if (totalInvite > 0 && totalInvite < 2) {
     return 0;
-  } else if (totalInvite >= 5 && totalInvite < 10) {
+  } else if (totalInvite >= 2 && totalInvite < 3) {
     return 1;
-  } else if (totalInvite >= 10 && totalInvite < 50) {
-    return 2;
-  } else if (totalInvite >= 50) {
+  } else if (totalInvite >= 3) {
     return 3;
   } else {
     return -1;
@@ -41,17 +39,16 @@ let active = $computed(() => {
         </div>
 
         <div class="flex-1 ">
-          <div class="mb-1">{{ $t("Become a partner after inviting 50 friends.") }}</div>
+          <div class="mb-1">{{ $t("Become a partner after inviting 3 friends.") }}</div>
           <div class="text-gray-500 text-[12px]">
 
             <van-steps :active="active">
               <van-step>1</van-step>
-              <van-step>10</van-step>
-              <van-step>25</van-step>
-              <van-step>50</van-step>
+              <van-step>2</van-step>
+              <van-step>3</van-step>
             </van-steps>
 
-            <div class="">{{ $t("inviteCount", { count: totalInvite, remainCount: 50 - totalInvite })
+            <div class="">{{ $t("inviteCount", { count: totalInvite, remainCount: 3 - totalInvite })
             }}</div>
           </div>
         </div>

@@ -1,14 +1,9 @@
 <script setup>
 const { token } = $(authStore());
-let { fatherInviteCode } = $(userStore());
 
 definePageMeta({
   layout: "invite",
 });
-
-onMounted(async () => {
-  console.log({ fatherInviteCode });
-})
 </script>
 
 <template>

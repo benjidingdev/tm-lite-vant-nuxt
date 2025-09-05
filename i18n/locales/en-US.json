@@ -1,6 +1,4 @@
 {
-  "Hello": "Hello",
-  "i18n docs": "i18n docs",
   "Language": "Language",
   "Trade Volume": "Trade Volume",
   "Logout": "Logout",
@@ -27,6 +25,7 @@
   "SHARE TO": "SHARE TO",
   "Login in or sign up": "Login in or sign up",
   "Balance": "Balance",
+  "Powered by TuringM.IO": "Powered by TuringM.IO",
   "Transfer Crypto": "Transfer Crypto",
   "Supported token": "Supported token",
   "Supported chain": "Supported chain",

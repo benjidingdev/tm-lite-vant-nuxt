@@ -11,7 +11,8 @@ export const authStore = defineStore(
     const { t } = useI18n();
     const { updateTraderType, isToken } = $(coreStore());
     const { setLoadingToast, setModal } = $(uiStore());
-    let { loadUserInfo, userInfo, initLocale, fatherInviteCode } = $(userStore());
+    const { startParam } = $(shareStore());
+    let { loadUserInfo, userInfo, initLocale } = $(userStore());
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
@@ -166,7 +167,7 @@ export const authStore = defineStore(
       } catch (error) { }
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
-        ivcode: fatherInviteCode,
+        ivcode: startParam.code || '',
         signature: data.signature,
         message: data.message,
       });

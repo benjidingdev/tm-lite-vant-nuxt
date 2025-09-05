@@ -122,7 +122,7 @@
           </div>
         </van-cell-group>
 
-        <div class="mt-8 mb-4 text-center text-sm text-gray-500">{{ $t('Supported by TuringM') }}</div>
+        <div class="mt-8 mb-4 text-center text-sm text-gray-500">{{ $t('Powered by TuringM.IO') }}</div>
       </van-form>
     </div>
   </van-dialog>
