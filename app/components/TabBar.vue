@@ -1,6 +1,7 @@
 <template>
   <van-tabbar v-model="active" safe-area-inset-bottom>
-    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="goToLInk(item.path)" :icon="item.icon" :name="item.key">
+    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="goToLInk(item.path)" :icon="item.icon"
+      :name="item.key">
       {{ $t(item.name) }}</van-tabbar-item>
   </van-tabbar>
 </template>
@@ -9,7 +10,7 @@
   const tabList = $ref([
     { key: 'index', name: "Markets", icon: "chart-trending-o", path: "/" },
     // { key: 'earn', name: "Earn", icon: "balance-o", path: "/earn" },
-    { key: 'invite', name: "Invite", icon: "hot-o", path: "/invite" },
+    // { key: 'invite', name: "Invite", icon: "hot-o", path: "/invite" },
     { key: 'user', name: "User", icon: "user-o", path: "/user" },
   ]);
   const { locale } = $(useI18n());
