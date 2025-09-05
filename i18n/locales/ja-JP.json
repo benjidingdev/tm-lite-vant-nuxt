@@ -53,6 +53,7 @@
   "Buy": "買う",
   "Sell": "売る",
   "MAX": "最大",
+  "Amount": "数量",
   "Withdraw": "引き出し",
   "Submitting transaction": "取引を提出中",
   "Filling your transaction on the blockchain": "取引をブロックチェーンに埋め込み中",
