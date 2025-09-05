@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { withdrawRequest } from "@/api/wallet";
 import { getWithdrawSign } from "@/api/transaction";
+import { shortenHash } from "@/utils/processing";
 import { parseUnits } from "viem";
 
 const { t } = useI18n();
@@ -83,11 +84,11 @@ const withdraw = async (form) => {
       userSign: signData,
     });
     if (rs.code != 0) return;
-    depositHash = rs.data;
     await waitTx();
-    status = t("Success");
+    depositHash = rs.data;
+    status = "success";
   } catch (error) {
-    status = t("Failed");
+    status = "failed";
     resetTimer();
   }
 };
@@ -189,7 +190,7 @@ const resetForm = () => {
           v-else-if="status === 'success'"
           class="min-h-[100px] flex justify-center items-center text-green-500"
         >
-          <van-icon name="passed" size="28" />
+          <van-icon name="passed" size="70" />
         </div>
         <div
           v-else
@@ -199,7 +200,10 @@ const resetForm = () => {
         </div>
 
         <van-cell :title="$t('Fill status')" :value="status" />
-        <van-cell :title="$t('You receive')" :value="withdrawData.tokenAmount" />
+        <van-cell
+          :title="$t('You receive')"
+          :value="withdrawData.tokenAmount"
+        />
         <van-collapse v-model="activeNames">
           <van-collapse-item name="1">
             <template #title>
@@ -209,12 +213,12 @@ const resetForm = () => {
             </template>
             <div class="flex justify-between text-xs text-gray-400">
               <span class="leading-6">{{ $t("Deposit tx") }}</span>
-              <span>{{ toAddress || "0x...." }}</span>
+              <span>{{ shortenHash(depositHash, 20) || "0x...." }}</span>
             </div>
-            <div class="flex justify-between text-xs text-gray-400">
+            <!-- <div class="flex justify-between text-xs text-gray-400">
               <span>{{ $t("Order submitted") }}</span>
               <span>{{ $t("time") }}</span>
-            </div>
+            </div> -->
           </van-collapse-item>
         </van-collapse>
         <van-notice-bar color="#a7a7a7" background="#f9f9f9" left-icon="info-o">
@@ -224,7 +228,13 @@ const resetForm = () => {
       </div>
       <van-cell>
         <div class="flex mt-2 gap-2">
-          <van-button block type="primary" plain native-type="submit" @click="currentStep = 1">
+          <van-button
+            block
+            type="primary"
+            plain
+            native-type="submit"
+            @click="currentStep = 1"
+          >
             {{ $t("Back") }}
           </van-button>
           <van-button

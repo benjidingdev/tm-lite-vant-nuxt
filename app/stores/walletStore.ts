@@ -375,22 +375,21 @@ export const walletStore = defineStore("walletStore", () => {
     return false;
   };
 
-  const signWithdraw = async (params: any) => {
+
+  const signWithdraw = async (message: any) => {
     try {
-      // signature trade data
-      const content = {
+      const result = await walletClient.signTypedData({
         domain: getTypedDomain(),
         types: TYPEHASH_WITHDRAW,
         primaryType: "Withdraw",
-        message: params,
-      };
-      const result = await walletClient.signTypedData(content);
+        message: message,
+      })
       return result;
     } catch (err) {
       console.error("Error signing typed data:", err);
       throw err;
     }
-  };
+  }
 
   const amountPermit = async () => {
     try {
