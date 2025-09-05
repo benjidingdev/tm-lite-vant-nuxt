@@ -6,31 +6,9 @@ export function getFatherInviteCode() {
     redirect: ''
   };
 
-  if (window?.Telegram) {
-    console.log(
-      "window.Telegram.WebApp.initDataUnsafe",
-      window.Telegram.WebApp.initDataUnsafe
-    );
-    const str = window?.Telegram?.WebApp?.initDataUnsafe?.start_param;
-    console.log({ str });
+  let queryString = window?.location?.search || window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
 
-    if (str) {
-      let regex = /(\w+)=([^&]+)/g;
-      let match;
-
-      while ((match = regex.exec(str)) !== null) {
-        let key = match[1];
-        let value = match[2];
-
-        startParams[key] = value;
-      }
-    }
-
-    console.log({ startParams });
-    return startParams;
-  }
-
-  const urlParams = new URLSearchParams(window?.location?.search);
+  const urlParams = new URLSearchParams(queryString);
   startParams.code = urlParams.get("inviteCode");
   startParams.redirect = urlParams.get("redirect");
 
@@ -44,11 +22,15 @@ export function inviteUser(inviteCode, redirect) {
 
   const botUsername = "turingM_lite_bot";
   const appShortName = "tmLite";
-  const params = `inviteCode=${inviteCode || ""}&redirect=${redirect || ""}`;
-  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${params}`;
-  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
-    miniAppUrl
-  )}`;
+
+  const params = new URLSearchParams();
+  params.append("inviteCode", inviteCode || "");
+  params.append("redirect", redirect || "");
+
+  const encodedParams = params.toString();
+
+  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${encodedParams}`;
+  const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
   if (window.Telegram) {
     Telegram.WebApp.openTelegramLink(shareUrl);
   } else {
