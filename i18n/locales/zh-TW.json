@@ -74,5 +74,15 @@
   "Deposit Method 2": "方法2：使用推薦的第三方服務",
   "Deposit Method 2 Instructions": "指令：使用推薦的第三方服務進行轉移。",
   "Start Deposit": "開始存款",
-  "Deposit Declaration": "本平台不直接託管第三方存款門戶。請謹慎处置並驗證交易信息。"
+  "Deposit Declaration": "本平台不直接託管第三方存款門戶。請謹慎处置並驗證交易信息。",
+  "Please enter a valid address": "請輸入有效地址",
+  "Please enter a valid amount": "請輸入有效數量",
+  "Please enter an amount more than 10": "請輸入大於10的數量",
+  "Success": "成功",
+  "Failed": "失敗",
+  "Back": "返回",
+  "Copy": "複製",
+  "Deposit Address": "存款地址",
+  "Fill status": "填充狀態",
+  "You receive": "您接收"
 }

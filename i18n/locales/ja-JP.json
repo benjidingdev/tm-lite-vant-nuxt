@@ -74,5 +74,13 @@
   "Deposit Method 2": "方法2: 推奨される3rdパーティーサービスを使用",
   "Deposit Method 2 Instructions": "手順: 推奨される3rdパーティーサービスを使用して転送を facilitated してください。",
   "Start Deposit": "預金を開始",
-  "Deposit Declaration": "このプラットフォームは3rdパーティーの預金ポータルを直接ホストしていません。取引情報を確認してください。"
+  "Deposit Declaration": "このプラットフォームは3rdパーティーの預金ポータルを直接ホストしていません。取引情報を確認してください。",
+  "Please enter a valid address": "有効なアドレスを入力してください",
+  "Please enter a valid amount": "有効な数量を入力してください",
+  "Please enter an amount more than 10": "10以上の数量を入力してください",
+  "Success": "成功",
+  "Failed": "失敗",
+  "Back": "戻る",
+  "Copy": "コピー",
+  "Deposit Address": "預金先のアドレス"
 }
