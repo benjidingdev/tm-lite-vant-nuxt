@@ -1,31 +1,31 @@
 <script setup>
-import Request from '@/utils/request';
+  import Request from '@/utils/request';
 
-const { userInfo } = $(userStore());
+  const { userInfo } = $(userStore());
 
-let leaderBoard = $ref([]);
-async function loadLeaderBoard() {
-  try {
-    const res = await Request({
-      url: '/app-api/topic/markets/ranks',
-      method: 'POST',
-      data: {
-        type: "share",
-        filterType: 'all',
-        limit: 10
-      }
-    })
+  let leaderBoard = $ref([]);
+  async function loadLeaderBoard() {
+    try {
+      const res = await Request({
+        url: '/app-api/topic/markets/ranks',
+        method: 'POST',
+        data: {
+          type: "share",
+          filterType: 'all',
+          limit: 10
+        }
+      })
 
-    console.log('loadLeaderBoard', res);
-    leaderBoard = res.data;
-  } catch (e) {
-    console.error('loadLeaderBoard', e);
+      console.log('loadLeaderBoard', res);
+      leaderBoard = res.data;
+    } catch (e) {
+      console.error('loadLeaderBoard', e);
+    }
   }
-}
 
-onMounted(async () => {
-  await loadLeaderBoard();
-})
+  onMounted(async () => {
+    await loadLeaderBoard();
+  })
 </script>
 
 <template>
@@ -47,10 +47,10 @@ onMounted(async () => {
       v-for="(user, i) in leaderBoard" :key="i">
       <div class="flex justify-start items-center space-x-1 border-0">
         <span>{{ i + 1 }}.</span>
-        <img :src="user.avatar" class="rounded-full size-4" alt="">
-        <span>{{ user.nickname }}</span>
+        <img :src="user?.avatar" class="rounded-full size-4" alt="">
+        <span>{{ user?.nickname }}</span>
       </div>
-      <div class="justify-self-end border-0">{{ user.total }}</div>
+      <div class="justify-self-end border-0">{{ user?.total }}</div>
     </div>
   </section>
 </template>
