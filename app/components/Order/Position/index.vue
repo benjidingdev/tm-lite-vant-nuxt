@@ -11,6 +11,7 @@ import {
 const { setModal } = $(uiStore());
 let { order } = $(userStore());
 let { holdResult } = $(tradeStore());
+
 const statusMap = [
   { text: "Waiting for publish", color: "#555555" },
   { text: "Active", color: "#555555" },
@@ -109,15 +110,21 @@ onMounted(() => {
           <div>
             <!-- hold price -->
             <p class="w-[150px] text-gray-500 mt-4">
-              hold price: {{ dollars2cents(item.holdPrice) }}€
+              {{ $t("Hold price") }}: {{ dollars2cents(item.holdPrice) }}€
             </p>
             <!-- the latest price -->
             <p class="w-[150px] text-gray-500">
-              current price: {{ dollars2cents(item.lastPrice) }}€
+              {{ $t("Current price") }}: {{ dollars2cents(item.lastPrice) }}€
+            </p>
+            <!-- shares -->
+            <p class="w-32 text-gray-500">
+              {{ $t("Shares") }}: {{ item.usableVolume }}
             </p>
             <!-- cost -->
             <p class="w-32 text-gray-500">
-              cost: {{ item.typeName }} ({{ amountMoney(item.initialValue) }}$)
+              {{ $t("Cost") }}: {{ item.typeName }} ({{
+                amountMoney(item.initialValue)
+              }}$)
             </p>
           </div>
           <div class="w-[150px]">
@@ -137,7 +144,7 @@ onMounted(() => {
           6、Removed and can be archived
           -->
           <template v-for="(tag, status) in statusMap" :key="status">
-            <van-tag v-if="item.status == status" plain :color="tag.color">
+            <van-tag v-if="item.status === status + 1" plain :color="tag.color">
               {{ tag.text }}
             </van-tag>
           </template>

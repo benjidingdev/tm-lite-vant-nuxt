@@ -6,7 +6,7 @@ const { userInfo } = $(userStore());
 async function onShare() {
   // const target = document.getElementById('shareTarget');
   // await captureTargetToPng('shareImageName', target);
-  inviteUser(userInfo.inviteCode)
+  inviteUser(userInfo.inviteCode, '/invite/guide')
 }
 
 async function loadUserTasks(inviteCode) {

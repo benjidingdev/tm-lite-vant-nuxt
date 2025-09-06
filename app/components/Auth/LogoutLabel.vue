@@ -1,18 +1,13 @@
 <script setup lang="ts">
-const { logOut } = $(authStore());
-const { setModal } = $(uiStore());
+  const { logOut } = $(authStore());
+  const { setModal } = $(uiStore());
 
-const onClick = async () => {
-  await logOut();
-  setModal('settings', false);
-};
+  const onClick = async () => {
+    await logOut();
+    setModal('settings', false);
+  };
 </script>
 
 <template>
-  <van-field
-    input-align="right"
-    readonly
-    :label="$t('Logout')"
-    @click="onClick"
-  />
+  <van-field input-align="right" readonly :label="$t('Logout')" @click="onClick" />
 </template>

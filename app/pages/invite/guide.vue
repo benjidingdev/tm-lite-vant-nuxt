@@ -1,14 +1,9 @@
 <script setup>
 const { token } = $(authStore());
 
-
 definePageMeta({
   layout: "invite",
 });
-
-onMounted(async () => {
-
-})
 </script>
 
 <template>

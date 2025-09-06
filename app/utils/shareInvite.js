@@ -1,40 +1,56 @@
 import domtoimage from 'dom-to-image';
 
 export function getFatherInviteCode() {
-  const startParams = {
-    code: '',
-    redirect: ''
-  };
+  let startParams = {};
 
-  let queryString = window?.location?.search || window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+  let babse64Params = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+  // console.log(0, babse64Params);
+  if (!babse64Params) {
+    return startParams;
+  }
 
-  const urlParams = new URLSearchParams(queryString);
-  startParams.code = urlParams.get("inviteCode");
-  startParams.redirect = urlParams.get("redirect");
-
-  console.log({ startParams });
+  startParams = base64ToParams(babse64Params)
   return startParams;
+}
+
+export function paramsToBase64(params) {
+  const urlParams = new URLSearchParams(params);
+  const encodedParams = urlParams.toString();
+  console.log({ encodedParams });
+
+  const babse64Params = btoa(encodedParams);
+  return babse64Params;
+}
+
+export function base64ToParams(babse64Params) {
+  const params = {};
+  try {
+    const decodedString = atob(babse64Params);
+    const urlParams = new URLSearchParams(decodedString);
+    for (const [key, value] of urlParams) {
+      params[key] = value;
+    }
+    console.log(params, decodedString);
+  } catch (error) {
+    console.log('decode base64 error:', error);
+  }
+  return params;
 }
 
 
 export function inviteUser(inviteCode, redirect) {
-  console.log({ inviteCode });
+  // console.log({ inviteCode, redirect });
 
-  const botUsername = "turingM_lite_bot";
-  const appShortName = "tmLite";
+  const botInfo = useRuntimeConfig().public.tgBotInfo || ''
+  const babse64Params = paramsToBase64({ inviteCode, redirect });
+  console.log({ botInfo });
 
-  const params = new URLSearchParams();
-  params.append("inviteCode", inviteCode || "");
-  params.append("redirect", redirect || "");
-
-  const encodedParams = params.toString();
-
-  const miniAppUrl = `https://t.me/${botUsername}/${appShortName}?startapp=${encodedParams}`;
+  const miniAppUrl = `https://t.me/${botInfo}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
   if (window.Telegram) {
     Telegram.WebApp.openTelegramLink(shareUrl);
   } else {
-    window.open(shareUrl);
+    window.open(shareUrl, '_blank');
   }
 }
 
