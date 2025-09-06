@@ -9,8 +9,8 @@
 <script setup lang="ts">
   const tabList = $ref([
     { key: 'index', name: "Markets", icon: "chart-trending-o", path: "/" },
-    // { key: 'earn', name: "Earn", icon: "balance-o", path: "/earn" },
-    // { key: 'invite', name: "Invite", icon: "hot-o", path: "/invite" },
+    { key: 'earn', name: "Earn", icon: "balance-o", path: "/earn" },
+    { key: 'invite', name: "Invite", icon: "hot-o", path: "/invite" },
     { key: 'my', name: "My", icon: "user-o", path: "/my" },
   ]);
   const { locale } = $(useI18n());
