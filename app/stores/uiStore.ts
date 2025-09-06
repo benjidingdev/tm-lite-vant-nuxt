@@ -10,6 +10,9 @@ export const uiStore = defineStore("uiStore", () => {
     loginModal: false,
     balanceModal: false,
     requestQueueErrorModal: false,
+    tuitModal: false,
+    rewardModal: false,
+    sharesModal: false
   });
   let keyBoardIsShow = $ref({
     settings: false,

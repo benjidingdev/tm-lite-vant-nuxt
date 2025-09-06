@@ -12,6 +12,14 @@
     if (clickNum < 3) return;
     const vConsole = new VConsole();
   };
+
+  const { locale } = $(useI18n())
+
+  const goToLInk = async (path: string) => {
+    const url = locale === "en-US" ? path : `/${locale}${path}`;
+    await navigateTo(url);
+    modalIsShow.settings = false
+  };
 </script>
 <template>
   <van-popup v-model:show="modalIsShow.settings" position="right" :style="{ width: '80%', height: '100%' }">
@@ -19,6 +27,8 @@
       <div class="flex-1">
         <LangSwitcherLabel />
         <TradeSettingLabel />
+          <van-cell :title="$t('Topic Voting')" is-link @click="goToLInk('/advise')" />
+          <van-cell :title="$t('Initiate a topic')" is-link @click="goToLInk('/advise/launch')" />
         <AuthLogoutLabel />
       </div>
       <van-cell-group>
