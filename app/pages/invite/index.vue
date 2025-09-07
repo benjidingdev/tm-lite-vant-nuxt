@@ -5,12 +5,15 @@ const { token } = $(authStore());
 <template>
   <section class="w-full h-[calc(100dvh-var(--nav-height))] space-y-px overflow-y-scroll">
 
-    <InviteNewUserNotice />
 
-    <InviteAccountShare v-if="token.accessToken" />
+    <template v-if="token.accessToken  && true">
+      <InviteNewUserNotice />
+      <InviteAccountShare />
+      <InviteLeaderBoard />
+    </template>
+
 
     <InviteGuideNoAccount v-else />
 
-    <InviteLeaderBoard />
   </section>
 </template>

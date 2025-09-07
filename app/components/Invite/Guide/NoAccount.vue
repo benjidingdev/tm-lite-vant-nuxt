@@ -15,7 +15,7 @@ const { setModal } = $(uiStore());
       </div>
 
       <div class="flex justify-between items-center w-full space-x-2">
-        <van-button block type="primary" @click="setModal('loginModal', true)">{{ $t("Claim") }}</van-button>
+        <van-button block type="success" @click="setModal('loginModal', true)">{{ $t("Claim") }}</van-button>
       </div>
       <div class="text-center text-[12px] text-gray-500 mt-2">{{ $t('login with your email and claim the rewards.') }}</div>
     </div>

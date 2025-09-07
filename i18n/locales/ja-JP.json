@@ -10,7 +10,7 @@
   "Markets": "市場",
   "Earn": "獲得",
   "Invite": "招待",
-  "User": "ユーザー",
+  "My": "マイ",
   "Position Value": "ポジション価値",
   "Profit": "利益",
   "Traded Volume": "取引量",
@@ -53,6 +53,7 @@
   "Buy": "買う",
   "Sell": "売る",
   "MAX": "最大",
+  "Amount": "数量",
   "Withdraw": "引き出し",
   "Submitting transaction": "取引を提出中",
   "Filling your transaction on the blockchain": "取引をブロックチェーンに埋め込み中",
@@ -73,5 +74,13 @@
   "Deposit Method 2": "方法2: 推奨される3rdパーティーサービスを使用",
   "Deposit Method 2 Instructions": "手順: 推奨される3rdパーティーサービスを使用して転送を facilitated してください。",
   "Start Deposit": "預金を開始",
-  "Deposit Declaration": "このプラットフォームは3rdパーティーの預金ポータルを直接ホストしていません。取引情報を確認してください。"
+  "Deposit Declaration": "このプラットフォームは3rdパーティーの預金ポータルを直接ホストしていません。取引情報を確認してください。",
+  "Please enter a valid address": "有効なアドレスを入力してください",
+  "Please enter a valid amount": "有効な数量を入力してください",
+  "Please enter an amount more than 10": "10以上の数量を入力してください",
+  "Success": "成功",
+  "Failed": "失敗",
+  "Back": "戻る",
+  "Copy": "コピー",
+  "Deposit Address": "預金先のアドレス"
 }

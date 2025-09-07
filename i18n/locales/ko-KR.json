@@ -10,7 +10,7 @@
   "Markets": "시장",
   "Earn": "이득",
   "Invite": "초대",
-  "User": "사용자",
+  "My": "내",
   "Position Value": "포지션 가치",
   "Profit": "이익",
   "Traded Volume": "거래량",
@@ -25,6 +25,7 @@
   "Deposit": "보증금",
   "Set Volume": "거래량 설정",
   "Recipient address": "수신자 주소",
+  "Amount": "수량",
   "Login First": "로그인하세요",
   "SHARE TO": "SHARE TO",
   "Login in or sign up": "Login in or sign up",
@@ -73,5 +74,14 @@
   "Deposit Method 2": "입금 방법 2: 추천된 세번째 파트너 서비스 사용",
   "Deposit Method 2 Instructions": "지침: 추천된 세번째 파트너 서비스를 사용하여 전송을 간편하게 처리하세요.",
   "Start Deposit": "입금 시작",
-  "Deposit Declaration": "이 플랫폼은 세번째 파트너 입금 포털을 직접 호스팅하지 않습니다. 주의 깊게 처리하고 트랜잭션 정보를 확인하세요."
+  "Deposit Declaration": "이 플랫폼은 세번째 파트너 입금 포털을 직접 호스팅하지 않습니다. 주의 깊게 처리하고 트랜잭션 정보를 확인하세요.",
+  "Please enter a valid address": "유효한 주소를 입력하세요",
+  "Please enter a valid amount": "유효한 수량을 입력하세요",
+  "Please enter an amount more than 10": "10 이상의 수량을 입력하세요",
+  "Success": "성공",
+  "Failed": "실패",
+  "Back": "뒤로",
+  "Copy": "복사",
+  "Fill status": "채우기 상태",
+  "You receive": "당신은"
 }
