@@ -139,5 +139,10 @@
   "You could trade for your failed orders again here!": "You could trade for your failed orders again here!",
   "Set Share volumes": "Set Share volumes",
   "Card": "Card",
-  "Swipe the card to trade now!": "Swipe the card to trade now!"
+  "Swipe left": "Swipe the card to trade now!",
+  "Swipe left to buy YES": "Swipe left to buy YES",
+  "Swipe right": "Swipe right",
+  "Swipe right to buy NO": "Swipe right to buy NO",
+  "Swipe up": "Swipe up",
+  "Swipe up to skip": "Swipe up to skip"
 }
