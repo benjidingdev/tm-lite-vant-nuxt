@@ -1,7 +1,7 @@
 <template>
-  <section class="w-screen h-screen overflow-y-scroll text-white bg">
+  <article class="w-screen h-[calc(100dvh)] overflow-y-scroll text-white relative bg">
       <slot />
-  </section>
+  </article>
 </template>
 
 <style scoped>
