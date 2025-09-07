@@ -66,7 +66,8 @@ onMounted(() => {
               <van-button
                 v-if="sub.isFinish"
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
                 @click="receiveTask(sub)"
               >
                 {{ $t("Get Rewards") }}
@@ -74,7 +75,8 @@ onMounted(() => {
               <van-button
                 v-else-if="sub.eventTasks[0]?.currentEventValue > 0"
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
                 @click="router.push(sub.skipUrl)"
               >
                 {{ $t("In Progress") }}
@@ -91,14 +93,16 @@ onMounted(() => {
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'"
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
               >
                 {{ $t("Go To Trade") }}
               </van-button>
               <van-button
                 v-else
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
                 @click="router.push(sub.skipUrl)"
               >
                 {{ sub.skipTip }}
