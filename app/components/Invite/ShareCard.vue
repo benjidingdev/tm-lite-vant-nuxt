@@ -18,7 +18,7 @@ onMounted(() => {
   console.log({ userInfo });
 });
 
-let show = ref(true);
+let show = ref(false);
 </script>
 
 
