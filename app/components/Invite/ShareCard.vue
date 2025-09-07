@@ -57,16 +57,14 @@ let show = ref(false);
           </van-button>
         </div>
 
-        <div style="color: red" @click="show = true">
-          <!-- <img src="/assets/icon/help.svg" alt=""> -->
-          <img class="" src="/icons/help.svg" />
+        <div @click="show = true">
+          <van-icon color="#f60" size="24" name="/icons/help.svg" />
         </div>
-
       </div>
     </div>
   </section>
 
-  <van-dialog v-model:show="show" title=" " closeable :show-confirm-button="false">
+  <van-dialog v-model:show="show" :title="$t('Referral Rewards')" closeable :show-confirm-button="false">
     <InviteUserList :totalInvite :shareUserList />
   </van-dialog>
 </template>

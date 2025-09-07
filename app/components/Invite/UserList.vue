@@ -19,9 +19,7 @@ const partnerCount = 3
 <template>
   <div class="w-full flex flex-col items-center justify-center p-5 space-x-1">
 
-    <div class="border border-gray-200 rounded-[12px] w-full p-5 space-y-6 bg-white">
-      <p class="text-[18px] flex-shrink-0">{{ $t('Referral Rewards') }}</p>
-
+    <div class="w-full p-5 space-y-6 bg-white">
       <div class="w-full flex justify-between space-x-2">
         <div>
           <van-icon name="fire-o" color="#1989fa" />

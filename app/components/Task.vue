@@ -83,7 +83,8 @@ onMounted(() => {
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
                 type="primary"
                 @click="modalIsShow.share = true"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
               >
                 {{ $t("Go To Invite") }}
               </van-button>
