@@ -58,7 +58,8 @@ onMounted(() => {
           >
             <template #tags>
               <van-tag class="p-2" plain type="primary"
-                >Award: {{ sub.rewardNumber }} {{ sub.rewardType }}</van-tag
+                >{{ $t("Award") }}: {{ sub.rewardNumber }}
+                {{ sub.rewardType }}</van-tag
               >
             </template>
             <template #footer>
@@ -68,7 +69,7 @@ onMounted(() => {
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="receiveTask(sub)"
               >
-                Get Rewards
+                {{ $t("Get Rewards") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.currentEventValue > 0"
@@ -76,7 +77,7 @@ onMounted(() => {
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="router.push(sub.skipUrl)"
               >
-                In Progress
+                {{ $t("In Progress") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
@@ -84,14 +85,14 @@ onMounted(() => {
                 @click="modalIsShow.share = true"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
               >
-                Go To Invite
+                {{ $t("Go To Invite") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'"
                 type="primary"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
               >
-                Go To Trade
+                {{ $t("Go To Trade") }}
               </van-button>
               <van-button
                 v-else
