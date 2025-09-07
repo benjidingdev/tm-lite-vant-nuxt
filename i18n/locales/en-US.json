@@ -42,7 +42,7 @@
   "Submit": "Submit",
   "Request Queue Error": "Request Queue Error",
   "Close": "Close",
-  "No data": "No data",
+  "No Error Yet": "No Error Yet",
   "Start to login": "Start to login",
   "Start to sign": "Start to sign",
   "Burn failed": "Burn failed",
@@ -149,5 +149,16 @@
   "Get Rewards": "Get Rewards",
   "In Progress": "In Progress",
   "Go To Invite": "Go To Invite",
-  "Go To Trade": "Go To Trade"
+  "Go To Trade": "Go To Trade",
+  "login with your email and claim the rewards.": "login with your email and claim the rewards.",
+  "Claim": "Claim",
+  "Referrals": "Referrals",
+  "Invite Leaderboard": "Invite Leaderboard",
+  "Referral Rewards": "Referral Rewards",
+  "Refer a friend and earn 10 TUIT.": "Refer a friend and earn {count} TUIT.",
+  "The reward is issued to your account after the successful registration of a friend.": "The reward is issued to your account after the successful registration of a friend.",
+  "Invite 3 friends to become a partner.": "Invite {count} friends to become a partner.",
+  "Rank": "Rank",
+  "Rewards": "Rewards",
+  "Top 10": "Top {count}"
 }

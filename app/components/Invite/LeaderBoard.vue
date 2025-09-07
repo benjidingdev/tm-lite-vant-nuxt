@@ -33,7 +33,7 @@ onMounted(async () => {
       class="w-full flex flex-col items-center justify-center space-y-4 text-sm p-5 bg-white rounded-[12px] border border-gray-200">
       <p class="text-center w-full flex justify-between items-end border-0">
         <span class="border-0 text-[18px]">{{ $t('Invite Leaderboard') }}</span>
-        <span class="text-[12px] text-gray-700 border-0">{{ $t('(Top 10)', totalUsers) }}</span>
+        <span class="text-[12px] text-gray-700 border-0">({{ $t('Top 10', totalUsers) }})</span>
       </p>
 
       <div class="w-full flex justify-between items-center text-gray-400">

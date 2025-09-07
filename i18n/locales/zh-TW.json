@@ -45,7 +45,7 @@
   "Submit": "提交",
   "Request Queue Error": "請求隊列錯誤",
   "Close": "關閉",
-  "No data": "無數據",
+  "No Error Yet": "暫無錯誤",
   "Start to login": "開始登入",
   "Start to sign": "開始註冊",
   "Burn failed": "燒毀失敗",
@@ -152,5 +152,16 @@
   "Get Rewards": "獲取獎勵",
   "In Progress": "進行中",
   "Go To Invite": "前往邀請",
-  "Go To Trade": "前往交易"
+  "Go To Trade": "前往交易",
+  "login with your email and claim the rewards.": "使用您的電子郵件登入並領取獎勵。",
+  "Claim": "領取",
+  "Referrals": "推薦",
+  "Invite Leaderboard": "邀請排行榜",
+  "Referral Rewards": "推薦獎勵",
+  "Refer a friend and earn 10 TUIT.": "推薦朋友並賺取 {count} TUIT。",
+  "The reward is issued to your account after the successful registration of a friend.": "好友成功註冊後，獎勵將發放到您的帳戶。",
+  "Invite 3 friends to become a partner.": "邀請{count}位朋友成為合作夥伴。",
+  "Rank": "排名",
+  "Rewards": "獎勵",
+  "Top 10": "前 {count} 名"
 }

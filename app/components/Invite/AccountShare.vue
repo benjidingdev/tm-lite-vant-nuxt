@@ -39,5 +39,4 @@ let totalTuit = $ref(0);
 
 <template>
   <InviteShareCard :totalInvite :totalTuit />
-  <InviteUserList :totalInvite :shareUserList />
 </template>

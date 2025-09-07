@@ -44,7 +44,7 @@
   "Submit": "送信",
   "Request Queue Error": "リクエストキューエラー",
   "Close": "閉じる",
-  "No data": "データがありません",
+  "No Error Yet": "まだエラーはありません",
   "Start to login": "ログインを開始",
   "Start to sign": "サインアップを開始",
   "Burn failed": "バーン失敗",
@@ -99,5 +99,16 @@
   "Get Rewards": "報酬を獲得",
   "In Progress": "進行中",
   "Go To Invite": "招待へ",
-  "Go To Trade": "トレードへ"
+  "Go To Trade": "トレードへ",
+  "login with your email and claim the rewards.": "メールでログインして報酬を獲得してください。",
+  "Claim": "獲得",
+  "Referrals": "紹介",
+  "Invite Leaderboard": "招待リーダーボード",
+  "Referral Rewards": "紹介報酬",
+  "Refer a friend and earn 10 TUIT.": "友達を紹介して{count} TUITを獲得しましょう。",
+  "The reward is issued to your account after the successful registration of a friend.": "友達が正常に登録された後、報酬があなたのアカウントに発行されます。",
+  "Invite 3 friends to become a partner.": "{count}人の友達を招待してパートナーになりましょう。",
+  "Rank": "ランク",
+  "Rewards": "報酬",
+  "Top 10": "トップ{count}"
 }
