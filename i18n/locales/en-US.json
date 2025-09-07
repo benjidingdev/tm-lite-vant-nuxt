@@ -144,5 +144,13 @@
   "Swipe right": "Swipe right",
   "Swipe right to buy NO": "Swipe right to buy NO",
   "Swipe up": "Swipe up",
-  "Swipe up to skip": "Swipe up to skip"
+  "Swipe up to skip": "Swipe up to skip",
+  "login with your email and claim the rewards.": "login with your email and claim the rewards.",
+  "Claim": "Claim",
+  "Referrals": "Referrals",
+  "Invite Leaderboard": "Invite Leaderboard",
+  "Referral Rewards": "Referral Rewards",
+  "Refer a friend and earn 10 TUIT.": "Refer a friend and earn {count} TUIT.",
+  "The reward is issued to your account after the successful registration of a friend.": "The reward is issued to your account after the successful registration of a friend.",
+  "Invite 3 friends to become a partner.": "Invite {count} friends to become a partner."
 }

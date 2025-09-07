@@ -95,5 +95,13 @@
   "Swipe right": "오른쪽으로 스와이프",
   "Swipe right to buy NO": "오른쪽으로 스와이프하여 구매하세요",
   "Swipe up": "위로 스와이프",
-  "Swipe up to skip": "위로 스와이프하여 건너뛰세요"
+  "Swipe up to skip": "위로 스와이프하여 건너뛰세요",
+  "login with your email and claim the rewards.": "이메일로 로그인하고 보상을 받으세요.",
+  "Claim": "받기",
+  "Referrals": "추천",
+  "Invite Leaderboard": "초대 리더보드",
+  "Referral Rewards": "추천 보상",
+  "Refer a friend and earn 10 TUIT.": "친구를 추천하고 {count} TUIT을 받으세요.",
+  "The reward is issued to your account after the successful registration of a friend.": "친구가 성공적으로 등록된 후 보상이 귀하의 계정에 발급됩니다.",
+  "Invite 3 friends to become a partner.": "{count}명의 친구를 초대하여 파트너가 되세요."
 }

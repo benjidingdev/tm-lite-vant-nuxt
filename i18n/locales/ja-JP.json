@@ -94,5 +94,13 @@
   "Swipe right": "「右にスワイプ」",
   "Swipe right to buy NO": "「右にスワイプして購入（いいえ）」",
   "Swipe up": "「上にスワイプ」",
-  "Swipe up to skip": "「上にスワイプしてスキップ」"
+  "Swipe up to skip": "「上にスワイプしてスキップ」",
+  "login with your email and claim the rewards.": "メールでログインして報酬を獲得してください。",
+  "Claim": "獲得",
+  "Referrals": "紹介",
+  "Invite Leaderboard": "招待リーダーボード",
+  "Referral Rewards": "紹介報酬",
+  "Refer a friend and earn 10 TUIT.": "友達を紹介して{count} TUITを獲得しましょう。",
+  "The reward is issued to your account after the successful registration of a friend.": "友達が正常に登録された後、報酬があなたのアカウントに発行されます。",
+  "Invite 3 friends to become a partner.": "{count}人の友達を招待してパートナーになりましょう。"
 }
