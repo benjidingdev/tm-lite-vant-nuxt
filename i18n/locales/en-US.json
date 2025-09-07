@@ -61,7 +61,7 @@
   "New Withdrawal": "New Withdrawal",
   "Deposit tx": "Deposit tx",
   "Deposit": "Deposit",
-  "inviteCount": "You have invited {count} user, invite {remainCount} more to become a Leader. | You have invited {count} users, invite {remainCount} more to become a Leader.",
+  "inviteCount": "You've invited {count} user, invite {remainCount} more to unlock partner status. | You've invited {count} users, invite {remainCount} more to unlock partner status.",
   "Deposit Title": "Deposit USDT to Avalanche",
   "Deposit Description": "Choose the appropriate method to top up USDT on the Avalanche chain",
   "Deposit Warning": "Target network is Avalanche (C-Chain). Incorrect transfers will result in asset loss.",
