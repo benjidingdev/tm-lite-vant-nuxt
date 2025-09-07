@@ -16,7 +16,7 @@ export const privyStore = defineStore(
     let session = $ref(null);
     let errorInfo = $ref('');
 
-    const doLogin = async () => {
+    const doPrivyLogin = async () => {
       if (session) return;
       if (isLoading) return;
       isLoading = true;
@@ -156,7 +156,7 @@ export const privyStore = defineStore(
       walletClient,
       publicClient,
       errorInfo,
-      doLogin,
+      doPrivyLogin,
       initWallet,
       refreshSession,
       setupEmbeddedWalletIframe,

@@ -88,7 +88,7 @@
   "Title": "Title",
   "Ttitle Prompt": "Please fill in the topic title",
   "Description": "Description",
-  "Search Prompt" : "Please enter search keywords",
+  "Search Prompt": "Please enter search keywords",
   "All": "All",
   "Expand": "Expand",
   "Collapse": "Collapse",
@@ -132,5 +132,12 @@
   "Tuit Rules Three Desc c": "c. Activated simulated TUIT is not subject to validity period restrictions.",
   "Tuit Rules Four": "4. Withdrawal to On-chain TUIT",
   "Tuit Rules Four Desc a": "a. When activated simulated TUIT ≥ 100, users can click [] → [Withdraw] to initiate the operation.",
-  "Tuit Rules Four Desc b": "b. The system will deduct an equivalent amount of simulated TUIT and transfer the corresponding amount of on-chain TUIT to your wallet shortly."
+  "Tuit Rules Four Desc b": "b. The system will deduct an equivalent amount of simulated TUIT and transfer the corresponding amount of on-chain TUIT to your wallet shortly.",
+  "Your Balance": "Your Balance",
+  "This is your USDT Balance!": "This is your USDT Balance!",
+  "Your Order list": "Your Order list",
+  "You could trade for your failed orders again here!": "You could trade for your failed orders again here!",
+  "Set Share volumes": "Set Share volumes",
+  "Card": "Card",
+  "Swipe the card to trade now!": "Swipe the card to trade now!"
 }

@@ -1,11 +1,11 @@
 <template>
   <div class="h-16 flex items-center justify-between px-4">
-    <div>
-      <BalanceNavButton />
+    <div class="flex justify-center items-center space-x-2">
+      <BalanceNavButton id="step1"/>
+      <RequestQueueButton id="step2"/>
     </div>
     <div class="flex justify-center items-center space-x-2">
-      <RequestQueueButton />
-      <SettingsVolumeButton />
+      <SettingsVolumeButton id="step3"/>
       <SettingsButton />
     </div>
   </div>

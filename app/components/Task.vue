@@ -42,11 +42,12 @@ onMounted(() => {
         v-for="task in voData.taskList"
         :key="task.id"
         :title="task.name"
+        class="rounded-xl"
       >
         <div
           v-for="sub in task.subTasks"
           :key="sub.id"
-          class="task container mt-1"
+          class="task container mt-2"
         >
           <van-card
             :desc="sub.description"

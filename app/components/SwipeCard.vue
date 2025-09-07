@@ -256,7 +256,8 @@ onMounted((e) => {
 </script>
 
 <template>
-  <div class="w-full h-[90%] relative">
+  <OnboardingGuide />
+  <div class="w-full h-[90%] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
         <div
@@ -293,7 +294,7 @@ onMounted((e) => {
         </div>
       </template>
 
-      <div v-if="cards.length">
+      <div v-if="cards.length" id="step4">
         <div
           v-for="(card, index) in cards"
           :key="card.id"
