@@ -10,7 +10,7 @@
   "Markets": "市場",
   "Earn": "獲得",
   "Invite": "邀請",
-  "User": "用戶",
+  "My": "我的",
   "Position Value": "位置值",
   "Profit": "利潤",
   "Traded Volume": "成交量",
@@ -29,6 +29,7 @@
   "SHARE TO": "分享到",
   "Login in or sign up": "登入或註冊",
   "Balance": "餘額",
+  "Amount": "數量",
   "Transfer Crypto": "轉帳加密貨幣",
   "Powered by TuringM.IO": "由 TuringM.IO 提供支持",
   "Supported token": "支援的令牌",
@@ -74,7 +75,6 @@
   "Deposit Method 2 Instructions": "指令：使用推薦的第三方服務進行轉移。",
   "Start Deposit": "開始存款",
   "Deposit Declaration": "本平台不直接託管第三方存款門戶。請謹慎处置並驗證交易信息。",
-
   "Topic Voting": "話題投票",
   "Initiate a topic": "發起建議",
   "Title": "標題",
@@ -82,7 +82,6 @@
   "Description": "描述",
   "Search Prompt": "請輸入搜尋關鍵詞",
   "All": "全部",
-  "My": "我的",
   "Expand": "展開",
   "Collapse": "收起",
   "Voted": "已投票",
@@ -101,7 +100,6 @@
   "Adopt Rules": "3、一旦您的建議被成功採納，您將獲得 [50] 枚 模擬 TUIT 的獎勵。您只需前往 [話題投票] → [我的] 頁面，即可查看已採納的話題並領取獎勵。",
   "Desc Tuit": "什麼是模擬TUIT",
   "Hide Rules": "4、若您是 Turing Market 特殊用戶（經紀人|代理商），您的建議被採納的優先級將更高。（詳細了解如何成為經紀人或代理商）",
-
   "Tuit Title": "模擬 TUIT",
   "Tuit Desc One": " 1. 模擬 TUIT 是由 Turing Market 預測市場 發行並統計的鏈下虛擬資產，與區塊鏈無直接關聯，無法在鏈上轉賬或查詢。",
   "Tuit Desc Tow": "2. 模擬 TUIT 的價值與 Avalanche 鏈上的 TUIT 按照 1:1 的比例錨定。",
@@ -127,6 +125,15 @@
   "Tuit Rules Three Desc c": "c. 已激活的模擬 TUIT 不受有效期限制。",
   "Tuit Rules Four": "4. 提取為鏈上 TUIT",
   "Tuit Rules Four Desc a": "a. 當已激活的模擬 TUIT ≥ 100 枚 時，用戶可點擊 [] → [提取] 發起操作。",
-  "Tuit Rules Four Desc b": "b. 系統將扣除等額的模擬 TUIT，並在短時間內將等量 鏈上 TUIT 轉入您的錢包。"
-
+  "Tuit Rules Four Desc b": "b. 系統將扣除等額的模擬 TUIT，並在短時間內將等量 鏈上 TUIT 轉入您的錢包。",
+  "Please enter a valid address": "請輸入有效地址",
+  "Please enter a valid amount": "請輸入有效數量",
+  "Please enter an amount more than 10": "請輸入大於10的數量",
+  "Success": "成功",
+  "Failed": "失敗",
+  "Back": "返回",
+  "Copy": "複製",
+  "Deposit Address": "存款地址",
+  "Fill status": "填充狀態",
+  "You receive": "您接收"
 }
