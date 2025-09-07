@@ -28,13 +28,13 @@
 </script>
 
 <template>
-  <section class="w-full flex flex-col items-center justify-center bg-white py-2 text-sm px-5">
-    <p class="text-center text-[16px] w-full flex justify-between items-center mb-2">
-      <span>{{ $t('Invite Leaderboard') }}</span>
-      <span class="text-[12px] text-gray-500 mt-2">{{ $t('(Top 10)', totalUsers) }}</span>
+  <section class="w-full flex flex-col items-center justify-center py-2 text-sm p-5">
+    <p class="text-center w-full flex justify-between items-end mb-4 px-5 border-0">
+      <span class="border-0 text-[18px] font-[900]">{{ $t('Invite Leaderboard') }}</span>
+      <span class="text-[12px] text-gray-700 border-0">{{ $t('(Top 10)', totalUsers) }}</span>
     </p>
 
-    <div class="w-full grid grid-cols-[2fr_1fr] justify-center items-center space-y-2 text-gray-700">
+    <div class="w-full flex justify-between items-center text-gray-900 mb-2 px-5 font-[600] mb-4">
       <div class="flex justify-start items-center space-x-1 border-0">
         <span>{{ $t('Rank') }}</span>
       </div>
@@ -42,9 +42,9 @@
       <!-- <div class="justify-self-end border-0">{{ $t('TUIT') }}</div> -->
     </div>
 
-    <div class="w-full grid grid-cols-[2fr_1fr] justify-center items-center space-y-6 text-gray-700"
+    <div class="w-full flex justify-between items-center text-gray-700 border-0 mb-4 px-5"
       v-for="(user, i) in leaderBoard" :key="i">
-      <div class="flex justify-start items-center space-x-1 border-0">
+      <div class="flex justify-self-start space-x-1 border-0">
         <span>{{ i + 1 }}.</span>
         <img :src="user?.avatar" class="rounded-full size-4" alt="">
         <span>{{ user?.nickname }}</span>

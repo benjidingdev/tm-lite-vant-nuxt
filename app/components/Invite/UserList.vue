@@ -16,10 +16,10 @@ let active = $computed(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col items-center justify-center bg-white p-4 space-x-1">
+  <div class="w-full flex flex-col items-center justify-center p-5 space-x-1">
 
-    <div class="border border-gray-200 rounded-[12px] w-full p-4 space-y-2">
-      <p class="font-[700] flex-shrink-0">{{ $t('Referral Rewards') }}</p>
+    <div class="border border-gray-200 rounded-[12px] w-full p-5 space-y-2">
+      <p class="font-[900] text-[18px] flex-shrink-0">{{ $t('Referral Rewards') }}</p>
 
       <div class="w-full flex justify-between space-x-2">
         <div>
@@ -27,8 +27,8 @@ let active = $computed(() => {
         </div>
 
         <div class="flex-1 ">
-          <div class="mb-1">{{ $t('Refer a friend and earn 10 tuit.') }}</div>
-          <div class="text-gray-500 text-[12px]">{{ $t(`The reward is issued to your account after the successful
+          <div class="mb-1 font-[700]">{{ $t('Refer a friend and earn 10 tuit.') }}</div>
+          <div class="text-gray-800 text-[14px]">{{ $t(`The reward is issued to your account after the successful
             registration of a friend.`) }}</div>
         </div>
       </div>
@@ -39,17 +39,17 @@ let active = $computed(() => {
         </div>
 
         <div class="flex-1 ">
-          <div class="mb-1">{{ $t("Become a partner after inviting 3 friends.") }}</div>
-          <div class="text-gray-500 text-[12px]">
+          <div class="mb-1 font-[700]">{{ $t("Become a partner after inviting 3 friends.") }}</div>
+          <div class="text-gray-800 text-[14px]">
 
-            <van-steps :active="active">
+            <!-- <van-steps :active="active" style="--van-steps-background: transparent;">
               <van-step>1</van-step>
               <van-step>2</van-step>
               <van-step>3</van-step>
-            </van-steps>
+            </van-steps> -->
 
             <div class="">{{ $t("inviteCount", { count: totalInvite, remainCount: 3 - totalInvite })
-            }}</div>
+              }}</div>
           </div>
         </div>
       </div>

@@ -9,10 +9,10 @@ async function handleShare() {
   inviteUser(userInfo.inviteCode, '/invite/guide');
 }
 
-async function handelImage() {
-  const target = document.getElementById('shareTarget');
-  await captureTargetToPng('shareImageName', target);
-}
+// async function handelImage() {
+//   const target = document.getElementById('shareTarget');
+//   await captureTargetToPng('shareImageName', target);
+// }
 
 onMounted(() => {
   console.log({ userInfo });
