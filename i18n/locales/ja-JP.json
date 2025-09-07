@@ -83,12 +83,16 @@
   "Back": "戻る",
   "Copy": "コピー",
   "Deposit Address": "預金先のアドレス",
-
   "Your Balance": "残高",
   "This is your USDT Balance!": "これはあなたの USDT 残高です!",
   "Your Order list": "ご注文リスト",
   "You could trade for your failed orders again here!": "ここで再度注文と交換できます！」",
   "Set Share volumes": "共有ボリュームを設定する",
   "Card": "カード",
-  "Swipe the card to trade now!": "カードをスワイプして今すぐ取引しましょう！"
+  "Swipe left": "「左にスワイプ」",
+  "Swipe left to buy YES": "「左にスワイプして購入（はい）」",
+  "Swipe right": "「右にスワイプ」",
+  "Swipe right to buy NO": "「右にスワイプして購入（いいえ）」",
+  "Swipe up": "「上にスワイプ」",
+  "Swipe up to skip": "「上にスワイプしてスキップ」"
 }
