@@ -47,14 +47,6 @@ const steps = [
   },
 ];
 
-onMounted(() => {
-  if (onboarding) {
-    setTimeout(() => {
-      (onboarding as any).start();
-    }, 5000);
-  }
-});
-
 </script>
 
 <template>

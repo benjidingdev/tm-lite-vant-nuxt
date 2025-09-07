@@ -11,10 +11,12 @@ const { requestCount, successCount, isProcessing } = $(requestQueueStore());
     color="rgb(0 0 0 / 5%)"
     @click="setModal('requestQueueErrorModal', true)"
   >
-    <van-loading size="12" v-if="isProcessing" />
-    <span><van-icon name="points" /></span>
+  <div class="flex">
+    <van-loading size="12" v-if="isProcessing"/>
+    <span v-else><van-icon name="points" /></span>
     <span class="text-xs ml-1 text-white">
       {{ successCount }}/{{ requestCount }}
     </span>
+  </div>
   </van-button>
 </template>
