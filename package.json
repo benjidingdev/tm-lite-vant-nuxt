@@ -39,6 +39,7 @@
     "pinia-plugin-persistedstate": "^4.5.0",
     "qrcode.vue": "^3.6.0",
     "tailwindcss": "^4.1.11",
+    "v-onboarding": "^2.9.0",
     "vant": ">=4",
     "vconsole": "^3.15.1",
     "viem": "^2.33.1",

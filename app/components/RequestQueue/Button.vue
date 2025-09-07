@@ -1,13 +1,22 @@
 <script setup lang="ts">
-
 const { setModal } = $(uiStore());
 const { requestCount, successCount, isProcessing } = $(requestQueueStore());
 </script>
 <template>
-  <button v-if="requestCount > 0 || true"
+  <van-button
+    v-if="requestCount > 0 || true"
+    size="small"
+    class="mr-1!"
+    round
+    color="rgb(0 0 0 / 5%)"
     @click="setModal('requestQueueErrorModal', true)"
-    class="flex justify-center items-center h-8 space-x-2 px-2 border-1 border-solid border-gray-100 rounded-full">
-    <van-loading size="12" v-if="isProcessing" />
-    <span class="text-xs" style="color: var(--van-button-default-color);">{{ successCount }}/{{ requestCount }}</span>
-  </button>
+  >
+  <div class="flex">
+    <van-loading size="12" v-if="isProcessing"/>
+    <span v-else><van-icon name="points" /></span>
+    <span class="text-xs ml-1 text-white">
+      {{ successCount }}/{{ requestCount }}
+    </span>
+  </div>
+  </van-button>
 </template>

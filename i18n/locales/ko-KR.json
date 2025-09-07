@@ -83,5 +83,17 @@
   "Back": "뒤로",
   "Copy": "복사",
   "Fill status": "채우기 상태",
-  "You receive": "당신은"
+  "You receive": "당신은",
+  "Your Balance": "귀하의 잔액",
+  "This is your USDT Balance!": "이것은 귀하의 USDT 잔액입니다!",
+  "Your Order list": "주문 목록",
+  "You could trade for your failed orders again here!": "실패한 주문은 여기서 다시 거래할 수 있습니다!",
+  "Set Share volumes": "주식 거래량 설정",
+  "Card": "카드",
+  "Swipe left": "왼쪽으로 스와이프",
+  "Swipe left to buy YES": "왼쪽으로 스와이프하여 구매하세요",
+  "Swipe right": "오른쪽으로 스와이프",
+  "Swipe right to buy NO": "오른쪽으로 스와이프하여 구매하세요",
+  "Swipe up": "위로 스와이프",
+  "Swipe up to skip": "위로 스와이프하여 건너뛰세요"
 }

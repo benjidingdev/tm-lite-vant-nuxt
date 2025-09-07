@@ -7,8 +7,10 @@ const { t } = useI18n();
 const { modalIsShow } = $(uiStore());
 const { holdResult } = $(tradeStore());
 const { signPayout, updateWalletBalance } = $(walletStore());
+let isRedeeming = $ref(false);
 
-const confirmPosition = async (useTokens) => {
+const redeem = async (useTokens) => {
+  isRedeeming = true;
   showToast(`Redeeming ${holdResult.outcomeName}...`);
   try {
     if (holdResult.status !== 5) {
@@ -30,8 +32,10 @@ const confirmPosition = async (useTokens) => {
     } else {
       showToast(`Redeem Failed as ${res.msg}`);
     }
+     isRedeeming = false;
   } catch (error) {
     showToast(`Redeem Failed...`);
+    isRedeeming = false;
   }
 };
 </script>
@@ -65,9 +69,10 @@ const confirmPosition = async (useTokens) => {
       </div>
       <van-button
         class="mt-4! rounded-lg"
+        :loading="isRedeeming"
         type="success"
         block
-        @click="confirmPosition()"
+        @click="redeem()"
       >
         {{ $t("Redeem") }}
       </van-button>

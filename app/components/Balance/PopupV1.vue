@@ -3,7 +3,7 @@
   import QrcodeVue from "qrcode.vue";
 
   const { modalIsShow } = $(uiStore());
-  const { usdcBalance, loginAddress } = $(walletStore());
+  const { userBalance, loginAddress } = $(walletStore());
   const { copy, copied, text } = useClipboard();
   const currentSite = ref(0);
 
@@ -57,7 +57,7 @@
   <van-dialog width="80vw" closeable v-model:show="modalIsShow.balanceModal" :title="$t('Transfer Crypto')"
     :showConfirmButton="false" :showCancelButton="false" :z-index="50">
     <div class="text-center text-gray-400 border-b-[1px] border-gray-100 pb-3 mb-3">
-      <span>{{ $t("Balance") }}: ${{ usdcBalance }}</span>
+      <span>{{ $t("Balance") }}: ${{ userBalance }}</span>
     </div>
     <van-tabs>
       <van-tab :title="$t('Deposit')">

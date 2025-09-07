@@ -8,7 +8,7 @@
   "Invite Now": "立即邀請",
   "Your TUIT": "您的TUIT",
   "Markets": "市場",
-  "Earn": "獲得",
+  "Earn": "賺取",
   "Invite": "邀請",
   "My": "我的",
   "Position Value": "位置值",
@@ -135,5 +135,17 @@
   "Copy": "複製",
   "Deposit Address": "存款地址",
   "Fill status": "填充狀態",
-  "You receive": "您接收"
+  "You receive": "您接收",
+  "Your Balance": "您的餘額",
+  "This is your USDT Balance!": "這是您的 USDT 餘額！",
+  "Your Order list": "您的訂單清單",
+  "You could trade for your failed orders again here!": "您可以在這裡重新交易失敗的訂單！",
+  "Set Share volumes": "設定份額",
+  "Card": "卡片",
+  "Swipe left": "向左滑動",
+  "Swipe left to buy YES": "向左滑動購買YES",
+  "Swipe right": "向右滑動",
+  "Swipe right to buy NO": "向右滑動購買NO",
+  "Swipe up": "向上滑動",
+  "Swipe up to skip": "向上滑動跳過"
 }

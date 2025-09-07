@@ -256,7 +256,8 @@ onMounted((e) => {
 </script>
 
 <template>
-  <div class="w-full h-[90%] relative">
+  <OnboardingGuide />
+  <div class="w-full h-[90%] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
         <div
@@ -309,11 +310,12 @@ onMounted((e) => {
             height="50%"
             :src="card['image']"
             class="p-2"
-            fit="cover"
+            fit="contain"
           >
             <div class="absolute -bottom-8 h-16 w-full z-50">
               <div class="flex justify-between items-center h-full px-6">
                 <div
+                  id="step4"
                   :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white`"
                   @click="buyYes(card)"
                 >
@@ -321,6 +323,7 @@ onMounted((e) => {
                 </div>
 
                 <div
+                  id="step5"
                   class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
                   @click="buyNo(card)"
                 >
@@ -328,7 +331,7 @@ onMounted((e) => {
                 </div>
               </div>
             </div>
-            <div v-if="index === 0" class="hint-box">
+            <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
               </div>

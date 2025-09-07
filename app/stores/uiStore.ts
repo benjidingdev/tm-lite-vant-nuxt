@@ -17,6 +17,7 @@ export const uiStore = defineStore("uiStore", () => {
   let keyBoardIsShow = $ref({
     settings: false,
   });
+  let onboarding = $ref(null);
   let labelWidth = $ref("12em");
   let timeStamp = Date.now();
 
@@ -29,6 +30,10 @@ export const uiStore = defineStore("uiStore", () => {
     if (typeof cb === "function") {
       cb();
     }
+  };
+
+  const startOnboarding = () => {
+    onboarding?.start();
   };
 
   const setKeyBoard = (name: keyof typeof keyBoardIsShow, isShow: boolean) => {
@@ -55,10 +60,12 @@ export const uiStore = defineStore("uiStore", () => {
     labelWidth,
     modalIsShow,
     keyBoardIsShow,
+    onboarding,
     setModal,
     setLoadingToast,
     showMsgDialog,
     setKeyBoard,
+    startOnboarding,
   });
 });
 

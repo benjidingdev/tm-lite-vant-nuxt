@@ -62,7 +62,7 @@ const dollars2cents = (value: number) => {
 
 const handleTrade = async (row) => {
   await navigateTo(
-    `/user?question=${formatTitle(row.question)}&id=${row.topicId}&marketId=${
+    `/my?question=${formatTitle(row.question)}&id=${row.topicId}&marketId=${
       row.marketId
     }`
   );
