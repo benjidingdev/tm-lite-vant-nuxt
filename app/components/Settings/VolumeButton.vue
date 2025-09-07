@@ -6,7 +6,7 @@ const { tradeVolume } = $(tradeStore());
   <van-button
     size="small"
     class="mr-1! w-8 h-8"
-    plain
+    color="rgb(0 0 0 / 20%)"
     round
     hairline
     @click="setModal('tradeSetting', true)"

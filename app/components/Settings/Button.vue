@@ -3,9 +3,9 @@ const { setModal } = $(uiStore());
 </script>
 <template>
   <van-button
-    icon="setting-o"
+    icon="home-o"
     size="small"
-    plain
+    color="rgb(0 0 0 / 20%)"
     round
     hairline
     @click="setModal('settings', true)"

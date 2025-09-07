@@ -31,10 +31,7 @@ type contentType = {
 export const walletStore = defineStore("walletStore", () => {
   let walletConected = $ref<boolean>(false);
   let walletConfig = $ref({});
-  let usdtBalance = $ref<bigint | null>(null); // USDT balance
-  let tokenBalance = $ref<bigint>(); // TUIT balance
   let userBalance = $ref(0);
-  let usdcBalance = $ref(0);
   let selfBalance = $ref(0);
 
   const { $wagmiAdapter } = useNuxtApp();
@@ -75,7 +72,6 @@ export const walletStore = defineStore("walletStore", () => {
     const network = $wagmiAdapter.wagmiChains!.find((chain) => chain.name === networkName);
     if (network) {
       await switchChain($wagmiAdapter.wagmiConfig, { chainId: network.id });
-      // await networkData.value.switchNetwork(network);
     }
   }
 
@@ -84,7 +80,7 @@ export const walletStore = defineStore("walletStore", () => {
     if (account.status.value != 'connected' || isGetSelfBalanceLoading) return;
     isGetSelfBalanceLoading = true;
     const usdcAddress = getUsdcAddress(account.chain.value!)
-    // get USDT balance
+    // Get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
       chainId: account.chainId.value,
       address: account.address.value as `0x${string}`,
@@ -116,10 +112,6 @@ export const walletStore = defineStore("walletStore", () => {
     userCapital.total = userBalance + userCapital.position;
   };
 
-  const updateTokenBalance = (balance: number) => {
-    tokenBalance = balance || 0;
-  };
-
   // transaction signature
   const signTradeData = async (options: SignTradeDataOptions) => {
     const { order } = options;
@@ -149,7 +141,6 @@ export const walletStore = defineStore("walletStore", () => {
    * get wallet balance and update store
    */
   const updateWalletBalance = useDebounceFn(async () => {
-    // console.log('updateWalletBalance')
     if (!wallet.address) return;
     // get USDT balance
     const mainRes = await getBalance($wagmiAdapter.wagmiConfig, {
@@ -157,31 +148,7 @@ export const walletStore = defineStore("walletStore", () => {
       address: wallet.address as any,
       token: walletConfig!.main.address,
     });
-    if (mainRes.value != usdtBalance) {
-      updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
-      usdtBalance = Number(formatUnits(mainRes.value, mainRes.decimals));
-    }
-    // get MEME balance
-    const memeRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: walletConfig.chain.id,
-      address: wallet.address as any,
-      token: walletConfig!.meme.address,
-    });
-    if (memeRes.value != tokenBalance) {
-      console.log(`token balance change: ${tokenBalance} → ${memeRes.value}`);
-      updateTokenBalance(Number(formatUnits(memeRes.value, memeRes.decimals)));
-      tokenBalance = Number(formatUnits(memeRes.value, memeRes.decimals));
-    }
-    // get USDC balance
-    const usdcAddress = getUsdcAddress(walletClient.chain!)
-    const usdcRes = await getBalance($wagmiAdapter.wagmiConfig, {
-      chainId: walletConfig.chain.id,
-      address: wallet.address as any,
-      token: usdcAddress,
-    });
-    if (usdcRes.value != usdcBalance) {
-      usdcBalance = Number(formatUnits(usdcRes.value, usdcRes.decimals));
-    }
+    updateUserBalance(Number(formatUnits(mainRes.value, mainRes.decimals)));
   }, 2000)
 
   /**
@@ -445,8 +412,6 @@ export const walletStore = defineStore("walletStore", () => {
     account,
     userBalance,
     userCapital,
-    tokenBalance,
-    usdcBalance,
     selfBalance,
     switchNetwork,
     getSelfAllowance,
@@ -460,7 +425,6 @@ export const walletStore = defineStore("walletStore", () => {
     mintUSDC,
     queryAllowanceAndPermit,
     updateUserBalance,
-    updateTokenBalance,
     amountPermit,
     signPayout,
   });
