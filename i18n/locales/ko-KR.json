@@ -103,5 +103,8 @@
   "Referral Rewards": "추천 보상",
   "Refer a friend and earn 10 TUIT.": "친구를 추천하고 {count} TUIT을 받으세요.",
   "The reward is issued to your account after the successful registration of a friend.": "친구가 성공적으로 등록된 후 보상이 귀하의 계정에 발급됩니다.",
-  "Invite 3 friends to become a partner.": "{count}명의 친구를 초대하여 파트너가 되세요."
+  "Invite 3 friends to become a partner.": "{count}명의 친구를 초대하여 파트너가 되세요.",
+  "Rank": "순위",
+  "Rewards": "보상",
+  "Top 10": "상위 {count}명"
 }

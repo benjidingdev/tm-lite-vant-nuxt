@@ -155,5 +155,8 @@
   "Referral Rewards": "推薦獎勵",
   "Refer a friend and earn 10 TUIT.": "推薦朋友並賺取 {count} TUIT。",
   "The reward is issued to your account after the successful registration of a friend.": "好友成功註冊後，獎勵將發放到您的帳戶。",
-  "Invite 3 friends to become a partner.": "邀請{count}位朋友成為合作夥伴。"
+  "Invite 3 friends to become a partner.": "邀請{count}位朋友成為合作夥伴。",
+  "Rank": "排名",
+  "Rewards": "獎勵",
+  "Top 10": "前 {count} 名"
 }

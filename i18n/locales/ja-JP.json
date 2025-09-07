@@ -102,5 +102,8 @@
   "Referral Rewards": "紹介報酬",
   "Refer a friend and earn 10 TUIT.": "友達を紹介して{count} TUITを獲得しましょう。",
   "The reward is issued to your account after the successful registration of a friend.": "友達が正常に登録された後、報酬があなたのアカウントに発行されます。",
-  "Invite 3 friends to become a partner.": "{count}人の友達を招待してパートナーになりましょう。"
+  "Invite 3 friends to become a partner.": "{count}人の友達を招待してパートナーになりましょう。",
+  "Rank": "ランク",
+  "Rewards": "報酬",
+  "Top 10": "トップ{count}"
 }

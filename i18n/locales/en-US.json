@@ -152,5 +152,8 @@
   "Referral Rewards": "Referral Rewards",
   "Refer a friend and earn 10 TUIT.": "Refer a friend and earn {count} TUIT.",
   "The reward is issued to your account after the successful registration of a friend.": "The reward is issued to your account after the successful registration of a friend.",
-  "Invite 3 friends to become a partner.": "Invite {count} friends to become a partner."
+  "Invite 3 friends to become a partner.": "Invite {count} friends to become a partner.",
+  "Rank": "Rank",
+  "Rewards": "Rewards",
+  "Top 10": "Top {count}"
 }
