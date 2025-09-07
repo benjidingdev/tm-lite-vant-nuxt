@@ -48,19 +48,17 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="space-x-4 flex">
-      <div>
+    <div class="space-x-4 flex w-1/2">
+      <!-- <div>
         <van-button type="default" @click="handelImage">
           <van-icon name="photo-o" />
           {{ $t("Save") }}
         </van-button>
-      </div>
-      <div>
-        <van-button type="danger" @click="handleShare">
-          <van-icon name="share-o" />
-          {{ $t("Invite") }}
-        </van-button>
-      </div>
+      </div> -->
+      <van-button block type="success" @click="handleShare">
+        <van-icon name="share-o" />
+        {{ $t("Invite") }}
+      </van-button>
     </div>
 
 
