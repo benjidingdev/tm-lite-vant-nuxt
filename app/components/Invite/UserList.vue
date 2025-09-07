@@ -18,8 +18,8 @@ let active = $computed(() => {
 <template>
   <div class="w-full flex flex-col items-center justify-center p-5 space-x-1">
 
-    <div class="border border-gray-200 rounded-[12px] w-full p-5 space-y-2">
-      <p class="font-[900] text-[18px] flex-shrink-0">{{ $t('Referral Rewards') }}</p>
+    <div class="border border-gray-200 rounded-[12px] w-full p-5 space-y-6 bg-white">
+      <p class="text-[18px] flex-shrink-0">{{ $t('Referral Rewards') }}</p>
 
       <div class="w-full flex justify-between space-x-2">
         <div>
@@ -27,8 +27,8 @@ let active = $computed(() => {
         </div>
 
         <div class="flex-1 ">
-          <div class="mb-1 font-[700]">{{ $t('Refer a friend and earn 10 tuit.') }}</div>
-          <div class="text-gray-800 text-[14px]">{{ $t(`The reward is issued to your account after the successful
+          <div class="mb-1">{{ $t('Refer a friend and earn 10 TUIT.') }}</div>
+          <div class="text-gray-500 text-[14px]">{{ $t(`The reward is issued to your account after the successful
             registration of a friend.`) }}</div>
         </div>
       </div>
@@ -39,8 +39,8 @@ let active = $computed(() => {
         </div>
 
         <div class="flex-1 ">
-          <div class="mb-1 font-[700]">{{ $t("Become a partner after inviting 3 friends.") }}</div>
-          <div class="text-gray-800 text-[14px]">
+          <div class="mb-1 font-[400]">{{ $t("Invite 3 friends to become a partner.") }}</div>
+          <div class="text-gray-500 text-[14px]">
 
             <!-- <van-steps :active="active" style="--van-steps-background: transparent;">
               <van-step>1</van-step>
