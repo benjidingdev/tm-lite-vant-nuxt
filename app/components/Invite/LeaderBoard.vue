@@ -1,9 +1,8 @@
 <script setup>
   import Request from '@/utils/request';
 
-  const { userInfo } = $(userStore());
-
   let leaderBoard = $ref([]);
+  let totalUsers = $computed(() => leaderBoard.length);
   async function loadLeaderBoard() {
     try {
       const res = await Request({
@@ -17,7 +16,7 @@
       })
 
       console.log('loadLeaderBoard', res);
-      leaderBoard = res.data;
+      leaderBoard = res.data.list || [];
     } catch (e) {
       console.error('loadLeaderBoard', e);
     }
@@ -32,7 +31,7 @@
   <section class="w-full flex flex-col items-center justify-center bg-white py-2 text-sm px-5">
     <p class="text-center text-[16px] w-full flex justify-between items-center mb-2">
       <span>{{ $t('Invite Leaderboard') }}</span>
-      <span class="text-[12px] text-gray-500 mt-2">{{ $t('(Top 10)') }}</span>
+      <span class="text-[12px] text-gray-500 mt-2">{{ $t('(Top 10)', totalUsers) }}</span>
     </p>
 
     <div class="w-full grid grid-cols-[2fr_1fr] justify-center items-center space-y-2 text-gray-700">

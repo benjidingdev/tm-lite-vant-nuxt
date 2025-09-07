@@ -1,5 +1,5 @@
 <script setup>
-import Request from '@/utils/request'
+// import Request from '@/utils/request'
 
 const { userInfo } = $(userStore());
 
@@ -9,23 +9,23 @@ async function onShare() {
   inviteUser(userInfo.inviteCode, '/invite/guide')
 }
 
-async function loadUserTasks(inviteCode) {
-  try {
-    const rz = await Request({
-      url: `/app-api/topic/task/list`,
-    })
-    console.log('inviteUser', rz);
-    if (rz.code === 200) {
-      // show success message or perform other actions
-    }
-  } catch (e) {
-    console.error('inviteUser', e);
-    alert('An error occurred while inviting the user.');
-  }
-}
+// async function loadUserTasks(inviteCode) {
+//   try {
+//     const rz = await Request({
+//       url: `/app-api/topic/task/list`,
+//     })
+//     console.log('inviteUser', rz);
+//     if (rz.code === 200) {
+//       // show success message or perform other actions
+//     }
+//   } catch (e) {
+//     console.error('inviteUser', e);
+//     alert('An error occurred while inviting the user.');
+//   }
+// }
 
 onMounted(() => {
-  loadUserTasks();
+  // loadUserTasks();
   console.log({ userInfo });
 })
 </script>

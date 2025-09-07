@@ -7,10 +7,13 @@ const { token } = $(authStore());
 
     <InviteNewUserNotice />
 
-    <InviteAccountShare v-if="token.accessToken" />
+    <template v-if="token.accessToken  && true">
+      <InviteAccountShare />
+      <InviteLeaderBoard />
+    </template>
+
 
     <InviteGuideNoAccount v-else />
 
-    <InviteLeaderBoard />
   </section>
 </template>
