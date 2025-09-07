@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { getUserTask, userTaskReceive } from "@/api/userInfo";
-const { modalIsShow } = $(uiStore());
+  import { getUserTask, userTaskReceive } from "@/api/userInfo";
+  const { modalIsShow } = $(uiStore());
 
-let voData = reactive({
-  list: []
-})
+  let voData = reactive({
+    list: []
+  })
 
-const userTask = async () => {
-  let res = await getUserTask({ slug: 'advise-task' })
-  if (res.code === 0) {
-    voData.list = res.data[0].subTasks
+  const userTask = async () => {
+    let res = await getUserTask({ slug: 'advise-task' })
+    if (res.code === 0) {
+      voData.list = res.data[0].subTasks
+    }
   }
-}
 
-const { locale } = $(useI18n())
-const goLink = async (path: string) => {
-  const url = locale === "en-US" ? path : `/${locale}${path}`;
-  await navigateTo(url);
-}
-
-const getReward = async (id: number) => {
-  let res = await userTaskReceive({ id })
-  if (res.code === 0) {
-    userTask()
+  const { locale } = $(useI18n())
+  const goLink = async (path: string) => {
+    const url = locale === "en-US" ? path : `/${locale}${path}`;
+    await navigateTo(url);
   }
-}
+
+  const getReward = async (id: number) => {
+    let res = await userTaskReceive({ id })
+    if (res.code === 0) {
+      userTask()
+    }
+  }
 </script>
 <template>
   <van-dialog v-model:show="modalIsShow.rewardModal" :title="$t('Reward Title')" @open="userTask" closeable
@@ -37,7 +37,7 @@ const getReward = async (id: number) => {
           <span class="mr-2">{{ item.rewardType }}</span>
         </p>
         <p class="mb-1 text-sm">{{ $t('Obtained') }}：{{ item.finishedCount * item.rewardNumber }}</p>
-        <p class="mb-1 text-sm">{{ $t('Progress"') }} ： {{ item.eventTasks[0].currentEventValue }} / {{
+        <p class="mb-1 text-sm">{{ $t('Progress') }} ： {{ item.eventTasks[0].currentEventValue }} / {{
           item.eventTasks[0].taskEventValue }}
         </p>
         <p class="text-right">
