@@ -33,7 +33,7 @@ const close = () => {
           </van-swipe-cell>
         </template>
 
-        <div v-else class="w-full h-full flex items-center">{{ $t('No data') }}</div>
+        <div v-else class="w-full h-full flex items-center">{{ $t('No Error Yet') }}</div>
       </div>
 
     </article>

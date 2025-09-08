@@ -17,6 +17,8 @@ async function handleShare() {
 onMounted(() => {
   console.log({ userInfo });
 });
+
+let show = ref(false);
 </script>
 
 
@@ -46,21 +48,23 @@ onMounted(() => {
         </div>
 
       </div>
+
+      <div class="space-x-4 w-full flex justify-center items-center mt-4">
+        <div class="flex-1">
+          <van-button block type="success" @click="handleShare">
+            <van-icon name="share-o" />
+            {{ $t("Invite") }}
+          </van-button>
+        </div>
+
+        <div @click="show = true">
+          <van-icon color="#f60" size="24" name="/icons/help.svg" />
+        </div>
+      </div>
     </div>
-
-    <div class="space-x-4 flex w-1/2">
-      <!-- <div>
-        <van-button type="default" @click="handelImage">
-          <van-icon name="photo-o" />
-          {{ $t("Save") }}
-        </van-button>
-      </div> -->
-      <van-button block type="success" @click="handleShare">
-        <van-icon name="share-o" />
-        {{ $t("Invite") }}
-      </van-button>
-    </div>
-
-
   </section>
+
+  <van-dialog v-model:show="show" :title="$t('Referral Rewards')" closeable :show-confirm-button="false">
+    <InviteUserList :totalInvite :shareUserList />
+  </van-dialog>
 </template>
