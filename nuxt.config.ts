@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   vite: {
     server: {
-      allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app"],
+      allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app", "frp.jdoffices.com"],
     },
     plugins: [
       tailwindcss(),
