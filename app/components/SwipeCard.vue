@@ -242,7 +242,7 @@ const goDeposit = async (card, isYes) => {
     addRequest(transaction, card);
 
     if (transaction.type === 1) {
-      swipeCard(statusList[0]);
+      swipeCard(statusList[0], () => {});
     } else {
       swipeCard(statusList[1], () => {});
     }
@@ -317,7 +317,7 @@ onMounted((e) => {
                 <div class="flex flex-col items-center text-">
                   <div
                     id="step4"
-                    :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white`"
+                    :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white ml-6`"
                     @click="buyYes(card)"
                   >
                     <van-icon name="checked" size="66" color="#97dbb4" />
@@ -329,7 +329,7 @@ onMounted((e) => {
                 <div class="flex flex-col items-center">
                   <div
                     id="step5"
-                    class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                    class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg mr-6"
                     @click="buyNo(card)"
                   >
                     <van-icon name="clear" size="66" color="#fe9595" />
@@ -461,6 +461,6 @@ onMounted((e) => {
   background-image: linear-gradient(to right, #4fd1c5, #a4e4d5);
 }
 .gradient-right {
-  background-image: linear-gradient(to left, #fb6f92, #f472b6); /* 紫色到粉色 */
+  background-image: linear-gradient(to right, #f2a4b7, #f472b6);
 }
 </style>

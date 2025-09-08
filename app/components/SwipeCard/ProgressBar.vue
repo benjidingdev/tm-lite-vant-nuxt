@@ -31,19 +31,4 @@ console.log("lastTradePrice", lastTradePrice);
   </div>
 </template>
 
-<style>
-.gradient-left {
-  background-image: linear-gradient(
-    to right,
-    rgb(151, 219, 180),
-    rgb(144, 216, 175)
-  );
-}
-.gradient-right {
-  background-image: linear-gradient(
-    to left,
-    rgb(254, 149, 149),
-    rgb(248, 140, 140)
-  );
-}
-</style>
+
