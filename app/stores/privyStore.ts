@@ -64,7 +64,7 @@ export const privyStore = defineStore(
     let publicClient = $ref(null);
     const userId = $computed(() => session?.user?.id || false);
     const initWallet = async () => {
-      if (!userId || isLoading) return;
+      if (!session || !userId || isLoading) return;
       isLoading = true;
 
       let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
