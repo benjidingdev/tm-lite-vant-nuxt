@@ -44,15 +44,11 @@ onMounted(async () => {
     cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
   }
 
-  const { code, redirect } = getFatherInviteCode() as any;
+   startParam = getFatherInviteCode() as any;
 
-  if (code) {
-    startParam.code = code;
-  }
 
-  if (redirect) {
-    startParam.redirect = redirect;
-    await navigateTo(redirect);
+  if (startParam.redirect) {
+    await navigateTo(startParam.redirect);
   }
 });
 
