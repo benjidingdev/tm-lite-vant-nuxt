@@ -33,8 +33,8 @@ export const privyStore = defineStore(
         console.log("session", session);
         isLoading = false;
       } catch (error) {
-        errorInfo = error;
         isLoading = false;
+        throw new Error("login error: " + error);
       }
     };
 
@@ -64,40 +64,43 @@ export const privyStore = defineStore(
     let publicClient = $ref(null);
     const userId = $computed(() => session?.user?.id || false);
     const initWallet = async () => {
-      if (!session || !userId || isLoading) return;
-      isLoading = true;
+      try {
+        if (!session || !userId || isLoading) return;
+        isLoading = true;
 
-      let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
-      console.log("theWallet", theWallet);
-      if (!theWallet) {
-        theWallet = await $privy.embeddedWallet.create({});
-        session = await $privy.user.get();
+        let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
+        console.log("theWallet", theWallet);
+        if (!theWallet) {
+          theWallet = await $privy.embeddedWallet.create({});
+          session = await $privy.user.get();
+        }
+
+        const { entropyId, entropyIdVerifier } =
+          $PrivySDK.getEntropyDetailsFromUser(session?.user);
+        console.log('xxx', {
+          wallet,
+          entropyId,
+          entropyIdVerifier,
+        }, session)
+        const provider = await $privy.embeddedWallet.getEthereumProvider({
+          wallet,
+          entropyId,
+          entropyIdVerifier,
+        });
+        walletClient = createWalletClient({
+          account: wallet.address,
+          chain: networks[0],
+          transport: custom(provider),
+        });
+        publicClient = createPublicClient({
+          chain: networks[0],
+          transport: custom(provider),
+        });
+        console.log("walletClient", walletClient);
+        isLoading = false;
+      } catch (error) {
+        throw new Error("init wallet error: " + error);
       }
-
-      const { entropyId, entropyIdVerifier } =
-        $PrivySDK.getEntropyDetailsFromUser(session?.user);
-      console.log('xxx', {
-        wallet,
-        entropyId,
-        entropyIdVerifier,
-      }, session)
-      const provider = await $privy.embeddedWallet.getEthereumProvider({
-        wallet,
-        entropyId,
-        entropyIdVerifier,
-      });
-      walletClient = createWalletClient({
-        account: wallet.address,
-        chain: networks[0],
-        transport: custom(provider),
-      });
-      publicClient = createPublicClient({
-        chain: networks[0],
-        transport: custom(provider),
-      });
-      console.log("walletClient", walletClient);
-
-      isLoading = false;
     };
 
     const userEmail = $computed(() => {

@@ -74,8 +74,8 @@ onMounted(() => {
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.currentEventValue > 0"
-                type="primary"
                 size="small"
+                type="primary"
                 plain
                 @click="router.push(sub.skipUrl)"
               >
@@ -83,17 +83,17 @@ onMounted(() => {
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
-                type="primary"
-                @click="modalIsShow.share = true"
                 size="small"
+                type="primary"
                 plain
+                @click="modalIsShow.share = true"
               >
                 {{ $t("Go To Invite") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'"
-                type="primary"
                 size="small"
+                type="primary"
                 plain
               >
                 {{ $t("Go To Trade") }}
