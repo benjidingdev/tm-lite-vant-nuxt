@@ -42,6 +42,10 @@ onMounted(() => {
     voData.queryParams.adviseId = route.query.adviseId
   }
 
+  if (route.query.title) {
+    voData.queryParams.title = route.query.title
+  }
+
   init()
 })
 
@@ -56,10 +60,6 @@ const onLoad = async () => {
     if (res.code === 0) {
       voData.list = voData.list.concat(res.data.list);
       voData.total = res.data.total;
-
-      if (voData.queryParams.title) {
-        voData.queryParams.title = voData.list[0].title
-      }
 
       if (voData.list.length >= voData.total || res.data.list.length < voData.queryParams.pageSize) {
         finished.value = true;

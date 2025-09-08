@@ -16,11 +16,7 @@ const goUrl = async (baseUrl) => {
   const origin = window.location.origin
   let targetUrl = await shortenURL(`${origin}/advise?inviteCode=${userInfo.inviteCode}&adviseId=${props.adviseId}&title=${props.title}`)
 
-
-  const shareText = `🚀 我在 Turing Market 提出了「${props.title}」的建议！
-✨ 你的支持很重要～
-快来 👉${targetUrl}
-为我的建议投票助力，一起创造新话题！🔥`
+  const shareText = $t('Share Text', { title: props.title, targetUrl })
 
   let shareUrl = ''
   switch (baseUrl) {
@@ -55,4 +51,3 @@ const goUrl = async (baseUrl) => {
     </div>
   </van-dialog>
 </template>
-
