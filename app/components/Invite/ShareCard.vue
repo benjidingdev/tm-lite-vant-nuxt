@@ -1,11 +1,59 @@
 <script setup>
+
+import Request from '@/utils/request'
+
 const { userInfo } = $(userStore());
 
-const { totalInvite, totalTuit } = defineProps(['totalInvite', 'totalTuit']);
+onMounted(() => {
+  console.log({ userInfo });
+  loadShareUser();
+  loadTotalTuit()
+})
+
+let shareUserList = $ref([]);
+let totalInvite = $ref(0);
+
+async function loadShareUser() {
+  try {
+    const rz = await Request({
+      url: `/app-api/topic/user/shareUserPage`,
+      method: 'post',
+      data: {
+        pageNo: 1,
+        pageSize: 12
+      }
+    })
+    console.log('loadShareUser', userInfo.inviteCode, rz);
+
+    if (rz.data.list) {
+      shareUserList = [
+        ...rz.data.list,
+      ];
+      totalInvite = rz.data.total;
+    }
+  } catch (e) {
+    console.error('loadShareUser', e);
+  }
+}
+
+let totalTuit = $ref(0);
+async function loadTotalTuit() {
+  try {
+    const rz = await Request({
+      url: `/app-api/topic/token/account/get`,
+      method: 'get',
+    })
+    console.log('loadTotalTuit', rz);
+
+    if (rz.data) {
+      totalTuit = rz.data.totalAmount || 0;
+    }
+  } catch (e) {
+    console.error('loadTotalTuit', e);
+  }
+}
 
 async function handleShare() {
-  // const target = document.getElementById('shareTarget');
-  // await captureTargetToPng('shareImageName', target);
   inviteUser(userInfo.inviteCode, '/invite/guide');
 }
 
@@ -13,10 +61,6 @@ async function handleShare() {
 //   const target = document.getElementById('shareTarget');
 //   await captureTargetToPng('shareImageName', target);
 // }
-
-onMounted(() => {
-  console.log({ userInfo });
-});
 
 let show = ref(false);
 </script>
@@ -57,19 +101,14 @@ let show = ref(false);
           </van-button>
         </div>
 
-        <div style="color: red" @click="show = true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-            viewBox="0 0 24 24"><!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE -->
-            <path fill="currentColor"
-              d="M10.6 16q0-2.025.363-2.912T12.5 11.15q1.025-.9 1.563-1.562t.537-1.513q0-1.025-.687-1.7T12 5.7q-1.275 0-1.937.775T9.125 8.05L6.55 6.95q.525-1.6 1.925-2.775T12 3q2.625 0 4.038 1.463t1.412 3.512q0 1.25-.537 2.138t-1.688 2.012Q14 13.3 13.738 13.913T13.475 16zm1.4 6q-.825 0-1.412-.587T10 20t.588-1.412T12 18t1.413.588T14 20t-.587 1.413T12 22" />
-          </svg>
+        <div @click="show = true">
+          <van-icon color="#f60" size="24" name="/icons/help.svg" />
         </div>
-
       </div>
     </div>
   </section>
 
-  <van-dialog v-model:show="show" title=" " closeable :show-confirm-button="false">
+  <van-dialog v-model:show="show" :title="$t('Referral Rewards')" closeable :show-confirm-button="false">
     <InviteUserList :totalInvite :shareUserList />
   </van-dialog>
 </template>

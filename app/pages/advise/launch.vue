@@ -34,7 +34,6 @@ const onSubmit = async (values: object) => {
       await showDialog({
         message: $t('Successful prompt'),
         confirmButtonText: $t('Shares'),
-        closeOnClickOverlay: true,
         showCancelButton: true // 显示取消按钮
       }).then(async () => {
         // on close
