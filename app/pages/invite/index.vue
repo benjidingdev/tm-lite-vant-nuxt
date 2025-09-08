@@ -8,7 +8,7 @@ const { token } = $(authStore());
 
     <template v-if="token.accessToken  && true">
       <InviteNewUserNotice />
-      <InviteAccountShare />
+      <InviteShareCard />
       <InviteLeaderBoard />
     </template>
 

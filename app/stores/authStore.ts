@@ -16,7 +16,7 @@ export const authStore = defineStore(
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
-    let { logoutPrivy, hasSend, isLoading, session, errorInfo } = $(privyStore());
+    let { logoutPrivy, hasSend, isLoading, session, errorInfo, userEmail } = $(privyStore());
 
     let token = $ref({
       accessToken: "",
@@ -163,10 +163,9 @@ export const authStore = defineStore(
     }) => {
       setLoadingToast(t("Start to login"));
       const address = wallet?.address;
-      try {
-      } catch (error) { }
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
+        email: userEmail,
         ivcode: startParam.code || '',
         signature: data.signature,
         message: data.message,
