@@ -134,9 +134,9 @@ export const authStore = defineStore(
      * @returns
      */
     const todoSign = async () => {
-      setLoadingToast(t("Start to sign"));
-      if (isSign) return;
       try {
+        setLoadingToast(t("Start to sign"));
+        if (isSign) return;
         isSign = true;
         const address = wallet?.address;
         if (address) {
@@ -149,7 +149,7 @@ export const authStore = defineStore(
           }
         }
       } catch (error) {
-        console.log("todoSign error", error);
+        throw new Error("error in sign: " + error);
       } finally {
         isSign = false;
         closeToast();

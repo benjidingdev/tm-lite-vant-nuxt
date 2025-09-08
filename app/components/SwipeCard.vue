@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
@@ -101,8 +101,8 @@ const touchMove = (e) => {
   offsetX = currentX - startX;
   offsetY = currentY - startY;
 
-  const maxOffsetX = 100;
-  const maxOffsetY = 100;
+  const maxOffsetX = threshold;
+  const maxOffsetY = threshold;
   if (Math.abs(offsetX) > maxOffsetX) {
     offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
     isSettlement = true;
@@ -314,20 +314,29 @@ onMounted((e) => {
           >
             <div class="absolute -bottom-8 h-16 w-full z-50">
               <div class="flex justify-between items-center h-full px-6">
-                <div
-                  id="step4"
-                  :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white`"
-                  @click="buyYes(card)"
-                >
-                  <van-icon name="checked" size="66" color="#97dbb4" />
+                <div class="flex flex-col items-center text-">
+                  <div
+                    id="step4"
+                    :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white`"
+                    @click="buyYes(card)"
+                  >
+                    <van-icon name="checked" size="66" color="#97dbb4" />
+                  </div>
+                  <text class="text-[#97dbb4]"
+                    >{{ card.markets[0].yesPrice * 100 || 0 }}¢</text
+                  >
                 </div>
-
-                <div
-                  id="step5"
-                  class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
-                  @click="buyNo(card)"
-                >
-                  <van-icon name="clear" size="66" color="#fe9595" />
+                <div class="flex flex-col items-center">
+                  <div
+                    id="step5"
+                    class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg"
+                    @click="buyNo(card)"
+                  >
+                    <van-icon name="clear" size="66" color="#fe9595" />
+                  </div>
+                  <text class="text-[#fe9595]"
+                    >{{ card.markets[0].noPrice * 100 || 0 }}¢</text
+                  >
                 </div>
               </div>
             </div>
@@ -347,23 +356,20 @@ onMounted((e) => {
 
           <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
             <div class="h-[85%] overflow-auto">
+              <SwipeCardProgressBar
+                class="mt-10"
+                :lastTradePrice="
+                  percentage(card?.markets[0].lastTradePrice, 'num')
+                "
+              />
               <text class="name mt-4">{{ card.title }}</text>
               <text v-if="card?.markets.length" class="desc">{{
                 card?.markets[0].question
               }}</text>
             </div>
+
             <div class="h-[15%] flex justify-between">
               <text> ${{ convertCurrency(card.volume) }} Vol.</text>
-              <van-circle
-                class="bottom-5"
-                v-model:current-rate="currentRate"
-                :stroke-width="80"
-                :rate="percentage(card?.markets[0].lastTradePrice, 'num')"
-                :speed="100"
-                size="42px"
-                layer-color="#d8d8d8"
-                :text="percentage(card?.markets[0].lastTradePrice, 'num') + '%'"
-              />
             </div>
           </div>
         </div>
@@ -449,5 +455,12 @@ onMounted((e) => {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   contain: content;
+}
+
+.gradient-left {
+  background-image: linear-gradient(to right, #4fd1c5, #a4e4d5);
+}
+.gradient-right {
+  background-image: linear-gradient(to left, #fb6f92, #f472b6); /* 紫色到粉色 */
 }
 </style>

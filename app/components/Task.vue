@@ -66,6 +66,7 @@ onMounted(() => {
               <van-button
                 v-if="sub.isFinish"
                 type="primary"
+                size="small"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="receiveTask(sub)"
               >
@@ -73,6 +74,7 @@ onMounted(() => {
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.currentEventValue > 0"
+                size="small"
                 type="primary"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="router.push(sub.skipUrl)"
@@ -81,6 +83,7 @@ onMounted(() => {
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
+                size="small"
                 type="primary"
                 @click="modalIsShow.share = true"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
@@ -89,6 +92,7 @@ onMounted(() => {
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'"
+                size="small"
                 type="primary"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
               >
@@ -97,6 +101,7 @@ onMounted(() => {
               <van-button
                 v-else
                 type="primary"
+                size="small"
                 class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
                 @click="router.push(sub.skipUrl)"
               >
