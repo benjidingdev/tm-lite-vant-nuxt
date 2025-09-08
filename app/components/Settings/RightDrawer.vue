@@ -21,17 +21,25 @@ const goToLInk = async (path: string) => {
   await navigateTo(url);
   modalIsShow.settings = false
 };
+
+const openTab = () => {
+  window.open(
+    'https://docs-zh.turingm.io/users-guide/lite',
+    "TuringUserGuideLite",
+    "width=600,height=800"
+  );
+}
 </script>
 <template>
   <van-popup v-model:show="modalIsShow.settings" position="right" :style="{ width: '80%', height: '100%' }">
     <div class="flex flex-col justify-around h-dvh relatvie">
       <span class="text-gray-200 absolute z-99 opacity-70 w-full flex justify-center px-5">{{ startParam }}</span>
-
       <div class="flex-1">
         <LangSwitcherLabel />
         <TradeSettingLabel />
         <van-cell :title="$t('Topic Voting')" is-link @click="goToLInk('/advise')" />
         <van-cell :title="$t('Initiate a topic')" is-link @click="goToLInk('/advise/launch')" />
+        <van-cell :title="$t('Users Guide')" is-link @click="openTab" v-if="locale === 'zh-TW'" />
         <AuthLogoutLabel v-if="token.accessToken" />
       </div>
       <van-cell-group>
