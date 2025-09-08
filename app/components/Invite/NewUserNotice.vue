@@ -2,25 +2,25 @@
 import Request from '@/utils/request';
 
 let newestInvitedUser = $ref([]);
-  async function loadNewestInvitedUser() {
-    try {
-      const res = await Request({
-        url: '/app-api/topic/user/invite/list',
-        method: 'POST',
-        data: {
-        }
-      })
+async function loadNewestInvitedUser() {
+  try {
+    const res = await Request({
+      url: '/app-api/topic/user/invite/list',
+      method: 'POST',
+      data: {
+      }
+    })
 
-      console.log('loadNewestInvitedUser', res);
-      newestInvitedUser = res.data;
-    } catch (e) {
-      console.error('loadNewestInvitedUser', e);
-    }
+    console.log('loadNewestInvitedUser', res);
+    newestInvitedUser = res.data;
+  } catch (e) {
+    console.error('loadNewestInvitedUser', e);
   }
+}
 
-  onMounted(async () => {
-    await loadNewestInvitedUser();
-  })
+onMounted(async () => {
+  await loadNewestInvitedUser();
+})
 
 </script>
 
