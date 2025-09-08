@@ -166,7 +166,7 @@ export const authStore = defineStore(
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
         email: userEmail,
-        ivcode: startParam.code || '',
+        ivcode: startParam.inviteCode || '',
         signature: data.signature,
         message: data.message,
       });
