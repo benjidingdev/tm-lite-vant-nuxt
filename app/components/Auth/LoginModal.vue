@@ -67,7 +67,6 @@ const startCountdown = () => {
   }, 1000);
 };
 
-
 watch(
   () => oneTimePassword,
   (newVal: string) => {
@@ -101,6 +100,7 @@ const counterText = $computed(() => {
           <van-field
             v-model="email"
             name="email"
+            left-icon="envelop-o"
             :label="$t('Email')"
             :placeholder="$t('Email')"
             :rules="[
@@ -120,7 +120,7 @@ const counterText = $computed(() => {
             >{{ errorInfo ? errorInfo : "Sending..." }}</span
           >
           <template v-if="hasSend">
-            <AuthPasswordInput v-model="oneTimePassword"/>
+            <AuthPasswordInput v-model="oneTimePassword" />
 
             <div class="flex justify-end">
               <button
