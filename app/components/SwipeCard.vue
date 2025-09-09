@@ -18,7 +18,6 @@ let currentY = 0;
 // The data from store
 const { userBalance } = $(walletStore());
 let { addRequest, cards, isLoading } = $(requestQueueStore());
-const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 const { userOrderAmount } = $(userStore());
@@ -170,7 +169,6 @@ const buyNo = (card) => {
 const bookmark = async (card) => {
   if (token.accessToken === "") {
     setModal("loginModal", true);
-    isToken(true);
     closeToast();
     return;
   }
@@ -220,7 +218,6 @@ const goDeposit = async (card, isYes) => {
 
   if (token.accessToken === "") {
     setModal("loginModal", true);
-    isToken(true);
     closeToast();
     resetCard();
   } else {

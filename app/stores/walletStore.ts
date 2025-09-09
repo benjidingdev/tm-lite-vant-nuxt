@@ -407,8 +407,6 @@ export const walletStore = defineStore("walletStore", () => {
     shortWalletAddress,
     walletConected,
     walletConfig,
-    wallet,
-    walletClient,
     account,
     userBalance,
     userCapital,

@@ -1,72 +1,85 @@
-import { createWalletClient, createPublicClient, custom } from "viem";
+import { createWalletClient, createPublicClient, custom, getAddress } from "viem";
+import { createSiweMessage } from "viem/siwe";
+import type { SiweMessage } from "@/types";
 import { getNetworks } from "~/config/networks";
+import * as walletApi from "~/api/wallet";
 
 export const privyStore = defineStore(
   "privyStore",
   () => {
+    const { t } = useI18n();
     const { $privy, $PrivySDK } = useNuxtApp();
     const { updateWalletBalance } = $(walletStore());
     const { updateUserOrderAmountInfo } = $(userStore());
+    const { startParam } = $(shareStore());
+    const { setLoadingToast } = $(uiStore());
+    let { afterLoginSuccess } = $(authStore());
     const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
     let email = $ref("");
     let hasSend = $ref(false);
     let oneTimePassword = $ref("");
     let isLoading = $ref(false);
-    let session = $ref(null);
-    let errorInfo = $ref('');
+    let session: any = $ref(null);
+    let errorInfo: any = $ref('');
+    let walletClient: any = $ref(null);
+    let publicClient: any = $ref(null);
+    let retryInitWalletCount = 0;
+    let nonce = '';
 
-    const doPrivyLogin = async () => {
+    const userId = $computed(() => session?.user?.id || false);
+    const wallet = $computed(() => {
+      const rz =
+        session?.user?.linked_accounts?.find(
+          (item: any) => item.type === "wallet"
+        ) || null;
+      return rz;
+    });
+    const userEmail = $computed(() => {
+      return (
+        session?.user?.linked_accounts?.find((item: any) => item.type === "email")
+          ?.address || ""
+      );
+    });
+
+
+    // send email to get one time password
+    const sendEmail = async () => {
+      errorInfo = "";
+      if (isLoading) return;
+      isLoading = true;
+      try {
+        await $privy.auth.email.sendCode(email);
+        hasSend = true;
+      } catch (error: Error | any) {
+        errorInfo = error.message || "Send email error";
+      }
+      isLoading = false;
+      oneTimePassword = "";
+    };
+
+    // ======== Check login logic in this function( Main login function) =======
+    const doLogin = async () => {
       if (session) return;
       if (isLoading) return;
       isLoading = true;
-      if (!hasSend) {
-        const rz = await $privy.auth.email.sendCode(email);
-        console.log("rz", rz);
-        hasSend = true;
-        isLoading = false;
-        return;
-      }
 
       try {
         session = await $privy.auth.email.loginWithCode(email, oneTimePassword);
         console.log("session", session);
-        isLoading = false;
-      } catch (error) {
-        isLoading = false;
-        throw new Error("login error: " + error);
+      } catch (error: Error | any) {
+        errorInfo = "login error: " + error.message;
       }
+      await initWallet();
+      if (publicClient && walletClient) {
+        await doSign();
+      }
+      isLoading = false;
     };
 
-    const refreshSession = async () => {
-      try {
-        session = await $privy.user.get();
-        console.log("session", session);
-        await initWallet();
-        await Promise.all([
-          updateWalletBalance(),
-          updateUserOrderAmountInfo(),
-        ]);
-      } catch (error) {
-        console.log("privy get user error", error);
-      }
-    };
-
-    const wallet = $computed(() => {
-      const rz =
-        session?.user?.linked_accounts?.find(
-          (item) => item.type === "wallet"
-        ) || null;
-      // console.log('wallet', rz)
-      return rz;
-    });
-    let walletClient = $ref(null);
-    let publicClient = $ref(null);
-    const userId = $computed(() => session?.user?.id || false);
     const initWallet = async () => {
       try {
-        if (!session || !userId || isLoading) return;
-        isLoading = true;
+        if (!session || !userId) return;
 
         let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
         console.log("theWallet", theWallet);
@@ -97,18 +110,116 @@ export const privyStore = defineStore(
           transport: custom(provider),
         });
         console.log("walletClient", walletClient);
-        isLoading = false;
-      } catch (error) {
-        throw new Error("init wallet error: " + error);
+      } catch (error: Error | any) {
+        let timer;
+        retryInitWalletCount++;
+        if (retryInitWalletCount < 3) {
+          timer = setTimeout(async () => {
+            await initWallet();
+          }, retryInitWalletCount * 1000);
+        } else {
+          clearInterval(timer);
+          retryInitWalletCount = 0;
+          errorInfo = "init wallet error: " + error.message;
+        }
       }
     };
 
-    const userEmail = $computed(() => {
-      return (
-        session?.user?.linked_accounts?.find((item) => item.type === "email")
-          ?.address || ""
-      );
-    });
+    // sign message by wallet
+    const doSign = async () => {
+      setLoadingToast(t("Start to login"));
+      let signData;
+      try {
+        const address = wallet?.address;
+        if (address) {
+          console.log("doSign address:", address);
+          const nonceRes = await getNonce(address);
+          if (nonceRes) {
+            nonce = nonceRes.data;
+            signData = await signLoginMessage(nonceRes.data);
+          }
+        }
+      } catch (error: Error | any) {
+        errorInfo = "doSign error: " + error.message;
+      }
+
+      try {
+        if (signData) {
+          await requestWalletLogin(signData);
+        }
+      } catch (error: Error | any) {
+        errorInfo = "request Wallet init API error: " + error.message;
+      }
+      closeToast();
+    };
+
+    /**
+     * Sign in, after the user connects the wallet, call the backend service to get the message
+     * Then request the signature, get the signature string, and call the backend interface to verify the signature
+     */
+    const signLoginMessage = async (nonce: string) => {
+      try {
+        const address = wallet?.address;
+        const chainId = walletClient.chain?.id;
+        const messageObj = {
+          address: getAddress(address),
+          chainId: chainId as number,
+          domain: location.host,
+          nonce,
+          uri: location.origin,
+          version: "1" as "1",
+          issuedAt: new Date(),
+          expirationTime: new Date(Date.now() + 60000),
+          statement:
+            "I accept the TuringM Terms of Service: https://TuringM.io/terms",
+        } as SiweMessage;
+        const message = createSiweMessage(messageObj);
+
+        let res = await walletClient.signMessage({
+          account: address,
+          message: message,
+        });
+        return { message: messageObj, signature: res };
+      } catch (err) {
+        throw err;
+      }
+    };
+
+    //start login process
+    const requestWalletLogin = async (data: {
+      message: SiweMessage;
+      signature: string;
+    }) => {
+      const address = wallet?.address;
+      let result: any = await walletApi.loginByWallet({
+        proxyWallet: address,
+        email: userEmail,
+        ivcode: startParam.inviteCode || '',
+        signature: data.signature,
+        message: data.message,
+      });
+      if (result && result?.code === 0) {
+        afterLoginSuccess(result);
+        await updateWalletBalance();
+      } else {
+        console.error("Login failed:");
+      }
+      closeToast();
+    };
+
+    const refreshSession = async () => {
+      try {
+        session = await $privy.user.get();
+        console.log("session", session);
+        await initWallet();
+        await Promise.all([
+          updateWalletBalance(),
+          updateUserOrderAmountInfo(),
+        ]);
+      } catch (error) {
+        console.log("privy get user error", error);
+      }
+    };
 
     const setupEmbeddedWalletIframe = (iframe: HTMLIFrameElement) => {
       const iframeUrl = $privy.embeddedWallet.getURL();
@@ -128,19 +239,13 @@ export const privyStore = defineStore(
       };
     };
 
-    const sendEmail = async () => {
-      if (isLoading) return;
-      isLoading = true;
+    const getNonce = async (_address: any) => {
       try {
-        await $privy.auth.email.sendCode(email);
-        hasSend = true;
-        errorInfo = "";
+        let res: any = await walletApi.getNonce({ proxyWallet: _address });
+        return res;
       } catch (error) {
-        hasSend = false
-        errorInfo = error;
+        throw error;
       }
-      isLoading = false;
-      oneTimePassword = "";
     };
 
     const logoutPrivy = async () => {
@@ -159,7 +264,7 @@ export const privyStore = defineStore(
       walletClient,
       publicClient,
       errorInfo,
-      doPrivyLogin,
+      doLogin,
       initWallet,
       refreshSession,
       setupEmbeddedWalletIframe,

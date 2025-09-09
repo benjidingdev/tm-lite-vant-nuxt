@@ -3,7 +3,6 @@ import { getAdviseList, getTopicsVote } from "~/api/advise";
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const { setModal } = $(uiStore());
-const { isToken } = $(coreStore());
 const { token } = $(authStore());
 
 const voData = reactive({
@@ -77,7 +76,6 @@ const onLoad = async () => {
 const topicsVote = async (adviseId: number) => {
   if (token.accessToken === "") {
     setModal("loginModal", true);
-    isToken(true);
     closeToast();
     return;
   } else {
@@ -102,7 +100,6 @@ const goToLInk = async (path: string) => {
 const claimReward = () => {
   if (token.accessToken === "") {
     setModal("loginModal", true);
-    isToken(true);
     closeToast();
     return;
   } else {

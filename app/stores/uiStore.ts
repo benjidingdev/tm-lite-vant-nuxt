@@ -14,9 +14,6 @@ export const uiStore = defineStore("uiStore", () => {
     rewardModal: false,
     sharesModal: false
   });
-  let keyBoardIsShow = $ref({
-    settings: false,
-  });
   let onboarding = $ref(null);
   let labelWidth = $ref("12em");
   let timeStamp = Date.now();
@@ -34,10 +31,6 @@ export const uiStore = defineStore("uiStore", () => {
 
   const startOnboarding = () => {
     onboarding?.start();
-  };
-
-  const setKeyBoard = (name: keyof typeof keyBoardIsShow, isShow: boolean) => {
-    keyBoardIsShow[name] = isShow;
   };
 
   const setLoadingToast = (message: string) =>
@@ -59,12 +52,10 @@ export const uiStore = defineStore("uiStore", () => {
   return $$({
     labelWidth,
     modalIsShow,
-    keyBoardIsShow,
     onboarding,
     setModal,
     setLoadingToast,
     showMsgDialog,
-    setKeyBoard,
     startOnboarding,
   });
 });

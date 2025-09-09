@@ -5,18 +5,18 @@ let inputArr = $computed(() => {
   return model?.split("");
 });
 
-const handleFocus = async () => {
-  try {
-    const pastedText = await navigator.clipboard.readText();
-    const extractedCode = pastedText.match(/\d{6}/);
+// const handleFocus = async () => {
+//   try {
+//     const pastedText = await navigator.clipboard.readText();
+//     const extractedCode = pastedText.match(/\d{6}/);
 
-    if (extractedCode) {
-      model = extractedCode[0];
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
+//     if (extractedCode) {
+//       model = extractedCode[0];
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 const onInput = (event) => {
   const value = event.target.value;
@@ -43,7 +43,6 @@ const onInput = (event) => {
       class="hidden-input"
       maxlength="6"
       @input="onInput"
-      @focus="handleFocus"
     />
   </div>
 </template>
