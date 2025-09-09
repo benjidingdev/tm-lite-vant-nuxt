@@ -62,6 +62,7 @@ const getInfoList = async (refresh) => {
 
   if (res.code === 0) {
     cards.push(...res.data.list);
+    cards = cards.filter((item: any) => item.markets && item.markets.length);
   }
   isLoading = false;
 };
