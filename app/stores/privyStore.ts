@@ -25,7 +25,6 @@ export const privyStore = defineStore(
     let walletClient: any = $ref(null);
     let publicClient: any = $ref(null);
     let retryInitWalletCount = 0;
-    let nonce = '';
 
     const userId = $computed(() => session?.user?.id || false);
     const wallet = $computed(() => {
@@ -135,7 +134,6 @@ export const privyStore = defineStore(
           console.log("doSign address:", address);
           const nonceRes = await getNonce(address);
           if (nonceRes) {
-            nonce = nonceRes.data;
             signData = await signLoginMessage(nonceRes.data);
           }
         }
