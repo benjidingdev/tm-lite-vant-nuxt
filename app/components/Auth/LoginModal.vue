@@ -2,53 +2,26 @@
 const emailPattern =
   /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const { todoSign } = $(authStore());
-const { modalIsShow, setKeyBoard, startOnboarding } = $(uiStore());
-const { email, hasSend, isLoading, doPrivyLogin, initWallet, sendEmail } = $(
-  privyStore()
-);
+const { modalIsShow } = $(uiStore());
+let {
+  email,
+  hasSend,
+  isLoading,
+  doLogin,
+  initWallet,
+  sendEmail,
+  oneTimePassword,
+  errorInfo,
+} = $(privyStore());
 const { t } = useI18n();
-let { oneTimePassword, errorInfo } = $(privyStore());
 
 let countdown = $ref(0);
 let resendDisabled = $computed(() => countdown > 0);
 
-const login = async () => {
-  // 1. send email
-  if (!hasSend) {
-    resend();
-    return;
-  }
-
-  if (!oneTimePassword) {
-    return;
-  }
-  // 2. Privy login
-  try {
-    await doPrivyLogin();
-  } catch (error) {
-    errorInfo = error as Error;
-    return;
-  }
-  setKeyBoard("settings", false);
-  // 3. init wallet
-  try {
-    await initWallet();
-  } catch (error) {
-    errorInfo = error as Error;
-    return;
-  }
-  // 4. sign and login
-  try {
-    await todoSign();
-  } catch (error) {
-    errorInfo = error as Error;
-    return;
-  }
-  startOnboarding();
-};
-
-const resend = async () => {
+/**
+ * Send email to Privy to get one time password
+ */
+const getOTP = async () => {
   startCountdown();
   await sendEmail();
 };
@@ -71,7 +44,8 @@ watch(
   () => oneTimePassword,
   (newVal: string) => {
     if (newVal.length === 6) {
-      login();
+      // The entrance of login
+      doLogin();
     }
   }
 );
@@ -129,7 +103,7 @@ const counterText = $computed(() => {
                   'decoration-gray-500': countdown > 0,
                   'decoration-blue-500': countdown <= 0,
                 }"
-                @click="resend"
+                @click="getOTP"
                 :disabled="resendDisabled"
               >
                 <span
@@ -149,7 +123,7 @@ const counterText = $computed(() => {
               round
               block
               type="primary"
-              @click="login"
+              @click="getOTP"
               native-type="submit"
               :loading="isLoading"
             >

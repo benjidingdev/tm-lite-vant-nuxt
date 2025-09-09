@@ -1,21 +1,13 @@
 <script lang="ts" setup>
 let model = $(defineModel());
+let isFocused = $ref(false);
 
 let inputArr = $computed(() => {
   return model?.split("");
 });
 
-const handleFocus = async () => {
-  try {
-    const pastedText = await navigator.clipboard.readText();
-    const extractedCode = pastedText.match(/\d{6}/);
-
-    if (extractedCode) {
-      model = extractedCode[0];
-    }
-  } catch (error) {
-    console.error(error);
-  }
+const onFocus = () => {
+  isFocused = true;
 };
 
 const onInput = (event) => {
@@ -30,11 +22,11 @@ const onInput = (event) => {
       v-for="(n, index) in 6"
       :key="n"
       :class="`code-box rounded ${
-        inputArr.length === index && 'border-black!'
+        isFocused && inputArr.length === index && 'border-black!'
       }`"
     >
       {{ inputArr[index] }}
-      <span v-if="inputArr.length === index" class="cursor" />
+      <span v-if="isFocused && inputArr.length === index" class="cursor" />
     </span>
     <input
       id="password-input"
@@ -43,7 +35,8 @@ const onInput = (event) => {
       class="hidden-input"
       maxlength="6"
       @input="onInput"
-      @focus="handleFocus"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
     />
   </div>
 </template>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import "@vant/touch-emulator";
-import { Locale } from 'vant'
-import enUS from 'vant/es/locale/lang/en-US'
-import zhTW from 'vant/es/locale/lang/zh-TW'
-import jaJP from 'vant/es/locale/lang/ja-JP'
-import koKR from 'vant/es/locale/lang/ko-KR'
+import { Locale } from "vant";
+import enUS from "vant/es/locale/lang/en-US";
+import zhTW from "vant/es/locale/lang/zh-TW";
+import jaJP from "vant/es/locale/lang/ja-JP";
+import koKR from "vant/es/locale/lang/ko-KR";
 
 useHead({
   title: "Turing Market",
@@ -17,7 +17,10 @@ useHead({
   ],
   script: [
     { src: "https://telegram.org/js/telegram-web-app.js", defer: true },
-    { src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js", defer: true },
+    {
+      src: "https://unpkg.com/vconsole@latest/dist/vconsole.min.js",
+      defer: true,
+    },
   ],
 });
 
@@ -25,27 +28,26 @@ const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore());
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 let cleanupIframe: (() => void) | null = null;
 
-const { locale } = useI18n()
+const { locale } = useI18n();
 Locale.add({
-  'en-US': enUS,
-  'zh-TW': zhTW,
-  'ja-JP': jaJP,
-  'ko-KR': koKR,
+  "en-US": enUS,
+  "zh-TW": zhTW,
+  "ja-JP": jaJP,
+  "ko-KR": koKR,
 });
 
 let { startParam } = $(shareStore());
 onMounted(async () => {
   // const vConsole = new VConsole();
 
-  Locale.use(locale.value)
-  refreshSession();
+  Locale.use(locale.value);
 
   if (iframeRef.value) {
     cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
   }
+  await refreshSession();
 
-   startParam = getFatherInviteCode() as any;
-
+  startParam = getFatherInviteCode() as any;
 
   if (startParam.redirect) {
     await navigateTo(startParam.redirect);

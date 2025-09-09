@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { addAdviseList } from "~/api/advise";
 
-const { isToken } = $(coreStore());
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
@@ -20,7 +19,6 @@ const title = ref('')
 const onSubmit = async (values: object) => {
   if (token.accessToken === "") {
     setModal("loginModal", true);
-    isToken(true);
     closeToast();
     return;
   } else {

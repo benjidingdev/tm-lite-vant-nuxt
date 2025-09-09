@@ -7,7 +7,6 @@ import { parseUnits } from "viem";
 const { t } = useI18n();
 const { wallet, publicClient } = $(privyStore());
 const { signWithdraw, walletConfig, userBalance } = $(walletStore());
-const { getNonce } = $(authStore());
 const { withdrawData } = $(withdrawStore());
 
 let depositHash = $ref("");

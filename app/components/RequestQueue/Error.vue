@@ -2,12 +2,13 @@
 import { multiply } from "@/utils/decimal";
 
 
-let { modalIsShow, setModal } = $(uiStore());
-let { failCards } = $(requestQueueStore());
+let { modalIsShow } = $(uiStore());
+let { failCards, requestCount } = $(requestQueueStore());
 
-const close = () => {
-  setModal("requestQueueErrorModal", false);
-};
+function handleRemove(i) {
+  failCards.splice(i, 1);
+  requestCount--;
+}
 </script>
 
 <template>
@@ -24,13 +25,11 @@ const close = () => {
               <template #footer>
                 <span class="text-red-500">
                   {{ item.error?.message || 'Unknown error' }}
-                </span>
-              </template>
-            </van-card>
-            <template #right>
-              <van-button square type="danger" :text="$t('Close')" @click="" />
+                </div>
+                <van-button square size="mini" type="danger" :text="$t('Clear')" @click="handleRemove(i)" />
+              </div>
             </template>
-          </van-swipe-cell>
+          </van-card>
         </template>
 
         <div v-else class="w-full h-full flex items-center">{{ $t('No Error Yet') }}</div>
@@ -39,3 +38,18 @@ const close = () => {
     </article>
   </van-popup>
 </template>
+
+<i18n lang="json">{
+  "en-US": {
+    "Clear": "Clear"
+  },
+  "zh-TW": {
+    "Clear": "清除"
+  },
+  "ja-JP": {
+    "Clear": "クリア"
+  },
+  "ko-KR": {
+    "Clear": "지우기"
+  }
+}</i18n>

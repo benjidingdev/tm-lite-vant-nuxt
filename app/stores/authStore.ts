@@ -1,32 +1,30 @@
-import { getAddress } from "viem";
-import { createSiweMessage } from "viem/siwe";
-import type { SiweMessage } from "@/types";
+
 import { getUserProfile } from "@/api/userInfo";
 import { getLogout } from "~/api/login";
-import * as walletApi from "~/api/wallet";
 
 export const authStore = defineStore(
   "authStore",
   () => {
     const { t } = useI18n();
-    const { updateTraderType, isToken } = $(coreStore());
-    const { setLoadingToast, setModal } = $(uiStore());
-    const { startParam } = $(shareStore());
-    let { loadUserInfo, userInfo, initLocale } = $(userStore());
-    const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
-      walletStore()
-    );
-    let { logoutPrivy, hasSend, isLoading, session, errorInfo, userEmail } = $(privyStore());
+    const { setModal, startOnboarding } = $(uiStore());
+    let { loadUserInfo, userInfo } = $(userStore());
+    const { amountPermit } = $(walletStore());
 
-    let token = $ref({
+    let {
+      logoutPrivy,
+      hasSend,
+      isLoading,
+      session,
+      errorInfo,
+    } = $(privyStore());
+
+    let token: any = $ref({
       accessToken: "",
       expiresTime: "",
       openid: "",
       refreshToken: "",
       userId: "",
     });
-    let isSign = $ref<boolean>(false); // Whether to sign successfully
-    let nonce = $ref<string>(""); // nonce value for signature
 
     // refresh local cache token
     const updateToken = (tokenInfo: any) => {
@@ -53,12 +51,11 @@ export const authStore = defineStore(
       updateToken(data.data);
       setModal("loginModal", false);
       await loadUserInfo();
-      let userProfile = await getUserProfile({
+      await getUserProfile({
         proxyWallet: userInfo.proxyWallet,
       });
-      updateTraderType(userProfile.data.traderType);
-      initLocale();
       await amountPermit();
+      startOnboarding();
     };
 
     // disconnect wallet and log out
@@ -83,116 +80,10 @@ export const authStore = defineStore(
       }
     };
 
-    /**
-     * Sign in, after the user connects the wallet, call the backend service to get the message
-     * Then request the signature, get the signature string, and call the backend interface to verify the signature
-     */
-    const signLoginMessage = async (nonce: string) => {
-      const address = wallet?.address;
-      const chainId = walletClient.chain?.id;
-      const messageObj = {
-        address: getAddress(address),
-        chainId: chainId as number,
-        domain: location.host,
-        nonce,
-        uri: location.origin,
-        version: "1" as "1",
-        issuedAt: new Date(),
-        expirationTime: new Date(Date.now() + 60000),
-        statement:
-          "I accept the TuringM Terms of Service: https://TuringM.io/terms",
-      } as SiweMessage;
-      const message = createSiweMessage(messageObj);
-
-      try {
-        let res = await walletClient.signMessage({
-          account: address,
-          message: message,
-        });
-        return { message: messageObj, signature: res };
-      } catch (err) {
-        isSign = false; // Ensure isSign is false when signing fails
-        isToken(false);
-        throw err;
-      } finally {
-        closeToast();
-      }
-    };
-
-    // get signature message
-    const getNonce = async (_address: any) => {
-      try {
-        let res: any = await walletApi.getNonce({ proxyWallet: _address });
-        return res;
-      } catch (error) {
-        throw error;
-      }
-    };
-
-    /**
-     * Sign in
-     * @returns
-     */
-    const todoSign = async () => {
-      try {
-        setLoadingToast(t("Start to sign"));
-        if (isSign) return;
-        isSign = true;
-        const address = wallet?.address;
-        if (address) {
-          console.log("todoSign address:", address);
-          const nonceRes = await getNonce(address);
-          if (nonceRes) {
-            nonce = nonceRes.data;
-            const signData = await signLoginMessage(nonceRes.data);
-            await todoLogin(signData);
-          }
-        }
-      } catch (error) {
-        throw new Error("error in sign: " + error);
-      } finally {
-        isSign = false;
-        closeToast();
-      }
-    };
-
-    // start login process
-    const todoLogin = async (data: {
-      message: SiweMessage;
-      signature: string;
-    }) => {
-      setLoadingToast(t("Start to login"));
-      const address = wallet?.address;
-      let result = await walletApi.loginByWallet({
-        proxyWallet: address,
-        email: userEmail,
-        ivcode: startParam.inviteCode || '',
-        signature: data.signature,
-        message: data.message,
-      });
-      if (result && result?.code === 0) {
-        afterLoginSuccess(result);
-        // Update wallet balance
-        await updateWalletBalance();
-      } else {
-        console.error("Login failed:");
-      }
-      closeToast();
-    };
-
-    // refresh sign status
-    const updateSign = (sign: boolean) => {
-      isSign = sign;
-    };
-
     return $$({
       token,
-      nonce,
       logOut,
-      todoSign,
       updateToken,
-      updateSign,
-      getNonce,
       afterLoginSuccess,
     });
   },
