@@ -1,11 +1,59 @@
 <script setup>
+
+import Request from '@/utils/request'
+
 const { userInfo } = $(userStore());
 
-const { totalInvite, totalTuit } = defineProps(['totalInvite', 'totalTuit']);
+onMounted(() => {
+  console.log({ userInfo });
+  loadShareUser();
+  loadTotalTuit()
+})
+
+let shareUserList = $ref([]);
+let totalInvite = $ref(0);
+
+async function loadShareUser() {
+  try {
+    const rz = await Request({
+      url: `/app-api/topic/user/shareUserPage`,
+      method: 'post',
+      data: {
+        pageNo: 1,
+        pageSize: 12
+      }
+    })
+    console.log('loadShareUser', userInfo.inviteCode, rz);
+
+    if (rz.data.list) {
+      shareUserList = [
+        ...rz.data.list,
+      ];
+      totalInvite = rz.data.total;
+    }
+  } catch (e) {
+    console.error('loadShareUser', e);
+  }
+}
+
+let totalTuit = $ref(0);
+async function loadTotalTuit() {
+  try {
+    const rz = await Request({
+      url: `/app-api/topic/token/account/get`,
+      method: 'get',
+    })
+    console.log('loadTotalTuit', rz);
+
+    if (rz.data) {
+      totalTuit = rz.data.totalAmount || 0;
+    }
+  } catch (e) {
+    console.error('loadTotalTuit', e);
+  }
+}
 
 async function handleShare() {
-  // const target = document.getElementById('shareTarget');
-  // await captureTargetToPng('shareImageName', target);
   inviteUser(userInfo.inviteCode, '/invite/guide');
 }
 
@@ -14,9 +62,7 @@ async function handleShare() {
 //   await captureTargetToPng('shareImageName', target);
 // }
 
-onMounted(() => {
-  console.log({ userInfo });
-});
+let show = ref(false);
 </script>
 
 
@@ -46,21 +92,23 @@ onMounted(() => {
         </div>
 
       </div>
+
+      <div class="space-x-4 w-full flex justify-center items-center mt-4">
+        <div class="flex-1">
+          <van-button block type="success" @click="handleShare">
+            <van-icon name="share-o" />
+            {{ $t("Invite") }}
+          </van-button>
+        </div>
+
+        <div @click="show = true">
+          <van-icon color="#f60" size="24" name="/icons/help.svg" />
+        </div>
+      </div>
     </div>
-
-    <div class="space-x-4 flex w-1/2">
-      <!-- <div>
-        <van-button type="default" @click="handelImage">
-          <van-icon name="photo-o" />
-          {{ $t("Save") }}
-        </van-button>
-      </div> -->
-      <van-button block type="success" @click="handleShare">
-        <van-icon name="share-o" />
-        {{ $t("Invite") }}
-      </van-button>
-    </div>
-
-
   </section>
+
+  <van-dialog v-model:show="show" :title="$t('Referral Rewards')" closeable :show-confirm-button="false">
+    <InviteUserList :totalInvite :shareUserList />
+  </van-dialog>
 </template>

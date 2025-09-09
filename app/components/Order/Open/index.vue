@@ -99,4 +99,7 @@ onMounted(() => {
       </template>
     </van-swipe-cell>
   </div>
+  <div v-else>
+    <van-empty description="Not Data. Please trade now!" image="search" />
+  </div>
 </template>

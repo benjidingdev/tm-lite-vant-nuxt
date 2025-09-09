@@ -4,23 +4,16 @@ const emailPattern =
 
 const { todoSign } = $(authStore());
 const { modalIsShow, setKeyBoard, startOnboarding } = $(uiStore());
-const {
-  email,
-  hasSend,
-  isLoading,
-  doPrivyLogin,
-  initWallet,
-  errorInfo,
-  sendEmail,
-} = $(privyStore());
+const { email, hasSend, isLoading, doPrivyLogin, initWallet, sendEmail } = $(
+  privyStore()
+);
 const { t } = useI18n();
-let { oneTimePassword } = $(privyStore());
+let { oneTimePassword, errorInfo } = $(privyStore());
 
 let countdown = $ref(0);
 let resendDisabled = $computed(() => countdown > 0);
 
 const login = async () => {
-  // van form vaddate pass; then to here
   // 1. send email
   if (!hasSend) {
     resend();
@@ -30,10 +23,28 @@ const login = async () => {
   if (!oneTimePassword) {
     return;
   }
-  await doPrivyLogin();
+  // 2. Privy login
+  try {
+    await doPrivyLogin();
+  } catch (error) {
+    errorInfo = error as Error;
+    return;
+  }
   setKeyBoard("settings", false);
-  await initWallet();
-  await todoSign();
+  // 3. init wallet
+  try {
+    await initWallet();
+  } catch (error) {
+    errorInfo = error as Error;
+    return;
+  }
+  // 4. sign and login
+  try {
+    await todoSign();
+  } catch (error) {
+    errorInfo = error as Error;
+    return;
+  }
   startOnboarding();
 };
 
@@ -54,24 +65,6 @@ const startCountdown = () => {
       clearInterval(countdownInterval);
     }
   }, 1000);
-};
-
-const handleFocus = async () => {
-  try {
-    // const permissionStatus = await navigator.permissions.query({ name: 'clipboard-read' });
-    // if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
-    // }
-
-    const pastedText = await navigator.clipboard.readText();
-    const extractedCode = pastedText.match(/\d{6}/);
-
-    if (extractedCode) {
-      oneTimePassword = extractedCode[0];
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  setKeyBoard("settings", true);
 };
 
 watch(
@@ -107,6 +100,7 @@ const counterText = $computed(() => {
           <van-field
             v-model="email"
             name="email"
+            left-icon="envelop-o"
             :label="$t('Email')"
             :placeholder="$t('Email')"
             :rules="[
@@ -125,14 +119,8 @@ const counterText = $computed(() => {
             }`"
             >{{ errorInfo ? errorInfo : "Sending..." }}</span
           >
-
           <template v-if="hasSend">
-            <van-password-input
-              :value="oneTimePassword"
-              :mask="false"
-              :focused="true"
-              @focus="handleFocus"
-            />
+            <AuthPasswordInput v-model="oneTimePassword" />
 
             <div class="flex justify-end">
               <button

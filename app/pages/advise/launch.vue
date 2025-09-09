@@ -34,7 +34,6 @@ const onSubmit = async (values: object) => {
       await showDialog({
         message: $t('Successful prompt'),
         confirmButtonText: $t('Shares'),
-        closeOnClickOverlay: true,
         showCancelButton: true // 显示取消按钮
       }).then(async () => {
         // on close
@@ -67,7 +66,7 @@ const getTuit = () => {
 </script>
 <template>
   <div class="h-[calc(100dvh-var(--nav-height))] overflow-y-scroll">
-    <p class="text-center font-bold mb-4">{{ $t('Initiate a topic') }}</p>
+    <p class="text-center font-bold mb-4 text-white">{{ $t('Initiate a topic') }}</p>
     <van-form ref="formRef" @submit="onSubmit">
       <van-cell-group inset>
         <van-field v-model="voData.title" name="title" :label="$t('Title')" :placeholder="$t('Title')" autosize
@@ -82,15 +81,15 @@ const getTuit = () => {
         </van-button>
       </div>
     </van-form>
-    <div class="px-4">
+    <div class="px-4 pb-4">
       <ol type="1" class="text-sm">
-        <li class="mb-4">{{ $t('Suggested Rules') }}</li>
-        <li class="mb-4">{{ $t('Consideration Rules') }}</li>
-        <li class="mb-4"> {{ $t('Adopt Rules') }}
+        <li class="mb-4 text-white">{{ $t('Suggested Rules') }}</li>
+        <li class="mb-4 text-white">{{ $t('Consideration Rules') }}</li>
+        <li class="mb-4 text-white"> {{ $t('Adopt Rules') }}
           <span @click="getTuit" class="underline">（{{ $t('Desc Tuit') }}？）</span>
         </li>
-        <li v-if="more" class="mb-4"> {{ $t('Hide Rules') }}</li>
-        <p class="text-right" @click="more = !more">
+        <li v-if="more" class="mb-4 text-white"> {{ $t('Hide Rules') }}</li>
+        <p class="text-right text-white" @click="more = !more">
           {{ more ? $t('Collapse') : $t('Expand') }}
           <van-icon :name="more ? 'arrow-up' : 'arrow-down'" />
         </p>

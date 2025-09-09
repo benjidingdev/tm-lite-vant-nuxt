@@ -27,11 +27,14 @@ const total = $(defineModel("total"));
 const { tradeVolume } = $(tradeStore());
 const { userBalance, signTradeData } = $(walletStore());
 
+let isTrading = $ref(false);
+
 let priceType = 1;
 let tradeSign = "";
 
 //Click the transaction button
 const transaction = _debounce(async () => {
+  isTrading = true;
   if (trade.details.closed) {
     return false;
   }
@@ -154,14 +157,19 @@ const transaction = _debounce(async () => {
         const res = await getTopicsOrderCreate(params);
 
         if (res.code === 0) {
-          showToast(t("successTrade"));
+          showToast(t("Trade successfully"));
+          isTrading = false;
+        } else {
+          showToast(t("Trade failed"));
+          isTrading = false;
         }
       } else {
         console.log("Wallet sign failed, please check your wallet connection!");
+        isTrading = false;
       }
     }
   } finally {
-    // switchLoading(false);
+    isTrading = false;
   }
 }, 200);
 
@@ -230,6 +238,7 @@ const yesNoClick = (type) => {
       round
       block
       type="primary"
+      :loading="isTrading"
       native-type="submit"
       @click="transaction"
     >

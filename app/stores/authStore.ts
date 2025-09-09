@@ -16,7 +16,7 @@ export const authStore = defineStore(
     const { updateWalletBalance, wallet, walletClient, amountPermit } = $(
       walletStore()
     );
-    let { logoutPrivy, hasSend, isLoading, session, errorInfo } = $(privyStore());
+    let { logoutPrivy, hasSend, isLoading, session, errorInfo, userEmail } = $(privyStore());
 
     let token = $ref({
       accessToken: "",
@@ -134,9 +134,9 @@ export const authStore = defineStore(
      * @returns
      */
     const todoSign = async () => {
-      setLoadingToast(t("Start to sign"));
-      if (isSign) return;
       try {
+        setLoadingToast(t("Start to sign"));
+        if (isSign) return;
         isSign = true;
         const address = wallet?.address;
         if (address) {
@@ -149,7 +149,7 @@ export const authStore = defineStore(
           }
         }
       } catch (error) {
-        console.log("todoSign error", error);
+        throw new Error("error in sign: " + error);
       } finally {
         isSign = false;
         closeToast();
@@ -163,11 +163,10 @@ export const authStore = defineStore(
     }) => {
       setLoadingToast(t("Start to login"));
       const address = wallet?.address;
-      try {
-      } catch (error) { }
       let result = await walletApi.loginByWallet({
         proxyWallet: address,
-        ivcode: startParam.code || '',
+        email: userEmail,
+        ivcode: startParam.inviteCode || '',
         signature: data.signature,
         message: data.message,
       });

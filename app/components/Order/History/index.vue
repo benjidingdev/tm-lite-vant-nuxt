@@ -7,13 +7,12 @@ import { onMounted } from "vue";
 const { setModal } = $(uiStore());
 let { order } = $(userStore());
 
-
-  const queryParams = {
-    pageNo: 1,
-    pageSize: 20,
-    orderBy: "created desc",
-    key: "",
-  }
+const queryParams = {
+  pageNo: 1,
+  pageSize: 20,
+  orderBy: "created desc",
+  key: "",
+};
 
 let marketId = $ref(0);
 let isLoading = $ref(true);
@@ -37,10 +36,9 @@ const fetchHistoryList = async () => {
     if (!res.data) {
       return;
     }
-    order.historyList = [...order.historyList, ...res.data.list]
+    order.historyList = [...order.historyList, ...res.data.list];
     total = res.data.total;
-  } catch (error) {
-  }
+  } catch (error) {}
   isLoading = false;
 };
 
@@ -56,13 +54,22 @@ onMounted(() => {
 <template>
   <div class="w-full bg-color-white p-4" v-if="order?.historyList.length !== 0">
     <van-swipe-cell v-for="item in order?.historyList" :key="item.marketId">
-      <van-card :key="item.marketId" :price="amountMoney(item.volume || 0) +
-        ' shares at ' +
-        dollars2cents(item.price || 0) +
-        '€'
-        " :desc="'Buy ' + item.yesName" :title="item.question" :thumb="item.image" class="mt-2">
+      <van-card
+        :key="item.marketId"
+        :price="
+          amountMoney(item.volume || 0) +
+          ' shares at ' +
+          dollars2cents(item.price || 0) +
+          '€'
+        "
+        :desc="'Buy ' + item.yesName"
+        :title="item.question"
+        :thumb="item.image"
+        class="mt-2"
+      >
         <template #footer>
-          <van-button plain size="mini" type="primary" @click="showShares(item)">{{ $t("Shares") }}
+          <van-button plain size="mini" type="primary" @click="showShares(item)"
+            >{{ $t("Shares") }}
           </van-button>
         </template>
       </van-card>
@@ -70,5 +77,8 @@ onMounted(() => {
         <van-button square type="primary" text="Trade" />
       </template>
     </van-swipe-cell>
+  </div>
+  <div v-else>
+    <van-empty description="Not Data. Please trade now!" image="search" />
   </div>
 </template>

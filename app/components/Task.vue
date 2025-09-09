@@ -58,45 +58,51 @@ onMounted(() => {
           >
             <template #tags>
               <van-tag class="p-2" plain type="primary"
-                >Award: {{ sub.rewardNumber }} {{ sub.rewardType }}</van-tag
+                >{{ $t("Award") }}: {{ sub.rewardNumber }}
+                {{ sub.rewardType }}</van-tag
               >
             </template>
             <template #footer>
               <van-button
                 v-if="sub.isFinish"
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
                 @click="receiveTask(sub)"
               >
-                Get Rewards
+                {{ $t("Get Rewards") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.currentEventValue > 0"
+                size="small"
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                plain
                 @click="router.push(sub.skipUrl)"
               >
-                In Progress
+                {{ $t("In Progress") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'"
+                size="small"
                 type="primary"
+                plain
                 @click="modalIsShow.share = true"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
               >
-                Go To Invite
+                {{ $t("Go To Invite") }}
               </van-button>
               <van-button
                 v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'"
+                size="small"
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                plain
               >
-                Go To Trade
+                {{ $t("Go To Trade") }}
               </van-button>
               <van-button
                 v-else
                 type="primary"
-                class="w-[40%] text-sm font-bold rounded-full border-0 ml-0 mt-4!"
+                size="small"
+                plain
                 @click="router.push(sub.skipUrl)"
               >
                 {{ sub.skipTip }}

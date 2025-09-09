@@ -5,7 +5,7 @@
   const { userBalance } = $(walletStore());
 
   const avatar = computed(() => {
-    return userInfo?.profile?.avatar || 'logo.png'
+    return userInfo?.profile?.avatar || '/logo.png'
   })
 </script>
 
