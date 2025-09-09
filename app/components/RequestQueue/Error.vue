@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { multiply } from "@/utils/decimal";
+const { t } = useI18n()
 
 
 let { modalIsShow } = $(uiStore());
@@ -17,22 +18,23 @@ function handleRemove(i) {
     <article class="w-full h-full flex justify-center items-center flex-col ">
       <div class="w-full text-center text-[18px] py-3 font-[700]">{{ $t("Request Queue Error") }}</div>
 
-      <div class="flex-1 overflow-y-scroll">
+      <div class="w-full flex-1 overflow-y-scroll">
         <template v-if="failCards.length > 0">
-          <van-swipe-cell class="w-full" v-for="item in failCards" :key="item.marketId">
-            <van-card currency="" :key="item.id" :price="multiply(item.transaction.textPrice || 0, 100) + '€'"
-              :desc="item.transaction.type == 1 ? 'Buy ' : 'Sell '" :title="item.title" :thumb="item.image" class="my-1">
-              <template #footer>
-                <span class="text-red-500">
+          <van-card v-for="(item, i) in failCards" currency="" :key="item.id"
+            :price="multiply(item.transaction.textPrice || 0, 100) + '€'"
+            :desc="item.transaction.type == 1 ? 'Buy ' : 'Sell '" :title="item.title" :thumb="item.image" class="my-1 w-full">
+            <template #footer>
+              <div class="flex justify-between">
+                <div class="text-red-500 flex-1">
                   {{ item.error?.message || 'Unknown error' }}
                 </div>
-                <van-button square size="mini" type="danger" :text="$t('Clear')" @click="handleRemove(i)" />
+                <van-button square size="mini" type="danger" :text="t('Clear')" @click="handleRemove(i)" />
               </div>
             </template>
           </van-card>
         </template>
 
-        <div v-else class="w-full h-full flex items-center">{{ $t('No Error Yet') }}</div>
+        <div v-else class="w-full h-full flex justify-center items-center">{{ $t('No Error Yet') }}</div>
       </div>
 
     </article>
