@@ -1,6 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { config as loadEnv } from 'dotenv'
+import { existsSync } from 'fs'
+import { resolve } from 'path'
+
+const envFile = process.env.NODE_ENV === 'dev'
+  ? '.env.dev'
+  : '.env.local'
+
+if (existsSync(resolve(process.cwd(), envFile))) {
+  loadEnv({ path: resolve(process.cwd(), envFile), override: true })
+}
 
 const modules = [
   "@vant/nuxt",

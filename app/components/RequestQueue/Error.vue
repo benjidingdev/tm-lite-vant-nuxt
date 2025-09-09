@@ -19,12 +19,11 @@ function handleRemove(i) {
 
       <div class="flex-1 overflow-y-scroll">
         <template v-if="failCards.length > 0">
-          <van-card v-for="(item, i) in failCards" currency="" :key="item.id"
-            :price="multiply(item.transaction.textPrice || 0, 100) + '€'"
-            :desc="item.transaction.type == 1 ? 'Buy ' : 'Sell '" :title="item.title" :thumb="item.image" class="my-1">
-            <template #footer>
-              <div class="flex justify-between">
-                <div class="text-red-500 flex-1">
+          <van-swipe-cell class="w-full" v-for="item in failCards" :key="item.marketId">
+            <van-card currency="" :key="item.id" :price="multiply(item.transaction.textPrice || 0, 100) + '€'"
+              :desc="item.transaction.type == 1 ? 'Buy ' : 'Sell '" :title="item.title" :thumb="item.image" class="my-1">
+              <template #footer>
+                <span class="text-red-500">
                   {{ item.error?.message || 'Unknown error' }}
                 </div>
                 <van-button square size="mini" type="danger" :text="$t('Clear')" @click="handleRemove(i)" />
