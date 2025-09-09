@@ -67,19 +67,6 @@ const startCountdown = () => {
   }, 1000);
 };
 
-const handleFocus = async () => {
-  try {
-    const pastedText = await navigator.clipboard.readText();
-    const extractedCode = pastedText.match(/\d{6}/);
-
-    if (extractedCode) {
-      oneTimePassword = extractedCode[0];
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  setKeyBoard("settings", true);
-};
 
 watch(
   () => oneTimePassword,
@@ -132,14 +119,8 @@ const counterText = $computed(() => {
             }`"
             >{{ errorInfo ? errorInfo : "Sending..." }}</span
           >
-
           <template v-if="hasSend">
-            <van-password-input
-              :value="oneTimePassword"
-              :mask="false"
-              :focused="true"
-              @focus="handleFocus"
-            />
+            <AuthPasswordInput v-model="oneTimePassword"/>
 
             <div class="flex justify-end">
               <button
