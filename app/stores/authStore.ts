@@ -1,8 +1,6 @@
 
-import type { SiweMessage } from "@/types";
 import { getUserProfile } from "@/api/userInfo";
 import { getLogout } from "~/api/login";
-import * as walletApi from "~/api/wallet";
 
 export const authStore = defineStore(
   "authStore",
@@ -10,9 +8,7 @@ export const authStore = defineStore(
     const { t } = useI18n();
     const { setModal, startOnboarding } = $(uiStore());
     let { loadUserInfo, userInfo } = $(userStore());
-    const { amountPermit } = $(
-      walletStore()
-    );
+    const { amountPermit } = $(walletStore());
 
     let {
       logoutPrivy,
@@ -20,10 +16,9 @@ export const authStore = defineStore(
       isLoading,
       session,
       errorInfo,
-      wallet
     } = $(privyStore());
 
-    let token = $ref({
+    let token: any = $ref({
       accessToken: "",
       expiresTime: "",
       openid: "",
