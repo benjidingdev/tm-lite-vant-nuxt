@@ -50,14 +50,13 @@ export const authStore = defineStore(
     const afterLoginSuccess = async (data: any) => {
       updateToken(data.data);
       setModal("loginModal", false);
-      await updateWalletBalance();
       await loadUserInfo();
       await getUserProfile({
         proxyWallet: userInfo.proxyWallet,
       });
-      await amountPermit();
-
       startOnboarding();
+      await amountPermit();
+      await updateWalletBalance();
     };
 
     // disconnect wallet and log out

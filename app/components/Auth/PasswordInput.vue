@@ -3,15 +3,16 @@ import { _debounce } from "@/utils/debounce";
 import { useTemplateRef } from "vue";
 
 let { pwdInputRef, isPwdFocused } = $(uiStore());
+let { oneTimePassword, doLogin } = $(privyStore());
 
-let model = $(defineModel());
+// let model = $(defineModel());
 
 let value;
 pwdInputRef = useTemplateRef("inputRef");
 console.log(pwdInputRef, "inputRef");
 
 let inputArr = $computed(() => {
-  return model?.split("");
+  return oneTimePassword?.split("");
 });
 
 const onFocus = () => {
@@ -27,8 +28,22 @@ const onInput = async (event) => {
     return;
   }
   value = event.target.value;
-  model = value;
+  oneTimePassword = value;
 };
+
+watch(
+  () => oneTimePassword,
+  async (newVal: string) => {
+    if (newVal.length === 6) {
+      // The entrance of login
+      await doLogin();
+      isPwdFocused = true;
+      pwdInputRef.value = "";
+      pwdInputRef.focus();
+      oneTimePassword = "";
+    }
+  }
+);
 </script>
 
 <template>
