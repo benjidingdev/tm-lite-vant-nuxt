@@ -63,11 +63,11 @@ export const privyStore = defineStore(
 
     // ======== Check login logic in this function( Main login function) =======
     const doLogin = async () => {
-      setupEmbeddedWalletIframe(iframeRef);
       if (session || isLoading) {
         console.log("===session===", session);
         return;
       }
+      setupEmbeddedWalletIframe(iframeRef);
       isLoading = true;
 
       try {
