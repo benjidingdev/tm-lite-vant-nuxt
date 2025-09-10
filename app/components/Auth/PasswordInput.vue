@@ -79,6 +79,7 @@ const onInput = async (event) => {
   height: 100%;
   opacity: 0.1;
   color: transparent;
+  caret-color: transparent;
 }
 .cursor {
   display: inline-block;
@@ -97,5 +98,10 @@ const onInput = async (event) => {
   50% {
     opacity: 0;
   }
+}
+
+.step-one .van-field__control,
+.step-one .van-field__error-message {
+  margin-left: 10px !important;
 }
 </style>

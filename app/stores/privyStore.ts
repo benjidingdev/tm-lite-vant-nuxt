@@ -25,7 +25,7 @@ export const privyStore = defineStore(
     let errorInfo: any = $ref('');
     let walletClient: any = $ref(null);
     let publicClient: any = $ref(null);
-    let cleanupIframe: (() => void) | null = null;
+    let cleanupIframe: () => void = () => {};
     let iframeRef: (HTMLIFrameElement | null) = $ref(null);
 
 
@@ -171,7 +171,6 @@ export const privyStore = defineStore(
       });
       if (result && result?.code === 0) {
         afterLoginSuccess(result);
-        await updateWalletBalance();
       } else {
         console.error("Login failed:");
       }
@@ -210,7 +209,6 @@ export const privyStore = defineStore(
       cleanupIframe = () => {
         window.removeEventListener("message", listener);
         iframe!.src = "";
-        // iframe!.contentWindow.location.reload()
       };
     };
 
@@ -225,9 +223,7 @@ export const privyStore = defineStore(
 
     const logoutPrivy = async () => {
       try {
-        cleanupIframe()
-        await $privy.auth.logout();
-        console.log(cleanupIframe);
+        cleanupIframe();
       } catch (error) {
         console.log("privy logout error", error);
       }
