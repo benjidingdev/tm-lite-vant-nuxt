@@ -113,5 +113,6 @@
   "Rank": "순위",
   "Rewards": "보상",
   "Top 10": "상위 {count}명",
-  "Share Text": "🚀 제가 Turing Market에 「{title}」 제안을 냈어요! ✨ 여러분의 지원이 중요합니다~ 어서 와서 👉{targetUrl} 제 제안에 투표하고 함께 새로운 화제를 만들어봐요! 🔥"
+  "Share Text": "🚀 제가 Turing Market에 「{title}」 제안을 냈어요! ✨ 여러분의 지원이 중요합니다~ 어서 와서 👉{targetUrl} 제 제안에 투표하고 함께 새로운 화제를 만들어봐요! 🔥",
+  "Insufficient balance": "잔액 부족"
 }

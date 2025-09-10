@@ -2,6 +2,7 @@
 import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
+const { t } = useI18n();
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 
@@ -47,6 +48,8 @@ const getInfoList = async (refresh) => {
   if (refresh) {
     isLoading = false;
     if (recommondQueryParams.pageNo * pageSize >= total) {
+      recommondQueryParams.pageNo = 1;
+      getInfoList(false);
       return;
     }
     recommondQueryParams.pageNo++;
@@ -70,9 +73,8 @@ const getInfoList = async (refresh) => {
 const getCardStyle = (index) => {
   if (index === currentIndex) {
     return {
-      transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${
-        offsetX / 20
-      }deg)`,
+      transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${offsetX / 20
+        }deg)`,
       zIndex: 30 - index,
     };
   }
@@ -189,11 +191,11 @@ const bookmark = async (card) => {
     console.log(error);
   }
 
-  swipeCard(statusList[2], () => {});
+  swipeCard(statusList[2], () => { });
 };
 
 const pickNext = () => {
-  swipeCard(statusList[3], () => {});
+  swipeCard(statusList[3], () => { });
 };
 
 // start transaction
@@ -231,7 +233,7 @@ const goDeposit = async (card, isYes) => {
       userCanUseBalance,
     });
     if (userCanUseBalance < transaction.textPrice) {
-      showFailToast("Insufficient balance");
+      showFailToast(t("Insufficient balance"));
       resetCard();
       return false;
     }
@@ -240,15 +242,15 @@ const goDeposit = async (card, isYes) => {
     addRequest(transaction, card);
 
     if (transaction.type === 1) {
-      swipeCard(statusList[0], () => {});
+      swipeCard(statusList[0], () => { });
     } else {
-      swipeCard(statusList[1], () => {});
+      swipeCard(statusList[1], () => { });
     }
   }
   resetCard();
 };
 
-onMounted((e) => {
+onMounted(() => {
   getInfoList(false);
 });
 </script>
@@ -258,27 +260,23 @@ onMounted((e) => {
   <div class="w-full h-[90%] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
-        <div
-          :style="{
+        <div :style="{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '80vh',
+        }">
+          <div :style="{
+            width: '100%',
+            height: '70vw',
             display: 'flex',
-            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            width: '100%',
-            height: '80vh',
-          }"
-        >
-          <div
-            :style="{
-              width: '100%',
-              height: '70vw',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              background: 'var(--van-active-color)',
-              borderRadius: '24px',
-            }"
-          >
+            background: 'var(--van-active-color)',
+            borderRadius: '24px',
+          }">
             <van-loading size="48" />
           </div>
 
@@ -293,48 +291,27 @@ onMounted((e) => {
       </template>
 
       <div v-if="cards.length">
-        <div
-          v-for="(card, index) in cards"
-          :key="card.id"
-          :class="['card', { active: currentIndex === index }]"
-          :style="getCardStyle(index)"
-          class="draggable-element shadow-md"
-          @touchstart="(e) => _debounce(touchStart(e))"
-          @touchmove="(e) => _debounce(touchMove(e))"
-          @touchend="(e) => _debounce(touchEnd(card, e))"
-        >
-          <van-image
-            width="100%"
-            height="50%"
-            :src="card['image']"
-            class="p-2"
-            fit="contain"
-          >
+        <div v-for="(card, index) in cards" :key="card.id" :class="['card', { active: currentIndex === index }]"
+          :style="getCardStyle(index)" class="draggable-element shadow-md" @touchstart="(e) => _debounce(touchStart(e))"
+          @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card, e))">
+          <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="contain">
             <div class="absolute -bottom-8 h-16 w-full z-50">
               <div class="flex justify-between items-center h-full px-6">
                 <div class="flex flex-col items-center text-">
-                  <div
-                    id="step4"
+                  <div id="step4"
                     :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white ml-6`"
-                    @click="buyYes(card)"
-                  >
+                    @click="buyYes(card)">
                     <van-icon name="checked" size="66" color="#97dbb4" />
                   </div>
-                  <text class="text-[#97dbb4]"
-                    >{{ card.markets[0].yesPrice * 100 || 0 }}¢</text
-                  >
+                  <text class="text-[#97dbb4]">{{ card.markets[0].yesPrice * 100 || 0 }}¢</text>
                 </div>
                 <div class="flex flex-col items-center">
-                  <div
-                    id="step5"
+                  <div id="step5"
                     class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg mr-6"
-                    @click="buyNo(card)"
-                  >
+                    @click="buyNo(card)">
                     <van-icon name="clear" size="66" color="#fe9595" />
                   </div>
-                  <text class="text-[#fe9595]"
-                    >{{ card.markets[0].noPrice * 100 || 0 }}¢</text
-                  >
+                  <text class="text-[#fe9595]">{{ card.markets[0].noPrice * 100 || 0 }}¢</text>
                 </div>
               </div>
             </div>
@@ -342,10 +319,7 @@ onMounted((e) => {
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
               </div>
-              <div
-                v-else-if="isSettlement && movingNo"
-                class="hint-box hint nope"
-              >
+              <div v-else-if="isSettlement && movingNo" class="hint-box hint nope">
                 NO
               </div>
               <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
@@ -354,16 +328,12 @@ onMounted((e) => {
 
           <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
             <div class="h-[85%] overflow-auto">
-              <SwipeCardProgressBar
-                class="mt-10"
-                :lastTradePrice="
-                  percentage(card?.markets[0].lastTradePrice, 'num')
-                "
-              />
+              <SwipeCardProgressBar class="mt-10" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
+                " />
               <text class="name mt-4">{{ card.title }}</text>
               <text v-if="card?.markets.length" class="desc">{{
                 card?.markets[0].question
-              }}</text>
+                }}</text>
             </div>
 
             <div class="h-[15%] flex justify-between">
@@ -374,17 +344,13 @@ onMounted((e) => {
       </div>
 
       <div v-else>
-        <van-empty
-          description="If you are interested in Turing Market, please go to our official version"
-          style="--van-empty-description-color: #323232"
-        >
+        <van-empty description="If you are interested in Turing Market, please go to our official version"
+          style="--van-empty-description-color: #323232">
           <template #image>
             <img src="/assets/icon/logo.svg" />
           </template>
 
-          <van-button round type="primary" class="bottom-button"
-            >Launch App</van-button
-          >
+          <van-button round type="primary" class="bottom-button">Launch App</van-button>
         </van-empty>
       </div>
     </van-skeleton>
@@ -458,6 +424,7 @@ onMounted((e) => {
 .gradient-left {
   background-image: linear-gradient(to right, #4fd1c5, #a4e4d5);
 }
+
 .gradient-right {
   background-image: linear-gradient(to right, #f2a4b7, #f472b6);
 }
