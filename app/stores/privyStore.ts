@@ -225,11 +225,9 @@ export const privyStore = defineStore(
 
     const logoutPrivy = async () => {
       try {
-
+        cleanupIframe()
         await $privy.auth.logout();
         console.log(cleanupIframe);
-
-        cleanupIframe()
       } catch (error) {
         console.log("privy logout error", error);
       }
