@@ -13,7 +13,7 @@ export const privyStore = defineStore(
     const { updateUserOrderAmountInfo } = $(userStore());
     const { startParam } = $(shareStore());
     const { setLoadingToast } = $(uiStore());
-    let { afterLoginSuccess } = $(authStore());
+    let { afterLoginSuccess, token } = $(authStore());
     const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
     let email = $ref("");
@@ -60,8 +60,10 @@ export const privyStore = defineStore(
 
     // ======== Check login logic in this function( Main login function) =======
     const doLogin = async () => {
-      if (session) return;
-      if (isLoading) return;
+      if (session || isLoading) {
+        console.log("===session===", session);
+        return;
+      }
       isLoading = true;
 
       try {
@@ -177,6 +179,11 @@ export const privyStore = defineStore(
 
     const refreshSession = async () => {
       try {
+        if (token.accessToken === "") {
+          await logoutPrivy();
+          session = null;
+          return;
+        };
         session = await $privy.user.get();
         console.log("session", session);
         await initWallet();
@@ -185,6 +192,7 @@ export const privyStore = defineStore(
           updateUserOrderAmountInfo(),
         ]);
       } catch (error) {
+        session = null;
         console.log("privy get user error", error);
       }
     };
@@ -252,6 +260,8 @@ export const privyStore = defineStore(
         "oneTimePassword",
         "hasSend",
         "errorInfo",
+        "session",
+        "initWallet",
       ],
       debug: true,
     },
