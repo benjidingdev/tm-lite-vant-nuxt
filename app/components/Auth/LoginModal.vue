@@ -8,7 +8,6 @@ let {
   hasSend,
   isLoading,
   doLogin,
-  initWallet,
   sendEmail,
   oneTimePassword,
   errorInfo,

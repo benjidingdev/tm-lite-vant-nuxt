@@ -24,9 +24,8 @@ useHead({
   ],
 });
 
-const { setupEmbeddedWalletIframe, refreshSession } = $(privyStore());
+let { setupEmbeddedWalletIframe, refreshSession, cleanupIframe } = $(privyStore());
 const iframeRef = ref<HTMLIFrameElement | null>(null);
-let cleanupIframe: (() => void) | null = null;
 
 const { locale } = useI18n();
 Locale.add({
@@ -39,12 +38,11 @@ Locale.add({
 let { startParam } = $(shareStore());
 onMounted(async () => {
   // const vConsole = new VConsole();
-
   Locale.use(locale.value);
 
-  if (iframeRef.value) {
-    cleanupIframe = setupEmbeddedWalletIframe(iframeRef.value);
-  }
+
+  setupEmbeddedWalletIframe(iframeRef!.value);
+
   await refreshSession();
 
   startParam = getFatherInviteCode() as any;
@@ -54,8 +52,9 @@ onMounted(async () => {
   }
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (cleanupIframe) {
+    console.log("app onUnmounted", cleanupIframe);
     cleanupIframe();
     cleanupIframe = null;
   }
