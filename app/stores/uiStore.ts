@@ -16,7 +16,8 @@ export const uiStore = defineStore("uiStore", () => {
   });
   let onboarding = $ref(null);
   let labelWidth = $ref("12em");
-  let timeStamp = Date.now();
+  let pwdInputRef = $ref("");
+  let isPwdFocused = $ref(false);
 
   const setModal = (
     name: keyof typeof modalIsShow,
@@ -53,6 +54,8 @@ export const uiStore = defineStore("uiStore", () => {
     labelWidth,
     modalIsShow,
     onboarding,
+    pwdInputRef,
+    isPwdFocused,
     setModal,
     setLoadingToast,
     showMsgDialog,

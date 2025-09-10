@@ -1,17 +1,32 @@
 <script lang="ts" setup>
+import { _debounce } from "@/utils/debounce";
+import { useTemplateRef } from "vue";
+
+let { pwdInputRef, isPwdFocused } = $(uiStore());
+
 let model = $(defineModel());
-let isFocused = $ref(false);
+
+let value;
+pwdInputRef = useTemplateRef("inputRef");
+console.log(pwdInputRef, "inputRef");
 
 let inputArr = $computed(() => {
   return model?.split("");
 });
 
 const onFocus = () => {
-  isFocused = true;
+  isPwdFocused = true;
 };
 
-const onInput = (event) => {
-  const value = event.target.value;
+const onBlur = () => {
+  isPwdFocused = false;
+};
+
+const onInput = async (event) => {
+  if (!isPwdFocused) {
+    return;
+  }
+  value = event.target.value;
   model = value;
 };
 </script>
@@ -22,21 +37,21 @@ const onInput = (event) => {
       v-for="(n, index) in 6"
       :key="n"
       :class="`code-box rounded ${
-        isFocused && inputArr.length === index && 'border-black!'
+        isPwdFocused && inputArr.length === index && 'border-black!'
       }`"
     >
       {{ inputArr[index] }}
-      <span v-if="isFocused && inputArr.length === index" class="cursor" />
+      <span v-if="isPwdFocused && inputArr.length === index" class="cursor" />
     </span>
     <input
       id="password-input"
-      type="tel"
-      autofocus
-      class="hidden-input"
+      ref="inputRef"
+      type="text"
+      :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']"
       maxlength="6"
-      @input="onInput"
-      @focus="isFocused = true"
-      @blur="isFocused = false"
+      @input="(e) => _debounce(onInput(e), 100)"
+      @focus.prevent="onFocus"
+      @blur.prevent="onBlur"
     />
   </div>
 </template>
@@ -64,7 +79,6 @@ const onInput = (event) => {
   height: 100%;
   opacity: 0.1;
   color: transparent;
-  caret-color: transparent;
 }
 .cursor {
   display: inline-block;

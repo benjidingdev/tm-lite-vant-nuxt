@@ -3,6 +3,7 @@ import { createSiweMessage } from "viem/siwe";
 import type { SiweMessage } from "@/types";
 import { getNetworks } from "~/config/networks";
 import * as walletApi from "~/api/wallet";
+import { log } from "logrocket";
 
 export const privyStore = defineStore(
   "privyStore",
@@ -24,7 +25,10 @@ export const privyStore = defineStore(
     let errorInfo: any = $ref('');
     let walletClient: any = $ref(null);
     let publicClient: any = $ref(null);
-    let retryInitWalletCount = 0;
+    let cleanupIframe: (() => void) | null = null;
+    let iframeRef: (HTMLIFrameElement | null) = $ref(null);
+
+
 
     const userId = $computed(() => session?.user?.id || false);
     const wallet = $computed(() => {
@@ -63,6 +67,7 @@ export const privyStore = defineStore(
         console.log("===session===", session);
         return;
       }
+      setupEmbeddedWalletIframe(iframeRef);
       isLoading = true;
 
       try {
@@ -81,48 +86,17 @@ export const privyStore = defineStore(
     const initWallet = async () => {
       try {
         if (!session || !userId) return;
-
-        let theWallet = $PrivySDK.getUserEmbeddedWallet(session?.user);
-        console.log("theWallet", theWallet);
-        if (!theWallet) {
-          theWallet = await $privy.embeddedWallet.create({});
-          session = await $privy.user.get();
-        }
-
-        const { entropyId, entropyIdVerifier } =
-          $PrivySDK.getEntropyDetailsFromUser(session?.user);
-        console.log('xxx', {
-          wallet,
-          entropyId,
-          entropyIdVerifier,
-        }, session)
-        const provider = await $privy.embeddedWallet.getEthereumProvider({
-          wallet,
-          entropyId,
-          entropyIdVerifier,
-        });
-        walletClient = createWalletClient({
-          account: wallet.address,
-          chain: networks[0],
-          transport: custom(provider),
-        });
-        publicClient = createPublicClient({
-          chain: networks[0],
-          transport: custom(provider),
-        });
+        // await _initWallet($PrivySDK, session, $privy, wallet, createWalletClient, createPublicClient, custom, networks)
+        const {
+          walletClient: _walletClient,
+          publicClient: _publicClient
+        } = await retryAsyncFn(() => _initWallet($PrivySDK, session, $privy, wallet, createWalletClient, createPublicClient, custom, networks), 5, 200)
+        walletClient = _walletClient;
+        publicClient = _publicClient;
         console.log("walletClient", walletClient);
+        console.log("publicClient", publicClient);
       } catch (error: Error | any) {
-        let timer;
-        retryInitWalletCount++;
-        if (retryInitWalletCount < 3) {
-          timer = setTimeout(async () => {
-            await initWallet();
-          }, retryInitWalletCount * 1000);
-        } else {
-          clearInterval(timer);
-          retryInitWalletCount = 0;
-          errorInfo = "init wallet error: " + error.message;
-        }
+        errorInfo = "init wallet error: " + error.message;
       }
     };
 
@@ -209,11 +183,6 @@ export const privyStore = defineStore(
 
     const refreshSession = async () => {
       try {
-        if (token.accessToken === "") {
-          await logoutPrivy();
-          session = null;
-          return;
-        };
         session = await $privy.user.get();
         console.log("session", session);
         await initWallet();
@@ -227,10 +196,10 @@ export const privyStore = defineStore(
       }
     };
 
-    const setupEmbeddedWalletIframe = (iframe: HTMLIFrameElement) => {
+    const setupEmbeddedWalletIframe = (iframe: HTMLIFrameElement | null) => {
       const iframeUrl = $privy.embeddedWallet.getURL();
-      iframe.src = iframeUrl;
-      $privy.setMessagePoster(iframe.contentWindow);
+      iframe!.src = iframeUrl;
+      $privy.setMessagePoster(iframe!.contentWindow);
       const listener = (e) => {
         try {
           $privy.embeddedWallet.onMessage(e.data);
@@ -240,8 +209,11 @@ export const privyStore = defineStore(
         }
       };
       window.addEventListener("message", listener);
-      return () => {
+
+      cleanupIframe = () => {
         window.removeEventListener("message", listener);
+        iframe!.src = "";
+        // iframe!.contentWindow.location.reload()
       };
     };
 
@@ -255,10 +227,19 @@ export const privyStore = defineStore(
     };
 
     const logoutPrivy = async () => {
-      await $privy.auth.logout();
+      try {
+
+        await $privy.auth.logout();
+        console.log(cleanupIframe);
+
+        cleanupIframe()
+      } catch (error) {
+        console.log("privy logout error", error);
+      }
     };
 
     return $$({
+      iframeRef,
       email,
       hasSend,
       oneTimePassword,
@@ -274,6 +255,7 @@ export const privyStore = defineStore(
       initWallet,
       refreshSession,
       setupEmbeddedWalletIframe,
+      cleanupIframe,
       logoutPrivy,
       sendEmail,
     });

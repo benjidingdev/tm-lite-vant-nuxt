@@ -64,7 +64,6 @@ export const authStore = defineStore(
         showToast(t("Logging out..."));
         hasSend = false;
         isLoading = false;
-        await logoutPrivy();
 
         let res: any = await getLogout();
         if (res?.code === 0) {
@@ -75,6 +74,7 @@ export const authStore = defineStore(
           userInfo = {}
           session = null;
           errorInfo = null;
+          await logoutPrivy();
           showToast(t("Logout successful"));
         }
       } catch (e) {

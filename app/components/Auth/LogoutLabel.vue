@@ -5,7 +5,7 @@
   const onClick = async () => {
     await logOut();
     setModal('settings', false);
-    window.location.reload();
+    // window.location.reload();
   };
 </script>
 
