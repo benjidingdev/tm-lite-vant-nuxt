@@ -2,7 +2,7 @@
 const emailPattern =
   /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const { modalIsShow } = $(uiStore());
+let { modalIsShow, pwdInputRef, isPwdFocused } = $(uiStore());
 let {
   email,
   hasSend,
@@ -45,7 +45,32 @@ watch(
     if (newVal.length === 6) {
       // The entrance of login
       await doLogin();
+      isPwdFocused = true;
+      pwdInputRef.value = "";
+      pwdInputRef.focus();
       oneTimePassword = "";
+    }
+  }
+);
+
+watch(
+  () => modalIsShow.loginModal,
+  async (newVal: boolean) => {
+    if (newVal) {
+      setTimeout(() => {
+        pwdInputRef.focus();
+      }, 300);
+    }
+  }
+);
+
+watch(
+  () => hasSend,
+  async (newVal: boolean) => {
+    if (newVal) {
+      setTimeout(() => {
+        pwdInputRef.focus();
+      }, 300);
     }
   }
 );
