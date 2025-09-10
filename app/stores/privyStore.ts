@@ -3,7 +3,6 @@ import { createSiweMessage } from "viem/siwe";
 import type { SiweMessage } from "@/types";
 import { getNetworks } from "~/config/networks";
 import * as walletApi from "~/api/wallet";
-import { log } from "logrocket";
 
 export const privyStore = defineStore(
   "privyStore",
@@ -25,7 +24,7 @@ export const privyStore = defineStore(
     let errorInfo: any = $ref('');
     let walletClient: any = $ref(null);
     let publicClient: any = $ref(null);
-    let cleanupIframe: (() => void) | null = null;
+    let cleanupIframe: () => void = () => {};
     let iframeRef: (HTMLIFrameElement | null) = $ref(null);
 
 
@@ -67,7 +66,6 @@ export const privyStore = defineStore(
         console.log("===session===", session);
         return;
       }
-      setupEmbeddedWalletIframe(iframeRef);
       isLoading = true;
 
       try {
@@ -84,10 +82,12 @@ export const privyStore = defineStore(
     };
 
     const initWallet = async () => {
+      if (!session || !userId) return;
+
       try {
-        if (!session || !userId) return;
+        setupEmbeddedWalletIframe(iframeRef);
         // await _initWallet($PrivySDK, session, $privy, wallet, createWalletClient, createPublicClient, custom, networks)
-        const rz = await retryAsyncFn(() => _initWallet($PrivySDK, session, $privy, createWalletClient, createPublicClient, custom, networks), 5, 200)
+        const rz = await retryAsyncFn(() => _initWallet($PrivySDK, session, $privy, createWalletClient, createPublicClient, custom, networks), 3, 50)
         console.log("initWallet success", rz);
         walletClient = rz.walletClient;
         publicClient = rz.publicClient;
@@ -171,7 +171,6 @@ export const privyStore = defineStore(
       });
       if (result && result?.code === 0) {
         afterLoginSuccess(result);
-        await updateWalletBalance();
       } else {
         console.error("Login failed:");
       }
@@ -210,7 +209,6 @@ export const privyStore = defineStore(
       cleanupIframe = () => {
         window.removeEventListener("message", listener);
         iframe!.src = "";
-        // iframe!.contentWindow.location.reload()
       };
     };
 
@@ -225,9 +223,7 @@ export const privyStore = defineStore(
 
     const logoutPrivy = async () => {
       try {
-        cleanupIframe()
-        await $privy.auth.logout();
-        console.log(cleanupIframe);
+        cleanupIframe();
       } catch (error) {
         console.log("privy logout error", error);
       }

@@ -8,7 +8,7 @@ export const authStore = defineStore(
     const { t } = useI18n();
     const { setModal, startOnboarding } = $(uiStore());
     let { loadUserInfo, userInfo } = $(userStore());
-    const { amountPermit } = $(walletStore());
+    const { amountPermit, updateWalletBalance } = $(walletStore());
 
     let {
       logoutPrivy,
@@ -54,8 +54,9 @@ export const authStore = defineStore(
       await getUserProfile({
         proxyWallet: userInfo.proxyWallet,
       });
-      await amountPermit();
       startOnboarding();
+      await amountPermit();
+      await updateWalletBalance();
     };
 
     // disconnect wallet and log out
