@@ -250,9 +250,7 @@ const goDeposit = async (card, isYes) => {
   resetCard();
 };
 
-onMounted((e) => {
-      showFailToast(t("Insufficient balance"));
-
+onMounted(() => {
   getInfoList(false);
 });
 </script>
