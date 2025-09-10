@@ -3,6 +3,7 @@ import { createSiweMessage } from "viem/siwe";
 import type { SiweMessage } from "@/types";
 import { getNetworks } from "~/config/networks";
 import * as walletApi from "~/api/wallet";
+import { log } from "logrocket";
 
 export const privyStore = defineStore(
   "privyStore",
@@ -200,7 +201,7 @@ export const privyStore = defineStore(
     const setupEmbeddedWalletIframe = (iframe: HTMLIFrameElement | null) => {
       const iframeUrl = $privy.embeddedWallet.getURL();
       iframe!.src = iframeUrl;
-      $privy.setMessagePoster(iframe.contentWindow);
+      $privy.setMessagePoster(iframe!.contentWindow);
       const listener = (e) => {
         try {
           $privy.embeddedWallet.onMessage(e.data);
@@ -213,7 +214,8 @@ export const privyStore = defineStore(
 
       cleanupIframe = () => {
         window.removeEventListener("message", listener);
-        iframe!.src = "about:blank";
+        iframe!.src = "";
+        iframe!.contentWindow.location.reload()
       };
     };
 
@@ -228,6 +230,9 @@ export const privyStore = defineStore(
 
     const logoutPrivy = async () => {
       await $privy.auth.logout();
+      console.log(cleanupIframe);
+
+      cleanupIframe()
     };
 
     return $$({
