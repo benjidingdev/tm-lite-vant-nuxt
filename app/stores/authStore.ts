@@ -69,6 +69,8 @@ export const authStore = defineStore(
         let res: any = await getLogout();
         if (res?.code === 0) {
           deleteAllCookies();
+          localStorage?.clear();
+          sessionStorage?.clear();
           updateToken({});
           userInfo = {}
           session = null;

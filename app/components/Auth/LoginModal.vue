@@ -42,10 +42,11 @@ const startCountdown = () => {
 
 watch(
   () => oneTimePassword,
-  (newVal: string) => {
+  async (newVal: string) => {
     if (newVal.length === 6) {
       // The entrance of login
-      doLogin();
+      await doLogin();
+      oneTimePassword = "";
     }
   }
 );
