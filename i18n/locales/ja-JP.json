@@ -112,5 +112,6 @@
   "Rank": "ランク",
   "Rewards": "報酬",
   "Top 10": "トップ{count}",
-  "Share Text": "🚀 私はTuring Marketで「{title}」という提案をしました！ ✨ あなたの支援が大切です～ さっそく 👉{targetUrl} 私の提案に投票して、一緒に新しい話題を創りましょう！🔥"
+  "Share Text": "🚀 私はTuring Marketで「{title}」という提案をしました！ ✨ あなたの支援が大切です～ さっそく 👉{targetUrl} 私の提案に投票して、一緒に新しい話題を創りましょう！🔥",
+  "Insufficient balance": "残高不足"
 }

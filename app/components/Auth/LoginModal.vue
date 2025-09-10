@@ -2,15 +2,13 @@
 const emailPattern =
   /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const { modalIsShow } = $(uiStore());
+let { modalIsShow, pwdInputRef, isPwdFocused } = $(uiStore());
 let {
   email,
   hasSend,
   isLoading,
   doLogin,
-  initWallet,
   sendEmail,
-  oneTimePassword,
   errorInfo,
 } = $(privyStore());
 const { t } = useI18n();
@@ -41,12 +39,14 @@ const startCountdown = () => {
 };
 
 watch(
-  () => oneTimePassword,
-  async (newVal: string) => {
-    if (newVal.length === 6) {
-      // The entrance of login
-      await doLogin();
-      oneTimePassword = "";
+  () => [modalIsShow.loginModal, hasSend],
+  async (newVal: boolean) => {
+    if (newVal) {
+      setTimeout(() => {
+        if (pwdInputRef) {
+          pwdInputRef.focus();
+        }
+      }, 300);
     }
   }
 );
@@ -76,7 +76,6 @@ const counterText = $computed(() => {
             v-model="email"
             name="email"
             left-icon="envelop-o"
-            :label="$t('Email')"
             :placeholder="$t('Email')"
             :rules="[
               { required: true, message: $t('Please enter email') },
@@ -95,7 +94,7 @@ const counterText = $computed(() => {
             >{{ errorInfo ? errorInfo : "Sending..." }}</span
           >
           <template v-if="hasSend">
-            <AuthPasswordInput v-model="oneTimePassword" />
+            <AuthPasswordInput />
 
             <div class="flex justify-end">
               <button
