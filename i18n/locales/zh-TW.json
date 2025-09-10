@@ -165,5 +165,6 @@
   "Rank": "排名",
   "Rewards": "獎勵",
   "Top 10": "前 {count} 名",
-  "Share Text": "🚀 我在 Turing Market 提出了「{title}」的建議！ ✨ 你的支持很重要～ 快來 👉{targetUrl} 爲我的建議投票助力，一起創造新話題！🔥入要轉換的內容"
+  "Share Text": "🚀 我在 Turing Market 提出了「{title}」的建議！ ✨ 你的支持很重要～ 快來 👉{targetUrl} 爲我的建議投票助力，一起創造新話題！🔥入要轉換的內容",
+  "Insufficient balance": "餘額不足"
 }
