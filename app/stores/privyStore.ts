@@ -87,14 +87,11 @@ export const privyStore = defineStore(
       try {
         if (!session || !userId) return;
         // await _initWallet($PrivySDK, session, $privy, wallet, createWalletClient, createPublicClient, custom, networks)
-        const {
-          walletClient: _walletClient,
-          publicClient: _publicClient
-        } = await retryAsyncFn(() => _initWallet($PrivySDK, session, $privy, wallet, createWalletClient, createPublicClient, custom, networks), 5, 200)
-        walletClient = _walletClient;
-        publicClient = _publicClient;
-        console.log("walletClient", walletClient);
-        console.log("publicClient", publicClient);
+        const rz = await retryAsyncFn(() => _initWallet($PrivySDK, session, $privy, createWalletClient, createPublicClient, custom, networks), 5, 200)
+        console.log("initWallet success", rz);
+        walletClient = rz.walletClient;
+        publicClient = rz.publicClient;
+        session = rz.session;
       } catch (error: Error | any) {
         errorInfo = "init wallet error: " + error.message;
       }
