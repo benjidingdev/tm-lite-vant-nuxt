@@ -13,13 +13,21 @@ export async function retryAsyncFn(fn: Function, retries = 3, delay = 0) {
   }
 }
 
-export async function _initWallet($PrivySDK: any, session: any, $privy: any, wallet: any, createWalletClient: any, createPublicClient: any, custom: any, networks: any) {
+export async function _initWallet($PrivySDK: any, session: any, $privy: any, createWalletClient: any, createPublicClient: any, custom: any, networks: any) {
   try {
     let theWallet = $PrivySDK.getUserEmbeddedWallet(session!.user);
     console.log("theWallet", theWallet);
     if (!theWallet) {
       theWallet = await $privy.embeddedWallet.create({});
+      console.log("theWallet create success", theWallet);
       session = await $privy.user.get();
+    }
+
+    const wallet = session?.user?.linked_accounts?.find(
+      (item: any) => item.type === "wallet"
+    ) || null;
+    if (!wallet) {
+      throw new Error("wallet not found");
     }
 
     const { entropyId, entropyIdVerifier } =
@@ -45,7 +53,7 @@ export async function _initWallet($PrivySDK: any, session: any, $privy: any, wal
       chain: networks[0],
       transport: custom(provider),
     });
-    return { walletClient, publicClient };
+    return { walletClient, publicClient, session };
   } catch (error: Error | any) {
     throw error;
   }
