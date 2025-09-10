@@ -9,7 +9,6 @@ let {
   isLoading,
   doLogin,
   sendEmail,
-  oneTimePassword,
   errorInfo,
 } = $(privyStore());
 const { t } = useI18n();
@@ -38,20 +37,6 @@ const startCountdown = () => {
     }
   }, 1000);
 };
-
-watch(
-  () => oneTimePassword,
-  async (newVal: string) => {
-    if (newVal.length === 6) {
-      // The entrance of login
-      await doLogin();
-      isPwdFocused = true;
-      pwdInputRef.value = "";
-      pwdInputRef.focus();
-      oneTimePassword = "";
-    }
-  }
-);
 
 watch(
   () => [modalIsShow.loginModal, hasSend],
@@ -109,7 +94,7 @@ const counterText = $computed(() => {
             >{{ errorInfo ? errorInfo : "Sending..." }}</span
           >
           <template v-if="hasSend">
-            <AuthPasswordInput v-model="oneTimePassword" />
+            <AuthPasswordInput />
 
             <div class="flex justify-end">
               <button
