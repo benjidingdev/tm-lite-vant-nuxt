@@ -54,22 +54,13 @@ watch(
 );
 
 watch(
-  () => modalIsShow.loginModal,
+  () => [modalIsShow.loginModal, hasSend],
   async (newVal: boolean) => {
     if (newVal) {
       setTimeout(() => {
-        pwdInputRef.focus();
-      }, 300);
-    }
-  }
-);
-
-watch(
-  () => hasSend,
-  async (newVal: boolean) => {
-    if (newVal) {
-      setTimeout(() => {
-        pwdInputRef.focus();
+        if (pwdInputRef) {
+          pwdInputRef.focus();
+        }
       }, 300);
     }
   }
@@ -100,7 +91,6 @@ const counterText = $computed(() => {
             v-model="email"
             name="email"
             left-icon="envelop-o"
-            :label="$t('Email')"
             :placeholder="$t('Email')"
             :rules="[
               { required: true, message: $t('Please enter email') },
