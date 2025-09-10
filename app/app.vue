@@ -24,9 +24,7 @@ useHead({
   ],
 });
 
-let { setupEmbeddedWalletIframe, refreshSession, cleanupIframe } = $(privyStore());
-const iframeRef = ref<HTMLIFrameElement | null>(null);
-
+let { iframeRef, refreshSession } = $(privyStore());
 const { locale } = useI18n();
 Locale.add({
   "en-US": enUS,
@@ -41,22 +39,18 @@ onMounted(async () => {
   Locale.use(locale.value);
 
 
-  setupEmbeddedWalletIframe(iframeRef!.value);
+  // setupEmbeddedWalletIframe(iframeRef!.value);
 
-  await refreshSession();
+  console.log("app onMounted", iframeRef, iframeRef!.src);
+  if (iframeRef!.src) {
+    await refreshSession();
+  }
+
 
   startParam = getFatherInviteCode() as any;
 
   if (startParam.redirect) {
     await navigateTo(startParam.redirect);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (cleanupIframe) {
-    console.log("app onUnmounted", cleanupIframe);
-    cleanupIframe();
-    cleanupIframe = null;
   }
 });
 </script>

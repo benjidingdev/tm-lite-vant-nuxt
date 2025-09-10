@@ -26,6 +26,8 @@ export const privyStore = defineStore(
     let walletClient: any = $ref(null);
     let publicClient: any = $ref(null);
     let cleanupIframe: (() => void) | null = null;
+    let iframeRef: (HTMLIFrameElement | null) = $ref(null);
+
 
 
     const userId = $computed(() => session?.user?.id || false);
@@ -61,6 +63,7 @@ export const privyStore = defineStore(
 
     // ======== Check login logic in this function( Main login function) =======
     const doLogin = async () => {
+      setupEmbeddedWalletIframe(iframeRef);
       if (session || isLoading) {
         console.log("===session===", session);
         return;
@@ -180,11 +183,6 @@ export const privyStore = defineStore(
 
     const refreshSession = async () => {
       try {
-        if (token.accessToken === "") {
-          await logoutPrivy();
-          session = null;
-          return;
-        };
         session = await $privy.user.get();
         console.log("session", session);
         await initWallet();
@@ -215,7 +213,7 @@ export const privyStore = defineStore(
       cleanupIframe = () => {
         window.removeEventListener("message", listener);
         iframe!.src = "";
-        iframe!.contentWindow.location.reload()
+        // iframe!.contentWindow.location.reload()
       };
     };
 
@@ -229,13 +227,19 @@ export const privyStore = defineStore(
     };
 
     const logoutPrivy = async () => {
-      await $privy.auth.logout();
-      console.log(cleanupIframe);
+      try {
 
-      cleanupIframe()
+        await $privy.auth.logout();
+        console.log(cleanupIframe);
+
+        cleanupIframe()
+      } catch (error) {
+        console.log("privy logout error", error);
+      }
     };
 
     return $$({
+      iframeRef,
       email,
       hasSend,
       oneTimePassword,
