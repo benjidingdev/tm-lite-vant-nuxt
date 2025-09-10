@@ -47,6 +47,8 @@ const getInfoList = async (refresh) => {
   if (refresh) {
     isLoading = false;
     if (recommondQueryParams.pageNo * pageSize >= total) {
+      recommondQueryParams.pageNo = 1;
+      getInfoList(false);
       return;
     }
     recommondQueryParams.pageNo++;
