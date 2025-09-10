@@ -38,20 +38,12 @@ onMounted(async () => {
   // const vConsole = new VConsole();
   Locale.use(locale.value);
 
-
-  // setupEmbeddedWalletIframe(iframeRef!.value);
-
-  console.log("app onMounted", iframeRef, iframeRef!.src);
-  if (iframeRef!.src) {
-    await refreshSession();
-  }
-
-
   startParam = getFatherInviteCode() as any;
-
   if (startParam.redirect) {
     await navigateTo(startParam.redirect);
   }
+
+  await refreshSession();
 });
 </script>
 
