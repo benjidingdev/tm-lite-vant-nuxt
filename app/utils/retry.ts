@@ -7,7 +7,7 @@ export async function retryAsyncFn(fn: Function, retries = 3, delay = 0) {
         throw error;
       }
       if (delay > 0) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay * i));
       }
     }
   }
@@ -26,6 +26,7 @@ export async function _initWallet($PrivySDK: any, session: any, $privy: any, cre
     const wallet = session?.user?.linked_accounts?.find(
       (item: any) => item.type === "wallet"
     ) || null;
+
     if (!wallet) {
       throw new Error("wallet not found");
     }
