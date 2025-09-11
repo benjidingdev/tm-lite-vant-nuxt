@@ -4,6 +4,9 @@ definePageMeta({
   layout: "x",
 });
 
+const { t } = useI18n()
+const route = useRoute()
+
 async function capture(targetId = 'my-div', name = 'shareImageName') {
   if (!targetId) {
     return;
@@ -18,10 +21,27 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
   await captureTargetToPng(name, target);
 }
 
+const handleBack = () => {
+  window.history.back()
+}
+
 </script>
 
 <template>
-  <article class="w-full h-full flex flex-col justify-center items-center pt-4">
+  <article class="w-full h-auto flex flex-col justify-center items-center pt-0">
+
+    <p class="text-4xl w-full mb-2 sticky top-0 z-1 flex justify-between items-center bg-black">
+      <span class="text-base ml-2" @click="handleBack">
+        <van-icon name="arrow-left" size="30" />
+      </span>
+      <span class="flex-1 text-center">
+        {{
+          t('Topic Detail', {
+            tier: route.params.uid
+          })
+        }}
+      </span>
+    </p>
 
     <div id="my-div" class="relative w-[320px] rounded-2xl pt-8 pb-6 px-8 bg
       border border-[#16653480] text-center text-white shadow-lg">
@@ -36,9 +56,9 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
         <p class="text-sm text-gray-400">@johnroosev18541</p>
       </div>
 
-      <img
+      <!-- <img
         src="https://mallbucket-pub.s3.us-west-1.amazonaws.com/d4278b107c70ba2c9f7e0fc23bf9647abb9f670c1b7fc958b6e1efcbb62a6693.png"
-        class="w-full h-auto" alt="">
+        class="w-full h-auto" alt=""> -->
 
       <button
         class="mt-8 w-full rounded-full bg-gradient-to-r from-green-500 to-green-700 py-3 font-semibold text-black">
@@ -89,7 +109,8 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
         </div>
       </div>
 
-      <button class="mt-2 w-full rounded-full bg-[#1ce4a8] py-4 font-bold text-black" @click="capture('my-div', 'shareImageName')">
+      <button class="mt-2 w-full rounded-full bg-[#1ce4a8] py-4 font-bold text-black"
+        @click="capture('my-div', 'shareImageName')">
         <div class="flex items-center justify-center space-x-2">
           <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
@@ -101,6 +122,22 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
 
   </article>
 </template>
+
+<i18n lang="json">{
+  "en-US": {
+    "Topic Detail": "Topic Detail {tier}"
+  },
+  "zh-TW": {
+    "Topic Detail": "Topic Detail {tier}"
+  },
+  "ja-JP": {
+    "Topic Detail": "Topic Detail {tier}"
+  },
+  "ko-KR": {
+    "Topic Detail": "Topic Detail {tier}"
+  }
+}</i18n>
+
 
 <style scoped>
 .bg {
