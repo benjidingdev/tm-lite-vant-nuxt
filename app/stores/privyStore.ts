@@ -8,7 +8,7 @@ export const privyStore = defineStore(
   "privyStore",
   () => {
     const { t } = useI18n();
-    const { $privy, $PrivySDK } = useNuxtApp();
+    const { $privy, $PrivySDK }: any = useNuxtApp();
     const { updateWalletBalance } = $(walletStore());
     const { updateUserOrderAmountInfo } = $(userStore());
     const { startParam } = $(shareStore());
@@ -24,7 +24,7 @@ export const privyStore = defineStore(
     let errorInfo: any = $ref('');
     let walletClient: any = $ref(null);
     let publicClient: any = $ref(null);
-    let cleanupIframe: () => void = () => {};
+    let cleanupIframe: () => void = () => { };
     let iframeRef: (HTMLIFrameElement | null) = $ref(null);
 
 
@@ -196,7 +196,7 @@ export const privyStore = defineStore(
       const iframeUrl = $privy.embeddedWallet.getURL();
       iframe!.src = iframeUrl;
       $privy.setMessagePoster(iframe!.contentWindow);
-      const listener = (e) => {
+      const listener = (e: MessageEvent) => {
         try {
           $privy.embeddedWallet.onMessage(e.data);
           console.log(`privy.onEmbeddedWalletMessage: ${e.data.event}`, e.data);

@@ -14,12 +14,12 @@
   }
 
   const { locale } = $(useI18n())
-  const goLink = async (path: string) => {
+  const goLink = async (path) => {
     const url = locale === "en-US" ? path : `/${locale}${path}`;
     await navigateTo(url);
   }
 
-  const getReward = async (id: number) => {
+  const getReward = async (id) => {
     let res = await userTaskReceive({ id })
     if (res.code === 0) {
       userTask()

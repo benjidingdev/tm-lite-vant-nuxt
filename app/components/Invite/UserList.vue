@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const { totalInvite } = defineProps(['totalInvite', 'totalTuit']);
 
 let active = $computed(() => {
