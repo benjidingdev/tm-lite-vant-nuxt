@@ -6,16 +6,16 @@ const user = useSupabaseUser()
 
 watch(user, () => {
   if (user.value) {
-    return navigateTo('/')
+    const params = new URLSearchParams(document.location.search);
+    const redirectTo = params.get("redirectTo") || '/';
+    return navigateTo(redirectTo)
   }
 }, { immediate: true })
 </script>
 
 <template>
- 
-  <UError
-    :error="{
-      statusMessage: 'Redirecting...'
-    }"
-  />
+
+  <UError :error="{
+    statusMessage: 'Redirecting...'
+  }" />
 </template>
