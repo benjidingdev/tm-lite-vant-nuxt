@@ -1,5 +1,49 @@
+<script setup>
+const { auth } = useSupabaseClient()
+const user = useSupabaseUser()
+
+const twitterIdentity = $computed(() => {
+  return user.value?.identities?.find(
+    identity => identity.provider === 'twitter'
+  )
+})
+const hasTwitterLogin = $computed(() => !!twitterIdentity)
+
+const doLogin = async () => {
+  const { data, error } = await auth.signInWithOAuth({
+    provider: 'twitter',
+    options: {
+      redirectTo: `http://localhost:3000/confirm?redirectTo=${encodeURIComponent('/pd')}`,
+    },
+  })
+  if (error) {
+    console.log('error', error)
+  }
+  if (data) {
+    console.log('data', data)
+  }
+  if (data?.url) {
+    window.location.href = data.url
+  }
+}
+
+const doLogout = async () => {
+  const rz = await auth.signOut()
+  console.log(rz)
+}
+</script>
+
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
+
+  <div v-if="hasTwitterLogin" class="border-0 flex justify-between items-center space-x-2">
+    <img :src="twitterIdentity?.identity_data?.avatar_url" alt="">
+    <div class="space-y-1">
+      <div class="text-2xl">{{ twitterIdentity?.identity_data?.full_name }}</div>
+      <div class="text-gray-400 text-xs">{{ twitterIdentity?.identity_data?.email }}</div>
+    </div>
+    <div class="bg-blue-500 rounded-md px-2" @click="doLogout">logout</div>
+  </div>
+  <div v-else class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
     <div class="w-full max-w-sm rounded-lg border border-[#1a1b1c] bg-[#111316] p-6 text-center shadow-lg">
 
       <div class="flex flex-col items-center">
@@ -9,7 +53,7 @@
           </path>
         </svg>
         <h1 class="mt-4 text-2xl font-bold">Connect X (Twitter)</h1>
-        <p class="mt-1 text-sm text-gray-400">Follow @MindoAI and connect your account</p>
+        <p class="mt-1 text-sm text-gray-400">Follow @TuringM and connect your account</p>
       </div>
 
       <div class="mt-8 text-left">
@@ -21,7 +65,7 @@
         </ol>
       </div>
 
-      <NuxtLink to="/pd/x"
+      <div to="/pd/x" @click="doLogin"
         class="mt-8 w-full rounded-lg bg-green-500 py-3 font-bold text-black flex items-center justify-center space-x-2 transition-transform duration-200 hover:scale-105">
         <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
@@ -30,7 +74,7 @@
         <svg class="h-4 w-4 fill-current ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M14.5 4L20 9.5 14.5 15 13 13.5 16 10.5H4V8.5H16L13 5.5z"></path>
         </svg>
-      </NuxtLink>
+      </div>
 
     </div>
   </div>
