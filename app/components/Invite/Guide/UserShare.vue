@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 // import Request from '@/utils/request'
 
 const { userInfo } = $(userStore());
