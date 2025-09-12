@@ -92,7 +92,7 @@ const topicsVote = async (adviseId: number) => {
 }
 
 const { locale } = $(useI18n())
-const goToLInk = async (path: string) => {
+const goToLink = async (path: string) => {
   const url = locale === "en-US" ? path : `/${locale}${path}`;
   await navigateTo(url);
 };
@@ -167,7 +167,7 @@ const goShares = (item: object) => {
       </template>
     </van-list>
     <div class="p-2 py-4 flex flex-row justify-between gap-x-4">
-      <van-button round class="w-1/2" type="primary" @click="goToLInk('/advise/launch')">
+      <van-button round class="w-1/2" type="primary" @click="goToLink('/advise/launch')">
         {{ $t("Initiate a topic") }}
       </van-button>
       <van-button round class="w-1/2" type="success" @click="claimReward">

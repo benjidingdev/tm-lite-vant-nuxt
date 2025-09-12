@@ -181,6 +181,7 @@ export const privyStore = defineStore(
       try {
         session = await $privy.user.get();
         console.log("session", session);
+        await nextTick()
         await initWallet();
         await Promise.all([
           updateWalletBalance(),
