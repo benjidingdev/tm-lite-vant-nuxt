@@ -12,7 +12,6 @@ import {
   TYPEHASH_ORDER,
   TYPEHASH_PERMIT,
   TYPEHASH_REWARD,
-  TYPEHASH_BROKER,
   TYPEHASH_WITHDRAW
 } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";

@@ -40,7 +40,9 @@ const depositPlatforms = [
   },
 ];
 
-const CRYPTO_URI = 'https://meldcrypto.com/?destinationCurrencyCode=USDT_AVAX&walletAddress=' + loginAddress;
+const CRYPTO_URI = $computed(() => {
+  return 'https://meldcrypto.com/?destinationCurrencyCode=USDT_AVAX&walletAddress=' + loginAddress;
+})
 
 const openProvider = async (link: string | undefined) => {
   window.open(
