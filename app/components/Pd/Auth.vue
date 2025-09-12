@@ -13,7 +13,7 @@ const doLogin = async () => {
   const { data, error } = await auth.signInWithOAuth({
     provider: 'twitter',
     options: {
-      redirectTo: `http://localhost:3000/confirm?redirectTo=${encodeURIComponent('/pd')}`,
+      redirectTo: `${location.origin}/confirm?redirectTo=${encodeURIComponent('/pd')}`,
     },
   })
   if (error) {
