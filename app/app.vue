@@ -64,7 +64,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <ClientOnly>
     <van-config-provider>
       <div>
         <NuxtLoadingIndicator />
@@ -80,7 +79,6 @@ onMounted(() => {
         </NuxtLayout>
       </div>
     </van-config-provider>
-  </ClientOnly>
   <iframe ref="iframeRef" />
 </template>
 
