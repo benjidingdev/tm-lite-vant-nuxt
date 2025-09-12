@@ -84,6 +84,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ["form-data"],
   },
+  piniaPluginPersistedstate: {
+    key: 'v1_0_0_%id',
+  },
   supabase: {
     redirect: false,
     redirectOptions: {
