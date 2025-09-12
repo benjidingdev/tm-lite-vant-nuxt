@@ -24,6 +24,8 @@ useHead({
   ],
 });
 
+const { $fbq } = useNuxtApp()
+
 let { iframeRef, refreshSession } = $(privyStore());
 const { locale } = useI18n();
 Locale.add({
@@ -33,16 +35,22 @@ Locale.add({
   "ko-KR": koKR,
 });
 
+const initPixel = () => {
+  console.log('init pixel', useRuntimeConfig().public.metapixel.default.id)
+  $fbq('track', 'CompleteRegistration')
+  $fbq('trackSingle', useRuntimeConfig().public.metapixel.default.id, 'CompleteRegistration')
+};
+
 let { startParam } = $(shareStore());
 onMounted(async () => {
   // const vConsole = new VConsole();
   Locale.use(locale.value);
 
+  initPixel();
   startParam = getFatherInviteCode() as any;
   if (startParam.redirect) {
     await navigateTo(startParam.redirect);
   }
-
   await refreshSession();
 });
 </script>
