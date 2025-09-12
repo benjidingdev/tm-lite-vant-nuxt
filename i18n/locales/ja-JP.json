@@ -76,6 +76,8 @@
   "Deposit Method 2 Instructions": "手順: 推奨される3rdパーティーサービスを使用して転送を facilitated してください。",
   "Start Deposit": "預金を開始",
   "Deposit Declaration": "このプラットフォームは3rdパーティーの預金ポータルを直接ホストしていません。取引情報を確認してください。",
+  "Topic Voting": "トピック投票",
+  "Initiate a topic": "トピックを開始する",
   "Please enter a valid address": "有効なアドレスを入力してください",
   "Please enter a valid amount": "有効な数量を入力してください",
   "Please enter an amount more than 10": "10以上の数量を入力してください",
@@ -113,5 +115,8 @@
   "Rewards": "報酬",
   "Top 10": "トップ{count}",
   "Share Text": "🚀 私はTuring Marketで「{title}」という提案をしました！ ✨ あなたの支援が大切です～ さっそく 👉{targetUrl} 私の提案に投票して、一緒に新しい話題を創りましょう！🔥",
-  "Insufficient balance": "残高不足"
+  "Insufficient balance": "残高不足",
+  "Other Methods": "他の方法",
+  "No crypto": "暗号通貨がありません",
+  "Buy USDT": "USDTを購入"
 }

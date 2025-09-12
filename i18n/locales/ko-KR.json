@@ -76,6 +76,8 @@
   "Deposit Method 2 Instructions": "지침: 추천된 세번째 파트너 서비스를 사용하여 전송을 간편하게 처리하세요.",
   "Start Deposit": "입금 시작",
   "Deposit Declaration": "이 플랫폼은 세번째 파트너 입금 포털을 직접 호스팅하지 않습니다. 주의 깊게 처리하고 트랜잭션 정보를 확인하세요.",
+  "Topic Voting": "주제 투표",
+  "Initiate a topic": "주제 시작",
   "Please enter a valid address": "유효한 주소를 입력하세요",
   "Please enter a valid amount": "유효한 수량을 입력하세요",
   "Please enter an amount more than 10": "10 이상의 수량을 입력하세요",
@@ -114,5 +116,8 @@
   "Rewards": "보상",
   "Top 10": "상위 {count}명",
   "Share Text": "🚀 제가 Turing Market에 「{title}」 제안을 냈어요! ✨ 여러분의 지원이 중요합니다~ 어서 와서 👉{targetUrl} 제 제안에 투표하고 함께 새로운 화제를 만들어봐요! 🔥",
-  "Insufficient balance": "잔액 부족"
+  "Insufficient balance": "잔액 부족",
+  "Other Methods": "다른 방법",
+  "No crypto": "암호화폐가 없습니다",
+  "Buy USDT": "USDT 구매"
 }
