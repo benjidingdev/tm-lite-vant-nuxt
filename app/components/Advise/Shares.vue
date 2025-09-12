@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { shortenURL } from '@/utils/shorten'
 
 const { modalIsShow } = $(uiStore());

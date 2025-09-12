@@ -10,11 +10,6 @@ const voData = $ref({
   openDrawer: false,
 });
 
-const openDetail = (item) => {
-  voData.openDrawer = true;
-  voData.chooseTask = item;
-};
-
 const receiveTask = async (sub) => {
   const res = await userTaskReceive({ id: sub.id });
   if (res.code == 0) getTasks();
@@ -30,9 +25,14 @@ const getTasks = async () => {
     // Handle any cleanup or final actions here if needed
   }
 };
+let active = $ref(0)
 onMounted(() => {
   getTasks();
 });
+
+const theTaskImg = (img) => {
+  return img === 'TaskImage' ? '/logo.png' : img
+}
 </script>
 
 <template>
@@ -51,10 +51,10 @@ onMounted(() => {
         >
           <van-card
             :desc="sub.description"
-            currency="Obtained: "
+            :currency="$t('Obtained: ')"
             :price="sub.rewardNumber * sub.finishedCount + ' ' + sub.rewardType"
             :title="sub.name"
-            :thumb="task.image"
+            :thumb="theTaskImg(task.image)"
           >
             <template #tags>
               <van-tag class="p-2" plain type="primary"

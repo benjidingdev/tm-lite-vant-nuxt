@@ -1,56 +1,60 @@
 <script setup lang="ts">
-  import { getNetworks } from "~/config/networks";
-  import QrcodeVue from "qrcode.vue";
+import QrcodeVue from "qrcode.vue";
 
-  const { modalIsShow } = $(uiStore());
-  const { userBalance, loginAddress } = $(walletStore());
-  const { copy, copied, text } = useClipboard();
-  const currentSite = ref(0);
+const { modalIsShow } = $(uiStore());
+const { wallet } = $(privyStore());
+const { userBalance } = $(walletStore());
+const { copy, copied, text } = useClipboard();
+const currentSite = ref(0);
 
-  const depositPlatforms = [
-    {
-      icon: "/icons/houdini.png",
-      name: "Houdini",
-      link: "https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000",
-    },
-    {
-      icon: "/icons/transit.png",
-      name: "Transit",
-      link: "https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp",
-    },
-    {
-      icon: "/icons/symbiosis.png",
-      name: "Symbiosis",
-      link: "https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
-    },
-    {
-      icon: "/icons/rubic.png",
-      name: "Rubic",
-      link: "https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000",
-    },
-    {
-      icon: "/icons/rocketx.png",
-      name: "Rocketx",
-      link: "https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w",
-    },
-    {
-      icon: "/icons/okx.png",
-      name: "Okx",
-      link: "https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
-    },
-  ];
+const depositPlatforms = [
+  {
+    icon: "/icons/houdini.png",
+    name: "Houdini",
+    link: "https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000",
+  },
+  {
+    icon: "/icons/transit.png",
+    name: "Transit",
+    link: "https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp",
+  },
+  {
+    icon: "/icons/symbiosis.png",
+    name: "Symbiosis",
+    link: "https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+  },
+  {
+    icon: "/icons/rubic.png",
+    name: "Rubic",
+    link: "https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000",
+  },
+  {
+    icon: "/icons/rocketx.png",
+    name: "Rocketx",
+    link: "https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w",
+  },
+  {
+    icon: "/icons/okx.png",
+    name: "Okx",
+    link: "https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+  },
+];
 
-  const openProvider = async () => {
-    window.open(
-      depositPlatforms[currentSite.value]?.link,
-      "Turing",
-      "width=600,height=800"
-    );
-  };
+const CRYPTO_URI = $computed(() => {
+  return 'https://meldcrypto.com/?destinationCurrencyCode=USDT_AVAX&walletAddress=' + wallet?.address;
+})
 
-  const closeModal = () => {
-    modalIsShow.balanceModal = false;
-  };
+const openProvider = async (link: string | undefined) => {
+  window.open(
+    link,
+    "Turing",
+    "width=600,height=800"
+  );
+};
+
+const closeModal = () => {
+  modalIsShow.balanceModal = false;
+};
 </script>
 
 <template>
@@ -78,31 +82,45 @@
                 {{ $t("Embedded Wallet Tips") }}
               </p>
               <p class="py-1 mb-2 sm:mb-0 flex-1 flex flex-row md:items-center">
-                <span class="font-semibold break-all">{{ loginAddress }}</span>
-                <van-button @click="copy(loginAddress)" type="primary"
+                <span class="flex-1 font-semibold break-all">{{ wallet?.address }}</span>
+                <van-button @click="copy(wallet?.address)" type="primary"
                   class="min-w-16 h-11 text-white !font-semibold bg-[var(--van-button-primary-background)] border-none !ml-4">
                   {{ copied ? "✔" : "Copy" }}
                 </van-button>
               </p>
               <div class="w-min rounded-xl mx-auto bg-white p-3">
-                <QrcodeVue :value="loginAddress" :size="120" />
+                <QrcodeVue :value="wallet?.address" :size="120" />
               </div>
               <p class="text-sm opacity-50 pt-4 pb-2">
                 {{ $t("Wallet Deposit Tips") }}
               </p>
             </div>
           </div>
-          <div class="md:flex justify-between mt-7 md:mt-11">
+          <div class="md:flex justify-between mt-7 md:mt-11 md:space-x-4">
             <div class="md:w-1/3 mb-7 md:mb-0">
               <p class="text-lg font-semibold">{{ $t("Deposit Method 1") }}</p>
               <p class="text-sm opacity-50">
                 {{ $t("Deposit Method 1 Instructions") }}
               </p>
             </div>
-            <div>
+            <div class="md:w-1/3 mb-4 md:mb-0">
               <p class="text-lg font-semibold">{{ $t("Deposit Method 2") }}</p>
               <p class="text-sm opacity-50">
                 {{ $t("Deposit Method 2 Instructions") }}
+              </p>
+            </div>
+            <div
+              class="mb-8 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-start items-center">
+              <span class="text-xl sm:text-2xl text-[var(--text-primary)] font-bold">VISA</span>
+              <img class="w-8 mr-4" src="/icons/pay-icon.png" />
+              <van-button size="small" type="primary" @click="openProvider(CRYPTO_URI)">
+                {{ $t("Buy USDT") }}
+              </van-button>
+            </div>
+            <div>
+              <p class="text-lg font-semibold">{{ $t("Deposit Method 3") }}</p>
+              <p class="text-sm opacity-50">
+                {{ $t("Deposit Method 3 Instructions") }}
               </p>
               <div class="grid grid-cols-3 lg:grid-cols-6 gap-3 mt-7 md:mt-4 px-4 md:px-0">
                 <div class="flex flex-col justify-center py-2.5 cursor-pointer bg-[#00000005] rounded"
@@ -120,7 +138,7 @@
           </div>
           <van-button
             class="w-full rounded-lg text-white !font-semibold border-0 bg-[var(--van-button-primary-background)] !mt-7 md:mt-4"
-            size="large" @click="openProvider()" type="primary">{{ $t("Start Deposit") }}</van-button>
+            size="large" @click="openProvider(depositPlatforms[currentSite]?.link)" type="primary">{{ $t("Start Deposit") }}</van-button>
           <div class="text-sm opacity-50 mt-3">
             {{ $t("Deposit Declaration") }}
           </div>
