@@ -38,7 +38,7 @@ onMounted(() => {
   <p class="text-4xl w-full text-center mt-8 sticky top-0 z-1 bg-black">Tier Rank Wall</p>
 
   <section class="w-full h-[calc(100dvh)] h-auto flex flex-col items-center justify-center space-y-[10px] mt-8">
-    <div class="flex justify-between items-stretch w-full border-1 border-red-500" v-for="(tier, index) in tiers"
+    <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
       :key="tier.rank">
 
       <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
