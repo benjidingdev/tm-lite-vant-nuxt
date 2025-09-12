@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { VOnboardingWrapper } from 'v-onboarding'
+import 'v-onboarding/dist/style.css'
+
 const { t } = useI18n();
 const { onboarding } = $(uiStore());
 
