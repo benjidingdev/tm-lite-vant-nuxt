@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  cardID?: string
+  cardID?: string | number
 }>()
 
 const { userInfo } = $(userStore());

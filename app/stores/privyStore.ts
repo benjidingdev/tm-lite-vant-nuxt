@@ -63,22 +63,6 @@ export const privyStore = defineStore(
       oneTimePassword = "";
     };
 
-    // const refreshSession = async () => {
-    //   try {
-    //     session = await $privy.user.get();
-    //     console.log("session", session);
-    //     await nextTick()
-    //     await initWallet();
-    //     await Promise.all([
-    //       updateWalletBalance(),
-    //       updateUserOrderAmountInfo(),
-    //     ]);
-    //   } catch (error) {
-    //     session = null;
-    //     console.log("privy get user error", error);
-    //   }
-    // };
-
     const logoutPrivy = async () => {
       try {
         cleanupIframe();
@@ -168,6 +152,8 @@ export const privyStore = defineStore(
       if (session) {
         debug({session})
         await initWallet();
+      } else {
+        session = await $privy.user.get();
       }
     })
 

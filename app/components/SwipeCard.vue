@@ -254,7 +254,6 @@ const goDeposit = async (card: Card, isYes: boolean) => {
 onMounted(() => {
   getInfoList(false);
   queryParams = getFatherInviteCode();
-  console.log(queryParams.cardID);
 });
 </script>
 
