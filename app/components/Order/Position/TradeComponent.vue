@@ -24,8 +24,9 @@ const { trade, voData } = props;
 const buySellCurrent = $(defineModel("buySellCurrent"));
 const marketAvgPrice = $(defineModel("marketAvgPrice"));
 const total = $(defineModel("total"));
-const { tradeVolume } = $(tradeStore());
+const { setModal } = $(uiStore());
 const { userBalance, signTradeData } = $(walletStore());
+let { tradeVolume, isUpdatePosition } = $(tradeStore());
 
 let isTrading = $ref(false);
 
@@ -158,7 +159,9 @@ const transaction = _debounce(async () => {
 
         if (res.code === 0) {
           showToast(t("Trade successfully"));
+          setModal("showTradePicker", false);
           isTrading = false;
+          isUpdatePosition = true;
         } else {
           showToast(t("Trade failed"));
           isTrading = false;
