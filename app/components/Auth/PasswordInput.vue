@@ -7,9 +7,7 @@ let { oneTimePassword, doLogin } = $(privyStore());
 
 // let model = $(defineModel());
 
-let value;
-pwdInputRef = useTemplateRef("inputRef");
-console.log(pwdInputRef, "inputRef");
+let value = $ref("");
 
 let inputArr = $computed(() => {
   return oneTimePassword?.split("");
@@ -38,8 +36,7 @@ watch(
       // The entrance of login
       await doLogin();
       isPwdFocused = true;
-      pwdInputRef.value = "";
-      pwdInputRef.focus();
+      pwdInputRef?.value?.focus();
       oneTimePassword = "";
     }
   }
@@ -62,6 +59,7 @@ watch(
       id="password-input"
       ref="inputRef"
       type="text"
+      v-model="value"
       :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']"
       maxlength="6"
       @input="(e) => _debounce(onInput(e), 100)"

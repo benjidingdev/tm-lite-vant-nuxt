@@ -257,8 +257,7 @@
         </van-cell>
         <van-notice-bar color="#a7a7a7" background="#f9f9f9" left-icon="info-o">
           <span class="font-xs">Experiencing problems?</span> <a class="text-black !underline" href=""
-            target="_blank">Get
-            help</a>
+            target="_blank">Get help</a>
         </van-notice-bar>
       </van-cell-group>
       <van-cell-group>

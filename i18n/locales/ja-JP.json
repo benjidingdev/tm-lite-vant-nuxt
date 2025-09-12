@@ -77,6 +77,8 @@
   "Deposit Method 1 Instructions": "手順: 取引所やウォレットから上記のアドレスに直接USDTを転送してください。",
   "Deposit Method 2": "方法2: 推奨される3rdパーティーサービスを使用",
   "Deposit Method 2 Instructions": "手順: 推奨される3rdパーティーサービスを使用して転送を facilitated してください。",
+  "Deposit Method 3": "方法3: 推奨される3rdパーティーサービスを使用",
+  "Deposit Method 3 Instructions": "手順: 推奨される3rdパーティーサービスを使用して転送を facilitated してください。",
   "Start Deposit": "預金を開始",
   "Deposit Declaration": "このプラットフォームは3rdパーティーの預金ポータルを直接ホストしていません。取引情報を確認してください。",
   "Topic Voting": "トピック投票",

@@ -103,10 +103,24 @@ const closeModal = () => {
                 {{ $t("Deposit Method 1 Instructions") }}
               </p>
             </div>
-            <div>
+            <div class="md:w-1/3 mb-7 md:mb-0">
               <p class="text-lg font-semibold">{{ $t("Deposit Method 2") }}</p>
               <p class="text-sm opacity-50">
                 {{ $t("Deposit Method 2 Instructions") }}
+              </p>
+            </div>
+            <div
+              class="py-3 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-end items-center">
+              <span class="text-xl sm:text-2xl text-[var(--text-primary)] font-bold">VISA</span>
+              <img class="w-8 mr-4" src="/icons/pay-icon.png" />
+              <van-button size="small" type="primary" @click="openProvider(CRYPTO_URI)">
+                {{ $t("Buy USDT") }}
+              </van-button>
+            </div>
+            <div>
+              <p class="text-lg font-semibold">{{ $t("Deposit Method 3") }}</p>
+              <p class="text-sm opacity-50">
+                {{ $t("Deposit Method 3 Instructions") }}
               </p>
               <div class="grid grid-cols-3 lg:grid-cols-6 gap-3 mt-7 md:mt-4 px-4 md:px-0">
                 <div class="flex flex-col justify-center py-2.5 cursor-pointer bg-[#00000005] rounded"
@@ -127,24 +141,6 @@ const closeModal = () => {
             size="large" @click="openProvider(depositPlatforms[currentSite]?.link)" type="primary">{{ $t("Start Deposit") }}</van-button>
           <div class="text-sm opacity-50 mt-3">
             {{ $t("Deposit Declaration") }}
-          </div>
-          <div class="py-5 flex flex-row items-center">
-            <p class="border-b border-[--border-color] flex-1"></p>
-            <span class="mx-6 text-xs text-[var(--text-gray)] dark:text-white tracking-[.25em]">{{ $t("Other Methods") }}</span>
-            <p class="border-b border-[--border-color] flex-1"></p>
-          </div>
-          <div
-            class="py-3 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-between items-center">
-            <div class="flex flex-row items-center">
-              <span class="text-base mr-2">{{ $t("No crypto") }}?</span>
-              <van-button class="text-base text-white bg-[var(--button-bg-color)] border-none font-semibold" type="primary" @click="openProvider(CRYPTO_URI)">
-                {{ $t("Buy USDT") }}
-              </van-button>
-            </div>
-            <div class="flex flex-row items-center">
-              <span class="text-xl sm:text-2xl text-[var(--text-primary)] font-bold">VISA</span>
-              <img class="w-8" src="/icons/pay-icon.png" />
-            </div>
           </div>
         </div>
       </van-tab>

@@ -16,7 +16,7 @@ export const uiStore = defineStore("uiStore", () => {
   });
   let onboarding = $ref(null);
   let labelWidth = $ref("12em");
-  let pwdInputRef = $ref("");
+  let pwdInputRef: (HTMLInputElement | null) = $ref(null);
   let isPwdFocused = $ref(false);
 
   const setModal = (
