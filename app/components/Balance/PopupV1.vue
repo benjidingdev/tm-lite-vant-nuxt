@@ -96,21 +96,21 @@ const closeModal = () => {
               </p>
             </div>
           </div>
-          <div class="md:flex justify-between mt-7 md:mt-11">
+          <div class="md:flex justify-between mt-7 md:mt-11 md:space-x-4">
             <div class="md:w-1/3 mb-7 md:mb-0">
               <p class="text-lg font-semibold">{{ $t("Deposit Method 1") }}</p>
               <p class="text-sm opacity-50">
                 {{ $t("Deposit Method 1 Instructions") }}
               </p>
             </div>
-            <div class="md:w-1/3 mb-7 md:mb-0">
+            <div class="md:w-1/3 mb-4 md:mb-0">
               <p class="text-lg font-semibold">{{ $t("Deposit Method 2") }}</p>
               <p class="text-sm opacity-50">
                 {{ $t("Deposit Method 2 Instructions") }}
               </p>
             </div>
             <div
-              class="py-3 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-end items-center">
+              class="mb-8 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-start items-center">
               <span class="text-xl sm:text-2xl text-[var(--text-primary)] font-bold">VISA</span>
               <img class="w-8 mr-4" src="/icons/pay-icon.png" />
               <van-button size="small" type="primary" @click="openProvider(CRYPTO_URI)">
