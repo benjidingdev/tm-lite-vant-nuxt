@@ -163,5 +163,8 @@
   "Rewards": "Rewards",
   "Top 10": "Top {count}",
   "Share Text": "🚀 I proposed the suggestion {title} on Turing Market! ✨ Your support matters~ Come quickly 👉{targetUrl} Vote for my suggestion and let's create new topics together! 🔥",
-  "Insufficient balance": "Insufficient balance"
+  "Insufficient balance": "Insufficient balance",
+  "Other Methods": "Other Methods",
+  "No crypto": "No crypto",
+  "Buy USDT": "Buy USDT"
 }

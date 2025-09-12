@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { getNetworks } from "~/config/networks";
 import QrcodeVue from "qrcode.vue";
 
 const { modalIsShow } = $(uiStore());
-const { userBalance, loginAddress } = $(walletStore());
+const { wallet } = $(privyStore());
+const { userBalance } = $(walletStore());
 const { copy, copied, text } = useClipboard();
 const currentSite = ref(0);
 
@@ -41,7 +41,7 @@ const depositPlatforms = [
 ];
 
 const CRYPTO_URI = $computed(() => {
-  return 'https://meldcrypto.com/?destinationCurrencyCode=USDT_AVAX&walletAddress=' + loginAddress;
+  return 'https://meldcrypto.com/?destinationCurrencyCode=USDT_AVAX&walletAddress=' + wallet?.address;
 })
 
 const openProvider = async (link: string | undefined) => {
@@ -82,14 +82,14 @@ const closeModal = () => {
                 {{ $t("Embedded Wallet Tips") }}
               </p>
               <p class="py-1 mb-2 sm:mb-0 flex-1 flex flex-row md:items-center">
-                <span class="font-semibold break-all">{{ loginAddress }}</span>
-                <van-button @click="copy(loginAddress)" type="primary"
+                <span class="flex-1 font-semibold break-all">{{ wallet?.address }}</span>
+                <van-button @click="copy(wallet?.address)" type="primary"
                   class="min-w-16 h-11 text-white !font-semibold bg-[var(--van-button-primary-background)] border-none !ml-4">
                   {{ copied ? "✔" : "Copy" }}
                 </van-button>
               </p>
               <div class="w-min rounded-xl mx-auto bg-white p-3">
-                <QrcodeVue :value="loginAddress" :size="120" />
+                <QrcodeVue :value="wallet?.address" :size="120" />
               </div>
               <p class="text-sm opacity-50 pt-4 pb-2">
                 {{ $t("Wallet Deposit Tips") }}
@@ -130,21 +130,20 @@ const closeModal = () => {
           </div>
           <div class="py-5 flex flex-row items-center">
             <p class="border-b border-[--border-color] flex-1"></p>
-            <span class="mx-6 text-xs text-[var(--text-gray)] dark:text-white tracking-[.25em]">OTHER METHODS</span>
+            <span class="mx-6 text-xs text-[var(--text-gray)] dark:text-white tracking-[.25em]">{{ $t("Other Methods") }}</span>
             <p class="border-b border-[--border-color] flex-1"></p>
           </div>
           <div
             class="py-3 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-between items-center">
             <div class="flex flex-row items-center">
-              <span class="text-base mr-2">No crypto?</span>
+              <span class="text-base mr-2">{{ $t("No crypto") }}?</span>
               <van-button class="text-base text-white bg-[var(--button-bg-color)] border-none font-semibold" type="primary" @click="openProvider(CRYPTO_URI)">
-                Buy USDT
+                {{ $t("Buy USDT") }}
               </van-button>
             </div>
             <div class="flex flex-row items-center">
               <span class="text-xl sm:text-2xl text-[var(--text-primary)] font-bold">VISA</span>
               <img class="w-8" src="/icons/pay-icon.png" />
-              <img class="w-8" src="/icons/pay-icon2.png" />
             </div>
           </div>
         </div>
