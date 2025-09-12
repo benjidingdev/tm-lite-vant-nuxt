@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { getAdviseList, getTopicsVote } from "~/api/advise";
 import { useRoute } from 'vue-router'
+
+const { locale } = $(useI18n())
 const route = useRoute()
 const { setModal } = $(uiStore());
 const { token } = $(authStore());
@@ -91,11 +93,6 @@ const topicsVote = async (adviseId: number) => {
   }
 }
 
-const { locale } = $(useI18n())
-const goToLink = async (path: string) => {
-  const url = locale === "en-US" ? path : `/${locale}${path}`;
-  await navigateTo(url);
-};
 
 const claimReward = () => {
   if (token.accessToken === "") {
@@ -167,7 +164,7 @@ const goShares = (item: object) => {
       </template>
     </van-list>
     <div class="p-2 py-4 flex flex-row justify-between gap-x-4">
-      <van-button round class="w-1/2" type="primary" @click="goToLink('/advise/launch')">
+      <van-button round class="w-1/2" type="primary" @click="useNavigateTo('/advise/launch')">
         {{ $t("Initiate a topic") }}
       </van-button>
       <van-button round class="w-1/2" type="success" @click="claimReward">

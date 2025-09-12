@@ -1,6 +1,6 @@
 <template>
   <van-tabbar v-model="active" safe-area-inset-bottom>
-    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="goToLink(item.path)" :icon="item.icon"
+    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="useNavigateTo(item.path)" :icon="item.icon"
       :name="item.key">
       {{ $t(item.name) }}</van-tabbar-item>
   </van-tabbar>
@@ -25,11 +25,6 @@ let active = $ref(tabList[0]?.key || 'index');
 
 onMounted(() => {
   active = tabList.find((item) => getLastPath(path) === getLastPath(item.path))?.key || tabList[0]?.key || 'index';
-  // console.log('path', path, active);
 })
 
-const goToLink = async (path: string) => {
-  const url = locale === "en-US" ? path : `/${locale}${path}`;
-  await navigateTo(url);
-};
 </script>

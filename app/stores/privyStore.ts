@@ -75,9 +75,6 @@ export const privyStore = defineStore(
         errorInfo = "login error: " + error.message;
       }
       await initWallet();
-      if (publicClient && walletClient) {
-        await doSign();
-      }
       isLoading = false;
     };
 
@@ -92,6 +89,9 @@ export const privyStore = defineStore(
         walletClient = rz.walletClient;
         publicClient = rz.publicClient;
         session = rz.session;
+        if (publicClient && walletClient) {
+          await doSign();
+        }
       } catch (error: Error | any) {
         errorInfo = "init wallet error: " + error.message;
       }
@@ -199,8 +199,11 @@ export const privyStore = defineStore(
       $privy.setMessagePoster(iframe!.contentWindow);
       const listener = (e: MessageEvent) => {
         try {
-          $privy.embeddedWallet.onMessage(e.data);
-          console.log(`privy.onEmbeddedWalletMessage: ${e.data.event}`, e.data);
+          console.log(`xxxx privy.onEmbeddedWalletMessage: ${e.data.event}`, e.data);
+          // const {data} = e.nativeEvent;
+          $privy.embeddedWallet.onMessage(JSON.parse(data));
+          // $privy.embeddedWallet.onMessage(e.data);
+          console.log('xxxx after onMessage', e.target)
         } catch (err) {
           // console.log('xxxx', err, e)
         }
