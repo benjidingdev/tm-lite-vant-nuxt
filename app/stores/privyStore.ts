@@ -113,7 +113,7 @@ export const privyStore = defineStore(
       },
     }
 
-    const setupEmbeddedWalletIframe = () => {
+    const setupEmbeddedWalletIframe = async() => {
       const iframeUrl = $privy.embeddedWallet.getURL();
       iframeRef!.src = iframeUrl;
       $privy.setMessagePoster(msgPoster);
@@ -139,6 +139,8 @@ export const privyStore = defineStore(
 
       };
       window.addEventListener("message", listener);
+      session = await $privy.user.get();
+
       cleanupIframe = () => {
         window.removeEventListener("message", listener);
         iframeRef!.src = "";
@@ -147,13 +149,11 @@ export const privyStore = defineStore(
 
     watchEffect(async() => {
       if (iframeRef) {
-        setupEmbeddedWalletIframe()
+        await setupEmbeddedWalletIframe()
       }
       if (session) {
         debug({session})
         await initWallet();
-      } else {
-        session = await $privy.user.get();
       }
     })
 
