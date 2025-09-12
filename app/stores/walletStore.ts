@@ -12,7 +12,6 @@ import {
   TYPEHASH_ORDER,
   TYPEHASH_PERMIT,
   TYPEHASH_REWARD,
-  TYPEHASH_BROKER,
   TYPEHASH_WITHDRAW
 } from "@/types/sign";
 import type { SignTradeDataOptions } from "@/types/sign";
@@ -45,7 +44,7 @@ export const walletStore = defineStore("walletStore", () => {
     position: 0,
   });
 
-  const { walletClient, publicClient, wallet } = $(privyStore());
+  const { walletClient, wallet } = $(privyStore());
 
   let loginAddress = $computed(() => {
     return wallet?.address;
@@ -158,7 +157,7 @@ export const walletStore = defineStore("walletStore", () => {
    */
   const queryAllowance = async (coinType: any) => {
     const coinInfo = coinType == 0 ? walletConfig!.main : walletConfig!.meme;
-    const result = await publicClient.readContract({
+    const result = await walletClient.readContract({
       abi: market,
       address: coinInfo.address,
       args: [wallet.address, walletConfig!.contract.address],
@@ -304,7 +303,7 @@ export const walletStore = defineStore("walletStore", () => {
       // If the authorization is insufficient, a signature is required
       if (allowanced < minValue) {
         // If the authorization is insufficient, a signature is required
-        const nonce = (await publicClient.readContract({
+        const nonce = (await walletClient.readContract({
           abi: market,
           address: coinInfo.address,
           args: [wallet.address],

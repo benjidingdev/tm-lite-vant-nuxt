@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import Request from '@/utils/request'
 
@@ -54,7 +54,11 @@ async function loadTotalTuit() {
 }
 
 async function handleShare() {
-  inviteUser(userInfo.inviteCode, '/invite/guide');
+  const params = {
+    inviteCode: userInfo.inviteCode,
+    redirect: '/invite/guide'
+  };
+  inviteUser(params);
 }
 
 // async function handelImage() {

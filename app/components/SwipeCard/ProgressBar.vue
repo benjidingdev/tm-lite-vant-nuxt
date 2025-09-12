@@ -5,7 +5,6 @@ const props = defineProps({
   },
 });
 const { lastTradePrice } = props;
-console.log("lastTradePrice", lastTradePrice);
 </script>
 
 <template>

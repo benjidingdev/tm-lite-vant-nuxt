@@ -22,6 +22,7 @@ const modules = [
   "pinia-plugin-persistedstate/nuxt",
   "@vueuse/motion/nuxt",
   "@vueuse/nuxt",
+  "nuxt-meta-pixel"
 ];
 
 export default defineNuxtConfig({
@@ -83,6 +84,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ["form-data"],
   },
+  piniaPluginPersistedstate: {
+    key: 'v1_0_0_%id',
+  },
   supabase: {
     redirect: false,
     redirectOptions: {
@@ -125,6 +129,9 @@ export default defineNuxtConfig({
       },
       apiPrefix:
         process.env.NUXT_PUBLIC_API_PREFIX || "http://192.168.1.82:48082",
+      metapixel: {
+        default: { id: '909961260585999' },
+      }
     },
   }
 });

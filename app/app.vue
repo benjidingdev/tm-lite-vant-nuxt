@@ -5,6 +5,7 @@ import enUS from "vant/es/locale/lang/en-US";
 import zhTW from "vant/es/locale/lang/zh-TW";
 import jaJP from "vant/es/locale/lang/ja-JP";
 import koKR from "vant/es/locale/lang/ko-KR";
+import { useRouteQuery } from '@vueuse/router'
 
 useHead({
   title: "Turing Market",
@@ -24,7 +25,9 @@ useHead({
   ],
 });
 
-let { iframeRef, refreshSession } = $(privyStore());
+const { $fbq } = useNuxtApp()
+
+const { iframeRef } = $(privyStore());
 const { locale } = useI18n();
 Locale.add({
   "en-US": enUS,
@@ -33,22 +36,34 @@ Locale.add({
   "ko-KR": koKR,
 });
 
+const initPixel = () => {
+  console.log('init pixel', useRuntimeConfig().public.metapixel.default.id)
+  $fbq('track', 'CompleteRegistration')
+  $fbq('trackSingle', useRuntimeConfig().public.metapixel.default.id, 'CompleteRegistration')
+};
+
 let { startParam } = $(shareStore());
 onMounted(async () => {
-  // const vConsole = new VConsole();
   Locale.use(locale.value);
 
+  initPixel();
   startParam = getFatherInviteCode() as any;
   if (startParam.redirect) {
     await navigateTo(startParam.redirect);
   }
-
-  await refreshSession();
 });
+
+const debug = $(useRouteQuery('debug'))
+onMounted(() => {
+  watchEffect(() => {
+    if (debug) {
+      localStorage.setItem('debug', debug)
+    }
+  })
+})
 </script>
 
 <template>
-  <ClientOnly>
     <van-config-provider>
       <div>
         <NuxtLoadingIndicator />
@@ -59,13 +74,11 @@ onMounted(async () => {
           <TradeSettingPopup />
           <OrderSharePopup />
           <AuthLoginModal />
-          <SettingsNumberKeyBoard />
           <BalancePopupV1 />
           <RequestQueueError />
         </NuxtLayout>
       </div>
     </van-config-provider>
-  </ClientOnly>
   <iframe ref="iframeRef" />
 </template>
 

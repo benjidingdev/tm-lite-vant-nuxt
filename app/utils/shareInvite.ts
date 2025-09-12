@@ -13,7 +13,7 @@ export function getFatherInviteCode() {
   return startParams;
 }
 
-export function paramsToBase64(params) {
+export function paramsToBase64(params: any) {
   const urlParams = new URLSearchParams(params);
   const encodedParams = urlParams.toString();
   console.log({ encodedParams });
@@ -22,7 +22,7 @@ export function paramsToBase64(params) {
   return babse64Params;
 }
 
-export function base64ToParams(babse64Params) {
+export function base64ToParams(babse64Params: any) {
   const params = {};
   try {
     const decodedString = atob(babse64Params);
@@ -37,12 +37,15 @@ export function base64ToParams(babse64Params) {
   return params;
 }
 
+type InviteParams = {
+  inviteCode?: string;
+  redirect?: string;
+  [key: string]: any;
+}
+export function inviteUser(params: InviteParams) {
 
-export function inviteUser(inviteCode, redirect) {
-  // console.log({ inviteCode, redirect });
-
-  const botInfo = useRuntimeConfig().public.tgBotInfo || ''
-  const babse64Params = paramsToBase64({ inviteCode, redirect });
+  const botInfo = useRuntimeConfig().public.tgBotInfo || '';
+  const babse64Params = paramsToBase64({ ...params });
   console.log({ botInfo });
 
   const miniAppUrl = `https://t.me/${botInfo}?startapp=${babse64Params}`;
@@ -54,7 +57,7 @@ export function inviteUser(inviteCode, redirect) {
   }
 }
 
-async function getImageFromProxy(img) {
+async function getImageFromProxy(img: any) {
   console.log('load img from proxy:', img.src);
   return $fetch('/api/proxy/image', {
     method: 'POST',
