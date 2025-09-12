@@ -1,6 +1,6 @@
 <template>
   <van-tabbar v-model="active" safe-area-inset-bottom>
-    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="goToLInk(item.path, locale)" :icon="item.icon"
+    <van-tabbar-item v-for="item in tabList" :key="item.name" @click="useNavigateTo(item.path)" :icon="item.icon"
       :name="item.key">
       {{ $t(item.name) }}</van-tabbar-item>
   </van-tabbar>
