@@ -179,12 +179,9 @@ export const privyStore = defineStore(
 
     const refreshSession = async () => {
       try {
-        setupEmbeddedWalletIframe(iframeRef);
-        if (token.accessToken === '') {
-          session = await $privy.user.get();
-          console.log("session", session);
-          await nextTick();
-        }
+        session = await $privy.user.get();
+        console.log("session", session);
+        await nextTick()
         await initWallet();
         await Promise.all([
           updateWalletBalance(),

@@ -10,7 +10,7 @@ import {
 
 const { setModal } = $(uiStore());
 let { order } = $(userStore());
-let { holdResult } = $(tradeStore());
+let { holdResult, isUpdatePosition } = $(tradeStore());
 
 const statusMap = [
   { text: "Waiting for publish", color: "#555555" },
@@ -31,6 +31,17 @@ const queryParams = {
 let marketId = $ref(0);
 let isLoading = $ref(true);
 let total = $ref(0);
+
+watch(
+  () => isUpdatePosition,
+  (newVal) => {
+    if (newVal) {
+      queryParams.pageNo = 1;
+      fetchUserHoldInfoList();
+      isUpdatePosition = false;
+    }
+  }
+);
 
 const showShares = (item: any) => {
   setModal("share", true);

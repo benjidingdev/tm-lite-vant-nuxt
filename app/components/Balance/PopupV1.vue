@@ -1,56 +1,60 @@
 <script setup lang="ts">
-  import { getNetworks } from "~/config/networks";
-  import QrcodeVue from "qrcode.vue";
+import { getNetworks } from "~/config/networks";
+import QrcodeVue from "qrcode.vue";
 
-  const { modalIsShow } = $(uiStore());
-  const { userBalance, loginAddress } = $(walletStore());
-  const { copy, copied, text } = useClipboard();
-  const currentSite = ref(0);
+const { modalIsShow } = $(uiStore());
+const { userBalance, loginAddress } = $(walletStore());
+const { copy, copied, text } = useClipboard();
+const currentSite = ref(0);
 
-  const depositPlatforms = [
-    {
-      icon: "/icons/houdini.png",
-      name: "Houdini",
-      link: "https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000",
-    },
-    {
-      icon: "/icons/transit.png",
-      name: "Transit",
-      link: "https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp",
-    },
-    {
-      icon: "/icons/symbiosis.png",
-      name: "Symbiosis",
-      link: "https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
-    },
-    {
-      icon: "/icons/rubic.png",
-      name: "Rubic",
-      link: "https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000",
-    },
-    {
-      icon: "/icons/rocketx.png",
-      name: "Rocketx",
-      link: "https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w",
-    },
-    {
-      icon: "/icons/okx.png",
-      name: "Okx",
-      link: "https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
-    },
-  ];
+const depositPlatforms = [
+  {
+    icon: "/icons/houdini.png",
+    name: "Houdini",
+    link: "https://houdiniswap.com/?tokenIn=USDTTRON&tokenOut=USDTAVAXC&amount=1000",
+  },
+  {
+    icon: "/icons/transit.png",
+    name: "Transit",
+    link: "https://swap.transit.finance/?inputChain=TRX&inputSymbol=USDT&inputCurrency=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&outputChain=AVAX&outputSymbol=USDt&outputCurrency=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7&from=tp",
+  },
+  {
+    icon: "/icons/symbiosis.png",
+    name: "Symbiosis",
+    link: "https://app.symbiosis.finance/swap?amountIn=1000&chainIn=Tron&chainOut=Avalanche&tokenIn=0xa614f803b6fd780986a42c78ec9c7f77e6ded13c&tokenOut=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+  },
+  {
+    icon: "/icons/rubic.png",
+    name: "Rubic",
+    link: "https://app.rubic.exchange/?fromChain=TRON&toChain=AVALANCHE&from=USDT&to=USDt&amount=1000",
+  },
+  {
+    icon: "/icons/rocketx.png",
+    name: "Rocketx",
+    link: "https://app.rocketx.exchange/swap/TRON.tether/AVAXC.tether/1000?from=Tether&to=Tether&mode=w",
+  },
+  {
+    icon: "/icons/okx.png",
+    name: "Okx",
+    link: "https://web3.okx.com/zh-hans/dex-swap/bridge?chain=tron,avalanche&token=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t,0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+  },
+];
 
-  const openProvider = async () => {
-    window.open(
-      depositPlatforms[currentSite.value]?.link,
-      "Turing",
-      "width=600,height=800"
-    );
-  };
+const CRYPTO_URI = $computed(() => {
+  return 'https://meldcrypto.com/?destinationCurrencyCode=USDT_AVAX&walletAddress=' + loginAddress;
+})
 
-  const closeModal = () => {
-    modalIsShow.balanceModal = false;
-  };
+const openProvider = async (link: string | undefined) => {
+  window.open(
+    link,
+    "Turing",
+    "width=600,height=800"
+  );
+};
+
+const closeModal = () => {
+  modalIsShow.balanceModal = false;
+};
 </script>
 
 <template>
@@ -120,9 +124,28 @@
           </div>
           <van-button
             class="w-full rounded-lg text-white !font-semibold border-0 bg-[var(--van-button-primary-background)] !mt-7 md:mt-4"
-            size="large" @click="openProvider()" type="primary">{{ $t("Start Deposit") }}</van-button>
+            size="large" @click="openProvider(depositPlatforms[currentSite]?.link)" type="primary">{{ $t("Start Deposit") }}</van-button>
           <div class="text-sm opacity-50 mt-3">
             {{ $t("Deposit Declaration") }}
+          </div>
+          <div class="py-5 flex flex-row items-center">
+            <p class="border-b border-[--border-color] flex-1"></p>
+            <span class="mx-6 text-xs text-[var(--text-gray)] dark:text-white tracking-[.25em]">OTHER METHODS</span>
+            <p class="border-b border-[--border-color] flex-1"></p>
+          </div>
+          <div
+            class="py-3 bg-[var(--bg-light-gray)] dark:bg-[var(--bg-cyan-dark)] rounded-md flex-1 flex flex-row justify-between items-center">
+            <div class="flex flex-row items-center">
+              <span class="text-base mr-2">No crypto?</span>
+              <van-button class="text-base text-white bg-[var(--button-bg-color)] border-none font-semibold" type="primary" @click="openProvider(CRYPTO_URI)">
+                Buy USDT
+              </van-button>
+            </div>
+            <div class="flex flex-row items-center">
+              <span class="text-xl sm:text-2xl text-[var(--text-primary)] font-bold">VISA</span>
+              <img class="w-8" src="/icons/pay-icon.png" />
+              <img class="w-8" src="/icons/pay-icon2.png" />
+            </div>
           </div>
         </div>
       </van-tab>
