@@ -64,7 +64,7 @@
   "Get help": "ヘルプを求める",
   "New Withdrawal": "新しい引き出し",
   "Deposit tx": "預金取引",
-  "inviteCount": "あなたは{count}人のユーザーを招待しました。{remainCount}人のユーザーを招待する必要があります。 | あなたは{count}人のユーザーを招待しました。{remainCount}人のユーザーを招待する必要があります。",
+  "inviteCount": "あなたは{count}人のユーザーを招待しました。{remainCount}人のユーザーを招待する必要があります。 ｜あなたは{count}人のユーザーを招待しました。{remainCount}人のユーザーを招待する必要があります。",
   "Deposit Title": "USDTをAvalancheに預金",
   "Deposit Description": "Avalancheチェーン上でUSDTを預金する方法を選択してください",
   "Deposit Warning": "ターゲットネットワークはAvalanche（C-Chain）です。不正な転送は資産の失失を招く可能性があります。",

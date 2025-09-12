@@ -14,7 +14,7 @@ type Card = {
 };
 type cardsType = Array<Card>;
 type QueryParams = {
-  cardID?: number | string;
+  cardID: string;
   inviteCode?: string;
 };
 
