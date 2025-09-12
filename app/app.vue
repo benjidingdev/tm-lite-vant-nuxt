@@ -5,6 +5,7 @@ import enUS from "vant/es/locale/lang/en-US";
 import zhTW from "vant/es/locale/lang/zh-TW";
 import jaJP from "vant/es/locale/lang/ja-JP";
 import koKR from "vant/es/locale/lang/ko-KR";
+import { useRouteQuery } from '@vueuse/router'
 
 useHead({
   title: "Turing Market",
@@ -26,7 +27,7 @@ useHead({
 
 const { $fbq } = useNuxtApp()
 
-let { iframeRef, refreshSession } = $(privyStore());
+const { iframeRef } = $(privyStore());
 const { locale } = useI18n();
 Locale.add({
   "en-US": enUS,
@@ -43,7 +44,6 @@ const initPixel = () => {
 
 let { startParam } = $(shareStore());
 onMounted(async () => {
-  // const vConsole = new VConsole();
   Locale.use(locale.value);
 
   initPixel();
@@ -51,8 +51,16 @@ onMounted(async () => {
   if (startParam.redirect) {
     await navigateTo(startParam.redirect);
   }
-  await refreshSession();
 });
+
+const debug = $(useRouteQuery('debug'))
+onMounted(() => {
+  watchEffect(() => {
+    if (debug) {
+      localStorage.setItem('debug', debug)
+    }
+  })
+})
 </script>
 
 <template>
@@ -67,7 +75,6 @@ onMounted(async () => {
           <TradeSettingPopup />
           <OrderSharePopup />
           <AuthLoginModal />
-          <SettingsNumberKeyBoard />
           <BalancePopupV1 />
           <RequestQueueError />
         </NuxtLayout>

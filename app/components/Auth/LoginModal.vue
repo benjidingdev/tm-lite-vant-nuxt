@@ -90,14 +90,14 @@ const counterText = $computed(() => {
             :class="`text-sm my-4 float-right pr-4 ${
               errorInfo ? 'text-red-400' : 'text-gray-500'
             }`"
-            >{{ errorInfo ? errorInfo : "Sending..." }}</span
+            >{{ errorInfo ? errorInfo : $t("Sending...") }}</span
           >
           <template v-if="hasSend">
             <AuthPasswordInput />
 
             <div class="flex justify-end">
               <button
-                class="px-4 py-2 underline"
+                class="py-2 underline"
                 :class="{
                   'decoration-gray-500': countdown > 0,
                   'decoration-blue-500': countdown <= 0,
