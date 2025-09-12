@@ -2,12 +2,11 @@
 const emailPattern =
   /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-let { modalIsShow, pwdInputRef, isPwdFocused } = $(uiStore());
+let { modalIsShow, pwdInputRef } = $(uiStore());
 let {
   email,
   hasSend,
   isLoading,
-  doLogin,
   sendEmail,
   errorInfo,
 } = $(privyStore());
@@ -68,7 +67,7 @@ const counterText = $computed(() => {
     <div class="step-one">
       <img
         class="w-[60%] py-8 rounded-xl m-auto"
-        src="@/assets/img/logo-light.png"
+        src="/assets/img/logo-light.png"
       />
       <van-form>
         <van-cell-group inset>

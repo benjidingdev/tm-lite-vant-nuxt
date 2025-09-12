@@ -16,12 +16,6 @@ const initVconsole = async () => {
 
 const { locale } = $(useI18n())
 
-const goToLInk = async (path: string) => {
-  const url = locale === "en-US" ? path : `/${locale}${path}`;
-  await navigateTo(url);
-  modalIsShow.settings = false
-};
-
 const openTab = () => {
   window.open(
     'https://docs-zh.turingm.io/users-guide/lite',
@@ -37,8 +31,8 @@ const openTab = () => {
       <div class="flex-1">
         <LangSwitcherLabel />
         <TradeSettingLabel />
-        <van-cell :title="$t('Topic Voting')" is-link @click="goToLInk('/advise')" />
-        <van-cell :title="$t('Initiate a topic')" is-link @click="goToLInk('/advise/launch')" />
+        <van-cell :title="$t('Topic Voting')" is-link @click="goToLInk('/advise', locale)" />
+        <van-cell :title="$t('Initiate a topic')" is-link @click="goToLInk('/advise/launch', locale)" />
         <van-cell :title="$t('Users Guide')" is-link @click="openTab" v-if="locale === 'zh-TW'" />
         <AuthLogoutLabel v-if="token.accessToken" />
       </div>
