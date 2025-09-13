@@ -1,8 +1,7 @@
 <script setup lang="ts">
 
-let { modalIsShow, pwdInputRef } = $(uiStore());
+let { modalIsShow, pwdInputRef, isPwdFocused }: any = $(uiStore());
 let {
-  hasSend,
   isLoading,
   sendEmail,
   errorInfo,
@@ -20,6 +19,12 @@ const validEmail = $computed(() => {
   return regex.test(email);
 });
 
+const counterText = $computed(() => {
+  return countdown > 0
+    ? t("Resend ({countdown}s)", { countdown })
+    : t("Resend Code");
+});
+
 /**
  * Send email to Privy to get one time password
  */
@@ -27,6 +32,12 @@ const getOTP = async () => {
   startCountdown();
   await sendEmail();
   step = 2;
+  setTimeout(() => {
+    if (pwdInputRef) {
+      isPwdFocused = true;
+      pwdInputRef.focus();
+    }
+  }, 300);
 };
 
 
@@ -45,19 +56,6 @@ const startCountdown = () => {
 };
 
 watch(
-  () => [modalIsShow.loginModal, hasSend],
-  async (newVal: boolean) => {
-    if (newVal) {
-      setTimeout(() => {
-        if (pwdInputRef) {
-          pwdInputRef.focus();
-        }
-      }, 300);
-    }
-  }
-);
-
-watch(
   () => [modalIsShow.loginModal],
   async (newVal: boolean) => {
     if (newVal) {
@@ -69,11 +67,6 @@ watch(
   }
 );
 
-const counterText = $computed(() => {
-  return countdown > 0
-    ? t("Resend ({countdown}s)", { countdown })
-    : t("Resend Code");
-});
 </script>
 
 <template>
@@ -107,22 +100,25 @@ const counterText = $computed(() => {
       </van-form>
     </div>
     <div v-else
-      class="px-6 pt-6 pb-2 w-full flex flex-col justify-center items-center gap-4 transition-all duration-200 relative">
+      class="px-6 pt-6 pb-4 w-full flex flex-col justify-center items-center gap-4 transition-all duration-200 relative">
       <div class="absolute left-6 top-3 rounded-full bg-gray-100 w-[30px] h-[30px] text-center" @click="step = 1">
         <van-icon name="down" class="transform rotate-90 text-gray-500 left-arrow" />
       </div>
       <div class="flex flex-col items-center gap-2 mt-6">
         <van-icon size="48" name="envelop-o" color="#1652f0" />
-        <p class="mt-2 text-lg font-bold">Enter confirmation code</p>
+        <p class="mt-2 text-lg font-bold">{{ $t("Enter confirmation code") }}</p>
       </div>
-      <div class="mt-5 px-2 text-base">
-        <p class="text-gray-500">Please check {{ email }} for an email from privy.io and enter your code below.</p>
+      <div class="mt-5 text-base">
+        <p class="text-gray-500">
+          {{ $t("Please check yourEmail for an email from privy.io and enter your code below.", { email: email }) }}</p>
       </div>
-      <AuthPasswordInput v-model="step" />
+      <!--error message-->
       <span v-if="isLoading || errorInfo" :class="`text-sm float-right ${errorInfo ? 'text-red-400' : 'text-gray-500'
         }`">{{ errorInfo ? errorInfo : $t("Sending...") }}</span>
-      <div class="w-full px-2 pt-3 pb-1 text-sm flex justify-between text-gray-500">
-        <span>Didn't get an email?</span>
+      <!--OTP input-->
+      <AuthPasswordInput v-model="step" />
+      <div class="w-full pt-3 pb-1 text-sm flex justify-between text-gray-500">
+        <span>{{$t("Didn't get an email?")}}</span>
         <span class="flex justify-end">
           <button :class="{
             'decoration-gray-500': countdown > 0,

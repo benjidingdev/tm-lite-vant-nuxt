@@ -124,5 +124,8 @@
   "Insufficient balance": "잔액 부족",
   "Other Methods": "다른 방법",
   "No crypto": "암호화폐가 없습니다",
-  "Buy USDT": "USDT 구매"
+  "Buy USDT": "USDT 구매",
+  "Enter confirmation code": "확인 코드 입력",
+  "Please check yourEmail for an email from privy.io and enter your code below.": "privy.io에서 온 이메일을 확인하고 아래에 코드를 입력하세요. {email}",
+  "Didn't get an email?": "이메일을 받지 못하셨나요?"
 }

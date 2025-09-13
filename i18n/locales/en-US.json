@@ -171,5 +171,8 @@
   "Insufficient balance": "Insufficient balance",
   "Other Methods": "Other Methods",
   "No crypto": "No crypto",
-  "Buy USDT": "Buy USDT"
+  "Buy USDT": "Buy USDT",
+  "Enter confirmation code": "Enter confirmation code",
+  "Please check yourEmail for an email from privy.io and enter your code below.": "Please check {email} for an email from privy.io and enter your code below.",
+  "Didn't get an email?": "Didn't get an email?"
 }
