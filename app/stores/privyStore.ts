@@ -131,7 +131,7 @@ export const privyStore = defineStore(
     const setupEmbeddedWalletIframe = async() => {
       const iframeUrl = $privy.embeddedWallet.getURL();
       iframeRef!.src = iframeUrl;
-      debug({ iframeUrl })
+      debug({ action: 'setupEmbeddedWalletIframe', iframeUrl })
       $privy.setMessagePoster(msgPoster);
       const listener = (e: MessageEvent) => {
         const target = e?.data?.target
@@ -164,7 +164,9 @@ export const privyStore = defineStore(
       cleanupIframe = async () => {
         window.removeEventListener("message", listener);
         iframeRef!.src = "";
-        await setupEmbeddedWalletIframe()
+        setTimeout(() => {
+          setupEmbeddedWalletIframe()
+        }, 1000)
       };
     };
 
