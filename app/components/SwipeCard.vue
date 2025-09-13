@@ -291,7 +291,7 @@ onMounted(() => {
                     @click="buyYes(card)">
                     <van-icon name="checked" size="66" color="#97dbb4" />
                   </div>
-                  <text class="text-[#97dbb4]">{{ unitConvert(card.markets[0].yesPrice * 100 || 0) }}¢</text>
+                  <text class="text-[#97dbb4]">{{ unitConvert(card.markets[0].yesPrice || 0) }}¢</text>
                 </div>
                 <div class="flex flex-col items-center">
                   <div id="step5"
@@ -299,7 +299,7 @@ onMounted(() => {
                     @click="buyNo(card)">
                     <van-icon name="clear" size="66" color="#fe9595" />
                   </div>
-                  <text class="text-[#fe9595]">{{ unitConvert(card.markets[0].noPrice * 100 || 0) }}¢</text>
+                  <text class="text-[#fe9595]">{{ unitConvert(card.markets[0].noPrice || 0) }}¢</text>
                 </div>
               </div>
             </div>
