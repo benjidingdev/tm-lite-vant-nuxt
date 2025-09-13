@@ -1,19 +1,24 @@
 <script setup lang="ts">
-const emailPattern =
-  /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 let { modalIsShow, pwdInputRef } = $(uiStore());
 let {
-  email,
   hasSend,
   isLoading,
   sendEmail,
   errorInfo,
+  email,
 } = $(privyStore());
 const { t } = useI18n();
 
 let countdown = $ref(0);
+let isFocused = $ref(false);
 let resendDisabled = $computed(() => countdown > 0);
+let step = $ref(1); // 1: email input, 2: code input
+
+const validEmail = $computed(() => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+});
 
 /**
  * Send email to Privy to get one time password
@@ -21,9 +26,11 @@ let resendDisabled = $computed(() => countdown > 0);
 const getOTP = async () => {
   startCountdown();
   await sendEmail();
+  step = 2;
 };
 
-let countdownInterval;
+
+let countdownInterval: any;
 const startCountdown = () => {
   countdown = 60;
 
@@ -58,83 +65,68 @@ const counterText = $computed(() => {
 </script>
 
 <template>
-  <van-dialog
-    v-model:show="modalIsShow.loginModal"
-    closeable
-    :show-confirm-button="false"
-    :title="$t('Login in or sign up')"
-  >
-    <div class="step-one">
-      <img
-        class="w-[60%] py-8 rounded-xl m-auto"
-        src="/assets/img/logo-light.png"
-      />
+  <van-dialog v-model:show="modalIsShow.loginModal" closeable :show-confirm-button="false">
+    <div v-if="step === 1" class="step-one">
+      <img class="w-[60%] pt-12 pb-8 rounded-xl m-auto" src="/assets/img/logo-light.png" />
+      <h2 class="text-center font-bold text-2xl mb-8 text-gray-600">{{ $t('Login in or sign up') }}</h2>
       <van-form>
         <van-cell-group inset>
-          <van-field
-            v-model="email"
-            name="email"
-            left-icon="envelop-o"
-            :placeholder="$t('Email')"
-            :rules="[
-              { required: true, message: $t('Please enter email') },
-              {
-                pattern: emailPattern,
-                message: $t('Please enter a valid email address'),
-              },
-            ]"
-          />
-
-          <span
-            v-if="isLoading || errorInfo"
-            :class="`text-sm my-4 float-right pr-4 ${
-              errorInfo ? 'text-red-400' : 'text-gray-500'
-            }`"
-            >{{ errorInfo ? errorInfo : $t("Sending...") }}</span
-          >
-          <template v-if="hasSend">
-            <AuthPasswordInput />
-
-            <div class="flex justify-end">
-              <button
-                class="py-2 underline"
-                :class="{
-                  'decoration-gray-500': countdown > 0,
-                  'decoration-blue-500': countdown <= 0,
-                }"
-                @click="getOTP"
-                :disabled="resendDisabled"
-              >
-                <span
-                  class="text-sm"
-                  :class="{
-                    'text-gray-500': countdown > 0,
-                    'text-blue-500': countdown <= 0,
-                  }"
-                >
-                  {{ counterText }}</span
-                >
-              </button>
+          <div class="flex items-center w-full max-w-sm mx-auto space-x-2 border-2 border-gray-200 rounded-lg"
+            :class="isFocused ? 'border border-gray-400!' : ''">
+            <div class="px-2 py-1 rounded-lg mx-2" color="#333">
+              <van-icon name="envelop-o" />
             </div>
-          </template>
-          <div v-else class="mt-4">
-            <van-button
-              round
-              block
-              type="primary"
-              @click="getOTP"
-              native-type="submit"
-              :loading="isLoading"
-            >
-              {{ $t("Submit") }}
-            </van-button>
+
+            <input class="w-[80%] bg-transparent outline-none placeholder-gray-400" type="email"
+              placeholder="your@email.com" v-model="email" @focus="isFocused = true" @blur="isFocused = false" />
+            <div class="email-submit-btn py-2 mx-2 text-gray-400 rounded-full whitespace-nowrap ">
+              <van-button plain size="small" @click="getOTP" native-type="submit" :loading="isLoading"
+                :disabled="!validEmail">
+                {{ $t("Submit") }}
+              </van-button>
+            </div>
           </div>
+
         </van-cell-group>
 
-        <div class="mt-8 mb-4 text-center text-sm text-gray-500">
+        <div class="mt-14 mb-4 text-center text-sm text-gray-500">
           {{ $t("Powered by TuringM.IO") }}
         </div>
       </van-form>
     </div>
+    <div v-else
+      class="px-6 pt-6 pb-2 w-full flex flex-col justify-center items-center gap-4 transition-all duration-200">
+      <div @click="step = 1">back </div>
+      <div class="flex flex-col items-center gap-2 mt-6">
+        <!-- <svg-icon class="w-12 h-12" name="email" color="var(--theme-color)" /> -->
+        <van-icon size="48" name="envelop-o" color="#1652f0" />
+        <p class="mt-2 text-lg font-bold">Enter confirmation code</p>
+      </div>
+      <div class="mt-5 px-2 text-base">
+        <p class="text-gray-500">Please check {{ email }} for an email from privy.io and enter your code below.</p>
+      </div>
+      <AuthPasswordInput />
+      <div class="w-full px-2 pt-3 pb-1 text-sm flex justify-between text-gray-500">
+        <span>Didn't get an email?</span>
+        <span class="flex justify-end">
+          <button :class="{
+            'decoration-gray-500': countdown > 0,
+            'decoration-blue-500': countdown <= 0,
+          }" @click="getOTP" :disabled="resendDisabled">
+            <span class="text-sm" :class="{
+              'text-gray-500': countdown > 0,
+              'text-blue-500': countdown <= 0,
+            }">
+              {{ counterText }}</span>
+          </button>
+        </span>
+      </div>
+    </div>
   </van-dialog>
 </template>
+
+<style scoped>
+.email-submit-btn .van-button {
+  border: none !important;
+}
+</style>
