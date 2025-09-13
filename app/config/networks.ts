@@ -3,7 +3,6 @@ import { type AppKitNetwork } from '@reown/appkit/networks'
 import type { CaipNetwork } from '@reown/appkit'
 
 export const getNetworks = (isTestnet: boolean) => {
-    console.log('isTestnet', isTestnet)
     if (isTestnet) {
       return [
             avalancheFuji,

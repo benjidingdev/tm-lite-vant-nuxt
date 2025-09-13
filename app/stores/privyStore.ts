@@ -7,9 +7,10 @@ export const privyStore = defineStore(
   () => {
     const debug = useDebug('privyStore')
     const { $privy, $PrivySDK }: any = useNuxtApp();
-    const { doSign } = $(authStore());
-
+    const { token } = $(authStore());
     const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
+    const { setLoadingToast } = $(uiStore());
+    const { t } = $(useI18n());
 
     let email = $ref("");
     let hasSend = $ref(false);
@@ -39,12 +40,11 @@ export const privyStore = defineStore(
 
       try {
         session = await $privy.auth.email.loginWithCode(email, oneTimePassword);
-        debug({ session })
-        await nextTick()
-        await doSign()
+        debug({ session, action: 'doLogin' })
         hasSend = false
       } catch (error: Error | any) {
         errorInfo = "login error: " + error.message;
+        debug({errorInfo, action: 'doLogin'})
       }
       isLoading = false;
     };
@@ -65,42 +65,57 @@ export const privyStore = defineStore(
 
     const logoutPrivy = async () => {
       try {
-        cleanupIframe();
+        await $privy.auth.logout();
+        session = null;
+        wallet = null;
+        email = '';
+        walletClient = null;
       } catch (error) {
-        console.log("privy logout error", error);
+        debug({ error, action: 'logoutPrivy' })
       }
+      cleanupIframe();
     };
 
     // above wait for clear
+    let isInitWallet = false
     const initWallet = async () => {
-      let theWallet = $PrivySDK.getUserEmbeddedWallet(session.user);
-      let user = session.user
-      if (!theWallet) {
-        const rz = await $privy.embeddedWallet.create({});
-        user = rz.user
-        theWallet = $PrivySDK.getUserEmbeddedWallet(user);
-      }
-      debug({ theWallet })
-      if (!theWallet) {
-        debug({session})
-        throw new Error("wallet not found");
-      }
-      wallet = theWallet
+      if (isInitWallet) return
+      isInitWallet = true
+      setLoadingToast(t("Initializing wallet..."));
+      try {
+        let theWallet = $PrivySDK.getUserEmbeddedWallet(session.user);
+        let user = session.user
+        if (!theWallet) {
+          const rz = await $privy.embeddedWallet.create({});
+          user = rz.user
+          theWallet = $PrivySDK.getUserEmbeddedWallet(user);
+        }
+        debug({ theWallet })
+        if (!theWallet) {
+          debug({ session })
+          throw new Error("wallet not found");
+        }
+        wallet = theWallet
 
-      debug({session})
-      const { entropyId, entropyIdVerifier } = $PrivySDK.getEntropyDetailsFromUser(user);
-      const provider = await $privy.embeddedWallet.getEthereumProvider({
-        wallet: theWallet,
-        entropyId,
-        entropyIdVerifier,
-      });
+        debug({ session })
+        const { entropyId, entropyIdVerifier } = $PrivySDK.getEntropyDetailsFromUser(user);
+        const provider = await $privy.embeddedWallet.getEthereumProvider({
+          wallet: theWallet,
+          entropyId,
+          entropyIdVerifier,
+        });
 
-      walletClient = createWalletClient({
-        account: theWallet.address,
-        chain: networks[0],
-        transport: custom(provider),
-      }).extend(publicActions)
-      debug({walletClient})
+        walletClient = createWalletClient({
+          account: theWallet.address,
+          chain: networks[0],
+          transport: custom(provider),
+        }).extend(publicActions)
+        debug({ walletClient })
+      } catch (error) {
+        debug({ error, action: 'initWallet' })
+      } finally {
+        isInitWallet = false
+      }
     }
 
     const msgPoster = {
@@ -116,10 +131,11 @@ export const privyStore = defineStore(
     const setupEmbeddedWalletIframe = async() => {
       const iframeUrl = $privy.embeddedWallet.getURL();
       iframeRef!.src = iframeUrl;
+      debug({ action: 'setupEmbeddedWalletIframe', iframeUrl })
       $privy.setMessagePoster(msgPoster);
       const listener = (e: MessageEvent) => {
         const target = e?.data?.target
-        const targetArr = ['metamask-inpage']
+        const targetArr = ['metamask-inpage', 'metamask-contentscript']
         if (target && targetArr.includes(target)) {
           return;
         }
@@ -139,22 +155,30 @@ export const privyStore = defineStore(
 
       };
       window.addEventListener("message", listener);
-      session = await $privy.user.get();
+      try {
+        session = await $privy.user.get();
+      } catch (error) {
+        debug({ error, action: 'setupEmbeddedWalletIframe' })
+      }
 
-      cleanupIframe = () => {
+      cleanupIframe = async () => {
         window.removeEventListener("message", listener);
         iframeRef!.src = "";
+        setTimeout(() => {
+          setupEmbeddedWalletIframe()
+        }, 1000)
       };
     };
 
     watchEffect(async() => {
-      if (iframeRef) {
-        await setupEmbeddedWalletIframe()
-      }
-      if (session) {
-        debug({session})
-        await initWallet();
-      }
+      if (!iframeRef) return
+      await setupEmbeddedWalletIframe()
+    })
+
+    watch(() => userId, async (newVal) => {
+      if(!newVal) return
+      if(token.accessToken) return
+      await initWallet();
     })
 
     return $$({
@@ -182,7 +206,6 @@ export const privyStore = defineStore(
     persist: {
       omit: [
         "isLoading",
-        "wallet",
         "userId",
         "oneTimePassword",
         "hasSend",
