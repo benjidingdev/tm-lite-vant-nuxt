@@ -8,7 +8,7 @@ export const privyStore = defineStore(
     const debug = useDebug('privyStore')
     const { $privy, $PrivySDK }: any = useNuxtApp();
     const { doSign } = $(authStore());
-
+    const { token } = $(authStore());
     const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
 
     let email = $ref("");
@@ -152,8 +152,10 @@ export const privyStore = defineStore(
         await setupEmbeddedWalletIframe()
       }
       if (session) {
-        debug({session})
-        await initWallet();
+        debug({ session })
+        if(token.accessToken === '') {
+          await initWallet();
+        }
       }
     })
 
