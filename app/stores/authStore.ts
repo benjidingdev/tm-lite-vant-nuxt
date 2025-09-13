@@ -15,8 +15,8 @@ export const authStore = defineStore(
     let { loadUserInfo, userInfo } = $(userStore());
     const { amountPermit, updateWalletBalance } = $(walletStore());
     const { startParam } = $(shareStore());
-    const {walletClient, wallet, logoutPrivy, isNewUser} = $(privyStore());
-    let {session, errorInfo} = $(privyStore());
+    const { walletClient, wallet, logoutPrivy, isNewUser } = $(privyStore());
+    let { session, errorInfo } = $(privyStore());
 
     let token: any = $ref({
       accessToken: "",
@@ -145,15 +145,19 @@ export const authStore = defineStore(
     };
 
     const doSign = useDebounceFn(async () => {
-      debug({action: 'doSign'})
+      debug({ action: 'doSign' })
       setLoadingToast(t("Start to login"));
       let signData;
       const address = wallet?.address;
-      if (address) {
-        const nonceRes = await getNonce(address);
-        if (nonceRes) {
-          signData = await signLoginMessage(nonceRes.data);
+      try {
+        if (address) {
+          const nonceRes = await getNonce(address);
+          if (nonceRes) {
+            signData = await signLoginMessage(nonceRes.data);
+          }
         }
+      } catch (error) {
+        closeToast();
       }
 
       try {
