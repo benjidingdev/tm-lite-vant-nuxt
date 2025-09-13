@@ -57,6 +57,18 @@ watch(
   }
 );
 
+watch(
+  () => [modalIsShow.loginModal],
+  async (newVal: boolean) => {
+    if (newVal) {
+      step = 1;
+      errorInfo = "";
+      clearInterval(countdownInterval);
+      countdown = 0;
+    }
+  }
+);
+
 const counterText = $computed(() => {
   return countdown > 0
     ? t("Resend ({countdown}s)", { countdown })
@@ -81,7 +93,7 @@ const counterText = $computed(() => {
               placeholder="your@email.com" v-model="email" @focus="isFocused = true" @blur="isFocused = false" />
             <div class="email-submit-btn py-2 mx-2 text-gray-400 rounded-full whitespace-nowrap ">
               <van-button plain size="small" @click="getOTP" native-type="submit" :loading="isLoading"
-                :disabled="!validEmail">
+                :disabled="!validEmail || resendDisabled">
                 {{ $t("Submit") }}
               </van-button>
             </div>
@@ -95,17 +107,20 @@ const counterText = $computed(() => {
       </van-form>
     </div>
     <div v-else
-      class="px-6 pt-6 pb-2 w-full flex flex-col justify-center items-center gap-4 transition-all duration-200">
-      <div @click="step = 1">back </div>
+      class="px-6 pt-6 pb-2 w-full flex flex-col justify-center items-center gap-4 transition-all duration-200 relative">
+      <div class="absolute left-6 top-3 rounded-full bg-gray-100 w-[30px] h-[30px] text-center" @click="step = 1">
+        <van-icon name="down" class="transform rotate-90 text-gray-500 left-arrow" />
+      </div>
       <div class="flex flex-col items-center gap-2 mt-6">
-        <!-- <svg-icon class="w-12 h-12" name="email" color="var(--theme-color)" /> -->
         <van-icon size="48" name="envelop-o" color="#1652f0" />
         <p class="mt-2 text-lg font-bold">Enter confirmation code</p>
       </div>
       <div class="mt-5 px-2 text-base">
         <p class="text-gray-500">Please check {{ email }} for an email from privy.io and enter your code below.</p>
       </div>
-      <AuthPasswordInput />
+      <AuthPasswordInput v-model="step" />
+      <span v-if="isLoading || errorInfo" :class="`text-sm float-right ${errorInfo ? 'text-red-400' : 'text-gray-500'
+        }`">{{ errorInfo ? errorInfo : $t("Sending...") }}</span>
       <div class="w-full px-2 pt-3 pb-1 text-sm flex justify-between text-gray-500">
         <span>Didn't get an email?</span>
         <span class="flex justify-end">
@@ -128,5 +143,9 @@ const counterText = $computed(() => {
 <style scoped>
 .email-submit-btn .van-button {
   border: none !important;
+}
+
+.left-arrow {
+  line-height: 30px;
 }
 </style>

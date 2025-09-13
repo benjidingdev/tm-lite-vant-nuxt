@@ -2,7 +2,7 @@
 import { _debounce } from "@/utils/debounce";
 
 let { pwdInputRef, isPwdFocused } = $(uiStore());
-let { oneTimePassword, doLogin } = $(privyStore());
+let { oneTimePassword, doLogin, errorInfo } = $(privyStore());
 
 let inputArr = $computed(() => {
   return oneTimePassword?.split("");
@@ -51,7 +51,6 @@ watch(
   </div>
 </template>
 <style>
-
 .hidden-input {
   position: absolute;
   top: 0;
