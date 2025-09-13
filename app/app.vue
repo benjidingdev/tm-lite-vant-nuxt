@@ -37,7 +37,6 @@ Locale.add({
 });
 
 const initPixel = () => {
-  console.log('init pixel', useRuntimeConfig().public.metapixel.default.id)
   $fbq('track', 'CompleteRegistration')
   $fbq('trackSingle', useRuntimeConfig().public.metapixel.default.id, 'CompleteRegistration')
 };

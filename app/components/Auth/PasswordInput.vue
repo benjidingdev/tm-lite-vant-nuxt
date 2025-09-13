@@ -3,9 +3,12 @@ import { _debounce } from "@/utils/debounce";
 
 let { pwdInputRef, isPwdFocused } = $(uiStore());
 let { oneTimePassword, doLogin, errorInfo } = $(privyStore());
+const debug = useDebug('PasswordInput')
 
 let inputArr = $computed(() => {
-  return oneTimePassword?.split("");
+  if (!oneTimePassword) return []
+  debug({ oneTimePassword })
+  return oneTimePassword.toString().split("");
 });
 
 const onFocus = () => {
@@ -23,20 +26,13 @@ const onInput = async (event: any) => {
   oneTimePassword = event.target.value;
 };
 
-watch(
-  () => oneTimePassword,
-  async (newVal: string) => {
-    if (newVal.length === 6) {
-      // The entrance of login
-      await doLogin();
-      isPwdFocused = true;
-      pwdInputRef?.value?.focus();
-      oneTimePassword = "";
-    } else {
-      errorInfo = "";
-    }
-  }
-);
+watch($$(oneTimePassword), async (newVal) => {
+  if (newVal.length !== 6) return
+  debug({ oneTimePassword, action: 'watch' })
+  await doLogin()
+  isPwdFocused = true;
+  oneTimePassword = "";
+})
 
 </script>
 
@@ -48,7 +44,7 @@ watch(
       {{ inputArr[index] }}
       <span v-if="isPwdFocused && inputArr.length === index" class="cursor" />
     </span>
-    <input id="password-input" ref="pwdInputRef" type="number" v-model="oneTimePassword"
+    <input id="password-input" ref="pwdInputRef" type="text" v-model="oneTimePassword"
       :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']" maxlength="6"
       @input="(e) => _debounce(onInput(e), 100)" @focus.prevent="onFocus" @blur.prevent="onBlur" />
   </div>

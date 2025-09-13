@@ -68,6 +68,7 @@ export const authStore = defineStore(
 
         let res: any = await getLogout();
         if (res?.code === 0) {
+          await logoutPrivy();
           deleteAllCookies();
           localStorage?.clear();
           sessionStorage?.clear();
@@ -75,7 +76,6 @@ export const authStore = defineStore(
           userInfo = {}
           session = null;
           errorInfo = null;
-          await logoutPrivy();
           showToast(t("Logout successful"));
         }
       } catch (e) {
@@ -87,7 +87,7 @@ export const authStore = defineStore(
      * Sign in, after the user connects the wallet, call the backend service to get the message
      * Then request the signature, get the signature string, and call the backend interface to verify the signature
      */
-    const signLoginMessage = useDebounceFn(async (nonce: string) => {
+    const signLoginMessage = async (nonce: string) => {
       try {
         const address = wallet?.address;
         const chainId = walletClient.chain?.id;
@@ -113,7 +113,7 @@ export const authStore = defineStore(
       } catch (err) {
         throw err;
       }
-    }, 100);
+    };
 
     const getNonce = async (_address: any) => {
       try {
@@ -145,18 +145,20 @@ export const authStore = defineStore(
     };
 
     const doSign = useDebounceFn(async () => {
-      debug({ action: 'doSign' })
       setLoadingToast(t("Start to login"));
       let signData;
       const address = wallet?.address;
+      debug({ address, wallet, walletClient })
       try {
         if (address) {
           const nonceRes = await getNonce(address);
+          debug({nonceRes})
           if (nonceRes) {
             signData = await signLoginMessage(nonceRes.data);
           }
         }
       } catch (error) {
+        debug({error})
         closeToast();
       }
 
@@ -169,6 +171,12 @@ export const authStore = defineStore(
       }
       closeToast();
     }, 100);
+
+    watchEffect(async () => {
+      if (!walletClient) return
+      if (token.accessToken) return
+      await doSign();
+    })
 
     return $$({
       token,
