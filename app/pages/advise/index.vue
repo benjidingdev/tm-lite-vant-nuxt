@@ -114,7 +114,7 @@ const goShares = (item: object) => {
 }
 </script>
 <template>
-  <div class="h-[calc(100dvh-var(--nav-height))] overflow-y-hidden flex flex-col">
+  <div class="h-[calc(90dvh-var(--nav-height))] overflow-y-hidden flex flex-col">
 
     <van-search v-model="voData.queryParams.title" background="transparent" shape="round"
       :placeholder="$t('Search Prompt')" @search="init" @clear="onClear" />
