@@ -108,17 +108,21 @@ watch(
         <van-icon size="48" name="envelop-o" color="#1652f0" />
         <p class="mt-2 text-lg font-bold">{{ $t("Enter confirmation code") }}</p>
       </div>
+      <!--OTP input-->
+      <AuthPasswordInput v-model="step" />
+
+      <!--error message-->
+      <span v-if="isLoading || errorInfo" :class="`text-sm float-right ${errorInfo ? 'text-red-400' : 'text-gray-500'
+        }`">{{ errorInfo ? errorInfo : $t("Sending...") }}</span>
+
       <div class="mt-5 text-base">
         <p class="text-gray-500">
           {{ $t("Please check yourEmail for an email from privy.io and enter your code below.", { email: email }) }}</p>
       </div>
-      <!--error message-->
-      <span v-if="isLoading || errorInfo" :class="`text-sm float-right ${errorInfo ? 'text-red-400' : 'text-gray-500'
-        }`">{{ errorInfo ? errorInfo : $t("Sending...") }}</span>
-      <!--OTP input-->
-      <AuthPasswordInput v-model="step" />
+
+
       <div class="w-full pt-3 pb-1 text-sm flex justify-between text-gray-500">
-        <span>{{$t("Didn't get an email?")}}</span>
+        <span>{{ $t("Didn't get an email?") }}</span>
         <span class="flex justify-end">
           <button :class="{
             'decoration-gray-500': countdown > 0,
