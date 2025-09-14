@@ -296,13 +296,13 @@ onMounted(() => {
           </van-image>
 
           <div v-if="card.markets" class="px-4 h-[50%]">
-            <div class="h-[85%] overflow-y-auto overflow-x-hidden">
+            <div class="h-[85%] overflow-hidden">
               <!-- Title and question -->
-              <div>
-                <text class="name">{{ card.title }}</text>
-                <text v-if="card?.markets.length" class="desc">{{
+              <div class="mh-[120px">
+                <p class="name">{{ card.title }}</p>
+                <p v-if="card?.markets.length" class="mt-1 leading-none!">{{
                   card?.markets[0].question
-                }}</text>
+                  }}</p>
               </div>
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">
@@ -363,10 +363,10 @@ onMounted(() => {
 }
 
 .name {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   display: block;
-  margin-bottom: 5px;
+  line-height: 1.2;
 }
 
 .hint-box {
