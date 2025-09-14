@@ -167,7 +167,6 @@ const transaction = _debounce(async () => {
           isTrading = false;
         }
       } else {
-        console.log("Wallet sign failed, please check your wallet connection!");
         isTrading = false;
       }
     }

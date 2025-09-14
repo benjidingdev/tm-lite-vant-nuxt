@@ -15,7 +15,6 @@ async function loadLeaderBoard() {
       }
     })
 
-    console.log('loadLeaderBoard', res);
     leaderBoard = res.data.list || [];
   } catch (e) {
     console.error('loadLeaderBoard', e);

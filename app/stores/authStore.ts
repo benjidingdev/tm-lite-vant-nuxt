@@ -70,7 +70,9 @@ export const authStore = defineStore(
         if (res?.code === 0) {
           await logoutPrivy();
           deleteAllCookies();
+          const debugScope = localStorage.getItem('debug') || ''
           localStorage?.clear();
+          localStorage.setItem('debug', debugScope)
           sessionStorage?.clear();
           updateToken({});
           userInfo = {}

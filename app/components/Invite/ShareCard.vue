@@ -5,7 +5,6 @@ import Request from '@/utils/request'
 const { userInfo } = $(userStore());
 
 onMounted(() => {
-  console.log({ userInfo });
   loadShareUser();
   loadTotalTuit()
 })
@@ -23,7 +22,6 @@ async function loadShareUser() {
         pageSize: 12
       }
     })
-    console.log('loadShareUser', userInfo.inviteCode, rz);
 
     if (rz.data.list) {
       shareUserList = [
@@ -43,7 +41,6 @@ async function loadTotalTuit() {
       url: `/app-api/topic/token/account/get`,
       method: 'get',
     })
-    console.log('loadTotalTuit', rz);
 
     if (rz.data) {
       totalTuit = rz.data.totalAmount || 0;

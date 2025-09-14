@@ -51,9 +51,6 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
 
   async function doProcess(payload: any) {
     const transaction = payload.transaction;
-
-    console.log('processRequest', transaction, payload);
-
     try {
       const req = {
         marketId: transaction.marketsId || 1012110,
@@ -87,7 +84,6 @@ export const requestQueueStore = defineStore("requestQueueStore", () => {
 
 
           let res = await getTopicsOrderCreate(params);
-          console.log("create order res:", res);
           if (res.code === 0) {
             payload.status = 'success';
             successCount++;

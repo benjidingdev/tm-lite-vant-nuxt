@@ -56,12 +56,10 @@ export const walletStore = defineStore("walletStore", () => {
   useAccountEffect({
     config: $wagmiAdapter.wagmiConfig,
     onConnect(data: any) {
-      console.log("Wallet connected:", data);
       walletConected = true;
       getSelfBalance();
     },
     onDisconnect() {
-      console.log("Wallet disconnected");
       walletConected = false;
       selfBalance = 0;
     },
@@ -127,8 +125,6 @@ export const walletStore = defineStore("walletStore", () => {
       };
       // signature returned result
       const result = await walletClient.signTypedData(content);
-      console.log("result:", result);
-
       return result;
     } catch (err) {
       console.error("Error signing typed data:", err);
@@ -183,9 +179,9 @@ export const walletStore = defineStore("walletStore", () => {
         ],
         functionName: 'approve'
       })
-      console.log('approve usdc result', tx)
       return tx
     } catch (err) {
+      console.error("Error signing approve:", err)
       return {
         error: err.shortMessage
       }
@@ -204,14 +200,6 @@ export const walletStore = defineStore("walletStore", () => {
       const destinationDomain = getDomain(walletClient.chain!)
       const destinationAddress_bytes32 = `0x000000000000000000000000${wallet.address!.slice(2)}`
       const destinationCaller_bytes32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
-      console.log('xxx', {
-        tokenMessager,
-        destinationDomain,
-        destinationAddress_bytes32,
-        usdcAddress,
-        destinationCaller_bytes32,
-        amount,
-      })
       const tx = await writeContract($wagmiAdapter.wagmiConfig, {
         abi: usdtAbi,
         address: tokenMessager,
@@ -226,7 +214,6 @@ export const walletStore = defineStore("walletStore", () => {
         ],
         functionName: 'depositForBurn'
       })
-      // console.log(`burn usdc from domain: ${destinationDomain} and return transactionHash: ${tx}`)
       return { originDomain: originDomain, destinationDomain: destinationDomain, transactionHash: tx }
     } catch (err) {
       console.error("Error signing approve:", err)
@@ -250,7 +237,6 @@ export const walletStore = defineStore("walletStore", () => {
         ],
         functionName: 'receiveMessage'
       })
-      console.log(`receive message: ${attestation} and mint usdc: ${tx}`)
       return tx
     } catch (err) {
       console.error("Error signing approve:", err)
@@ -371,7 +357,6 @@ export const walletStore = defineStore("walletStore", () => {
      * Sign the payout
      */
   const signPayout = async (message: any) => {
-    console.log('walletClient:', walletClient)
     try {
       const result = await walletClient.signTypedData({
         domain: getTypedDomain(),
@@ -379,7 +364,6 @@ export const walletStore = defineStore("walletStore", () => {
         primaryType: "Reward",
         message: message,
       })
-      //console.log('content:', content, 'result:', result)
       return result;
     } catch (err) {
       console.error("Error signing typed data:", err);
