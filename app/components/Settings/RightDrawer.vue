@@ -36,7 +36,7 @@ const openTab = () => {
         <AuthLogoutLabel v-if="token.accessToken" />
       </div>
       <van-cell-group>
-        <van-cell :title="$t('Build Time')" :value="theBuildTime" v-if="clickNum > 2" />
+        <van-cell :title="$t('Build Time')" :value="theBuildTime" />
         <van-cell :title="$t('Branch')" :value="branch" @click="initVconsole" />
         <van-cell :title="$t('Hash')" :value="shortHash" />
       </van-cell-group>
