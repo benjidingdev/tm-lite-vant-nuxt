@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { addAdviseList } from "~/api/advise";
 
+const { wallet } = $(privyStore())
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
 const voData = reactive({
   title: "",
   description: "",
+  hash: '',
 });
 
 const formRef = ref();
@@ -23,7 +25,15 @@ const onSubmit = async (values: object) => {
     return;
   } else {
     loading.value = true;
-
+    const { hash } = await doFetch('/api/lighthouse/upload', {
+      method: 'POST',
+      body: {
+        title: voData.title,
+        description: voData.description,
+        address: wallet?.address,
+      }
+    })
+    voData.hash = hash
     let res = await addAdviseList(voData)
     adviseId.value = res.data
     title.value = voData.title
@@ -32,13 +42,11 @@ const onSubmit = async (values: object) => {
       await showDialog({
         message: $t('Successful prompt'),
         confirmButtonText: $t('Shares'),
-        showCancelButton: true // 显示取消按钮
+        showCancelButton: true
       }).then(async () => {
-        // on close
         setModal("sharesModal", true);
-         await safeResetForm();
-      }).catch(async() => {
-        // on cancel
+        await safeResetForm();
+      }).catch(async () => {
         loading.value = false;
         await safeResetForm();
       });

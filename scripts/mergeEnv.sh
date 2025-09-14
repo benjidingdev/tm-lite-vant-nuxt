@@ -13,7 +13,6 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
-# 合并环境文件（支持可选分支文件）
 cat .env > "$tmp_env"
 if [ -f ".env.local" ]; then
   # echo "merge .env.local"

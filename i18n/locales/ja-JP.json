@@ -123,5 +123,9 @@
   "Insufficient balance": "残高不足",
   "Other Methods": "他の方法",
   "No crypto": "暗号通貨がありません",
-  "Buy USDT": "USDTを購入"
+  "Buy USDT": "USDTを購入",
+  "Enter confirmation code": "確認コードを入力",
+  "Please check yourEmail for an email from privy.io and enter your code below.": "privy.ioからのメールについては{email}を確認し、以下にコードを入力してください。",
+  "Didn't get an email?": "メールが届きませんか？",
+  "Initializing wallet...": "ウォレットを初期化中..."
 }

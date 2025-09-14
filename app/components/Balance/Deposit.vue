@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
   import { showToast } from "vant";
   import { retrieveAttestation } from "@/api/cctp"
   import { encryptMiddle } from "@/utils/processing";
@@ -272,4 +272,4 @@
       </van-cell-group>
     </div>
   </van-cell-group>
-</template>
+</template> -->
