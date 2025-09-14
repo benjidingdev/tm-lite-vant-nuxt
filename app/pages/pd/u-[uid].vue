@@ -22,50 +22,37 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
   await captureTargetToPng(name, target);
 }
 
-const handleBack = () => {
-  window.history.back()
+let user = $ref({})
+const isMe = $computed(() => !!hasTwitterLogin && route.params.uid === x_user.id)
+async function loadUser(uid) {
+  const rz = await doFetch(`/api/pd/${uid}`)
+  console.log(rz)
+  user = rz
 }
 
+onMounted(async () => {
+  // console.log(route.params.uid, hasTwitterLogin, x_user.id, isMe)
+  if (isMe) {
+    user = x_user
+    return
+  }
+  await loadUser(route.params.uid)
+})
 </script>
 
 <template>
   <article class="w-full h-full flex flex-col justify-center items-center pt-0">
 
-    <!-- <p class="text-4xl w-full mb-2 sticky top-0 z-1 flex justify-between items-center bg-black">
-      <span class="text-base ml-2" @click="handleBack">
-        <van-icon name="arrow-left" size="30" />
-      </span>
-      <span class="flex-1 text-center">
-        {{
-          t('Topic Detail', {
-            tier: route.params.uid
-          })
-        }}
-      </span>
-    </p> -->
-
-    <PdUser :user="x_user" />
+    <PdUser :user />
 
     <div class="flex flex-col items-center justify-center bg-[#000000] text-white p-2 mt-4">
       <div class="relative flex items-center rounded-xl bg-[#090b0e] p-4 text-sm font-semibold text-gray-400">
-        <span class="flex-grow text-left">https://mindoshare.ai/kol?ref=cm...</span>
-        <div class="ml-2 flex h-8 w-8 items-center justify-center rounded-lg bg-[#14181a] p-2 text-green-500">
-          <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path
-              d="M19 12h-2v2h-2v-2h-2v2h-2v-2h-2v-2h2V8h2V6h2v2h2V6h2v6zM7 6h2V4H7v2zM5 6h2V4H5v2zM3 6h2V4H3v2zM1 6h2V4H1v2z">
-            </path>
-          </svg>
-        </div>
+        <span class="flex-grow text-left">{{ t('btn-desc', { coin: 'PDCoin' }) }}</span>
       </div>
 
-      <button class="mt-2 w-full rounded-full bg-[#1ce4a8] py-4 font-bold text-black"
+      <button class="mt-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
         @click="capture('my-div', 'shareImageName')">
-        <div class="flex items-center justify-center space-x-2">
-          <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
-          </svg>
-          <span>Invite your friends</span>
-        </div>
+        <span>{{ t('btn', { coin: 'PDCoin' }) }}</span>
       </button>
     </div>
 
@@ -74,16 +61,20 @@ const handleBack = () => {
 
 <i18n lang="json">{
   "en-US": {
-    "Topic Detail": "Topic Detail {tier}"
+    "btn-desc": "Login with Twitter to get {coin}",
+    "btn": "Claim {coin}"
   },
   "zh-TW": {
-    "Topic Detail": "Topic Detail {tier}"
+    "btn-desc": "使用 Twitter 登錄以獲取 {coin}",
+    "btn": "領取 {coin}"
   },
   "ja-JP": {
-    "Topic Detail": "Topic Detail {tier}"
+    "btn-desc": "Twitterでログインして{coin}を入手しよう",
+    "btn": "{coin}を受け取る"
   },
   "ko-KR": {
-    "Topic Detail": "Topic Detail {tier}"
+    "btn-desc": "Twitter로 로그인하여 {coin}을 받으세요",
+    "btn": "{coin} 받기"
   }
 }</i18n>
 

@@ -3,6 +3,7 @@ definePageMeta({
   layout: "x",
 });
 
+const debug = useDebug('pd')
 const { hasTwitterLogin, twitterIdentity, supabseUser } = $(supabaseStore())
 
 let tiers = $ref([
@@ -17,22 +18,37 @@ let tiers = $ref([
   { rank: 'H', bg: 'rgb(255, 127, 10)', users: [] },
 ])
 
+const getRank = async () => {
+  const rz = await doFetch('/api/invite/rank', {
+    method: 'GET',
+  })
+  debug({ rz })
+}
+
 async function loadData() {
   const rz = await $fetch('/api/pd')
   console.log(rz, supabseUser)
 
-  tiers[3].users = rz.map(item => ({
+  const users = rz.map(item => ({
     id: item?.id,
     avatar: item?.avatar,
     name: item?.fullname,
     user_name: item?.slug
   }))
-  // const { data, error } = await client.from('x_profiles').select('*')
-  // console.log({ data, error })
+
+  users.forEach((user, index) => {
+    const tierIndex = Math.floor(index / 4)
+    if (tiers[tierIndex]) {
+      tiers[tierIndex].users.push(user)
+    }
+  })
+
+
 }
 
 onMounted(() => {
-  loadData()
+  // loadData()
+  getRank()
 })
 </script>
 
@@ -46,33 +62,35 @@ onMounted(() => {
       <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
 
       <div class="flex-1 grid grid-cols-4 gap-[1px]">
-        <NuxtLink :to="`/pd/u-${n.id}`" v-for="n in (tier.users.length ? tier.users.slice(0, 3) : (index + 1 >= 3 ? 3 : index + 1))" :key="n"
+        <NuxtLink :to="`/pd/u-${user.id}`" v-for="user in tier.users" :key="user.id"
           class="border-0 flex flex-col items-center justify-center relative">
-          <van-image class="w-full h-full bg-cover" :src="xAvatar(n.avatar)">
+          <van-image class="w-full h-full bg-cover" :src="xAvatar(user.avatar)">
             <template v-slot:loading>
               <van-loading type="spinner" size="20" />
             </template>
           </van-image>
-          <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{ n.name || 'name' }}</p>
+          <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{
+            user.name ||
+            'name' }}</p>
         </NuxtLink>
 
-        <NuxtLink v-if="index >= 3" :to="`/pd/t-${tier.rank}`"
+        <!-- <NuxtLink v-if="index >= 3" :to="`/pd/t-${tier.rank}`"
           class="border-0 flex flex-col items-center justify-center">
           <p class="border-0 w-full flex items-center justify-center">
             <span class="border-0 mb-[2px] leading-10">more</span>
             <van-icon name="arrow" />
           </p>
-        </NuxtLink>
+        </NuxtLink> -->
       </div>
 
     </div>
 
-    <NuxtLink to="/pd/guid"
+    <!-- <NuxtLink to="/pd/guid"
       class="fixed bottom-[5vh] right-[5vw] size-10 rounded-full border border-white overflow-hidden flex justify-center items-center bg-white">
       <img v-if="hasTwitterLogin && true" :src="twitterIdentity?.identity_data?.avatar_url" alt=""></img>
       <div v-else>
         <van-icon name="share-o" color="red" size="24" />
       </div>
-    </NuxtLink>
+    </NuxtLink> -->
   </section>
 </template>
