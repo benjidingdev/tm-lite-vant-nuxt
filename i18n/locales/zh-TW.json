@@ -177,5 +177,6 @@
   "Buy USDT": "購買USDT",
   "Enter confirmation code": "輸入確認碼",
   "Please check yourEmail for an email from privy.io and enter your code below.": "請檢查您的郵件 {email}，查看來自 privy.io 的郵件並在下方輸入您的代碼。",
-  "Didn't get an email?": "沒有收到郵件？"
+  "Didn't get an email?": "沒有收到郵件？",
+  "Initializing wallet...": "正在初始化錢包..."
 }

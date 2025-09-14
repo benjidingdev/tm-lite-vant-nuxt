@@ -23,10 +23,15 @@ const onInput = async (event: any) => {
   if (!isPwdFocused) {
     return;
   }
-  oneTimePassword = event.target.value;
+  oneTimePassword = event.target.value.replace(/\D/g, '');
+};
+
+const isNumeric = (str) => {
+  return /^\d+$/.test(str);
 };
 
 watch($$(oneTimePassword), async (newVal) => {
+  if (!isNumeric(newVal)) return;
   if (newVal.length !== 6) return
   debug({ oneTimePassword, action: 'watch' })
   await doLogin()
@@ -45,18 +50,13 @@ watch($$(oneTimePassword), async (newVal) => {
       <span v-if="isPwdFocused && inputArr.length === index" class="cursor" />
     </span>
     <input id="password-input" ref="pwdInputRef" type="text" v-model="oneTimePassword"
+      class="absolute top-0 left-0 w-full h-full opacity-0"
       :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']" maxlength="6"
       @input="(e) => _debounce(onInput(e), 100)" @focus.prevent="onFocus" @blur.prevent="onBlur" />
   </div>
 </template>
 <style>
 .hidden-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
   color: transparent;
   caret-color: transparent;
 }
