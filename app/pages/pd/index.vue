@@ -3,7 +3,7 @@ definePageMeta({
   layout: "x",
 });
 
-const { hasTwitterLogin, twitterIdentity } = $(supabaseStore())
+const { hasTwitterLogin, twitterIdentity, supabseUser } = $(supabaseStore())
 
 const client = useSupabaseClient()
 
@@ -22,10 +22,10 @@ let tiers = $ref([
 
 async function loadData() {
   const rz = await $fetch('/api/pd')
-  console.log(rz)
+  console.log(rz, supabseUser)
 
   tiers[3].users = rz.map(item => ({
-    id: item?.twitterid,
+    id: item?.id,
     avatar: item?.avatar,
     name: item?.fullname,
     user_name: item?.slug
@@ -49,7 +49,7 @@ onMounted(() => {
       <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
 
       <div class="flex-1 grid grid-cols-4 gap-[1px]">
-        <NuxtLink :to="`pd/u-${n}`" v-for="n in (tier.users.length ? tier.users : (index + 1 >= 3 ? 3 : index + 1))" :key="n"
+        <NuxtLink :to="`pd/u-${n.id}`" v-for="n in (tier.users.length ? tier.users : (index + 1 >= 3 ? 3 : index + 1))" :key="n"
           class="border-0 flex flex-col items-center justify-center relative">
           <img class="w-full h-full bg-cover" :src="n.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'" />
           <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{ n.name || 'name' }}</p>
