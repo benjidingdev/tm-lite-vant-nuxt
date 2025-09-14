@@ -13,7 +13,8 @@ export const supabaseStore = defineStore("supabaseStore", () => {
     id: supabseUser.value?.id,
     avatar: twitterIdentity?.identity_data?.avatar_url,
     name: twitterIdentity?.identity_data?.full_name,
-    user_name: twitterIdentity?.identity_data?.user_name
+    user_name: twitterIdentity?.identity_data?.user_name,
+    refCount: 0,
   }))
 
   const hasTwitterLogin = $computed(() => !!twitterIdentity)
