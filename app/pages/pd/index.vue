@@ -3,7 +3,12 @@ definePageMeta({
   layout: "x",
 });
 
-let tiers = [
+const { hasTwitterLogin, twitterIdentity } = $(supabaseStore())
+
+const client = useSupabaseClient()
+
+
+let tiers = $ref([
   { rank: 'S', bg: 'rgb(255, 127, 127)', users: [] },
   { rank: 'A', bg: 'rgb(255, 191, 127)', users: [] },
   { rank: 'B', bg: 'rgb(255, 223, 127)', users: [] },
@@ -54,8 +59,8 @@ onMounted(() => {
       <div class="flex-1 grid grid-cols-4 gap-[1px]">
         <NuxtLink :to="`pd/u-${n}`" v-for="n in (index + 1 >= 3 ? 3 : index + 1)" :key="n"
           class="border-0 flex flex-col items-center justify-center relative">
-          <img class="w-full h-full bg-cover" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-          <p class="leading-5 text-center border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">name</p>
+          <img class="w-full h-full bg-cover" :src="n.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'" />
+          <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{ n.name || 'name' }}</p>
         </NuxtLink>
 
         <NuxtLink v-if="index >= 3" :to="`pd/t-${tier.rank}`"
@@ -69,7 +74,12 @@ onMounted(() => {
 
     </div>
 
-    <PdAuth />
-
+    <NuxtLink to="pd/guid"
+      class="fixed bottom-[5vh] right-[5vw] size-10 rounded-full border border-white overflow-hidden flex justify-center items-center bg-white">
+      <img v-if="hasTwitterLogin && true" :src="twitterIdentity?.identity_data?.avatar_url" alt=""></img>
+      <div v-else>
+        <van-icon name="share-o" color="red" size="24" />
+      </div>
+    </NuxtLink>
   </section>
 </template>
