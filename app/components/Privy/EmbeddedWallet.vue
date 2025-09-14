@@ -1,15 +1,12 @@
 <script setup lang="ts">
     const { walletClient, wallet, initWallet, isLoading } = $(privyStore())
     import { showToast } from 'vant';
-    const signMessage = async () => {
-        console.log('walletClient', {
-            walletClient
-        })
+const signMessage = async () => {
         const message = `Hello, world! ${Date.now()}`
         const signature = await walletClient.signMessage({
             message,
         })
-        showToast(`message: ${message} 
+        showToast(`message: ${message}
 sign signature: ${signature}`)
     }
 </script>
