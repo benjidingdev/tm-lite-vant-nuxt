@@ -19,11 +19,21 @@ export const supabaseStore = defineStore("supabaseStore", () => {
 
   const hasTwitterLogin = $computed(() => !!twitterIdentity)
 
-  const doLogin = async () => {
+  const doLogin = async ({ pathname, refId }: { pathname: string, refId: string }) => {
+    console.log('doLogin', { pathname, refId })
+    // const redirectTo = `${location.origin}/confirm?redirectTo=${encodeURIComponent(url)}&refId=${refId}`
+    const newUrl = new URL(`${location.origin}/confirm`);
+    if (refId) {
+      newUrl.searchParams.append('refId', refId)
+    }
+    if (pathname) {
+      newUrl.searchParams.append('redirectTo', pathname)
+    }
+
     const { data, error } = await client.auth.signInWithOAuth({
       provider: 'twitter',
       options: {
-        redirectTo: `${location.origin}/confirm?redirectTo=${encodeURIComponent('/pd')}`,
+        redirectTo: newUrl.toString(),
       },
     })
     if (error) {

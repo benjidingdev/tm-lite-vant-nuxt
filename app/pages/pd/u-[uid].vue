@@ -44,6 +44,10 @@ onMounted(async () => {
   }
   await loadUser(route.params.uid)
 })
+
+const handleLogin = async () => {
+  await doLogin({pathname: '/pd/u-[uid]', refId: route.params.uid})
+}
 </script>
 
 <template>
@@ -52,7 +56,7 @@ onMounted(async () => {
     <PdUser :user />
 
     <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
-      <template v-if="true || hasTwitterLogin">
+      <template v-if="isMe">
         <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="capture('my-div', 'shareImageName')">
           <span>{{ t('share') }}</span>
         </button>
@@ -62,8 +66,8 @@ onMounted(async () => {
         </div>
       </template>
 
-      <template v-else>
-        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="doLogin">
+      <template v-if="!hasTwitterLogin">
+        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="handleLogin">
           <span>{{ t('btn', { coin: 'PDCoin' }) }}</span>
         </button>
 
