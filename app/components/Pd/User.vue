@@ -5,7 +5,7 @@ const { user = {} } = defineProps(['user'])
 </script>
 
 <template>
-  <div id="my-div" class="relative w-[320px] rounded-2xl p-8 bg
+  <div id="my-div" class="relative w-full rounded-2xl p-8 bg
       border border-[#16653480] text-center text-white shadow-lg">
 
     <div class="mt-4 flex flex-col items-center">

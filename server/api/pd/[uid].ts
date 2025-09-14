@@ -1,5 +1,4 @@
 import { serverSupabaseServiceRole } from "#supabase/server";
-import _ from 'lodash'
 
 export default defineEventHandler(async (event) => {
   const uid = getRouterParam(event, 'uid')
@@ -9,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
   let queryBuilder = adminClient
     .from("invites")
-    .select(`*`).eq('userId', uid);
+    .select(`*, x_profiles (*) `).eq('userId', uid).single();
 
   const { data, error } = await queryBuilder;
 
