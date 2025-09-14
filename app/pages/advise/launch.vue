@@ -6,8 +6,8 @@ const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
 const voData = reactive({
-  title: "test",
-  description: "aaaa",
+  title: "",
+  description: "",
   hash: '',
 });
 

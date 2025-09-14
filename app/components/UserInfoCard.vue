@@ -3,10 +3,7 @@
 import { onMounted } from "vue";
 import { getUserProfile } from "@/api/userInfo";
 import {
-  encryptMiddle,
   amountSeparate,
-  amountMoney,
-  unitConvert,
 } from "@/utils/processing";
 
 const { wallet } = $(walletStore());
@@ -89,13 +86,13 @@ onMounted(() => {
       >
         <img
           v-if="voData.userInfo.avatar"
-          class="w-8 h-8 mx-auto rounded-full"
+          class="w-12 h-12 mx-auto rounded-full"
           :src="voData.userInfo.avatar"
         />
         <img
           v-else
-          class="w-8 h-8 mx-auto rounded-full"
-          src="@/assets/img/default.webp"
+          class="w-12 h-12 mx-auto rounded-full"
+          src="/logo.png"
         />
         <div class="flex-1 h-6 flex flex-col pl-2">
           <p class="text-xl font-bold">
