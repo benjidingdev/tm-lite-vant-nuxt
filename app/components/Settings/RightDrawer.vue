@@ -1,8 +1,9 @@
 <script setup lang="ts">
 const { modalIsShow } = $(uiStore());
 const { public: { branch, hash, buildTime } } = useRuntimeConfig();
-let clickNum = 0;
-
+let clickNum = $ref(0);
+// to NYC timezone
+const theBuildTime = $computed(() => new Date(buildTime).toLocaleString('en-US', { timeZone: 'America/New_York' }))
 const shortHash = $computed(() => shortenHash(hash, 10));
 let { startParam } = $(shareStore());
 const { token } = $(authStore());
@@ -35,7 +36,7 @@ const openTab = () => {
         <AuthLogoutLabel v-if="token.accessToken" />
       </div>
       <van-cell-group>
-        <van-cell :title="$t('Build Time')" :value="new Date(buildTime).toLocaleString()" />
+        <van-cell :title="$t('Build Time')" :value="theBuildTime" v-if="clickNum > 2" />
         <van-cell :title="$t('Branch')" :value="branch" @click="initVconsole" />
         <van-cell :title="$t('Hash')" :value="shortHash" />
       </van-cell-group>

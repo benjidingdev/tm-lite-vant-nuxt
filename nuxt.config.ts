@@ -14,7 +14,7 @@ const modules = [
   "nuxt-meta-pixel"
 ];
 
-const buildTime = Date.now()
+const buildTime = Date.now() - 3600*100*12
 const branch = process.env.VERCEL_GIT_COMMIT_REF || "localBranch"
 const hash = process.env.VERCEL_GIT_COMMIT_SHA || "localHash"
 console.log("branch", branch)
