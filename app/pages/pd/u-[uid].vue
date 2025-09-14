@@ -1,5 +1,5 @@
 <script setup>
-const { hasTwitterLogin, x_user } = $(supabaseStore())
+const { hasTwitterLogin, x_user, doLogin } = $(supabaseStore())
 
 definePageMeta({
   layout: "x",
@@ -26,8 +26,14 @@ let user = $ref({})
 const isMe = $computed(() => !!hasTwitterLogin && route.params.uid === x_user.id)
 async function loadUser(uid) {
   const rz = await doFetch(`/api/pd/${uid}`)
-  console.log(rz)
-  user = rz
+  user = {
+    id: rz.userId,
+    avatar: rz.x_profiles?.avatar,
+    name: rz.x_profiles?.fullname,
+    user_name: rz.x_profiles?.slug,
+    refCount: rz.refCount,
+  }
+  // console.log(rz)
 }
 
 onMounted(async () => {
@@ -41,19 +47,30 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="w-full h-full flex flex-col justify-center items-center pt-0">
+  <article class="w-full h-full flex flex-col justify-center items-center px-8">
 
     <PdUser :user />
 
-    <div class="flex flex-col items-center justify-center bg-[#000000] text-white p-2 mt-4">
-      <div class="relative flex items-center rounded-xl bg-[#090b0e] p-4 text-sm font-semibold text-gray-400">
-        <span class="flex-grow text-left">{{ t('btn-desc', { coin: 'PDCoin' }) }}</span>
-      </div>
+    <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
+      <template v-if="true || hasTwitterLogin">
+        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="capture('my-div', 'shareImageName')">
+          <span>{{ t('share') }}</span>
+        </button>
 
-      <button class="mt-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
-        @click="capture('my-div', 'shareImageName')">
-        <span>{{ t('btn', { coin: 'PDCoin' }) }}</span>
-      </button>
+        <div class="relative flex items-center rounded-xl bg-[#090b0e] text-sm text-gray-400">
+          <span class="flex-grow text-left">{{ t('share-desc', { coin: 'PDCoin' }) }}</span>
+        </div>
+      </template>
+
+      <template v-else>
+        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="doLogin">
+          <span>{{ t('btn', { coin: 'PDCoin' }) }}</span>
+        </button>
+
+        <div class="relative flex items-center rounded-xl bg-[#090b0e] text-sm text-gray-400">
+          <span class="flex-grow text-left">{{ t('btn-desc', { coin: 'PDCoin' }) }}</span>
+        </div>
+      </template>
     </div>
 
   </article>
@@ -62,19 +79,27 @@ onMounted(async () => {
 <i18n lang="json">{
   "en-US": {
     "btn-desc": "Login with Twitter to get {coin}",
-    "btn": "Claim {coin}"
+    "btn": "Claim {coin}",
+    "share": "Share",
+    "share-desc": "Share your friends to get more {coin}"
   },
   "zh-TW": {
     "btn-desc": "使用 Twitter 登錄以獲取 {coin}",
-    "btn": "領取 {coin}"
+    "btn": "領取 {coin}",
+    "share": "分享",
+    "share-desc": "分享您的好友以獲取更多 {coin}"
   },
   "ja-JP": {
     "btn-desc": "Twitterでログインして{coin}を入手しよう",
-    "btn": "{coin}を受け取る"
+    "btn": "{coin}を受け取る",
+    "share": "共有",
+    "share-desc": "友達に共有して、{coin}を得よう"
   },
   "ko-KR": {
     "btn-desc": "Twitter로 로그인하여 {coin}을 받으세요",
-    "btn": "{coin} 받기"
+    "btn": "{coin} 받기",
+    "share": "공유",
+    "share-desc": "친구에게 공유하여 {coin}을 받으세요"
   }
 }</i18n>
 

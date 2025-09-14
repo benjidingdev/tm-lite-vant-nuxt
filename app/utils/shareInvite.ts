@@ -67,22 +67,28 @@ export async function captureTargetToPng(name = 'shareImageName', target) {
     return;
   }
 
-  const imgElements = target.querySelectorAll('img');
-  const promises = Array.from(imgElements).filter(img => img.src.startsWith('http')).map(img => getImageFromProxy(img));
+  try {
+    const imgElements = target.querySelectorAll('img');
+    const promises = Array.from(imgElements).filter(img => img.src.startsWith('http')).map(img => getImageFromProxy(img));
 
-  const base64Urls = await Promise.all(promises);
+    const base64Urls = await Promise.all(promises);
 
-  imgElements.forEach((img, index) => {
-    if (base64Urls[index]) {
-      img.src = URL.createObjectURL(base64Urls[index]);
-    }
-  });
-
-  const blob = await domtoimage.toBlob(target);
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.download = `${name}.png`;
-  link.href = url;
-  link.click();
-  URL.revokeObjectURL(url);
+    imgElements.forEach((img, index) => {
+      if (base64Urls[index]) {
+        img.src = URL.createObjectURL(base64Urls[index]);
+      }
+    });
+    console.log(1111)
+    const blob = await domtoimage.toBlob(target);
+    console.log(222)
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    console.log(222)
+    link.download = `${name}.png`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.log('captureTargetToPng error', error)
+  }
 }
