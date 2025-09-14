@@ -40,6 +40,7 @@ onMounted(() => {
   <section class="w-full h-[calc(100dvh)] h-auto flex flex-col items-center justify-center space-y-[10px] mt-8">
     <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
       :key="tier.rank">
+<<<<<<< HEAD
 
       <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
 
@@ -48,6 +49,14 @@ onMounted(() => {
           class="border-0 flex flex-col items-center justify-center relative">
           <img class="w-full h-full bg-cover" :src="n.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'" />
           <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{ n.name || 'name' }}</p>
+=======
+      <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
+      <div class="flex-1 grid grid-cols-4 gap-[1px]">
+        <NuxtLink :to="`pd/u-${n}`" v-for="n in (index + 1 >= 3 ? 3 : index + 1)" :key="n"
+          class="border-0 flex flex-col items-center justify-center relative">
+          <img class="w-full h-full bg-cover" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
+          <p class="leading-5 text-center border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">name</p>
+>>>>>>> update pd index ui
         </NuxtLink>
 
         <NuxtLink v-if="index >= 3" :to="`pd/t-${tier.rank}`"
