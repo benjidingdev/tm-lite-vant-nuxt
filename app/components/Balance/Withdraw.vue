@@ -38,7 +38,6 @@ const waitTransaction = async (hash: string) => {
       throw new Error("Transaction failed");
     }
   } catch (error) {
-    console.log("waitTransaction error:", error);
     throw error;
   }
 };

@@ -11,7 +11,7 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
 
   const target = document.getElementById(targetId);
   if (!target) {
-    console.log('target not found');
+    console.error('target not found');
     return;
   }
 

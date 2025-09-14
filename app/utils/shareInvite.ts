@@ -4,7 +4,6 @@ export function getFatherInviteCode() {
   let startParams = {};
 
   let babse64Params = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
-  // console.log(0, babse64Params);
   if (!babse64Params) {
     return startParams;
   }
@@ -16,7 +15,6 @@ export function getFatherInviteCode() {
 export function paramsToBase64(params: any) {
   const urlParams = new URLSearchParams(params);
   const encodedParams = urlParams.toString();
-  console.log({ encodedParams });
 
   const babse64Params = btoa(encodedParams);
   return babse64Params;
@@ -30,9 +28,8 @@ export function base64ToParams(babse64Params: any) {
     for (const [key, value] of urlParams) {
       params[key] = value;
     }
-    console.log(params, decodedString);
   } catch (error) {
-    console.log('decode base64 error:', error);
+    console.error('decode base64 error:', error);
   }
   return params;
 }
@@ -46,7 +43,6 @@ export function inviteUser(params: InviteParams) {
 
   const botInfo = useRuntimeConfig().public.tgBotInfo || '';
   const babse64Params = paramsToBase64({ ...params });
-  console.log({ botInfo });
 
   const miniAppUrl = `https://t.me/${botInfo}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
@@ -58,7 +54,6 @@ export function inviteUser(params: InviteParams) {
 }
 
 async function getImageFromProxy(img: any) {
-  console.log('load img from proxy:', img.src);
   return $fetch('/api/proxy/image', {
     method: 'POST',
     body: {
