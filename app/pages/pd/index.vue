@@ -3,12 +3,7 @@ definePageMeta({
   layout: "x",
 });
 
-const { hasTwitterLogin, twitterIdentity } = $(supabaseStore())
-
-const client = useSupabaseClient()
-
-
-let tiers = $ref([
+let tiers = [
   { rank: 'S', bg: 'rgb(255, 127, 127)', users: [] },
   { rank: 'A', bg: 'rgb(255, 191, 127)', users: [] },
   { rank: 'B', bg: 'rgb(255, 223, 127)', users: [] },
@@ -64,14 +59,11 @@ onMounted(() => {
         </NuxtLink>
       </div>
 
+      <!-- <div class="border-1 min-w-5 h-20 flex flex-col items-center justify-center space-y-2">
+        <span>15</span>
+        <van-icon name="arrow" />
+      </div> -->
     </div>
 
-    <NuxtLink to="pd/guid"
-      class="fixed bottom-[5vh] right-[5vw] size-10 rounded-full border border-white overflow-hidden flex justify-center items-center bg-white">
-      <img v-if="hasTwitterLogin && true" :src="twitterIdentity?.identity_data?.avatar_url" alt=""></img>
-      <div v-else>
-        <van-icon name="share-o" color="red" size="24" />
-      </div>
-    </NuxtLink>
   </section>
 </template>
