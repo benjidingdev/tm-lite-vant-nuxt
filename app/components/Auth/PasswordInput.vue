@@ -50,13 +50,14 @@ watch($$(oneTimePassword), async (newVal) => {
       <span v-if="isPwdFocused && inputArr.length === index" class="cursor" />
     </span>
     <input id="password-input" ref="pwdInputRef" type="text" v-model="oneTimePassword"
-      class="absolute top-0 left-0 w-full h-full opacity-0"
+      class="absolute top-0 left-0 w-full h-full"
       :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']" maxlength="6"
       @input="(e) => _debounce(onInput(e), 100)" @focus.prevent="onFocus" @blur.prevent="onBlur" />
   </div>
 </template>
 <style>
 .hidden-input {
+  opacity: 0.1;
   color: transparent;
   caret-color: transparent;
 }
