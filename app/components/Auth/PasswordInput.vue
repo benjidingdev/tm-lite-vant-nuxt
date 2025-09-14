@@ -47,12 +47,13 @@ watch($$(oneTimePassword), async (newVal) => {
       class="w-[40px] h-[50px] border-1 border-solid border-gray-400 rounded-xl flex justify-center items-center rounded"
       :class="`${isPwdFocused && inputArr.length === index && 'border-black!'}`">
       {{ inputArr[index] }}
-      <span v-if="isPwdFocused && inputArr.length === index" class="cursor" />
+      <span v-if="isPwdFocused && inputArr.length === index"
+        class="cursor inline-block w-[1px] h-[1.2em] bg-black ml-1" />
     </span>
+
     <input id="password-input" ref="pwdInputRef" type="text" v-model="oneTimePassword"
-      class="absolute top-0 left-0 w-full h-full"
-      :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']" maxlength="6"
-      @input="(e) => _debounce(onInput(e), 100)" @focus.prevent="onFocus" @blur.prevent="onBlur" />
+      class="absolute top-0 left-0 w-full h-full" :class="[isPwdFocused ? 'focus' : 'not-focus', 'hidden-input']"
+      maxlength="6" @input="(e) => _debounce(onInput(e), 100)" @focus.prevent="onFocus" @blur.prevent="onBlur" />
   </div>
 </template>
 <style>
@@ -63,11 +64,6 @@ watch($$(oneTimePassword), async (newVal) => {
 }
 
 .cursor {
-  display: inline-block;
-  width: 1px;
-  height: 1.2em;
-  background-color: black;
-  margin-left: 2px;
   animation: blink 1.2s steps(1) infinite;
 }
 
