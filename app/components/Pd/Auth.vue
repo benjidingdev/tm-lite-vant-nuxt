@@ -1,29 +1,5 @@
 <script setup>
-const client = useSupabaseClient()
 const { hasTwitterLogin, x_user } = $(supabaseStore())
-
-const doLogin = async () => {
-  const { data, error } = await client.auth.signInWithOAuth({
-    provider: 'twitter',
-    options: {
-      redirectTo: `${location.origin}/confirm?redirectTo=${encodeURIComponent('/pd')}`,
-    },
-  })
-  if (error) {
-    console.log('error', error)
-  }
-  if (data) {
-    console.log('data', data)
-  }
-  if (data?.url) {
-    window.location.href = data.url
-  }
-}
-
-const doLogout = async () => {
-  const rz = await client.auth.signOut()
-  console.log(rz)
-}
 </script>
 
 <template>
