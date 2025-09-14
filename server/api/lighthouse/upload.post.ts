@@ -1,12 +1,13 @@
 import lighthouse from '@lighthouse-web3/sdk'
 
 export default defineEventHandler(async (event) => {
-  const { title, description } = await readBody(event)
+  const { title, description, address } = await readBody(event)
   const { lighthouseStorageApiKey } = useRuntimeConfig(event)
 
   const data = {
     title,
     description,
+    address
   }
   const content = JSON.stringify(data)
 

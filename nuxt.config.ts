@@ -55,7 +55,7 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""),
       "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(process.env.NUXT_PUBLIC_TG_BOT_INFO || ""),
       "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""),
-      "import.meta.env.NUXT_PUBLIC_LIGHTHOUSE_STORAGE_API_URL": JSON.stringify(process.env.NUXT_PUBLIC_LIGHTHOUSE_STORAGE_API_URL || ""),
+      "import.meta.env.NUXT_PUBLIC_IPFS_GATEWAY_URL": JSON.stringify(process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL || ""),
     },
   },
   i18n: {
@@ -93,7 +93,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     lighthouseStorageApiKey: process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY,
     public: {
-      lighthouseStorageApiUrl: process.env.NUXT_PUBLIC_LIGHTHOUSE_STORAGE_API_URL,
+      ipfsGatewayUrl: process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL,
       tgBotInfo: process.env.NUXT_PUBLIC_TG_BOT_INFO,
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
       isTestnet: process.env.NUXT_PUBLIC_IS_TESTNET === 'true',

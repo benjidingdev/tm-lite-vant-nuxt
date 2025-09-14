@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { addAdviseList } from "~/api/advise";
 
+const { wallet } = $(privyStore())
 const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
@@ -26,7 +27,11 @@ const onSubmit = async (values: object) => {
     loading.value = true;
     const { hash } = await doFetch('/api/lighthouse/upload', {
       method: 'POST',
-      body: voData
+      body: {
+        title: voData.title,
+        description: voData.description,
+        address: wallet?.address,
+      }
     })
     voData.hash = hash
     let res = await addAdviseList(voData)
