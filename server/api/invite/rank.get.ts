@@ -1,8 +1,13 @@
-import { serverSupabaseServiceRole } from "#supabase/server";
+import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
 export default defineEventHandler(async (event) => {
-  // get top 50 inviter, order by refCount
-  const {data} = await serverSupabaseServiceRole(event).from('invites')
-    .select()
+  const user = await serverSupabaseUser(event)
+  const userId = user?.id as string
+  const adminClient = serverSupabaseServiceRole(event)
+  const {data, error} = await adminClient.from('invites')
+    .select(`
+      userId,
+      refCount,
+      x_profiles(*)`)
     .order('refCount', { ascending: false })
     .limit(50)
 

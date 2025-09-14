@@ -39,9 +39,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // insert data into invites table
+  const {data: userXData} = await adminClient.from('x_profiles').select('*')
+  .eq('id', userId)
+  .single()
+  const meta = {
+    xAvatar: userXData?.avatar_url,
+    xName: userXData?.full_name,
+    xSlug: userXData?.user_name,
+  }
   const {data: dataInsert} = await adminClient.from('invites').insert({
     refId,
     userId,
+    meta,
   }).select().single()
 
   // update invites table that increase refIdCount by 1
