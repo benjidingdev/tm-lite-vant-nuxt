@@ -48,7 +48,11 @@ onMounted(() => {
       <div class="flex-1 grid grid-cols-4 gap-[1px]">
         <NuxtLink :to="`/pd/u-${n.id}`" v-for="n in (tier.users.length ? tier.users.slice(0, 3) : (index + 1 >= 3 ? 3 : index + 1))" :key="n"
           class="border-0 flex flex-col items-center justify-center relative">
-          <img class="w-full h-full bg-cover" :src="n.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'" />
+          <van-image class="w-full h-full bg-cover" :src="xAvatar(n.avatar)">
+            <template v-slot:loading>
+              <van-loading type="spinner" size="20" />
+            </template>
+          </van-image>
           <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{ n.name || 'name' }}</p>
         </NuxtLink>
 
