@@ -1,5 +1,4 @@
 import { serverSupabaseServiceRole } from "#supabase/server";
-import _ from 'lodash'
 
 export default defineEventHandler(async (event) => {
   const adminClient = serverSupabaseServiceRole(event);

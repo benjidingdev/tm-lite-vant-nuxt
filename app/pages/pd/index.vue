@@ -5,9 +5,6 @@ definePageMeta({
 
 const { hasTwitterLogin, twitterIdentity, supabseUser } = $(supabaseStore())
 
-const client = useSupabaseClient()
-
-
 let tiers = $ref([
   { rank: 'S', bg: 'rgb(255, 127, 127)', users: [] },
   { rank: 'A', bg: 'rgb(255, 191, 127)', users: [] },

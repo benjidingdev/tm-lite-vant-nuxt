@@ -26,23 +26,6 @@ const handleBack = () => {
   window.history.back()
 }
 
-async function loadData(uid) {
-  console.log('load user info from ')
-  const rz = await $fetch(`/api/pd/${uid}/`, {
-    // method: 'POST',
-    // body: {
-    //   refId: uid
-    // }
-  })
-  console.log(rz)
-}
-
-onMounted(async() => {
-  if (x_user && x_user.id) {
-    loadData(x_user.id)
-  }
-})
-
 </script>
 
 <template>
