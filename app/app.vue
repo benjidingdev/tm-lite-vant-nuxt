@@ -75,10 +75,8 @@ onMounted(() => {
       <BalancePopupV1 />
       <RequestQueueError />
     </NuxtLayout>
-    <ClientOnly>
-      <iframe ref="iframeRef" />
-    </ClientOnly>
     </van-config-provider>
+    <iframe ref="iframeRef" />
 </template>
 
 <style>
