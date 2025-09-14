@@ -18,7 +18,7 @@ const { modalIsShow } = $(uiStore());
           <p class="mb-2">{{ $t('Method One Desc') }} </p>
         </li>
         <li>
-          <p class="font-bold">{{ $t('uit Method Tow') }}</p>
+          <p class="font-bold">{{ $t('Tuit Method Tow') }}</p>
           <p class="mb-2">{{ $t('Method Tow Desc') }}</p>
         </li>
         <li>
