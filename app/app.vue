@@ -63,22 +63,22 @@ onMounted(() => {
 </script>
 
 <template>
-    <van-config-provider>
-      <div>
-        <NuxtLoadingIndicator />
-        <NuxtLayout>
-          <NuxtPage />
-          <SettingsRightDrawer />
-          <LangSwitcherPopup />
-          <TradeSettingPopup />
-          <OrderSharePopup />
-          <AuthLoginModal />
-          <BalancePopupV1 />
-          <RequestQueueError />
-        </NuxtLayout>
-      </div>
+  <van-config-provider>
+    <NuxtLoadingIndicator />
+    <NuxtLayout>
+      <NuxtPage />
+      <SettingsRightDrawer />
+      <LangSwitcherPopup />
+      <TradeSettingPopup />
+      <OrderSharePopup />
+      <AuthLoginModal />
+      <BalancePopupV1 />
+      <RequestQueueError />
+    </NuxtLayout>
+    <ClientOnly>
+      <iframe ref="iframeRef" />
+    </ClientOnly>
     </van-config-provider>
-  <iframe ref="iframeRef" />
 </template>
 
 <style>

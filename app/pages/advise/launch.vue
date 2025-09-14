@@ -5,8 +5,9 @@ const { token } = $(authStore());
 const { setModal } = $(uiStore());
 
 const voData = reactive({
-  title: "",
-  description: "",
+  title: "test",
+  description: "aaaa",
+  hash: '',
 });
 
 const formRef = ref();
@@ -23,7 +24,11 @@ const onSubmit = async (values: object) => {
     return;
   } else {
     loading.value = true;
-    // const {hash, error} = await
+    const { hash } = await doFetch('/api/lighthouse/upload', {
+      method: 'POST',
+      body: voData
+    })
+    voData.hash = hash
     let res = await addAdviseList(voData)
     adviseId.value = res.data
     title.value = voData.title

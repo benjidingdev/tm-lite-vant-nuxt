@@ -1,17 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import { config as loadEnv } from 'dotenv'
-import { existsSync } from 'fs'
-import { resolve } from 'path'
-
-const envFile = process.env.NODE_ENV === 'dev'
-  ? '.env.dev'
-  : '.env.local'
-
-if (existsSync(resolve(process.cwd(), envFile))) {
-  loadEnv({ path: resolve(process.cwd(), envFile), override: true })
-}
 
 const modules = [
   "@vant/nuxt",
@@ -59,16 +48,14 @@ export default defineNuxtConfig({
     ],
     define: {
       "window.FormData": "undefined",
-      "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(
-        import.meta.env.NUXT_PUBLIC_API_PREFIX
-      ),
-      "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(
-        import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID
-      ),
+      "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(process.env.NUXT_PUBLIC_API_PREFIX),
+      "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID),
       "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_REF || "localDev"),
       "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA || "localDev"),
       "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""),
       "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(process.env.NUXT_PUBLIC_TG_BOT_INFO || ""),
+      "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""),
+      "import.meta.env.NUXT_PUBLIC_LIGHTHOUSE_STORAGE_API_URL": JSON.stringify(process.env.NUXT_PUBLIC_LIGHTHOUSE_STORAGE_API_URL || ""),
     },
   },
   i18n: {
@@ -104,7 +91,9 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    lighthouseStorageApiKey: process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY,
     public: {
+      lighthouseStorageApiUrl: process.env.NUXT_PUBLIC_LIGHTHOUSE_STORAGE_API_URL,
       tgBotInfo: process.env.NUXT_PUBLIC_TG_BOT_INFO,
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
       isTestnet: process.env.NUXT_PUBLIC_IS_TESTNET === 'true',
