@@ -172,8 +172,6 @@ export const shortenHash = (
   if (!hash) return "";
   let pre = ''
   if (endLength === 0) {
-    endLength = startLength
-    startLength = 0
     pre = hash.substring(0, startLength);
     return `${pre}`;
   }

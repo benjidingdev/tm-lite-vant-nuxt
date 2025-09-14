@@ -14,6 +14,11 @@ const modules = [
   "nuxt-meta-pixel"
 ];
 
+const buildTime = Date.now()
+const branch = process.env.VERCEL_GIT_COMMIT_REF || "localBranch"
+const hash = process.env.VERCEL_GIT_COMMIT_SHA || "localHash"
+console.log("branch", branch)
+console.log("hash", hash)
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
@@ -50,8 +55,8 @@ export default defineNuxtConfig({
       "window.FormData": "undefined",
       "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(process.env.NUXT_PUBLIC_API_PREFIX),
       "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID),
-      "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_REF || "localDev"),
-      "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA || "localDev"),
+      "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(branch),
+      "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(hash),
       "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""),
       "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(process.env.NUXT_PUBLIC_TG_BOT_INFO || ""),
       "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""),
@@ -93,6 +98,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     lighthouseStorageApiKey: process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY,
     public: {
+      buildTime,
+      branch,
+      hash,
       ipfsGatewayUrl: process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL,
       tgBotInfo: process.env.NUXT_PUBLIC_TG_BOT_INFO,
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
@@ -101,8 +109,6 @@ export default defineNuxtConfig({
       siteName: "",
       siteSlogan: "",
       siteDescription: "",
-      branch: process.env.VERCEL_GIT_COMMIT_REF || "localDev",
-      hash: process.env.VERCEL_GIT_COMMIT_SHA || "localDev",
       privy: {
         appId: process.env.NUXT_PUBLIC_PRIVY_APP_ID || "",
         clientId: process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID || "",
