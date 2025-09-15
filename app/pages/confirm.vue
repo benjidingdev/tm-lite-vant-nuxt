@@ -23,12 +23,12 @@ const postInvite = async (refId: string) => {
 watch(user, async () => {
   if (user.value) {
     const params = new URLSearchParams(document.location.search);
-    const redirectTo = params.get("redirectTo") || '/';
+    let redirectTo = params.get("redirectTo") || '/';
+    redirectTo = redirectTo.replace('[uid]', user.value.id)
     const refId = params.get("refId") || '';
+    debug({ refId, user: user.value, redirectTo })
     if (refId) {
-      debug({ refId, user: user.value })
       postInvite(refId)
-      return navigateTo(`${redirectTo.replace('[uid]', user.value.id)}?refId=${refId}`)
     }
     return navigateTo(redirectTo)
   }
