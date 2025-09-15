@@ -6,7 +6,7 @@
   "scripts": {
     "build": "./scripts/build.sh",
     "dev": "./scripts/dev.sh",
-    "dev2": "nuxt dev",
+    "dev2": "nuxt dev --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"

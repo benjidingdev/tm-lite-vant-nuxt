@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
   const { network } = query;
 
   let queryBuilder = adminClient
-    .from("x_profiles")
-    .select(`*`)
-    .order("id", { ascending: false });
+    .from("invites")
+    .select(`*, x_profiles (*)`)
+    .order("refCount", { ascending: false });
 
   if (network) {
     queryBuilder = queryBuilder.eq("network", network);

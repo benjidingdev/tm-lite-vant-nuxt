@@ -2,7 +2,9 @@
 import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
+import { customCards } from "@/utils/customCards";
 const debug = useDebug('SwipeCard')
+
 type Card = {
   id: number;
   title: string;
@@ -55,6 +57,8 @@ const recommondQueryParams = $ref({
   followed: false,
 });
 
+const { query } = $(useRoute());
+
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
@@ -87,6 +91,10 @@ const getInfoList = async (refresh: boolean) => {
         const card = cards.splice(index, 1)[0];
         cards.unshift(card);
       }
+    }
+
+    if (query.sharedMarket === 'true') {
+      cards.unshift(customCards[0]); // add
     }
   }
   isLoading = false;
@@ -282,7 +290,7 @@ onMounted(() => {
           :class="['card', 'draggable-element', 'shadow-md', { active: currentIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
-          <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="contain">
+          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
 
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
@@ -302,7 +310,7 @@ onMounted(() => {
                 <p class="name">{{ card.title }}</p>
                 <p v-if="card?.markets.length" class="mt-1 leading-none!">{{
                   card?.markets[0].question
-                  }}</p>
+                }}</p>
               </div>
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">

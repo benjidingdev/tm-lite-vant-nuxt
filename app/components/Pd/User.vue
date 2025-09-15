@@ -16,6 +16,7 @@ const { user = {} } = defineProps(['user'])
       <p class="text-sm text-gray-400">@{{ user.user_name }}</p>
     </div>
 
+    <!-- {{ user }} -->
     <div class="mt-14 grid grid-cols-2 gap-y-6">
       <div>
         <h3 class="text-4xl font-semibold">{{ user.refCount || '-' }}</h3>

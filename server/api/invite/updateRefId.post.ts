@@ -56,6 +56,7 @@ export default defineEventHandler(async (event) => {
   const {data: dataInviterUpdate} = await adminClient.from('invites')
     .upsert({ refCount, userId: refId })
     .select()
+    .eq('userId', refId)
     .single()
   return {
     dataInsert,
