@@ -29,7 +29,7 @@ type subTaskItem = {
   rewardType: string;
   rewardNumber: number;
   skipUrl: string;
-  isReceive:boolean;
+  isReceive: boolean;
   skipTip: string;
   isFinish: boolean;
   finishedCount: number;
@@ -83,46 +83,47 @@ const theTaskImg = (img: any) => {
         <div v-for="sub in task.subTasks" :key="sub.id" class="task container mt-2">
           <van-card :desc="sub.description" :title="sub.name" :thumb="theTaskImg(task.image)">
             <template #title>
-              <h1 class="text-lg"> {{ task.name }}</h1>
+              <h1 class="text-lg font-bold"> {{ task.name }}</h1>
             </template>
 
             <template #desc>
-              <div class="text-sm text-gray-400">Task: {{ sub.description }}</div>
+              <div class="text-sm"><span class="text-black">Task:</span> {{ sub.description }}</div>
             </template>
 
             <template #tags>
-              <span class="text-gray-400">{{ $t("Award") }}: {{ sub.rewardNumber }}
+              <span class="text-green-500">{{ $t("Award") }}: {{ sub.rewardNumber }}
                 {{ sub.rewardType }}</span>
             </template>
 
             <template #price>
-              <span :class="Number(sub.rewardNumber * sub.finishedCount) > 0 ? 'text-green-500' : 'text-gray-400'">
-                {{ $t('Obtained: ') }} {{ sub.rewardNumber * sub.finishedCount + ' ' + sub.rewardType }}
+              <span class="text-black">
+                {{ $t('Obtained: ') }}{{ sub.rewardNumber * sub.finishedCount +
+                  ' ' + sub.rewardType }}
               </span>
             </template>
 
             <template #num>
               <div v-if="sub.isReceive">
-                <van-button disabled type="primary" size="small" plain>
+                <van-button disabled type="primary" size="mini" plain>
                   Completed
                 </van-button>
               </div>
               <div v-else>
-                <van-button v-if="sub.isFinish" type="primary" size="small" plain @click="receiveTask(sub)">
+                <van-button v-if="sub.isFinish" type="primary" size="mini" plain @click="receiveTask(sub)">
                   {{ $t("Get Rewards") }}
                 </van-button>
-                <van-button v-else-if="sub.eventTasks[0]?.currentEventValue > 0" size="small" type="primary" plain
+                <van-button v-else-if="sub.eventTasks[0]?.currentEventValue > 0" size="mini" type="primary" plain
                   @click="router.push(sub.skipUrl)">
                   {{ $t("In Progress") }}
                 </van-button>
-                <van-button v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'" size="small" type="primary" plain
+                <van-button v-else-if="sub.eventTasks[0]?.taskEvent == 'INVITE'" size="mini" type="primary" plain
                   @click="modalIsShow.share = true">
                   {{ $t("Go To Invite") }}
                 </van-button>
-                <van-button v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'" size="small" type="primary" plain>
+                <van-button v-else-if="sub.eventTasks[0]?.taskEvent == 'TRADE'" size="mini" type="primary" plain>
                   {{ $t("Go To Trade") }}
                 </van-button>
-                <van-button v-else type="primary" size="small" plain @click="router.push(sub.skipUrl)">
+                <van-button v-else type="primary" size="mini" plain @click="router.push(sub.skipUrl)">
                   {{ sub.skipTip }}
                 </van-button>
               </div>
