@@ -18,22 +18,15 @@ let tiers = $ref([
   { rank: 'H', bg: 'rgb(255, 127, 10)', users: [] },
 ])
 
-const getRank = async () => {
-  const rz = await doFetch('/api/invite/rank', {
-    method: 'GET',
-  })
-  debug({ rz })
-}
-
 async function loadData() {
-  const rz = await $fetch('/api/pd')
-  console.log(rz, supabseUser)
+  const rz = await doFetch('/api/pd')
 
   const users = rz.map(item => ({
-    id: item?.id,
-    avatar: item?.avatar,
-    name: item?.fullname,
-    user_name: item?.slug
+    id: item?.x_profiles?.id,
+    avatar: item?.x_profiles?.avatar,
+    name: item?.x_profiles?.fullname,
+    user_name: item?.x_profiles?.slug,
+    refCount: item?.refCount,
   }))
 
   users.forEach((user, index) => {
@@ -47,8 +40,7 @@ async function loadData() {
 }
 
 onMounted(() => {
-  // loadData()
-  getRank()
+  loadData()
 })
 </script>
 

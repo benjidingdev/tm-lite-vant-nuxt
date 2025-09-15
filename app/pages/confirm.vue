@@ -2,16 +2,27 @@
 definePageMeta({
   colorMode: "dark",
 });
+
+const debug = useDebug('confirm')
 const user = useSupabaseUser()
 
-watch(user, () => {
+const postInvite = async (refId: string) => {
+  await doFetch('/api/invite/updateRefId', {
+    method: 'POST',
+    body: {
+      refId,
+    }
+  })
+}
+
+watch(user, async () => {
   if (user.value) {
     const params = new URLSearchParams(document.location.search);
     const redirectTo = params.get("redirectTo") || '/';
     const refId = params.get("refId") || '';
     if (refId) {
-      console.log(user.value, refId)
-      // TODO bind refId to db
+      debug({ refId, user: user.value })
+      await postInvite(refId)
       return navigateTo(`${redirectTo.replace('[uid]', user.value.id)}?refId=${refId}`)
     }
     return navigateTo(redirectTo)
