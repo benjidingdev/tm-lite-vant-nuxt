@@ -6,7 +6,7 @@
 
 <style scoped>
 .bg {
-  background: #000;
-  background-image: radial-gradient(ellipse 100% 70% at 50% -10%, #00ff9936, transparent);
+  background: #0e100f;
+  background-image: radial-gradient(ellipse 80% 40% at 50% -10%, #200052, transparent);
 }
 </style>

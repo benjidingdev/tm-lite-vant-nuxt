@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     statusMessage: profileError?.message
   });
 
-  user = profileData
+  user = { ...profileData }
   user.refCount = inviteData?.refCount || 0;
 
   return user;
