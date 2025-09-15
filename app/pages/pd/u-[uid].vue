@@ -50,14 +50,14 @@ let user = $ref({})
 const isMe = $computed(() => !!hasTwitterLogin && route.params.uid === x_user.id)
 async function loadUser(uid) {
   const rz = await doFetch(`/api/pd/${uid}`)
+  console.log(rz)
   user = {
-    id: rz.userId,
-    avatar: rz.x_profiles?.avatar,
-    name: rz.x_profiles?.fullname,
-    user_name: rz.x_profiles?.slug,
+    id: rz.id,
+    avatar: rz?.avatar,
+    name: rz?.fullname,
+    user_name: rz?.slug,
     refCount: rz.refCount,
   }
-  // console.log(rz)
 }
 
 onMounted(async () => {
