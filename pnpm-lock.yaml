@@ -11,6 +11,9 @@ importers:
       '@lighthouse-web3/sdk':
         specifier: ^0.4.2
         version: 0.4.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@line/liff':
+        specifier: ^2.27.2
+        version: 2.27.2(debug@4.4.1)
       '@linenext/dapp-portal-sdk':
         specifier: ^1.4.4
         version: 1.4.4(@reown/appkit-wallet-button@1.8.4(@netlify/blobs@9.1.2)(@types/react@19.1.13)(bufferutil@4.0.9)(db0@0.3.2)(ioredis@5.6.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(@reown/appkit@1.7.16(@netlify/blobs@9.1.2)(@types/react@19.1.13)(bufferutil@4.0.9)(db0@0.3.2)(ioredis@5.6.1)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(debug@4.4.1)
@@ -71,6 +74,9 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+      crypto-browserify:
+        specifier: ^3.12.1
+        version: 3.12.1
       debug:
         specifier: ^4.4.1
         version: 4.4.1
@@ -101,6 +107,9 @@ importers:
       qrcode.vue:
         specifier: ^3.6.0
         version: 3.6.0(vue@3.5.18(typescript@5.8.3))
+      stream-browserify:
+        specifier: ^3.0.0
+        version: 3.0.0
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.11
