@@ -56,7 +56,7 @@ const recommondQueryParams = $ref({
   followed: false,
 });
 
-const { query } = $(useRoute());
+const { query, path } = $(useRoute());
 
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
@@ -203,6 +203,9 @@ const pickNext = () => {
 
 // start transaction
 const goDeposit = async (card: Card, isYes: boolean) => {
+  if (path.includes("market")) {
+    return;
+  }
   const transaction = {
     parentId: null,
     textColor: "",
@@ -255,8 +258,6 @@ const goDeposit = async (card: Card, isYes: boolean) => {
   }
   resetCard();
 };
-
-
 
 onMounted(() => {
   getInfoList(false);
