@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@lighthouse-web3/sdk": "^0.4.2",
+    "@linenext/dapp-portal-sdk": "^1.4.4",
     "@nuxtjs/i18n": "^10.0.5",
     "@nuxtjs/supabase": "^1.6.1",
     "@pinia/nuxt": "^0.11.2",
