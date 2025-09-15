@@ -115,6 +115,13 @@ export default defineNuxtConfig({
         clientId: process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID || "",
       },
 
+      kaia: {
+        enabled: process.env.NUXT_PUBLIC_ENABLE_KAIA === "true",
+        clientId: process.env.NUXT_PUBLIC_KAIA_CLIENT_ID || "",
+        clientSecret: process.env.NUXT_PUBLIC_KAIA_CLIENT_SECRET || "",
+        chainId: process.env.NUXT_PUBLIC_KAIA_CHAIN_ID || "1001",
+      },
+
       // all options can be found here: https://www.npmjs.com/package/logrocket?activeTab=code
       // dist/types.d.ts --> interface IOptions
       logRocket: {
