@@ -2,20 +2,32 @@ import { serverSupabaseServiceRole } from "#supabase/server";
 
 export default defineEventHandler(async (event) => {
   const uid = getRouterParam(event, 'uid')
+  if (!uid) throw createError({
+    statusCode: 400,
+    statusMessage: 'uid is required'
+  });
+
   const adminClient = serverSupabaseServiceRole(event);
 
   console.log({ uid })
 
-  let queryBuilder = adminClient
-    .from("invites")
-    .select(`*, x_profiles (*) `).eq('userId', uid).single();
+  let queryProfile = adminClient
+    .from("x_profiles")
+    .select(`*`).eq('id', uid).single();
 
-  const { data, error } = await queryBuilder;
+    let queryInvite = adminClient
+      .from("invites")
+      .select(`refCount`).eq('userId', uid).single();
 
-  if (error) throw createError({
+  const [{error: profileError, data: profileData}, {error: inviteError, data: inviteData}] = await Promise.all([queryProfile, queryInvite]);
+  // console.log(profileError, inviteError)
+  if (profileError || inviteError) throw createError({
     statusCode: 400,
-    statusMessage: error.message
+    statusMessage: profileError?.message || inviteError?.message
   });
-  return data;
+  return {
+    ...profileData,
+    refCount: inviteData?.refCount,
+  };
 
 });
