@@ -8,16 +8,18 @@ const postInvite = async () => {
     }
   })
   debug({ rz })
+}
 
-  // if (rz.statusMessage === 'RefIdAlreadyExists') {
-  //   debug('refId already exists')
-  // } else {
-  //   debug('refId not exists')
-  // }
+const getRank = async () => {
+  const rz = await doFetch('/api/invite/rank', {
+    method: 'GET',
+  })
+  debug({ rz })
 }
 </script>
 <template>
     <div class="h-screen">
-        <vanButton @click="postInvite">test invite post</vanButton>
+        <vanButton @click="postInvite">post invite refId</vanButton>
+        <vanButton @click="getRank">get invite rank</vanButton>
     </div>
 </template>

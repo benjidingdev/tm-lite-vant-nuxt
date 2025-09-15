@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     .eq('userId', userId)
     .single()
 
-  if (data?.refId) {
+  if (data) {
     throw createError({
       statusCode: 400,
       message: 'RefId already exists',

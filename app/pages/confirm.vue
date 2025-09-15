@@ -6,16 +6,22 @@ const user = useSupabaseUser()
 
 watch(user, () => {
   if (user.value) {
-    return navigateTo('/')
+    const params = new URLSearchParams(document.location.search);
+    const redirectTo = params.get("redirectTo") || '/';
+    const refId = params.get("refId") || '';
+    if (refId) {
+      console.log(user.value, refId)
+      // TODO bind refId to db
+      return navigateTo(`${redirectTo.replace('[uid]', user.value.id)}?refId=${refId}`)
+    }
+    return navigateTo(redirectTo)
   }
 }, { immediate: true })
 </script>
 
 <template>
- 
-  <UError
-    :error="{
-      statusMessage: 'Redirecting...'
-    }"
-  />
+
+  <UError :error="{
+    statusMessage: 'Redirecting...'
+  }" />
 </template>

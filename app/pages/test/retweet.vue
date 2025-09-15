@@ -14,7 +14,7 @@
   }
 
   // logic
-  const { yourStats } = $(airdropStore())
+  // const { yourStats } = $(airdropStore())
   const items = [
     {
       slot: 'retweet' as const,
@@ -33,14 +33,14 @@
   ] satisfies StepperItem[]
 
   let activeStep = $ref(0)
-  watch($$(yourStats), () => {
-    if (yourStats.hasRetweet) {
-      activeStep = 1
-    }
-    if (yourStats.finishedTasks.includes('airdrop:retweet')) {
-      activeStep = 2
-    }
-  }, { immediate: true })
+  // watch($$(yourStats), () => {
+  //   if (yourStats.hasRetweet) {
+  //     activeStep = 1
+  //   }
+  //   if (yourStats.finishedTasks.includes('airdrop:retweet')) {
+  //     activeStep = 2
+  //   }
+  // }, { immediate: true })
 
   const user = useSupabaseUser()
   const twitterSlug = $computed(() => {
@@ -78,7 +78,7 @@ Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 test
   const config = useRuntimeConfig()
   const network = config.public.network
 
-  const { doClaimToken } = $(airdropStore())
+  // const { doClaimToken } = $(airdropStore())
   let isLoading = $ref(false)
   const doSubmitRetweetLink = async () => {
     if (isLoading) return
@@ -111,7 +111,7 @@ Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 test
     if (isLoading) return
     isLoading = true
     try {
-      await doClaimToken('airdrop:retweet')
+      // await doClaimToken('airdrop:retweet')
       await doClose()
     } catch (e) {
       console.error(e)

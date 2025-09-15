@@ -1,31 +1,31 @@
 <script setup lang="ts">
-  const { auth } = useSupabaseClient()
-  const user = useSupabaseUser()
+const { auth } = useSupabaseClient()
+const user = useSupabaseUser()
 
-  const twitterIdentity = $computed(() => {
-    return user.value?.identities?.find(
-      identity => identity.provider === 'twitter'
-    )
+const twitterIdentity = $computed(() => {
+  return user.value?.identities?.find(
+    identity => identity.provider === 'twitter'
+  )
+})
+const hasTwitterLogin = $computed(() => !!twitterIdentity)
+
+const doLogin = async () => {
+  const { data, error } = await auth.signInWithOAuth({
+    provider: 'twitter',
+    options: {
+      redirectTo: 'http://localhost:3000/confirm',
+    },
   })
-  const hasTwitterLogin = $computed(() => !!twitterIdentity)
-
-  const doLogin = async () => {
-    const { data, error } = await auth.signInWithOAuth({
-      provider: 'twitter',
-      options: {
-        redirectTo: 'http://localhost:3000/confirm',
-      },
-    })
-    if (error) {
-      console.log('error', error)
-    }
-    if (data) {
-      console.log('data', data)
-    }
-    if (data?.url) {
-      window.location.href = data.url
-    }
+  if (error) {
+    console.log('error', error)
   }
+  if (data) {
+    console.log('data', data)
+  }
+  if (data?.url) {
+    window.location.href = data.url
+  }
+}
 </script>
 <template>
   <div class="h-screen px-4">
@@ -33,7 +33,10 @@
       isLogin: {{ hasTwitterLogin }}
     </div>
     <div v-if="hasTwitterLogin">
-      {{ twitterIdentity }}
+      <img :src="twitterIdentity?.identity_data?.avatar_url" alt="">
+      <div>{{ twitterIdentity?.identity_data?.email }}</div>
+      <div>{{ twitterIdentity?.identity_data?.full_name }}</div>
+      <!-- {{ twitterIdentity }} -->
     </div>
     <van-button v-else type="primary" @click="doLogin">Twitter Login</van-button>
   </div>

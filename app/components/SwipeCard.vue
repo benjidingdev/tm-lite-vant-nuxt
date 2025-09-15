@@ -283,26 +283,7 @@ onMounted(() => {
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
           <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="contain">
-            <div class="absolute -bottom-8 h-16 w-full z-50">
-              <div class="flex justify-between items-center h-full px-6">
-                <div class="flex flex-col items-center text-">
-                  <div id="step4"
-                    :class="`rounded-full w-15 h-15 flex justify-center items-center shadow-lg bg-white ml-6`"
-                    @click="buyYes(card)">
-                    <van-icon name="checked" size="66" color="#97dbb4" />
-                  </div>
-                  <text class="text-[#97dbb4]">{{ unitConvert(card.markets[0].yesPrice || 0) }}¢</text>
-                </div>
-                <div class="flex flex-col items-center">
-                  <div id="step5"
-                    class="rounded-full bg-white w-15 h-15 flex justify-center items-center shadow-lg mr-6"
-                    @click="buyNo(card)">
-                    <van-icon name="clear" size="66" color="#fe9595" />
-                  </div>
-                  <text class="text-[#fe9595]">{{ unitConvert(card.markets[0].noPrice || 0) }}¢</text>
-                </div>
-              </div>
-            </div>
+
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
@@ -314,16 +295,40 @@ onMounted(() => {
             </div>
           </van-image>
 
-          <div v-if="card.markets" class="px-4 pt-4 h-[50%]">
-            <div class="h-[85%] overflow-auto">
-              <SwipeCardProgressBar class="mt-10" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
-                " />
-              <text class="name mt-4">{{ card.title }}</text>
-              <text v-if="card?.markets.length" class="desc">{{
-                card?.markets[0].question
-              }}</text>
-            </div>
+          <div v-if="card.markets" class="px-4 h-[50%]">
+            <div class="h-[85%] overflow-hidden">
+              <!-- Title and question -->
+              <div class="mh-[120px">
+                <p class="name">{{ card.title }}</p>
+                <p v-if="card?.markets.length" class="mt-1 leading-none!">{{
+                  card?.markets[0].question
+                  }}</p>
+              </div>
+              <!-- Yes and No button -->
+              <div class="w-full h-16 z-50 mt-5">
+                <div class="flex justify-between items-center h-full">
+                  <div id="step4" class="relative" @click="buyYes(card)">
+                    <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
+                    <span
+                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                      Yes {{ unitConvert(card.markets[0].yesPrice || 0) }}¢
+                    </span>
+                  </div>
+                  <div id="step5" class="relative" @click="buyNo(card)">
+                    <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
+                    <span
+                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                      No {{ unitConvert(card.markets[0].noPrice || 0) }}¢
+                    </span>
+                  </div>
+                </div>
+              </div>
 
+              <!-- Progress bar -->
+              <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
+                " />
+            </div>
+            <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">
               <text> ${{ convertCurrency(card.volume) }} Vol.</text>
               <SwipeCardShareCard :cardID="card.id" />
@@ -358,10 +363,10 @@ onMounted(() => {
 }
 
 .name {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   display: block;
-  margin-bottom: 5px;
+  line-height: 1.2;
 }
 
 .hint-box {
@@ -411,10 +416,10 @@ onMounted(() => {
 }
 
 .gradient-left {
-  background-image: linear-gradient(to right, #4fd1c5, #a4e4d5);
+  background-image: linear-gradient(to right, #1652F0, #1854ee);
 }
 
 .gradient-right {
-  background-image: linear-gradient(to right, #f2a4b7, #f472b6);
+  background-image: linear-gradient(to right, #D103FB, rgb(242, 111, 179));
 }
 </style>
