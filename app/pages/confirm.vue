@@ -7,12 +7,17 @@ const debug = useDebug('confirm')
 const user = useSupabaseUser()
 
 const postInvite = async (refId: string) => {
-  await doFetch('/api/invite/updateRefId', {
-    method: 'POST',
-    body: {
-      refId,
-    }
-  })
+  try {
+    const rz = await doFetch('/api/invite/updateRefId', {
+      method: 'POST',
+      body: {
+        refId,
+      }
+    })
+    debug({ rz })
+  } catch (error) {
+    debug({ error })
+  }
 }
 
 watch(user, async () => {
@@ -22,7 +27,7 @@ watch(user, async () => {
     const refId = params.get("refId") || '';
     if (refId) {
       debug({ refId, user: user.value })
-      await postInvite(refId)
+      postInvite(refId)
       return navigateTo(`${redirectTo.replace('[uid]', user.value.id)}?refId=${refId}`)
     }
     return navigateTo(redirectTo)
