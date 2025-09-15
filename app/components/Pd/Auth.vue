@@ -1,5 +1,5 @@
 <script setup>
-const { hasTwitterLogin, x_user } = $(supabaseStore())
+const { hasTwitterLogin, x_user, doLogin } = $(supabaseStore())
 </script>
 
 <template>
@@ -38,7 +38,7 @@ const { hasTwitterLogin, x_user } = $(supabaseStore())
           </ol>
         </div>
 
-        <div to="/pd/x" @click="doLogin"
+        <div to="/pd/x" @click="doLogin({ pathname: '/pd/u-[uid]' })"
           class="mt-8 w-full rounded-lg bg-green-500 py-3 font-bold text-black flex items-center justify-center space-x-2 transition-transform duration-200 hover:scale-105">
           <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
