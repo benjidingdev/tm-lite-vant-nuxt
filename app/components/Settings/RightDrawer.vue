@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { shortenHash } from "@/utils/processing";
 const { modalIsShow } = $(uiStore());
-const hash = import.meta.env.NUXT_PUBLIC_HASH;
-const branch = import.meta.env.NUXT_PUBLIC_BRANCH;
-let clickNum = 0;
-
+const { public: { branch, hash, buildTime } } = useRuntimeConfig();
+let clickNum = $ref(0);
+// to NYC timezone
+const theBuildTime = $computed(() => new Date(buildTime).toLocaleString('en-US', { timeZone: 'America/New_York' }))
 const shortHash = $computed(() => shortenHash(hash, 10));
 let { startParam } = $(shareStore());
 const { token } = $(authStore());
@@ -37,6 +36,7 @@ const openTab = () => {
         <AuthLogoutLabel v-if="token.accessToken" />
       </div>
       <van-cell-group>
+        <van-cell :title="$t('Build Time')" :value="theBuildTime" />
         <van-cell :title="$t('Branch')" :value="branch" @click="initVconsole" />
         <van-cell :title="$t('Hash')" :value="shortHash" />
       </van-cell-group>

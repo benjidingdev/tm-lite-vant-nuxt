@@ -1,43 +1,88 @@
 <script setup>
-  definePageMeta({
-    layout: "x",
-  });
+definePageMeta({
+  layout: "x",
+});
+
+const debug = useDebug('pd')
+const { hasTwitterLogin, twitterIdentity, supabseUser } = $(supabaseStore())
+
+let tiers = $ref([
+  { rank: 'S', bg: 'rgb(255, 127, 127)', users: [] },
+  { rank: 'A', bg: 'rgb(255, 191, 127)', users: [] },
+  { rank: 'B', bg: 'rgb(255, 223, 127)', users: [] },
+  { rank: 'C', bg: 'rgb(255, 127, 191)', users: [] },
+  { rank: 'D', bg: 'rgb(127, 127, 223)', users: [] },
+  { rank: 'E', bg: 'rgb(68, 127, 255)', users: [] },
+  { rank: 'F', bg: 'rgb(10, 127, 35)', users: [] },
+  { rank: 'G', bg: 'rgb(255, 10, 223)', users: [] },
+  { rank: 'H', bg: 'rgb(255, 127, 10)', users: [] },
+])
+
+async function loadData() {
+  const rz = await doFetch('/api/pd')
+
+  const users = rz.map(item => ({
+    id: item?.x_profiles?.id,
+    avatar: item?.x_profiles?.avatar,
+    name: item?.x_profiles?.fullname,
+    user_name: item?.x_profiles?.slug,
+    refCount: item?.refCount,
+  }))
+
+  users.forEach((user, index) => {
+    const tierIndex = Math.floor(index / 4)
+    if (tiers[tierIndex]) {
+      tiers[tierIndex].users.push(user)
+    }
+  })
+
+
+}
+
+onMounted(() => {
+  loadData()
+})
 </script>
 
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
-    <div class="w-full max-w-sm rounded-lg border border-[#1a1b1c] bg-[#111316] p-6 text-center shadow-lg">
+  <p class="text-4xl w-full text-center mt-8 sticky top-0 z-1 bg-black">Tier Rank Wall</p>
 
-      <div class="flex flex-col items-center">
-        <svg class="h-8 w-8 fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path
-            d="M18.9 6.2c.7-.6 1.4-1.2 2-1.9L22 3.3l-1.6-.3c-.6-.1-1.2.2-1.8.6l-1.3.8c-.5.3-1.1.5-1.7.5H16c-1.1 0-2-.9-2-2V1H10v2c0 1.1-.9 2-2 2H6.6c-.6 0-1.2-.2-1.8-.5L3.5 3.3.4 5.4c.7.7 1.4 1.3 2 1.9l.8.8c.4.4.7.9.9 1.5.3.6.4 1.2.4 1.8v.5c0 1.1-.9 2-2 2h-1c-.6 0-1.2.2-1.8.5l-1.3.8c-.5.3-1.1.5-1.7.5H0v1c0 1.1.9 2 2 2h1c.6 0 1.2-.2 1.8-.5l1.3-.8c.5-.3 1.1-.5 1.7-.5h.5c1.1 0 2 .9 2 2v2h4v-2c0-1.1.9-2 2-2h1.4c.6 0 1.2.2 1.8.5l1.3.8c.5.3 1.1.5 1.7.5h.5c1.1 0 2-.9 2-2v-1c0-1.1-.9-2-2-2h-1c-.6 0-1.2.2-1.8.5L18.9 6.2z">
-          </path>
-        </svg>
-        <h1 class="mt-4 text-2xl font-bold">Connect X (Twitter)</h1>
-        <p class="mt-1 text-sm text-gray-400">Follow @MindoAI and connect your account</p>
+  <section class="w-full h-[calc(100dvh)] h-auto flex flex-col items-center justify-center space-y-[10px] mt-8">
+    <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
+      :key="tier.rank">
+
+      <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
+
+      <div class="flex-1 grid grid-cols-4 gap-[1px]">
+        <NuxtLink :to="`/pd/u-${user.id}`" v-for="user in tier.users" :key="user.id"
+          class="border-0 flex flex-col items-center justify-center relative">
+          <van-image class="w-full h-full bg-cover" :src="xAvatar(user.avatar)">
+            <template v-slot:loading>
+              <van-loading type="spinner" size="20" />
+            </template>
+          </van-image>
+          <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{
+            user.name ||
+            'name' }}</p>
+        </NuxtLink>
+
+        <!-- <NuxtLink v-if="index >= 3" :to="`/pd/t-${tier.rank}`"
+          class="border-0 flex flex-col items-center justify-center">
+          <p class="border-0 w-full flex items-center justify-center">
+            <span class="border-0 mb-[2px] leading-10">more</span>
+            <van-icon name="arrow" />
+          </p>
+        </NuxtLink> -->
       </div>
-
-      <div class="mt-8 text-left">
-        <h2 class="text-green-400 font-bold">Quick Steps:</h2>
-        <ol class="mt-2 list-none">
-          <li class="mt-1 text-sm">1. Click the button below to connect</li>
-          <li class="mt-1 text-sm">2. Authorize access to your X account</li>
-          <li class="mt-1 text-sm">3. Ensure you follow @MindoAI</li>
-        </ol>
-      </div>
-
-      <NuxtLink to="/pd/x"
-        class="mt-8 w-full rounded-lg bg-green-500 py-3 font-bold text-black flex items-center justify-center space-x-2 transition-transform duration-200 hover:scale-105">
-        <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>
-        </svg>
-        <span>Connect X Account</span>
-        <svg class="h-4 w-4 fill-current ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M14.5 4L20 9.5 14.5 15 13 13.5 16 10.5H4V8.5H16L13 5.5z"></path>
-        </svg>
-      </NuxtLink>
 
     </div>
-  </div>
+
+    <!-- <NuxtLink to="/pd/guid"
+      class="fixed bottom-[5vh] right-[5vw] size-10 rounded-full border border-white overflow-hidden flex justify-center items-center bg-white">
+      <img v-if="hasTwitterLogin && true" :src="twitterIdentity?.identity_data?.avatar_url" alt=""></img>
+      <div v-else>
+        <van-icon name="share-o" color="red" size="24" />
+      </div>
+    </NuxtLink> -->
+  </section>
 </template>

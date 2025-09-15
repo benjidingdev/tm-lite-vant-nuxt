@@ -166,10 +166,17 @@ export const shortenAddress = (
 
 export const shortenHash = (
   hash: string,
-  startLength = 4
+  startLength = 4,
+  endLength = 0
 ) => {
   if (!hash) return "";
-  const end = hash.substring(0, startLength);
-  return `${end}`;
+  let pre = ''
+  if (endLength === 0) {
+    pre = hash.substring(0, startLength);
+    return `${pre}`;
+  }
+  pre = hash.substring(0, startLength);
+  const end = hash.substring(hash.length - endLength);
+  return `${pre}...${end}`
 };
 

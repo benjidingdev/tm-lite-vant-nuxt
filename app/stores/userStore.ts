@@ -41,7 +41,6 @@ export const userStore = defineStore("userStore", () => {
       const rz = await getOrderAmount();
       if (rz.data) {
         userOrderAmountInfo = rz.data;
-        // console.log(rz.data, userOrderAmountInfo, userOrderAmount);
       }
     } catch (error) {
       console.error('get user order amount error:', error);

@@ -3,6 +3,7 @@ import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
 import { customCards } from "@/utils/customCards";
+const debug = useDebug('SwipeCard')
 
 type Card = {
   id: number;
@@ -232,7 +233,7 @@ const goDeposit = async (card: Card, isYes: boolean) => {
   } else {
     // balance check
     const userCanUseBalance = userBalance - userOrderAmount;
-    console.log({
+    debug({
       userBalance,
       textPrice: transaction.textPrice,
       userOrderAmount,

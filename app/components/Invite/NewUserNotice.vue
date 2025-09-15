@@ -10,7 +10,6 @@ async function loadNewestInvitedUser() {
       data: {}
     })
 
-    console.log('loadNewestInvitedUser', res);
     newestInvitedUser = res.data;
   } catch (e) {
     console.error('loadNewestInvitedUser', e);
