@@ -5,21 +5,45 @@ definePageMeta({
   layout: "x",
 });
 
+const shareTweetStatusLink = "https://x.com/TuringMarket/status/1958786009753428017";
+
+
 const { t } = useI18n()
 const route = useRoute()
 
 async function capture(targetId = 'my-div', name = 'shareImageName') {
-  if (!targetId) {
-    return;
-  }
+  // if (!targetId) {
+  //   return;
+  // }
 
-  const target = document.getElementById(targetId);
-  if (!target) {
-    console.log('target not found');
-    return;
-  }
+  // const target = document.getElementById(targetId);
+  // if (!target) {
+  //   console.log('target not found');
+  //   return;
+  // }
 
-  await captureTargetToPng(name, target);
+  // await captureTargetToPng(name, target);
+
+  handleRetweet()
+}
+
+function handleRetweet() {
+  const url = new URL("https://twitter.com/intent/tweet");
+
+  const hashtags = "TuringM,TuringMaster,Airdrop";
+  url.searchParams.append("hashtags", hashtags);
+
+  const shareLink = `${location.href}`;
+  const text = `
+I’m joining the TuringM Prediction Master 🏆🏆🏆🏆🏆
+
+Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 testnet $TUIT.
+
+1000 USDT up for grabs!
+ `;
+  url.searchParams.append("text", text);
+  url.searchParams.append("url", shareTweetStatusLink);
+  window.open(url.toString(), "_blank");
 }
 
 let user = $ref({})
@@ -46,7 +70,7 @@ onMounted(async () => {
 })
 
 const handleLogin = async () => {
-  await doLogin({pathname: '/pd/u-[uid]', refId: route.params.uid})
+  await doLogin({ pathname: '/pd/u-[uid]', refId: route.params.uid })
 }
 </script>
 
@@ -57,7 +81,8 @@ const handleLogin = async () => {
 
     <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
       <template v-if="isMe">
-        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="capture('my-div', 'shareImageName')">
+        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
+          @click="capture('my-div', 'shareImageName')">
           <span>{{ t('share') }}</span>
         </button>
 
