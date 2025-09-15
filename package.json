@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@lighthouse-web3/sdk": "^0.4.2",
+    "@line/liff": "^2.27.2",
     "@linenext/dapp-portal-sdk": "^1.4.4",
     "@nuxtjs/i18n": "^10.0.5",
     "@nuxtjs/supabase": "^1.6.1",
@@ -33,6 +34,7 @@
     "@wagmi/vue": "^0.1.24",
     "axios": "^1.11.0",
     "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
     "debug": "^4.4.1",
     "decimal.js": "^10.6.0",
     "dom-to-image": "^2.6.0",
@@ -43,6 +45,7 @@
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "qrcode.vue": "^3.6.0",
+    "stream-browserify": "^3.0.0",
     "tailwindcss": "^4.1.11",
     "v-onboarding": "^2.9.0",
     "vant": ">=4",

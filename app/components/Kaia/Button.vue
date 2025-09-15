@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useKaiaStore } from "~/stores/kaiaStore";
+import { useKaiaWalletStore } from "~/stores/kaiaWalletStore";
 
-const kaiaStore = useKaiaStore();
+const kaiaStore = useKaiaWalletStore();
 
 // Initialize Kaia SDK
 onMounted(async () => {
@@ -16,7 +16,7 @@ const connectKaiaWallet = async () => {
     if (!kaiaStore.isInitialized) {
       await kaiaStore.initialize();
     }
-    await kaiaStore.connect();
+   const [ account ] = await kaiaStore.connectAndSign('connect');
   } catch (error) {
     console.error("Failed to connect Kaia wallet:", error);
   }
