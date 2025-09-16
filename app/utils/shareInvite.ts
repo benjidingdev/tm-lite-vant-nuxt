@@ -47,7 +47,7 @@ export function inviteUser(params: InviteParams) {
   const miniAppUrl = `https://t.me/${botInfo}?startapp=${babse64Params}`;
   const shareUrl = `https://t.me/share/url?url=${miniAppUrl}`;
   if (window.Telegram) {
-    Telegram.WebApp.openTelegramLink(shareUrl);
+    window.Telegram.WebApp.openTelegramLink(shareUrl);
   } else {
     window.open(shareUrl, '_blank');
   }
@@ -62,7 +62,7 @@ async function getImageFromProxy(img: any) {
   });
 }
 
-export async function captureTargetToPng(name = 'shareImageName', target) {
+export async function captureTargetToPng(name = 'shareImageName', target: HTMLElement) {
   if (!target) {
     return;
   }
@@ -91,4 +91,12 @@ export async function captureTargetToPng(name = 'shareImageName', target) {
   } catch (error) {
     console.log('captureTargetToPng error', error)
   }
+}
+
+export function handleRetweet({ hashtags, shareTweetStatusLink, text }: { hashtags: string; shareTweetStatusLink: string; text: string }) {
+  const url = new URL("https://twitter.com/intent/tweet");
+  url.searchParams.append("hashtags", hashtags);
+  url.searchParams.append("text", text);
+  url.searchParams.append("url", shareTweetStatusLink);
+  window.open(url.toString(), "_blank");
 }
