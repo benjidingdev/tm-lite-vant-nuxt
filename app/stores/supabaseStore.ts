@@ -29,7 +29,7 @@ export const supabaseStore = defineStore("supabaseStore", () => {
     if (pathname) {
       newUrl.searchParams.append('redirectTo', pathname)
     }
-
+    console.log('newUrl', newUrl.toString())
     const { data, error } = await client.auth.signInWithOAuth({
       provider: 'twitter',
       options: {
