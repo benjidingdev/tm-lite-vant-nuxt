@@ -30,28 +30,30 @@ Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 test
   })
 }
 
-let retweetLink = $ref('')
+let retweetLink = $ref('xxx')
 async function handleSubmit() {
   if (!retweetLink) {
     return
   }
 
-  const rz = await doFetch(`/api/pd/topic-${route.params.pid}`, {
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
     method: 'POST',
     body: JSON.stringify({
       retweetLink,
-      action: 'add-topic',
+      action: 'join-topic',
     })
   })
 
-  console.log(rz)
+  console.log({ rz })
 }
 
+const sharedTopic = topics()
+const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 </script>
 
 <template>
   <article class="w-full h-full flex flex-col items-center justify-center space-y-8 px-8">
-    <h1 class="text-3xl font-bold">Waitlist</h1>
+    <h1 class="text-3xl font-bold">{{ topic?.title }}</h1>
     <h2 class="text-2xl font-bold">Join the Waitlist</h2>
 
     <template v-if="hasTwitterLogin">
