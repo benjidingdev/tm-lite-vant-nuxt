@@ -30,7 +30,7 @@ Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 test
   })
 }
 
-let retweetLink = $ref('xxx')
+let retweetLink = $ref('')
 async function handleSubmit() {
   if (!retweetLink) {
     return
@@ -45,10 +45,55 @@ async function handleSubmit() {
   })
 
   console.log({ rz })
+  if (rz.data.success) {
+    hasRetweeted = true
+  }
+}
+
+async function handleDel() {
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      retweetLink,
+      action: 'del-topic',
+    })
+  })
+
+  console.log({ rz })
+  if (rz.data.success) {
+    hasRetweeted = false
+  }
 }
 
 const sharedTopic = topics()
 const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+
+
+let hasRetweeted = $ref(false)
+async function loadData() {
+  if (!hasTwitterLogin) {
+    return
+  }
+
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      retweetLink,
+      action: 'check-topic',
+    })
+  })
+
+  console.log({ rz })
+
+  if (rz?.data?.success) {
+    hasRetweeted = true
+  }
+}
+
+onMounted(() => {
+  loadData()
+})
+
 </script>
 
 <template>
@@ -57,16 +102,24 @@ const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params
     <h2 class="text-2xl font-bold">Join the Waitlist</h2>
 
     <template v-if="hasTwitterLogin">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleShare">
-        retweet
-      </button>
-      <p class="text-center text-gray-500 text-xs">
-        Please login with your X account to join the waitlist.
-      </p>
-      <input type="text" class="border roudned-md" placeholder="Enter your X username">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleSubmit">
-        submit
-      </button>
+      <template v-if="hasRetweeted">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+          hasRetweeted, remove for test
+        </button>
+      </template>
+
+      <template v-else>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleShare">
+          retweet
+        </button>
+        <p class="text-center text-gray-500 text-xs">
+          Please login with your X account to join the waitlist.
+        </p>
+        <input type="text" v-model="retweetLink" class="border roudned-md" placeholder="Enter your X username">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleSubmit">
+          submit
+        </button>
+      </template>
     </template>
 
     <template v-else>
