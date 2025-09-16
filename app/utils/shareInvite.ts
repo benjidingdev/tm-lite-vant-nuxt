@@ -78,12 +78,9 @@ export async function captureTargetToPng(name = 'shareImageName', target: HTMLEl
         img.src = URL.createObjectURL(base64Urls[index]);
       }
     });
-    console.log(1111)
     const blob = await domtoimage.toBlob(target);
-    console.log(222)
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    console.log(222)
     link.download = `${name}.png`;
     link.href = url;
     link.click();

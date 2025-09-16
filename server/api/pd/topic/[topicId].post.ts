@@ -2,14 +2,16 @@ import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server"
 // import { useSharedTopic } from ""
 
 export default defineEventHandler(async (event) => {
+
   const user = await serverSupabaseUser(event)
   const userId = user?.id as string
-
-  if (!userId) {
+  const twitterIdentity = user?.identities?.find(identity => identity.provider === 'twitter')
+  const hasTwitterAuth = !!twitterIdentity
+  if (!hasTwitterAuth) {
     throw createError({
       statusCode: 400,
-      message: 'User not found',
-      statusMessage: 'UserNotFound',
+      message: 'Must auth with twitter first',
+      statusMessage: 'MustAuthWithX',
     })
   }
 
@@ -46,6 +48,16 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    const twitterSlug = twitterIdentity?.identity_data?.preferred_username
+
+    if (!retweetLink.startsWith(`https://x.com/${twitterSlug}`)) {
+      throw createError({
+        statusCode: 400,
+        message: 'The retweet link is invalid',
+        statusMessage: 'InvalidRetweetLink',
+      })
+    }
+
     {
       const { data } = await serverSupabaseServiceRole(event).from('retweets').select().eq('reason', reason).eq('userId', userId).single()
       if (data) {
@@ -70,9 +82,28 @@ export default defineEventHandler(async (event) => {
       })
     }
     return {
-      data,
+      data: { success: true }
     }
   }
 
-  return { rz: true }
+  if (action === 'check-topic') {
+    const { data } = await serverSupabaseServiceRole(event).from('retweets').select().eq('reason', reason).eq('userId', userId).single()
+
+    return { data: { success: data ? true : false } }
+  }
+
+  if (action === 'del-topic') {
+    const { data, error } = await serverSupabaseServiceRole(event).from('retweets').delete().eq('reason', reason).eq('userId', userId)
+    if (error) {
+      throw createError({
+        statusCode: 400,
+        message: error.message,
+        statusMessage: 'DelTopicError',
+      })
+    }
+    console.log(data, error)
+    return { data: { success: true } }
+  }
+
+  return { data: { success: true } }
 });
