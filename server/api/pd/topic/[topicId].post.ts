@@ -26,8 +26,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const adminClient = serverSupabaseServiceRole(event)
   const body = await readBody(event)
-  console.log({ topicId, userId, body, topic })
+  // console.log({ topicId, userId, body, topic })
   const reason = 'retweet_topic_' + topicId
 
   const { retweetLink, action } = body
@@ -39,7 +40,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (action === 'join-topic') {
+  if (action === 'topic-join') {
     if (!retweetLink) {
       throw createError({
         statusCode: 400,
@@ -58,22 +59,16 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    {
-      const { data } = await serverSupabaseServiceRole(event).from('retweets').select().eq('reason', reason).eq('userId', userId).single()
-      if (data) {
-        throw createError({
-          statusCode: 400,
-          message: 'You have already joined this topic',
-          statusMessage: 'TopicAlreadyJoined',
-        })
-      }
-    }
-
-    const { data, error } = await serverSupabaseServiceRole(event).from('retweets').insert({
+    const { data, error } = await adminClient.from('retweets').upsert({
       userId,
       url: retweetLink,
       reason,
-    })
+    }, {
+      onConflict: 'userId,reason',
+      ignoreDuplicates: true,
+    }).select().single()
+    console.log(data, error, 'xxx join topic')
+
     if (error) {
       throw createError({
         statusCode: 400,
@@ -81,19 +76,27 @@ export default defineEventHandler(async (event) => {
         statusMessage: 'JoinTopicError',
       })
     }
+
+    if (!data) {
+      throw createError({
+        statusCode: 400,
+        message: 'You have already joined this topic',
+        statusMessage: 'JoinTopicFailed',
+      })
+    }
+
     return {
       data: { success: true }
     }
   }
 
-  if (action === 'check-topic') {
-    const { data } = await serverSupabaseServiceRole(event).from('retweets').select().eq('reason', reason).eq('userId', userId).single()
-
-    return { data: { success: data ? true : false } }
+  if (action === 'topic-join_check') {
+    const { count } = await adminClient.from('retweets').select('*', {count: 'exact', head: true}).eq('reason', reason).eq('userId', userId);
+    return { data: { success: !!(count && count > 0) } }
   }
 
-  if (action === 'del-topic') {
-    const { data, error } = await serverSupabaseServiceRole(event).from('retweets').delete().eq('reason', reason).eq('userId', userId)
+  if (action === 'topic-join_del') {
+    const { data, error } = await adminClient.from('retweets').delete().eq('reason', reason).eq('userId', userId)
     if (error) {
       throw createError({
         statusCode: 400,
@@ -101,8 +104,21 @@ export default defineEventHandler(async (event) => {
         statusMessage: 'DelTopicError',
       })
     }
-    console.log(data, error)
+    // console.log(data, error)
     return { data: { success: true } }
+  }
+
+  if (action === 'topic-join_list') {
+    const { data, error } = await adminClient.from('retweets').select().eq('reason', reason)
+    if (error) {
+      throw createError({
+        statusCode: 400,
+        message: error.message,
+        statusMessage: 'ListTopicError',
+      })
+    }
+    // console.log(data, error)
+    return { data: { success: true, data } }
   }
 
   return { data: { success: true } }
