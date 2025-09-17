@@ -12,6 +12,8 @@ type Card = {
   volume: number;
   markets: Array<any>;
   followed: boolean;
+  yesNum: number;
+  noNum: number;
 };
 type cardsType = Array<Card>;
 type QueryParams = {
@@ -19,7 +21,6 @@ type QueryParams = {
   inviteCode?: string;
 };
 
-const { t } = useI18n();
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
 let currentIndex = $ref(0); // The index of current card
 let offsetX = $ref(0); // The value  of offsetX
@@ -28,22 +29,22 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 const threshold = 100; // Threshold of swiping
 // The data from store
-const { userBalance } = $(walletStore());
-let { addRequest, cards, isLoading } = $(requestQueueStore());
-const { token } = $(authStore());
 const { setModal } = $(uiStore());
-const { userOrderAmount } = $(userStore());
+let { isLoading } = $(requestQueueStore());
+let { pdcCards }: any = $(pdcSwipeCardStore());
 
+const topicsId = 2; // default topic id
 let currentX = 0;
 let currentY = 0;
 const pageSize = 12;
 let total = 0;
+let isSettlement = $ref(false);
+const customMarkets: any = $ref(markets());
+
 let queryParams: QueryParams = {
   cardID: "",
   inviteCode: "",
 };
-const customMarkets: any = $ref(markets()[0]);
-let isSettlement = $ref(false);
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize,
@@ -63,6 +64,39 @@ let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
 
+const initMarket = async (topicId: number, markets: any) => {
+  let res = await doFetch('/api/topics/update', {
+    method: 'POST',
+    body: {
+      topicId,
+      markets,
+    }
+  })
+  console.log('initMarket res', res);
+}
+
+const updateMarket = async (topicId, markets) => {
+  let res = await doFetch('/api/topics/update', {
+    method: 'POST',
+    body: {
+      topicId,
+      markets,
+    }
+  })
+  console.log('createMarket res', res)
+}
+
+const getMarket = async (topicId: any) => {
+  let res: any = await doFetch(`/api/topics/${topicId}`, {
+    method: 'GET',
+  })
+  const markets = res?.data?.markets || [];
+  console.log('getMarket res', markets)
+  return markets;
+}
+
+let { userAsset } = $(pdcSwipeCardStore())
+
 // get the list of cards
 const getInfoList = async (refresh: boolean) => {
   if (refresh) {
@@ -75,31 +109,17 @@ const getInfoList = async (refresh: boolean) => {
     recommondQueryParams.pageNo++;
   } else {
     isLoading = true;
-    cards = [];
   }
 
-  const res = await getTopicsRecommend(recommondQueryParams);
-  total = res.data.total;
-
-  if (res.code === 0) {
-    cards.push(...res.data.list);
-    cards = cards.filter((item: any) => item.markets && item.markets.length);
-    // If there is cardID in the url, put this card to the first
-    if (queryParams.cardID) {
-      const index = cards.findIndex((item: any) => item.id === Number(queryParams.cardID));
-      if (index > -1) {
-        const card = cards.splice(index, 1)[0];
-        cards.unshift(card);
-      }
-    }
-
-    if (query.sharedMarket === 'true') {
-      cards.unshift(customMarkets); // add
-    }
+  pdcCards = await getMarket(topicsId);
+  console.log('customMarkets', customMarkets.length, 'pdcCards', pdcCards.length, customMarkets?.length !== pdcCards.length);
+  if (customMarkets?.length !== pdcCards.length) {
+    await initMarket(topicsId, customMarkets);
+    pdcCards = await getMarket(topicsId);
   }
+  console.log('pdcCards', pdcCards);
   isLoading = false;
 };
-
 
 // Obtain the style of card
 const getCardStyle = (index: number) => {
@@ -118,7 +138,7 @@ const getCardStyle = (index: number) => {
 
 // Touch start
 const touchStart = (e: TouchEvent | any) => {
-  if (currentIndex >= cards.length) return;
+  if (currentIndex >= pdcCards.length) return;
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
   offsetX = 0;
@@ -127,7 +147,7 @@ const touchStart = (e: TouchEvent | any) => {
 
 // Touch move
 const touchMove = (e: TouchEvent | any) => {
-  if (currentIndex >= cards.length) return;
+  if (currentIndex >= pdcCards.length) return;
 
   currentX = e.touches[0].clientX;
   currentY = e.touches[0].clientY;
@@ -150,11 +170,8 @@ const touchMove = (e: TouchEvent | any) => {
 
 // Touch end
 const touchEnd = (card: Card) => {
-  if (currentIndex >= cards.length) return;
+  if (currentIndex >= pdcCards.length) return;
 
-  if (cards.length <= pageSize / 2) {
-    getInfoList(true);
-  }
   if (offsetX >= threshold) {
     buyNo(card); // swipe to left means reject
   } else if (offsetX <= -threshold) {
@@ -180,7 +197,7 @@ const swipeCard = (status: any) => {
   setTimeout(() => {
     offsetX = 0;
     offsetY = 0;
-    cards.shift();
+    pdcCards.shift();
   }, 0);
 };
 
@@ -202,61 +219,40 @@ const pickNext = () => {
   swipeCard(statusList[3]);
 };
 
+const updateAsset = async (pAmount:any) => {
+  let res = await doFetch('/api/assets/update', {
+    method: 'POST',
+    body: {
+      userId: x_user.id,
+      pAmount,
+    }
+  })
+  console.log('updateAsset res', res)
+}
+
 // start transaction
-const goDeposit = async (card: Card, isYes: boolean) => {
-  if (path.includes("market")) {
+const goDeposit = async(card: Card, isYes: boolean) => {
+  if (path.includes("market") === "true") {
     return;
   }
-  const transaction = {
-    parentId: null,
-    textColor: "",
-    marketsId: card.markets[0].id,
-    marketsTitle: card.title,
-    fee: null,
-    marketsItem: {},
-    textName: "",
-    textPrice: 0,
-    type: 0, // 1: yes, 2: no
-  };
 
-  if (isYes) {
-    transaction.textName = card.markets[0].yesName;
-    transaction.textPrice = card.markets[0].yesPrice;
-    transaction.type = 1;
-  } else {
-    transaction.textName = card.markets[0].noName;
-    transaction.textPrice = card.markets[0].noPrice;
-    transaction.type = 2;
-  }
-
-  if (token.accessToken === "") {
-    setModal("loginModal", true);
-    closeToast();
-    resetCard();
-  } else {
-    // balance check
-    const userCanUseBalance = userBalance - userOrderAmount;
-    debug({
-      userBalance,
-      textPrice: transaction.textPrice,
-      userOrderAmount,
-      userCanUseBalance,
-    });
-    if (userCanUseBalance < transaction.textPrice) {
-      showFailToast(t("Insufficient balance"));
-      resetCard();
-      return false;
-    }
-
-    // add request to queue
-    addRequest(transaction, card);
-
-    if (transaction.type === 1) {
-      swipeCard(statusList[0]);
-    } else {
-      swipeCard(statusList[1]);
+  console.log('pdcCards', pdcCards, 'card', card);
+  let currentIndex: any = pdcCards.findIndex((item: any) => item.id === card.id);
+  if (currentIndex !== -1) {
+    if (pdcCards[currentIndex]) {
+      if (isYes) {
+        pdcCards[currentIndex].yesNum += 1;
+      } else {
+        pdcCards[currentIndex].noNum += 1;
+      }
     }
   }
+  // console.log('currentCard', currentCard);
+  await updateMarket(2, pdcCards)
+
+  userAsset.pAmount -= 1;
+  updateAsset(userAsset.pAmount);
+
   resetCard();
 };
 
@@ -286,13 +282,12 @@ onMounted(() => {
         </div>
       </template>
 
-      <div v-if="cards.length">
-        <div v-for="(card, index) in cards as cardsType" :key="card.id"
+      <div v-if="pdcCards.length">
+        <div v-for="(card, index) in pdcCards as cardsType" :key="card.id"
           :class="['card', 'draggable-element', 'shadow-md', { active: currentIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
           <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
-
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
@@ -304,14 +299,11 @@ onMounted(() => {
             </div>
           </van-image>
 
-          <div v-if="card.markets" class="px-4 h-[50%]">
+          <div v-if="card" class="px-4 h-[50%]">
             <div class="h-[85%] overflow-hidden">
               <!-- Title and question -->
-              <div class="mh-[120px">
+              <div class="mh-[120px]">
                 <p class="name">{{ card.title }}</p>
-                <p v-if="card?.markets.length" class="mt-1 leading-none!">{{
-                  card?.markets[0].question
-                }}</p>
               </div>
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">
@@ -320,26 +312,26 @@ onMounted(() => {
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      Yes {{ unitConvert(card.markets[0].yesPrice || 0) }}¢
+                      Yes
                     </span>
                   </div>
                   <div id="step5" class="relative" @click="buyNo(card)">
                     <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      No {{ unitConvert(card.markets[0].noPrice || 0) }}¢
+                      No
                     </span>
                   </div>
                 </div>
               </div>
 
               <!-- Progress bar -->
-              <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
-                " />
+              <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
+              " /> -->
             </div>
             <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">
-              <text> ${{ convertCurrency(card.volume) }} Vol.</text>
+              <!-- <text> ${{ convertCurrency(card.volume) }} Vol.</text> -->
               <SwipeCardShareCard :cardID="card.id" />
             </div>
           </div>
@@ -352,7 +344,6 @@ onMounted(() => {
           <template #image>
             <img src="/assets/icon/logo.svg" />
           </template>
-
           <van-button round type="primary" class="bottom-button">Launch App</van-button>
         </van-empty>
       </div>
