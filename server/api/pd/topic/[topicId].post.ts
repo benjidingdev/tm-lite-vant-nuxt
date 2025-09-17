@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
   if (action === 'topic-join_list') {
     // const { data, error } = await adminClient.from('retweets').select('*, x_profiles (*), assets (*)').eq('reason', reason)
-    const { data, error } = await adminClient.from('retweets').select('*, x_profiles (*)').eq('reason', reason)
+    let { data, error } = await adminClient.from('retweets').select('*, x_profiles (*)').eq('reason', reason)
     if (error) {
       throw createError({
         statusCode: 400,
@@ -38,6 +38,12 @@ export default defineEventHandler(async (event) => {
         statusMessage: 'ListTopicError',
       })
     }
+
+    const userIds = data?.map(i => i.userId)
+    console.log({userIds})
+    const rz = await adminClient.from('assets').select('*').in('userId', userIds)
+    console.log(rz)
+    data = data?.map(i => ({ ...i, pAmount: rz?.data?.find(j => j.userId === i.userId)?.pAmount || 0 })) || []
     // console.log(data, error, reason)
     return { data: { success: true, data } }
   }
@@ -103,36 +109,8 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    {
-      // .upsert({ refCount: adminClient.rpc('increment', { val: 1 }), userId: refId }, { onConflict: 'userId' })
-
-      const incrementAmount = 100;
-
-      const { data: dataOld } = await adminClient.from('assets')
-        .select()
-        .eq('userId', userId)
-        .single()
-      let pAmount = dataOld?.pAmount || 0
-      pAmount += incrementAmount;
-      console.log({ pAmount })
-      // upsert inviter pAmount
-      const { data: dataNew, error } = await adminClient.from('assets')
-        .upsert({ pAmount, userId }, { onConflict: 'userId' })
-        .select()
-        .eq('userId', userId)
-        .single()
-
-      console.log(dataOld, dataNew, error, 'xxx join topic get rewards')
-
-
-      const rz2 = await adminClient.from('assetsLog').insert({
-        userId,
-        delta: incrementAmount,
-        reason
-      })
-
-      console.log(rz2, 'xxx join topic get rewards')
-    }
+    const incrementAmount = topic?.rewards?.retweet || 0;
+    await updateUserPAmount(adminClient, userId, incrementAmount, reason)
 
     return {
       data: { success: true }
@@ -160,3 +138,35 @@ export default defineEventHandler(async (event) => {
 
   return { data: { success: true } }
 });
+
+
+async function updateUserPAmount(adminClient: any, userId: string, incrementAmount: number, reason: string) {
+
+  const rz = await adminClient.from('assets')
+    .select()
+    .eq('userId', userId)
+    .single()
+
+  console.log('rz', rz)
+
+  let pAmount = rz.data?.pAmount || 0
+  pAmount += incrementAmount;
+
+  console.log({ pAmount })
+  // upsert inviter pAmount
+  const rz1 = await adminClient.from('assets')
+    .upsert({ pAmount, userId }, { onConflict: 'userId' })
+    .select()
+    .eq('userId', userId)
+    .single()
+
+  console.log('rz1', rz1)
+
+  const rz2 = await adminClient.from('assetsLog').insert({
+    userId,
+    delta: incrementAmount,
+    reason,
+  })
+
+  console.log('rz2', rz2)
+}

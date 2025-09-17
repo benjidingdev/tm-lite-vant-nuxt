@@ -1,11 +1,11 @@
 <script setup>
 const { doLogin } = $(supabaseStore())
 
-
+const route = useRoute()
 async function handleLogin() {
   const query = new URLSearchParams(location.search)
   const refId = query.get('refId')
-  await doLogin({ pathname: location.pathname, refId })
+  await doLogin({ pathname: location.pathname, refId, reason: `auth.topic-${route.params.pid}` })
 }
 </script>
 

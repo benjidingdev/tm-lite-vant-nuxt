@@ -39,6 +39,6 @@ watchEffect(() => {
         <p class="text-gray-300 text-xs">@{{ user.x_profiles?.slug }}</p>
       </div>
     </div>
-    <div class="text-xs text-gray-100">{{ '-' }}</div>
+    <div class="text-xs text-gray-100">{{ user.pAmount || '-' }} $PM</div>
   </div>
 </template>
