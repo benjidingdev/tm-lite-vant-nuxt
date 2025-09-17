@@ -79,8 +79,8 @@ watchEffect(async () => {
 
       <!--update assets-->
       <div class="mt-5">
-        <van-button @click="buyYes">Buy yes</van-button>
-        <van-button @click="buyNo">Buy no</van-button>
+        <van-button size="mini" @click="buyYes">Buy yes</van-button>
+        <van-button size="mini" @click="buyNo">Buy no</van-button>
       </div>
       <!--swipe card-->
       <SwipeCardPDC />

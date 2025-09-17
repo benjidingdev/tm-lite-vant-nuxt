@@ -2,7 +2,6 @@
 import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
-import { customCards } from "@/utils/customCards";
 const debug = useDebug('SwipeCard')
 
 type Card = {
@@ -40,6 +39,7 @@ let currentY = 0;
 const pageSize = 12;
 let total = 0;
 let isSettlement = $ref(false);
+const customMarkets: any = $ref(markets()[0]);
 let queryParams: QueryParams = {
   cardID: "",
   inviteCode: "",
@@ -78,25 +78,27 @@ const getInfoList = async (refresh: boolean) => {
     cards = [];
   }
 
-  const res = await getTopicsRecommend(recommondQueryParams);
-  total = res.data.total;
+  cards.unshift(customMarkets);
 
-  if (res.code === 0) {
-    cards.push(...res.data.list);
-    cards = cards.filter((item: any) => item.markets && item.markets.length);
-    // If there is cardID in the url, put this card to the first
-    if (queryParams.cardID) {
-      const index = cards.findIndex((item: any) => item.id === Number(queryParams.cardID));
-      if (index > -1) {
-        const card = cards.splice(index, 1)[0];
-        cards.unshift(card);
-      }
-    }
+  // const res = await getTopicsRecommend(recommondQueryParams);
+  // total = res.data.total;
 
-    if (query.sharedMarket === 'true') {
-      cards.unshift(customCards[0]); // add
-    }
-  }
+  // if (res.code === 0) {
+  //   cards.push(...res.data.list);
+  //   cards = cards.filter((item: any) => item.markets && item.markets.length);
+  //   // If there is cardID in the url, put this card to the first
+  //   if (queryParams.cardID) {
+  //     const index = cards.findIndex((item: any) => item.id === Number(queryParams.cardID));
+  //     if (index > -1) {
+  //       const card = cards.splice(index, 1)[0];
+  //       cards.unshift(card);
+  //     }
+  //   }
+
+  //   if (query.sharedMarket === 'true') {
+  //     cards.unshift(customMarkets); // add
+  //   }
+  // }
   isLoading = false;
 };
 
