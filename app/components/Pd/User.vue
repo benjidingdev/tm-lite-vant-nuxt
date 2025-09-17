@@ -6,10 +6,10 @@ const { user = {} } = defineProps(['user'])
 
 <template>
   <div id="my-div" class="relative w-full rounded-2xl p-8 bg
-      border border-[#16653480] text-center text-white shadow-lg">
+      border-0 border-[#fff] bg-[#836ef9] text-center text-white shadow-lg">
 
     <div class="mt-4 flex flex-col items-center">
-      <div class="h-20 w-20 rounded-full bg-[#354366] flex items-center justify-center overflow-hidden">
+      <div class="h-20 w-20 rounded-full bg-[#0e100f] flex items-center justify-center overflow-hidden">
         <img :src="user.avatar" alt="" class="w-full h-full">
       </div>
       <h2 class="mt-4 text-xl font-bold">{{ user.name }}</h2>

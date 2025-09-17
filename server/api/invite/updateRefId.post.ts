@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     })
   }
   // query from user table check if id=refId user exists
-  const {data: userData} = await adminClient.from('profiles').select('*')
+  const { data: userData } = await adminClient.from('profiles').select('*')
     .eq('id', refId)
     .single()
   if (!userData) {
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const {data} = await adminClient.from('invites').select('*')
+  const { data } = await adminClient.from('invites').select('*')
     .eq('userId', userId)
     .single()
 
@@ -39,25 +39,39 @@ export default defineEventHandler(async (event) => {
   }
 
   // insert data into invites table
-  const {data: dataInsert} = await adminClient.from('invites').insert({
+  const { data: dataInsert } = await adminClient.from('invites').insert({
     refId,
     userId,
   }).select().single()
 
-  // update invites table that increase refIdCount by 1
-  // get inviter
-  const {data: dataInviter} = await adminClient.from('invites')
+  // // update invites table that increase refIdCount by 1
+  // // get inviter
+  // const {data: dataInviter} = await adminClient.from('invites')
+  //   .select()
+  //   .eq('userId', refId)
+  //   .single()
+  // let refCount = dataInviter?.refCount || 0
+  // refCount++
+  // // upsert inviter refCount
+  // const {data: dataInviterUpdate} = await adminClient.from('invites')
+  //   .upsert({ refCount, userId: refId })
+  //   .select()
+  //   .eq('userId', refId)
+  //   .single()
+
+  const { data: dataInviterUpdate, error: errorInviterUpdate } = await adminClient.from('invites')
+    .upsert({ refCount: adminClient.rpc('increment', { val: 1 }), userId: refId }, { onConflict: 'userId' })
     .select()
-    .eq('userId', refId)
     .single()
-  let refCount = dataInviter?.refCount || 0
-  refCount++
-  // upsert inviter refCount
-  const {data: dataInviterUpdate} = await adminClient.from('invites')
-    .upsert({ refCount, userId: refId })
-    .select()
-    .eq('userId', refId)
-    .single()
+
+    if (errorInviterUpdate) {
+      throw createError({
+        statusCode: 400,
+        message: 'Failed to update refIdCount',
+        statusMessage: 'FailedToUpdateRefIdCount',
+      })
+    }
+
   return {
     dataInsert,
     dataInviterUpdate,
