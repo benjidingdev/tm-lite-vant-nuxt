@@ -29,32 +29,18 @@ const getAsset = async (userId) => {
   return res;
 }
 
-const buyYes = async () => {
-  userAsset.pAmount -= 5;
-  updateAsset(userAsset.pAmount);
-}
-
-const buyNo = async () => {
-  userAsset.pAmount -= 5;
-  updateAsset(userAsset.pAmount);
-}
-
-const updateAsset = async (pAmount) => {
-  let res = await doFetch('/api/assets/update', {
-    method: 'POST',
-    body: {
-      userId: x_user.id,
-      pAmount,
-    }
+const getMarket = async (topicId) => {
+  let res = await doFetch(`/api/topics/${topicId}`, {
+    method: 'GET',
   })
-  console.log('updateAsset res', res)
+  console.log('getMarket res', res)
 }
 
 watchEffect(async () => {
   if (!x_user?.id) return;
   const res = await getAsset(x_user.id);
   console.log('res', res)
-  if (res.status === 200 && Array.isArray(res.data) && res.data.length > 0) return;
+  if (res.status === 200 && res.data) return;
   createAsset();
 })
 </script>
@@ -71,16 +57,13 @@ watchEffect(async () => {
             <span> ${{ userAsset.pAmount }}</span>
           </span>
           <van-button v-else @click="login">login X</van-button>
+          <!-- <van-button @click="updateMarket(2)">update markets</van-button> -->
+          <van-button @click="getMarket(2)">getMarket</van-button>
+
         </div>
         <div class="flex justify-center items-center space-x-2">
           <van-image width="30" height="30" :src="x_user.avatar" />
         </div>
-      </div>
-
-      <!--update assets-->
-      <div class="mt-5">
-        <van-button @click="buyYes">Buy yes</van-button>
-        <van-button @click="buyNo">Buy no</van-button>
       </div>
       <!--swipe card-->
       <SwipeCardPDC />
