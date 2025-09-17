@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const userId = user?.id as string
   const adminClient = serverSupabaseServiceRole(event)
   const bodyOrigin = await readBody(event)
-  const { refId } = _.pick(bodyOrigin, ['refId'])
+  const { refId, reason } = _.pick(bodyOrigin, ['refId', 'reason'])
   if (!refId) {
     throw createError({
       statusCode: 400,
@@ -14,6 +14,14 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'RefIdRequired',
     })
   }
+  if (!reason) {
+    throw createError({
+      statusCode: 400,
+      message: 'Reason is required',
+      statusMessage: 'ReasonRequired',
+    })
+  }
+
   // query from user table check if id=refId user exists
   const { data: userData } = await adminClient.from('profiles').select('*')
     .eq('id', refId)
@@ -42,35 +50,23 @@ export default defineEventHandler(async (event) => {
   const { data: dataInsert } = await adminClient.from('invites').insert({
     refId,
     userId,
+    reason,
   }).select().single()
 
-  // // update invites table that increase refIdCount by 1
-  // // get inviter
-  // const {data: dataInviter} = await adminClient.from('invites')
-  //   .select()
-  //   .eq('userId', refId)
-  //   .single()
-  // let refCount = dataInviter?.refCount || 0
-  // refCount++
-  // // upsert inviter refCount
-  // const {data: dataInviterUpdate} = await adminClient.from('invites')
-  //   .upsert({ refCount, userId: refId })
-  //   .select()
-  //   .eq('userId', refId)
-  //   .single()
-
-  const { data: dataInviterUpdate, error: errorInviterUpdate } = await adminClient.from('invites')
-    .upsert({ refCount: adminClient.rpc('increment', { val: 1 }), userId: refId }, { onConflict: 'userId' })
+  // update invites table that increase refIdCount by 1
+  // get inviter
+  const {data: dataInviter} = await adminClient.from('invites')
     .select()
+    .eq('userId', refId)
     .single()
-
-    if (errorInviterUpdate) {
-      throw createError({
-        statusCode: 400,
-        message: 'Failed to update refIdCount',
-        statusMessage: 'FailedToUpdateRefIdCount',
-      })
-    }
+  let refCount = dataInviter?.refCount || 0
+  refCount++
+  // upsert inviter refCount
+  const {data: dataInviterUpdate} = await adminClient.from('invites')
+    .upsert({ refCount, userId: refId })
+    .select()
+    .eq('userId', refId)
+    .single()
 
   return {
     dataInsert,
