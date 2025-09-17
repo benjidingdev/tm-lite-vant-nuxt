@@ -6,21 +6,23 @@ export default defineEventHandler(async (event) => {
   const adminClient = serverSupabaseServiceRole(event)
 
   const bodyOrigin = await readBody(event)
-  const { meta } = _.pick(bodyOrigin, ['meta'])
+  const { markets } = _.pick(bodyOrigin, ['markets'])
   const { topicId } = _.pick(bodyOrigin, ['topicId'])
 
-  const { err }: any = await adminClient.from('topics')
-    .upsert({ markets })
+  console.log('update topicId, markets', topicId, markets)
+  const rz = await adminClient.from('topics')
+    .update({ markets })
     .eq('id', topicId)
     .single()
-  if (err) {
-    throw createError({
-      statusCode: 400,
-      message: err.message
-    })
-  }
+  console.log('rz', rz)
+  // if (error) {
+  //   throw createError({
+  //     statusCode: 400,
+  //     message: error.message
+  //   })
+  // }
   return {
     status: 200,
-    message: "Market updated successfully"
+    message: "Market updated successfull,"
   };
 });
