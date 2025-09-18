@@ -40,7 +40,11 @@ export default defineEventHandler(async (event) => {
     }
 
     const userIds = data?.map(i => i.userId)
-    console.log({userIds})
+    console.log('topic-join_list', {userIds})
+    if (!userIds?.length) {
+      return { data: { success: true, data: [] } }
+    }
+
     const rz = await adminClient.from('assets').select('*').in('userId', userIds)
     console.log(rz)
     data = data?.map(i => ({ ...i, pAmount: rz?.data?.find(j => j.userId === i.userId)?.pAmount || 0 })) || []
@@ -147,7 +151,7 @@ async function updateUserPAmount(adminClient: any, userId: string, incrementAmou
     .eq('userId', userId)
     .single()
 
-  console.log('rz', rz)
+  console.log('asset-pAmount', userId, rz)
 
   let pAmount = rz.data?.pAmount || 0
   pAmount += incrementAmount;
@@ -157,10 +161,9 @@ async function updateUserPAmount(adminClient: any, userId: string, incrementAmou
   const rz1 = await adminClient.from('assets')
     .upsert({ pAmount, userId }, { onConflict: 'userId' })
     .select()
-    .eq('userId', userId)
     .single()
 
-  console.log('rz1', rz1)
+  console.log('asset-pAmount-update', userId, rz1)
 
   const rz2 = await adminClient.from('assetsLog').insert({
     userId,
