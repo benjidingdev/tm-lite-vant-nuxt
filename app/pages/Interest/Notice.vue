@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { getInterestNoticeList } from '~/api/interest'
+const { t } = useI18n()
+// import { getInterestNoticeList } from '~/api/interest'
 
 let loading = $ref(true)
 setTimeout(() => {
@@ -7,19 +8,19 @@ setTimeout(() => {
 }, 1000)
 
 let notices = $ref([
-  '完成全程返还 20,000 双倍积分',
-  '成功者平分积分池',
-  '中断清零',
+  t('notices.return'),
+  t('notices.poolSplit'),
+  t('notices.reset'),
 ])
 
-const getList = async () => {
-  const res = await getInterestNoticeList()
-  console.log(res);
-}
+// const getList = async () => {
+//   const res = await getInterestNoticeList()
+//   console.log(res);
+// }
 
-onMounted(()=> {
-  getList()
-})
+// onMounted(()=> {
+//   getList()
+// })
 </script>
 
 <template>
@@ -37,3 +38,34 @@ onMounted(()=> {
     </van-notice-bar>
   </van-skeleton>
 </template>
+
+<i18n lang="json">{
+  "en-US": {
+    "notices": {
+      "return": "Complete the whole campaign to receive 20,000 double points back",
+      "poolSplit": "Finishers will evenly split the points pool",
+      "reset": "Interrupted progress resets to zero"
+    }
+  },
+  "zh-TW": {
+    "notices": {
+      "return": "完成全程返還 20,000 雙倍積分",
+      "poolSplit": "成功者平均分配積分池",
+      "reset": "中斷清零"
+    }
+  },
+  "ja-JP": {
+    "notices": {
+      "return": "全行程を完了すると、ダブルポイント20,000を還元",
+      "poolSplit": "達成者でポイントプールを均等分配",
+      "reset": "中断するとリセット"
+    }
+  },
+  "ko-KR": {
+    "notices": {
+      "return": "전체 완료 시 20,000 더블 포인트 반환",
+      "poolSplit": "성공자들이 포인트 풀을 균등 분배",
+      "reset": "중단 시 초기화"
+    }
+  }
+}</i18n>

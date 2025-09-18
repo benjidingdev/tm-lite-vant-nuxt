@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import 'odometer/themes/odometer-theme-default.css'
+const { t } = useI18n()
 let participants = $ref(8412)
 let pool = $ref(1286500)
 
@@ -132,14 +133,40 @@ setTimeout(() => {
 
     <div class="grid grid-cols-2 gap-3">
       <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm">
-        <div class="text-xs text-gray-500">参与人数</div>
-        <!-- 初始文本保持纯数字；格式化交给 Odometer 的 format 实现 -->
+        <div class="text-xs text-gray-500">{{ t('labels.participants') }}</div>
         <div ref="participantsEl" class="text-2xl font-semibold mt-1 odometer">{{ participants }}</div>
       </div>
       <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm">
-        <div class="text-xs text-gray-500">当前积分池</div>
+        <div class="text-xs text-gray-500">{{ t('labels.pool') }}</div>
         <div ref="poolEl" class="text-2xl font-semibold mt-1 odometer">{{ pool }}</div>
       </div>
     </div>
   </van-skeleton>
 </template>
+
+<i18n lang="json">{
+  "en-US": {
+    "labels": {
+      "participants": "Participants",
+      "pool": "Points Pool"
+    }
+  },
+  "zh-TW": {
+    "labels": {
+      "participants": "參與人數",
+      "pool": "當前積分池"
+    }
+  },
+  "ja-JP": {
+    "labels": {
+      "participants": "参加者数",
+      "pool": "現在のポイントプール"
+    }
+  },
+  "ko-KR": {
+    "labels": {
+      "participants": "참여 인원",
+      "pool": "현재 포인트 풀"
+    }
+  }
+}</i18n>

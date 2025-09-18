@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 let leaderboard = $ref([
   { name: 'Alice', invites: 23, points: 460, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=alice' },
   { name: 'Bob', invites: 18, points: 360, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=bob' },
@@ -74,7 +76,7 @@ const getCrown = (idx: number) => {
         color="#1989FA"
         swipeable
       >
-        <van-tab title="邀请榜">
+        <van-tab :title="t('tabs.invite')">
           <div class="space-y-2 mt-2 max-h-[300px] overflow-y-auto scrollbar-hidden">
             <div
               v-for="(item, idx) in leaderboard"
@@ -94,7 +96,7 @@ const getCrown = (idx: number) => {
                 </div>
                 <div class="text-sm">
                   <div class="text-gray-800">{{ item.name }}</div>
-                  <div class="text-xs text-gray-500">邀请 {{ item.invites }} 人</div>
+                  <div class="text-xs text-gray-500">{{ t('invitedN', { count: item.invites }) }}</div>
                 </div>
               </div>
               <van-tag type="primary">+{{ item.points }}</van-tag>
@@ -102,7 +104,7 @@ const getCrown = (idx: number) => {
           </div>
         </van-tab>
 
-        <van-tab title="坚持榜">
+        <van-tab :title="t('tabs.streak')">
           <div class="space-y-2 mt-2 max-h-[300px] overflow-y-auto scrollbar-hidden">
             <div
               v-for="(item, idx) in streakboard"
@@ -122,10 +124,10 @@ const getCrown = (idx: number) => {
                 </div>
                 <div class="text-sm">
                   <div class="text-gray-800">{{ item.name }}</div>
-                  <div class="text-xs text-gray-500">连续 {{ item.days }} 天</div>
+                  <div class="text-xs text-gray-500">{{ t('streakDays', { days: item.days }) }}</div>
                 </div>
               </div>
-              <van-tag type="success">{{ item.days }} 天</van-tag>
+              <van-tag type="success">{{ t('daysUnit', { days: item.days }) }}</van-tag>
             </div>
           </div>
         </van-tab>
@@ -133,3 +135,42 @@ const getCrown = (idx: number) => {
     </div>
   </van-skeleton>
 </template>
+
+<i18n lang="json">{
+  "en-US": {
+    "tabs": {
+      "invite": "Invite Ranking",
+      "streak": "Streak Ranking"
+    },
+    "invitedN": "Invited {count} people",
+    "streakDays": "Streak {days} days",
+    "daysUnit": "{days} days"
+  },
+  "zh-TW": {
+    "tabs": {
+      "invite": "邀請榜",
+      "streak": "堅持榜"
+    },
+    "invitedN": "邀請 {count} 人",
+    "streakDays": "連續 {days} 天",
+    "daysUnit": "{days} 天"
+  },
+  "ja-JP": {
+    "tabs": {
+      "invite": "招待ランキング",
+      "streak": "継続ランキング"
+    },
+    "invitedN": "招待 {count} 人",
+    "streakDays": "連続 {days} 日",
+    "daysUnit": "{days} 日"
+  },
+  "ko-KR": {
+    "tabs": {
+      "invite": "초대 랭킹",
+      "streak": "연속 랭킹"
+    },
+    "invitedN": "초대 {count}명",
+    "streakDays": "연속 {days}일",
+    "daysUnit": "{days}일"
+  }
+}</i18n>

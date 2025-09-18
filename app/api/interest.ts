@@ -1,5 +1,5 @@
-import { doFetch } from '@/composables/doFetch'
+// import { doFetch } from '@/composables/doFetch'
 
 export const getInterestNoticeList = () => {
-  return doFetch('/api/interest/notice', { method: 'GET' })
+  // return doFetch('/api/interest/notice', { method: 'GET' })
 }
