@@ -65,18 +65,17 @@ let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
 
 const initMarket = async (topicId: number, markets: any) => {
-  let res = await doFetch('/api/topics/update', {
+  let res = await doFetch('/api/topics/updateTopic', {
     method: 'POST',
     body: {
       topicId,
       markets,
     }
   })
-  console.log('initMarket res', res);
 }
 
-const updateMarket = async (topicId, markets) => {
-  let res = await doFetch('/api/topics/update', {
+const updateMarket = async (topicId: number, markets: any) => {
+  let res = await doFetch('/api/topics/updateTopic', {
     method: 'POST',
     body: {
       topicId,
@@ -219,19 +218,50 @@ const pickNext = () => {
   swipeCard(statusList[3]);
 };
 
-const updateAsset = async (pAmount:any) => {
-  let res = await doFetch('/api/assets/update', {
+const updateAsset = async (userAsset: any) => {
+  let res = await doFetch('/api/assets/updateAsset', {
     method: 'POST',
     body: {
-      userId: x_user.id,
-      pAmount,
+      pAmount: userAsset,
     }
   })
   console.log('updateAsset res', res)
 }
 
+const updateUserMarkets = async (market: any) => {
+  let res = await doFetch('/api/usermarkets/updateUserMarket', {
+    method: 'POST',
+    body: {
+      market,
+    }
+  })
+  console.log('updateUserMarkets res', res)
+}
+
+const getUserMarkets = async () => {
+  let res = await doFetch('/api/usermarkets', {
+    method: 'GET',
+  })
+  console.log('updateUserMarkets res', res)
+}
+
+const tradeSum = async () => {
+  userAsset = Math.max(0, userAsset - 1);
+  console.log('tradeSum userAsset', userAsset);
+  await updateAsset(userAsset);
+}
+
+const tradeUserMarket = async (card: any, isYes: boolean) => {
+  const userMarkets = await getUserMarkets();
+  console.log('userMarkets', userMarkets);
+  await updateUserMarkets({
+    yesMarkets: isYes ? [card.id] : [],
+    noMarkets: isYes ? [] : [card.id],
+  });
+}
+
 // start transaction
-const goDeposit = async(card: Card, isYes: boolean) => {
+const goDeposit = async (card: Card, isYes: boolean) => {
   if (path.includes("market") === "true") {
     return;
   }
@@ -250,8 +280,9 @@ const goDeposit = async(card: Card, isYes: boolean) => {
   // console.log('currentCard', currentCard);
   await updateMarket(2, pdcCards)
 
-  userAsset.pAmount -= 1;
-  updateAsset(userAsset.pAmount);
+  await tradeSum();
+
+  await tradeUserMarket(card, isYes);
 
   resetCard();
 };
@@ -308,14 +339,14 @@ onMounted(() => {
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">
                 <div class="flex justify-between items-center h-full">
-                  <div id="step4" class="relative" @click="buyYes(card)">
+                  <div class="relative" @click="buyYes(card)">
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
                       Yes
                     </span>
                   </div>
-                  <div id="step5" class="relative" @click="buyNo(card)">
+                  <div class="relative" @click="buyNo(card)">
                     <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
@@ -324,6 +355,24 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
+              <!--Card information-->
+              <div class="text-sm text-gray-500 mt-2">
+                <div>
+                  <span class="font-bold text-black">{{ card.yesNum }}</span>
+                  <span> Yes Votes</span>
+                </div>
+                <div>
+                  <span class="font-bold text-black">{{ card.noNum }}</span>
+                  <span> No Votes</span>
+                </div>
+                <div>
+                  <span> You have selected <span class="font-bold text-green-500">Yes</span></span>
+                </div>
+                <div>
+                  <van-button size="mini" type="primary">Claim</van-button>
+                </div>
+              </div>
+
 
               <!-- Progress bar -->
               <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')

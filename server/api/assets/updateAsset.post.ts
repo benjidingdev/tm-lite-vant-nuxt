@@ -9,17 +9,27 @@ export default defineEventHandler(async (event) => {
   const bodyOrigin = await readBody(event)
   const { pAmount } = _.pick(bodyOrigin, ['pAmount'])
 
-  console.log('pAmount', pAmount)
-
-  const { err } = await adminClient.from('assets')
-    .update({ pAmount })
+  const { data } = await adminClient.from('assets').select('*')
     .eq('userId', userId)
     .single()
-  if (err) {
+  if (data?.pAmount <= 0) {
+    return { status: 400, message: "pAmount cannot be zero" };
+  }
+
+  const { data: assetData, error: updateAmountError } = await adminClient.from('assets')
+    .upsert({
+      pAmount,
+      userId,
+    }, { onConflict: 'userId' })
+    .select()
+    .eq('userId', userId)
+    .single()
+
+  if (updateAmountError) {
     throw createError({
       statusCode: 400,
-      message: err.message
+      message: updateAmountError.message
     })
   }
-  return userId + "'s latest pAmount" + pAmount;
+  return "latestpAmount" + assetData.pAmount;
 });

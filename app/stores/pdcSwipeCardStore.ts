@@ -1,8 +1,5 @@
 export const pdcSwipeCardStore = defineStore("pdcSwipeCardStore", () => {
-  let userAsset = $ref({
-    userId: "",
-    pAmount: 0,
-  });
+  let userAsset = $ref(0);
   let pdcCards = $ref([]);
 
   return $$({

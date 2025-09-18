@@ -10,38 +10,33 @@ const login = async () => {
   await doLogin({ pathname: '/market' });
 }
 
-const createAsset = async () => {
-  let res = await doFetch('/api/assets/create', {
+const initAsset = async () => {
+  let res = await doFetch('/api/assets/initAsset', {
     method: 'POST',
     body: {
-      userId: x_user.id,
-      pAmount: 0
+      pAmount: 10
     }
   })
   console.log('res', res)
 }
 
 const getAsset = async (userId) => {
-  let res = await doFetch(`/api/assets/${userId}`, {
+  let res = await doFetch(`/api/assets/getAsset`, {
     method: 'GET',
   })
-  userAsset = res.data;
+  if (res.status === 200) {
+    const asset = res?.data?.pAmount || 0;
+    userAsset = asset;
+  } else {
+    userAsset = 0;
+  }
   return res;
-}
-
-const getMarket = async (topicId) => {
-  let res = await doFetch(`/api/topics/${topicId}`, {
-    method: 'GET',
-  })
-  console.log('getMarket res', res)
 }
 
 watchEffect(async () => {
   if (!x_user?.id) return;
-  const res = await getAsset(x_user.id);
-  console.log('res', res)
-  if (res.status === 200 && res.data) return;
-  createAsset();
+  await initAsset();
+  await getAsset();
 })
 </script>
 
@@ -49,16 +44,14 @@ watchEffect(async () => {
   <div>
     <div class="h-[calc(100dvh)] px-10 flex flex-col justify-center items-center">
       <!--user avatar-->
-      <div class="w-full h-16 bg-black-100 flex items-center justify-between px-4">
+      <div class="w-full h-16 bg-black-100 flex items-center justify-between">
         <div class="flex justify-center items-center space-x-2">
           <span v-if="x_user.name" class="text-white text-xs">
             <span> {{ x_user.name }}</span>
             <span>{{ ' ' }} </span>
-            <span> ${{ userAsset.pAmount }}</span>
+            <span> ${{ userAsset }}</span>
           </span>
           <van-button v-else @click="login">login X</van-button>
-          <!-- <van-button @click="updateMarket(2)">update markets</van-button> -->
-          <van-button @click="getMarket(2)">getMarket</van-button>
 
         </div>
         <div class="flex justify-center items-center space-x-2">
