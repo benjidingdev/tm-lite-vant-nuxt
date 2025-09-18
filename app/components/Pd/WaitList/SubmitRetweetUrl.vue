@@ -1,12 +1,16 @@
 <script setup>
-const emit = defineEmits(['handleBack', 'handleSuccess'])
+
+const { x_user } = $(supabaseStore())
+
+const emit = defineEmits(['onBack', 'onSuccess'])
 
 const route = useRoute()
 
 let submitLoading = $ref(false)
 let retweetLink = $ref('')
-const disabled = $computed(() => submitLoading || !retweetLink)
 // let retweetLink = $ref('https://x.com/John_TuringM/status/1968124413582381493')
+const disabled = $computed(() => submitLoading || !retweetLink || !retweetLink.startsWith(`https://x.com/${x_user?.user_name}`))
+
 async function handleSubmit() {
   if (!retweetLink) {
     return
@@ -23,31 +27,36 @@ async function handleSubmit() {
 
   // console.log({ rz })
   if (rz.data.success) {
-    emit('handleSuccess')
+    emit('onSuccess')
   }
+
+  // emit('onSuccess')
+
   submitLoading = false
 }
 </script>
 
-<template v-if="hasRetweetClicked">
-  <section class="w-full flex flex-col items-center justify-center space-y-4 bg-[#200052] p-4 rounded-md">
-    <p class="text-gray-300 text-xs">
-      Then, paste the retweet link above and click submit.
-    </p>
-
-    <textarea type="text" v-model="retweetLink" class="w-full border p-2 rounded-md"
-      placeholder="Enter your retweet link">
+<template>
+  <textarea type="text" name="retweetLink" v-model="retweetLink"
+    class="w-full border-1 px-4 py-3 rounded-md border-gray-500 focus:border-[#7000FF]"
+    placeholder="Enter your retweet link">
   </textarea>
 
-    <div class="w-full flex justify-between items-center space-x-2">
-      <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-md" @click="() => emit('handleBack') ">
-        go back
-      </button>
-      <button :disabled class="w-full text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
-        :class="disabled ? 'bg-gray-500' : 'bg-blue-500'" @click="handleSubmit">
-        <span>submit</span>
-        <van-loading size="12" v-if="submitLoading" />
-      </button>
-    </div>
-  </section>
+  <div class="w-full flex flex-col justify-between items-center space-y-4">
+    <button :disabled class="w-full text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
+      :class="disabled ? 'bg-gray-500' : 'bg-[#7000FF] active'" @click="handleSubmit">
+      <span class="text-white font-[900]">submit</span>
+      <van-loading size="12" v-if="submitLoading" />
+    </button>
+
+    <button class="w-full border-1 border-[#353535] px-4 py-2 rounded-md" @click="() => emit('onBack')">
+      <span class="font-[900]">back</span>
+    </button>
+  </div>
 </template>
+
+<style>
+.active {
+  box-shadow: 0px 12px 32px -8px rgba(112, 0, 255, 0.5);
+}
+</style>

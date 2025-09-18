@@ -10,9 +10,6 @@ const { hasTwitterLogin, doLogout } = $(supabaseStore())
 const sharedTopic = topics()
 const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-// 2 share
-let hasRetweetClicked = $ref(false)
-
 async function handleDel() {
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
     method: 'POST',
@@ -57,23 +54,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <article class="w-full h-full flex flex-col items-center justify-center space-y-8 px-8">
-    <h1 class="text-xl font-bold">{{ topic?.title }}</h1>
-    <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2>
+  <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
+    <img src="/logo.webp" alt="" class="w-[110px] h-[90px] my-10">
+    <p class="text-[30px] font-900 leading-[1.2]">{{ topic?.title }}</p>
+    <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
     <template v-if="hasTwitterLogin">
       <template v-if="hasRetweeted">
-        <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+        <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
           hasRetweeted, remove for test
-        </button>
-        <PdWaitListRetweet :hasRetweeted />
+        </button> -->
+        <!-- <PdWaitListRetweet :hasRetweeted /> -->
       </template>
 
-      <template v-else>
-        <PdWaitListSubmitRetweetUrl @handleSuccess="() => { hasRetweeted = true; refreshTime = new Date() }"
-          @handleBack="() => { hasRetweetClicked = false }" v-if="hasRetweetClicked" />
-        <PdWaitListRetweet @handleClick="() => { hasRetweetClicked = true }" v-else />
-      </template>
+      <PdWaitListRetweet v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
     </template>
 
     <PdWaitListLogin v-else />
