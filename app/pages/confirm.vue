@@ -30,9 +30,7 @@ watch(user, async () => {
     const refId = params.get("refId") || '';
     const reason = params.get("reason") || '';
     debug({ refId, reason, user: user.value, redirectTo })
-    if (refId) {
-      postInvite(refId, reason)
-    }
+    postInvite(refId, reason)
     return navigateTo(redirectTo)
   }
 }, { immediate: true })
