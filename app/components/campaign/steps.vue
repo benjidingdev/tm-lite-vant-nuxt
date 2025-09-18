@@ -4,11 +4,21 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  button: {
+    type: Array,
+    default: () => [],
+  },
   active: {
     type: Number,
     default: 0,
   },
 })
+
+const emit = defineEmits(['click'])
+
+const handleClick = (ind) => {
+  emit('click', ind)
+}
 </script>
 <template>
   <div class="w-full">
@@ -26,7 +36,7 @@ defineProps({
       <van-col v-for="(item, ind) in value" class="w-18 lg:w-28 text-sm text-center font-bold font-roboto"
         :class="ind === active ? 'text-[#93DF18]' : ind < active ? 'text-white opacity-50' : 'text-white'">
         <p>{{ item }}</p>
-        <van-button v-if="ind === active" class="!h-8.5 !border-0 !rounded-full !bg-[#B3FF26] !mt-2">去分享</van-button>
+        <van-button v-if="ind === active && button.length" class="!h-8.5 !border-0 !rounded-full !bg-[#B3FF26] !mt-2" @click="handleClick(ind)">{{ button[ind] }}</van-button>
       </van-col>
     </van-row>
   </div>
