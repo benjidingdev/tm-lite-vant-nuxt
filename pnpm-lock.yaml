@@ -41,6 +41,9 @@ importers:
       '@tanstack/vue-query':
         specifier: ^5.85.6
         version: 5.85.6(vue@3.5.18(typescript@5.8.3))
+      '@types/canvas-confetti':
+        specifier: ^1.9.0
+        version: 1.9.0
       '@vant/nuxt':
         specifier: 1.0.7
         version: 1.0.7(magicast@0.3.5)(vant@4.9.21(vue@3.5.18(typescript@5.8.3)))
@@ -74,6 +77,9 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+      canvas-confetti:
+        specifier: ^1.9.3
+        version: 1.9.3
       crypto-browserify:
         specifier: ^3.12.1
         version: 3.12.1
@@ -98,6 +104,9 @@ importers:
       nuxt-meta-pixel:
         specifier: 2.0.2
         version: 2.0.2(magicast@0.3.5)
+      odometer:
+        specifier: ^0.4.8
+        version: 0.4.8
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
@@ -2648,6 +2657,9 @@ packages:
   '@types/async-lock@1.4.2':
     resolution: {integrity: sha512-HlZ6Dcr205BmNhwkdXqrg2vkFMN2PluI7Lgr8In3B3wE5PiQHhjRqtW/lGdVU9gw+sM0JcIDx2AN+cW8oSWIcw==}
 
+  '@types/canvas-confetti@1.9.0':
+    resolution: {integrity: sha512-aBGj/dULrimR1XDZLtG9JwxX1b4HPRF6CX9Yfwh3NvstZEm1ZL7RBnel4keCPSqs1ANRu1u2Aoz9R+VmtjYuTg==}
+
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
@@ -3742,6 +3754,9 @@ packages:
   canonicalize@2.1.0:
     resolution: {integrity: sha512-F705O3xrsUtgt98j7leetNhTWPe+5S72rlL5O4jA1pKqBVQ/dT1O1D6PFxmSXvc0SUOinWS57DKx0I3CHrXJHQ==}
     hasBin: true
+
+  canvas-confetti@1.9.3:
+    resolution: {integrity: sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==}
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -5786,6 +5801,9 @@ packages:
   object.assign@4.1.7:
     resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
     engines: {node: '>= 0.4'}
+
+  odometer@0.4.8:
+    resolution: {integrity: sha512-bfKuAhWE/qMCiX9bwX90c5bTpt7MDVeq1e6YsOHQrYokNhv9jhS5JbR9kg6i+FeWmDgalf3VUtwNx1aVaZ8cgg==}
 
   ofetch@1.4.1:
     resolution: {integrity: sha512-QZj2DfGplQAr2oj9KzceK9Hwz6Whxazmn85yYeVuS3u9XTMOGMRx0kO95MQ+vLsj/S/NwBDMMLU5hpxvI6Tklw==}
@@ -11600,6 +11618,8 @@ snapshots:
 
   '@types/async-lock@1.4.2': {}
 
+  '@types/canvas-confetti@1.9.0': {}
+
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 2.1.0
@@ -13858,6 +13878,8 @@ snapshots:
   caniuse-lite@1.0.30001727: {}
 
   canonicalize@2.1.0: {}
+
+  canvas-confetti@1.9.3: {}
 
   chalk@4.1.2:
     dependencies:
@@ -16183,6 +16205,8 @@ snapshots:
       es-object-atoms: 1.1.1
       has-symbols: 1.1.0
       object-keys: 1.1.1
+
+  odometer@0.4.8: {}
 
   ofetch@1.4.1:
     dependencies:
