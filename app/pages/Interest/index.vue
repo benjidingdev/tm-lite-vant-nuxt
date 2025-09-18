@@ -5,7 +5,7 @@
       <KpiCards />
       <TaskCard />
       <ShareInvite />
-      <LeaderboardTabs />
+      <Leaderboard />
       <RulesCard />
     </div>
   </section>
@@ -15,9 +15,8 @@
 import TaskCard from './TaskCard.vue'
 import KpiCards from './KpiCards.vue'
 import ShareInvite from './ShareInvite.vue'
-import LeaderboardTabs from './LeaderboardTabs.vue'
+import Leaderboard from './Leaderboard.vue'
 import RulesCard from './RulesCard.vue'
 import Notice from './Notice.vue'
 
 </script>
-

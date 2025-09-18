@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { showToast } from 'vant'
+const { t } = useI18n()
 import confetti from "canvas-confetti";
+import checked from '~/assets/icon/checked.svg'
+import unchecked from '~/assets/icon/unchecked.svg'
 
 let totalDays = 30
 let day = $ref(12)
@@ -16,7 +18,6 @@ const onCheckIn = () => {
   isCheckedToday = true
   consecutiveDays += 1
   day = Math.min(day + 1, totalDays)
-  // showToast('打卡成功 +50 积分')
   confetti({
     particleCount: 100,
     spread: 70,
@@ -55,24 +56,59 @@ setTimeout(() => {
     <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm space-y-3">
       <div class="flex items-center justify-between">
         <div>
-          <div class="text-sm text-gray-700">第 {{ day }}/{{ totalDays }} 天</div>
-          <div class="text-xs text-gray-500">剩余 {{ remainingTime }}</div>
+          <div class="text-sm text-gray-700">{{ t('dayProgress', { day, total: totalDays }) }}</div>
+          <div class="text-xs text-gray-500">{{ t('remaining', { time: remainingTime }) }}</div>
         </div>
-        <van-tag type="success" v-if="isCheckedToday">今日已打卡</van-tag>
-        <van-tag type="danger" v-else>待打卡</van-tag>
+        <div>
+          <img :src="isCheckedToday ? checked : unchecked" alt="" class="w-6 h-6">
+        </div>
       </div>
 
       <van-progress :percentage="progress" stroke-width="10" track-color="#f0f2f5" color="linear-gradient(to right, #3fecff, #6149f6)" />
 
       <div class="flex items-center justify-between">
-        <div class="text-xs text-gray-500">已连续打卡 {{ consecutiveDays }} 天</div>
-        <div class="text-xs text-gray-500">完成度 {{ progress }}%</div>
+        <div class="text-xs text-gray-500">{{ t('streak', { days: consecutiveDays }) }}</div>
+        <div class="text-xs text-gray-500">{{ t('completion', { percent: progress }) }}</div>
       </div>
 
       <van-button block type="primary" :disabled="isCheckedToday" @click="onCheckIn">
-        {{ isCheckedToday ? '明日再来' : '今日打卡' }}
+        {{ t(isCheckedToday ? 'btnComeBackTomorrow' : 'btnCheckin') }}
       </van-button>
     </div>
   </van-skeleton>
-
 </template>
+
+<i18n lang="json">{
+  "en-US": {
+    "dayProgress": "Day {day}/{total}",
+    "remaining": "Remaining {time}",
+    "streak": "Checked in for {days} consecutive days",
+    "completion": "Completion {percent}%",
+    "btnComeBackTomorrow": "Come back tomorrow",
+    "btnCheckin": "Check in today"
+  },
+  "zh-TW": {
+    "dayProgress": "第 {day}/{total} 天",
+    "remaining": "剩餘 {time}",
+    "streak": "已連續打卡 {days} 天",
+    "completion": "完成度 {percent}%",
+    "btnComeBackTomorrow": "明日再來",
+    "btnCheckin": "今日打卡"
+  },
+  "ja-JP": {
+    "dayProgress": "{day}/{total} 日目",
+    "remaining": "残り {time}",
+    "streak": "{days}日連続チェックイン",
+    "completion": "達成度 {percent}%",
+    "btnComeBackTomorrow": "また明日",
+    "btnCheckin": "今日チェックイン"
+  },
+  "ko-KR": {
+    "dayProgress": "{day}/{total}일차",
+    "remaining": "남은 {time}",
+    "streak": "{days}일 연속 출석",
+    "completion": "달성도 {percent}%",
+    "btnComeBackTomorrow": "내일 다시 오기",
+    "btnCheckin": "오늘 체크인"
+  }
+}</i18n>
