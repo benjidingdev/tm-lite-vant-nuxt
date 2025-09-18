@@ -1,4 +1,11 @@
-@import "tailwindcss";
+@import "tailwindcss" theme(static);
+
+@theme static {
+  --font-sans: 'Public Sans', sans-serif;
+  --font-dmsans: DM Sans, DM Sans;
+  --font-roboto: Roboto, Roboto;
+  --font-dinpro: DINPro, DINPro;
+}
 
 html,
 body {

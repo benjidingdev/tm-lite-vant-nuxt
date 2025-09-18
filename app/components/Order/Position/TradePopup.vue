@@ -4,22 +4,17 @@ import { showToast } from "vant";
 import { Decimal } from "decimal.js";
 import type {
   TopicReqVO,
-  SeriesReqVO,
   SportLiveTopicsVO,
   TopicMarketsRespVO,
   TopicsDetailRespVO,
   UserHoldInfo,
   UserOrderInfo,
-  TopicSummaryRespVO,
   SeriesTopicsRespVO,
 } from "@/types/market";
 
-import { add, subtract, decimal } from "@/utils/decimal";
+import { decimal } from "@/utils/decimal";
 import {
-  convertCurrency,
   formatResultPrice,
-  formatTitle,
-  percentage,
   unitConvert,
 } from "@/utils/processing";
 import {
@@ -344,8 +339,8 @@ const getMarketResult = (
   if (tmpPosition && tmpPosition.length) {
     holdResult.total = tmpPosition[0].usableVolume
       ? formatResultPrice(
-          tmpPosition[0].currentValue * (1 - holdResult.settleFee)
-        )
+        tmpPosition[0].currentValue * (1 - holdResult.settleFee)
+      )
       : 0;
   } else {
     holdResult.total = 0;
@@ -422,33 +417,16 @@ watch(
 </script>
 
 <template>
-  <van-popup
-    v-model:show="modalIsShow.showTradePicker"
-    destroy-on-close
-    round
-    position="bottom"
-  >
+  <van-popup v-model:show="modalIsShow.showTradePicker" destroy-on-close round position="bottom">
     <van-tabs v-model:active="tradeTypeActive" @click-tab="tradeTypeClick">
       <van-tab title="Buy">
-        <OrderPositionTradeComponent
-          v-model:buySellCurrent="trade.buySellCurrent"
-          v-model:marketAvgPrice="marketAvgPrice"
-          v-model:total="total"
-          :trade="trade"
-          :voData="voData"
-        />
+        <OrderPositionTradeComponent v-model:buySellCurrent="trade.buySellCurrent"
+          v-model:marketAvgPrice="marketAvgPrice" v-model:total="total" :trade="trade" :voData="voData" />
       </van-tab>
       <van-tab title="Sell">
-        <OrderPositionTradeComponent
-          v-model:buySellCurrent="trade.buySellCurrent"
-          v-model:marketAvgPrice="marketAvgPrice"
-          v-model:total="total"
-          :trade="trade"
-          :voData="voData"
-        />
+        <OrderPositionTradeComponent v-model:buySellCurrent="trade.buySellCurrent"
+          v-model:marketAvgPrice="marketAvgPrice" v-model:total="total" :trade="trade" :voData="voData" />
       </van-tab>
     </van-tabs>
   </van-popup>
 </template>
-
-

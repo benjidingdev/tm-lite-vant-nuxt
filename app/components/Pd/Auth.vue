@@ -1,10 +1,10 @@
 <script setup>
-const { hasTwitterLogin, x_user } = $(supabaseStore())
+const { hasTwitterLogin, x_user, doLogin } = $(supabaseStore())
 </script>
 
 <template>
 
-  <div class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
+  <div class="flex items-center justify-center min-h-screen text-white p-4">
 
     <PdUser :user="x_user" v-if="hasTwitterLogin" />
 
@@ -16,8 +16,8 @@ const { hasTwitterLogin, x_user } = $(supabaseStore())
     </div>
     <div class="bg-blue-500 rounded-md px-2" @click="doLogout">logout</div>
   </div> -->
-    <template v-else class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
-      <div class="w-full max-w-sm rounded-lg border border-[#1a1b1c] bg-[#111316] p-6 text-center shadow-lg">
+    <template v-else class="flex items-center justify-center min-h-screen text-white p-4">
+      <div class="w-full max-w-sm rounded-lg border border-[#0e100f] bg-[#200052] p-6 text-center shadow-lg">
 
         <div class="flex flex-col items-center">
           <svg class="h-8 w-8 fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -38,7 +38,7 @@ const { hasTwitterLogin, x_user } = $(supabaseStore())
           </ol>
         </div>
 
-        <div to="/pd/x" @click="doLogin"
+        <div to="/pd/x" @click="doLogin({ pathname: '/pd/u-[uid]' })"
           class="mt-8 w-full rounded-lg bg-green-500 py-3 font-bold text-black flex items-center justify-center space-x-2 transition-transform duration-200 hover:scale-105">
           <svg class="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 11h-3v3h-2v-3H8v-2h3V8h2v3h3z"></path>

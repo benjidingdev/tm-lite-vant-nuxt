@@ -3,6 +3,7 @@ import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
 const debug = useDebug('SwipeCard')
+
 type Card = {
   id: number;
   title: string;
@@ -37,11 +38,12 @@ let currentX = 0;
 let currentY = 0;
 const pageSize = 12;
 let total = 0;
-let isSettlement = $ref(false);
 let queryParams: QueryParams = {
   cardID: "",
   inviteCode: "",
 };
+const customMarkets: any = $ref(markets()[0]);
+let isSettlement = $ref(false);
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize,
@@ -54,6 +56,8 @@ const recommondQueryParams = $ref({
   tagId: null,
   followed: false,
 });
+
+const { query, path } = $(useRoute());
 
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
@@ -87,6 +91,10 @@ const getInfoList = async (refresh: boolean) => {
         const card = cards.splice(index, 1)[0];
         cards.unshift(card);
       }
+    }
+
+    if (query.sharedMarket === 'true') {
+      cards.unshift(customMarkets); // add
     }
   }
   isLoading = false;
@@ -196,6 +204,9 @@ const pickNext = () => {
 
 // start transaction
 const goDeposit = async (card: Card, isYes: boolean) => {
+  if (path.includes("market")) {
+    return;
+  }
   const transaction = {
     parentId: null,
     textColor: "",
@@ -249,8 +260,6 @@ const goDeposit = async (card: Card, isYes: boolean) => {
   resetCard();
 };
 
-
-
 onMounted(() => {
   getInfoList(false);
   queryParams = getFatherInviteCode();
@@ -282,7 +291,7 @@ onMounted(() => {
           :class="['card', 'draggable-element', 'shadow-md', { active: currentIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
-          <van-image width="100%" height="50%" :src="card['image']" class="p-2" fit="contain">
+          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
 
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
@@ -302,7 +311,7 @@ onMounted(() => {
                 <p class="name">{{ card.title }}</p>
                 <p v-if="card?.markets.length" class="mt-1 leading-none!">{{
                   card?.markets[0].question
-                  }}</p>
+                }}</p>
               </div>
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">
