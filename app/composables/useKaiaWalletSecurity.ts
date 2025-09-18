@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/vue-query";
-import { useKaiaWalletStore } from "~/stores/kaiaWalletStore";
+import { useKaiaWalletStore } from "#build/app/stores/lineWalletStore";
 import { liff } from "~/utils/liff";
 
 export const useKaiaWalletSecurity = () => {

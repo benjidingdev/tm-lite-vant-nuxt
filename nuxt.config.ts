@@ -27,7 +27,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   plugins: [
-    '~/plugins/04.polyfill-random.client.ts',
   ],
 
   modules,

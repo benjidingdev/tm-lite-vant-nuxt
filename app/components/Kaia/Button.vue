@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useKaiaWalletStore } from "~/stores/kaiaWalletStore";
+import { lineWalletStore } from "~/stores/lineWalletStore";
 
-const kaiaStore = useKaiaWalletStore();
+const kaiaStore = lineWalletStore();
 
 // Initialize Kaia SDK
 onMounted(async () => {

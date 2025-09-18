@@ -1,4 +1,3 @@
-
 import { getUserProfile } from "@/api/userInfo";
 import { getLogout } from "~/api/login";
 import * as walletApi from "~/api/wallet";
@@ -9,13 +8,20 @@ import type { SiweMessage } from "@/types";
 export const authStore = defineStore(
   "authStore",
   () => {
-    const debug = useDebug('authStore')
+    const debug = useDebug("authStore");
     const { t } = $(useI18n());
     const { setModal, startOnboarding, setLoadingToast } = $(uiStore());
     let { loadUserInfo, userInfo } = $(userStore());
     const { amountPermit, updateWalletBalance } = $(walletStore());
     const { startParam } = $(shareStore());
-    const { walletClient, wallet, logoutPrivy, isNewUser } = $(privyStore());
+    const { walletClient: privyWalletClient, wallet, logoutPrivy, isNewUser } = $(privyStore());
+    const { walletClient: lineWalletClient, address: lineAddress, disconnect } = $(lineWalletStore());
+    const walletClient = $computed(() => {
+      return privyWalletClient ? privyWalletClient : lineWalletClient ? lineWalletClient : undefined;
+    });
+    const address = $computed(() => {
+      return wallet ? wallet.address : lineAddress ? lineAddress : undefined;
+    });
     let { session, errorInfo } = $(privyStore());
 
     let token: any = $ref({
@@ -69,13 +75,14 @@ export const authStore = defineStore(
         let res: any = await getLogout();
         if (res?.code === 0) {
           await logoutPrivy();
+          await disconnect();
           deleteAllCookies();
-          const debugScope = localStorage.getItem('debug') || ''
+          const debugScope = localStorage.getItem("debug") || "";
           localStorage?.clear();
-          localStorage.setItem('debug', debugScope)
+          localStorage.setItem("debug", debugScope);
           sessionStorage?.clear();
           updateToken({});
-          userInfo = {}
+          userInfo = {};
           session = null;
           errorInfo = null;
           showToast(t("Logout successful"));
@@ -91,7 +98,6 @@ export const authStore = defineStore(
      */
     const signLoginMessage = async (nonce: string) => {
       try {
-        const address = wallet?.address;
         const chainId = walletClient.chain?.id;
         const messageObj = {
           address: getAddress(address),
@@ -131,10 +137,9 @@ export const authStore = defineStore(
       message: SiweMessage;
       signature: string;
     }) => {
-      const address = wallet?.address;
       let result: any = await walletApi.loginByWallet({
         proxyWallet: address,
-        ivcode: startParam.inviteCode || '',
+        ivcode: startParam.inviteCode || "",
         signature: data.signature,
         message: data.message,
       });
@@ -149,18 +154,17 @@ export const authStore = defineStore(
     const doSign = useDebounceFn(async () => {
       setLoadingToast(t("Start to login"));
       let signData;
-      const address = wallet?.address;
-      debug({ address, wallet, walletClient })
+      debug({ address, wallet, walletClient });
       try {
         if (address) {
           const nonceRes = await getNonce(address);
-          debug({nonceRes})
+          debug({ nonceRes });
           if (nonceRes) {
             signData = await signLoginMessage(nonceRes.data);
           }
         }
       } catch (error) {
-        debug({error})
+        debug({ error });
         closeToast();
       }
 

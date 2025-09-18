@@ -1,20 +1,17 @@
 import { defineStore } from "pinia";
-import type { EIP1193Provider } from "viem";
 import { formatUnits, parseEther, parseUnits } from "viem";
 import { getBalance, readContract, writeContract, switchChain } from "@wagmi/core";
 import { useAccount, useAccountEffect } from "@wagmi/vue";
 
 import {
+  type SignTradeDataOptions,
   TYPEHASH_DOMAIN,
   TYPEHASH_MERGE_SPLIT_ORDER,
-} from "@/config/tradeTypes";
-import {
   TYPEHASH_ORDER,
   TYPEHASH_PERMIT,
   TYPEHASH_REWARD,
   TYPEHASH_WITHDRAW
-} from "@/types/sign";
-import type { SignTradeDataOptions } from "@/types/sign";
+} from "@/config/tradeTypes";
 import { approveSign } from "@/api/userInfo";
 import { market, usdtAbi } from "@/config/abis";
 import { shortenAddress } from "@/utils/processing";
@@ -409,8 +406,6 @@ export const walletStore = defineStore("walletStore", () => {
     amountPermit,
     signPayout,
   });
-}, {
-  persist: true,
 });
 
 if (import.meta.hot) {

@@ -1,12 +1,15 @@
 <script setup lang="ts">
-  const { setModal } = $(uiStore());
-  const { token } = $(authStore());
-  const { userInfo, userCanUseAmount } = $(userStore())
-  const { userBalance } = $(walletStore());
+const { setModal } = $(uiStore());
+const { token } = $(authStore());
+const { userInfo, userCanUseAmount } = $(userStore())
+const { initWalletClient, requestAccount, userBalance } = $(lineWalletStore())
 
-  const avatar = computed(() => {
-    return userInfo?.profile?.avatar || '/logo.png'
-  })
+const avatar = computed(() => {
+  return userInfo?.profile?.avatar || '/logo.png'
+})
+onMounted(() => {
+  initWalletClient()
+})
 </script>
 
 <template>
@@ -19,7 +22,7 @@
       </div>
     </button>
     <van-button size="small" v-else round type="primary" class="px-3 text-white/80 right mr-2!"
-      @click="setModal('loginModal', true)">{{ $t("Login") }}</van-button>
+      @click="requestAccount">{{ $t("Login") }}</van-button>
   </div>
 </template>
 
