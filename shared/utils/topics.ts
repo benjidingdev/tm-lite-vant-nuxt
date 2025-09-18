@@ -5,9 +5,9 @@ export default function () {
       title: 'Who will be the biggest winner when the Monad mainnet goes live?',
       content: 'Content 1',
       rewards: {
-        auth: 80,
-        invite: 40,
-        retweet: 10,
+        auth: 1000,
+        invite: 1000,
+        retweet: 100,
       }
     }
   ]
