@@ -63,7 +63,7 @@ onMounted(() => {
 
     <template v-if="hasTwitterLogin">
       <template v-if="hasRetweeted">
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+        <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
           hasRetweeted, remove for test
         </button>
         <PdWaitListRetweet :hasRetweeted />
