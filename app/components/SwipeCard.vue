@@ -2,7 +2,6 @@
 import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
-import { customCards } from "@/utils/customCards";
 const debug = useDebug('SwipeCard')
 
 type Card = {
@@ -39,11 +38,12 @@ let currentX = 0;
 let currentY = 0;
 const pageSize = 12;
 let total = 0;
-let isSettlement = $ref(false);
 let queryParams: QueryParams = {
   cardID: "",
   inviteCode: "",
 };
+const customMarkets: any = $ref(markets()[0]);
+let isSettlement = $ref(false);
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize,
@@ -94,7 +94,7 @@ const getInfoList = async (refresh: boolean) => {
     }
 
     if (query.sharedMarket === 'true') {
-      cards.unshift(customCards[0]); // add
+      cards.unshift(customMarkets); // add
     }
   }
   isLoading = false;

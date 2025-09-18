@@ -4,24 +4,24 @@ import _ from 'lodash'
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   const userId = user?.id as string
-  const pAmount = user?.pAmount || 0
+
+  const bodyOrigin = await readBody(event)
+  const { title } = _.pick(bodyOrigin, ['title'])
   const adminClient = serverSupabaseServiceRole(event)
 
-  const { data, err } = await adminClient.from('assets')
-    .upsert({ userId, pAmount })
+  const { data, error } = await adminClient.from('topics')
+    .upsert({ title, userId })
     .select()
     .eq('userId', userId)
     .single()
 
-  if (err) {
+  if (error) {
     throw createError({
       statusCode: 400,
-      message: 'Failed to create or update asset record'
+      message: error.message
     })
   }
 
-  console.log({ data })
-  // return userId + "'s latest pAmount" + pAmount;
   return {
     res: 200,
     data,
