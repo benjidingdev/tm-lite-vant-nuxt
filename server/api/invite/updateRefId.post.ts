@@ -8,11 +8,9 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const { refId, reason } = body
   if (!refId) {
-    throw createError({
-      statusCode: 400,
-      message: 'RefId is required',
-      statusMessage: 'RefIdRequired',
-    })
+    console.log({ body }, 'no refId')
+    await updateTopicAuthInviterPAmount(adminClient, userId, body)
+    return true
   }
   if (!reason) {
     throw createError({
@@ -52,7 +50,7 @@ export default defineEventHandler(async (event) => {
     userId,
     reason,
   }, { onConflict: 'userId,reason' }).select().single()
-  console.log('rz1', rz1)
+  console.log('userauth-insert', rz1)
 
   // update invites table that increase refIdCount by 1
   // get inviter
@@ -60,7 +58,7 @@ export default defineEventHandler(async (event) => {
     .select()
     .eq('userId', refId)
     .single()
-    console.log('rz2', rz2)
+  console.log('invite-refCount', rz2)
 
   let refCount = rz2.data?.refCount || 0
   refCount++
@@ -71,9 +69,9 @@ export default defineEventHandler(async (event) => {
     .eq('userId', refId)
     .single()
 
-    console.log('rz3', rz3)
+  console.log('invite-refCount-update', rz3)
 
-  await updateTopicAuthInviterPAmount(adminClient, refId, body)
+  await updateTopicAuthInviterPAmount(adminClient, userId, body)
 
   return {
     success: true,
@@ -97,7 +95,11 @@ async function updateTopicAuthInviterPAmount(adminClient: any, userId: string, b
   const authIncrementAmount = topic.rewards.auth
   await updateUserPAmount(adminClient, userId, authIncrementAmount, reason)
 
-  const inviteIncrementAmount = 0
+  if (!refId) {
+    return
+  }
+
+  const inviteIncrementAmount = topic.rewards.invite
   await updateUserPAmount(adminClient, refId, inviteIncrementAmount, reason)
 }
 
@@ -109,7 +111,7 @@ async function updateUserPAmount(adminClient: any, userId: string, incrementAmou
     .eq('userId', userId)
     .single()
 
-  console.log('rz', rz)
+  console.log('userauth-pAmount', userId, rz)
 
   let pAmount = rz.data?.pAmount || 0
   pAmount += incrementAmount;
@@ -122,7 +124,7 @@ async function updateUserPAmount(adminClient: any, userId: string, incrementAmou
     .eq('userId', userId)
     .single()
 
-  console.log('rz1', rz1)
+  console.log('userauth-pAmount-update', rz1)
 
   const rz2 = await adminClient.from('assetsLog').insert({
     userId,
@@ -130,5 +132,5 @@ async function updateUserPAmount(adminClient: any, userId: string, incrementAmou
     reason,
   })
 
-  console.log('rz2', rz2)
+  console.log('userauth-pAmount-log', rz2)
 }
