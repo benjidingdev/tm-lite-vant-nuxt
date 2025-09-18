@@ -33,10 +33,10 @@ const handleClick = (ind) => {
       </template>
     </van-row>
     <van-row class="flex justify-between mt-1 lg:mt-3 px-2 lg:px-0">
-      <van-col v-for="(item, ind) in value" class="w-18 lg:w-28 text-sm text-center font-bold font-roboto"
+      <van-col v-for="(item, ind) in value" class="w-20 lg:w-28 lg:text-sm text-xs text-center font-bold font-roboto"
         :class="ind === active ? 'text-[#93DF18]' : ind < active ? 'text-white opacity-50' : 'text-white'">
         <p>{{ item }}</p>
-        <van-button v-if="ind === active && button.length" class="!h-8.5 !border-0 !rounded-full !bg-[#B3FF26] !mt-2" @click="handleClick(ind)">{{ button[ind] }}</van-button>
+        <van-button v-if="ind === active && button.length" class="!h-8.5 lg:text-sm !text-xs !border-0 !rounded-full !bg-[#B3FF26] !mt-2 !px-3" @click="handleClick(ind)">{{ button[ind] }}</van-button>
       </van-col>
     </van-row>
   </div>
