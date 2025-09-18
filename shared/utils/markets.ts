@@ -1,5 +1,5 @@
-import avaxImg from '/icons/avax.png';
-
+// import avaxImg from '/icons/avax.png';
+const avaxImg = '/icons/avax.png';
 export default function () {
   return [{
     id: 1,
