@@ -30,9 +30,9 @@ export default defineEventHandler(async (event) => {
     .eq('userId', userId)
     .single()
   console.log('pAmount', userAsset, userAsset?.pAmount)
-  if (!userAsset?.pAmount) {
+  if (userAsset?.pAmount === undefined || userAsset?.pAmount === null) {
     const { data, error } = await adminClient.from('assets')
-      .upsert({ pAmount, userId })
+      .upsert({ pAmount, userId }, { onConflict: 'userId' })
       .select()
       .eq('userId', userId)
       .single()
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 400,
-        message: 'Failed to init assets'
+        message: error.message
       })
     }
     return { res: 200, data, msg: 'Asset has been initialized' }
@@ -49,6 +49,6 @@ export default defineEventHandler(async (event) => {
   return {
     res: 200,
     data: userAsset?.pAmount,
-    msg: "This user's asset is already exists, just do show the amount",
+    msg: "This user's asset is already exists, just show the asset",
   }
 });

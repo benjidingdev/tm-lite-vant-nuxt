@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
   const adminClient = serverSupabaseServiceRole(event)
 
   const bodyOrigin = await readBody(event)
-  const { markets } = _.pick(bodyOrigin, ['markets'])
-  const yesMarkets = markets?.yesMarkets || []
-  const noMarkets = markets?.noMarkets || []
+  const { market } = _.pick(bodyOrigin, ['market'])
+  const yesMarkets = market?.yesMarkets || []
+  const noMarkets = market?.noMarkets || []
   console.log('yesMarkets nomarkets', yesMarkets, noMarkets);
 
   if (yesMarkets === undefined && noMarkets === undefined) {
@@ -19,21 +19,49 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { data, error } = await adminClient.from('userMarkets')
-    .upsert({ yesMarkets: [1, 2, 3], noMarkets: {}, userId }, { onConflict: 'userId' })
-    .select()
+  const rz = await adminClient.from('userMarkets')
+    .select('yesMarkets, noMarkets')
     .eq('userId', userId)
-    .single()
-
-  if (error) {
+  if (rz.error) {
     throw createError({
       statusCode: 400,
-      message: error.message
+      message: rz.error.message
     })
   }
+  console.log('rz userMarkets', rz.data, 'rz?.data === []', rz?.data.length === 0);
+  if (rz?.data.length === 0) {
+    const rz2 = await adminClient.from('userMarkets')
+      .insert({ userId, yesMarkets, noMarkets })
+
+    if (rz2.error) {
+      throw createError({
+        statusCode: 400,
+        message: rz2.error.message
+      })
+    }
+    console.log('rz userMarkets', rz2.data);
+
+    return {
+      status: 200,
+      message: "Market inserted successful"
+    };
+  }
+
+  const rz3 = await adminClient.from('userMarkets')
+    .update({ yesMarkets, noMarkets })
+    .select()
+    .eq('userId', userId)
+
+  if (rz3.error) {
+    throw createError({
+      statusCode: 400,
+      message: rz3.error.message
+    })
+  }
+  console.log('data', rz3.data)
 
   return {
     status: 200,
-    message: "Market updated successful" + data
+    message: "Market updated successful"
   };
 });

@@ -4,7 +4,7 @@ definePageMeta({
   layout: "pdc-default",
 });
 const { doLogin, x_user } = $(supabaseStore())
-let { userAsset } = $(pdcSwipeCardStore())
+let { pAmount } = $(pdcSwipeCardStore())
 
 const login = async () => {
   await doLogin({ pathname: '/market' });
@@ -26,9 +26,9 @@ const getAsset = async (userId) => {
   })
   if (res.status === 200) {
     const asset = res?.data?.pAmount || 0;
-    userAsset = asset;
+    pAmount = asset;
   } else {
-    userAsset = 0;
+    pAmount = 0;
   }
   return res;
 }
@@ -49,7 +49,7 @@ watchEffect(async () => {
           <span v-if="x_user.name" class="text-white text-xs">
             <span> {{ x_user.name }}</span>
             <span>{{ ' ' }} </span>
-            <span> ${{ userAsset }}</span>
+            <span> ${{ pAmount }}</span>
           </span>
           <van-button v-else @click="login">login X</van-button>
 

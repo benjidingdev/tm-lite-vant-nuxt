@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
+import _ from 'lodash'
 const debug = useDebug('SwipeCard')
 
 type Card = {
@@ -29,60 +29,37 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 const threshold = 100; // Threshold of swiping
 // The data from store
-const { setModal } = $(uiStore());
 let { isLoading } = $(requestQueueStore());
-let { pdcCards }: any = $(pdcSwipeCardStore());
+let { pdcCards, pdcCardsOrigin, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
 
 const topicsId = 2; // default topic id
 let currentX = 0;
 let currentY = 0;
-const pageSize = 12;
-let total = 0;
 let isSettlement = $ref(false);
 const customMarkets: any = $ref(markets());
 
-let queryParams: QueryParams = {
+let queryParams: any = {
   cardID: "",
   inviteCode: "",
 };
-const recommondQueryParams = $ref({
-  pageNo: 1,
-  pageSize,
-  title: null,
-  active: null,
-  closed: null,
-  order: "trending",
-  ascending: false,
-  page: 1,
-  tagId: null,
-  followed: false,
-});
 
 const { query, path } = $(useRoute());
 
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
-
-const initMarket = async (topicId: number, markets: any) => {
-  let res = await doFetch('/api/topics/updateTopic', {
-    method: 'POST',
-    body: {
-      topicId,
-      markets,
-    }
-  })
-}
+let selectedYesOrNo = $computed(() => {
+  yesMarkets.concat(noMarkets).includes(pdcCards[currentIndex]?.id) && yesMarkets.includes(pdcCards[currentIndex]?.id) ? 'Yes' : 'No'
+})
 
 const updateMarket = async (topicId: number, markets: any) => {
-  let res = await doFetch('/api/topics/updateTopic', {
+  await doFetch('/api/topics/updateTopic', {
     method: 'POST',
     body: {
       topicId,
       markets,
     }
   })
-  console.log('createMarket res', res)
 }
 
 const getMarket = async (topicId: any) => {
@@ -90,33 +67,20 @@ const getMarket = async (topicId: any) => {
     method: 'GET',
   })
   const markets = res?.data?.markets || [];
-  console.log('getMarket res', markets)
   return markets;
 }
 
-let { userAsset } = $(pdcSwipeCardStore())
+let { pAmount } = $(pdcSwipeCardStore())
 
 // get the list of cards
-const getInfoList = async (refresh: boolean) => {
-  if (refresh) {
-    isLoading = false;
-    if (recommondQueryParams.pageNo * pageSize >= total) {
-      recommondQueryParams.pageNo = 1;
-      getInfoList(false);
-      return;
-    }
-    recommondQueryParams.pageNo++;
-  } else {
-    isLoading = true;
-  }
-
+const getInfoList = async () => {
   pdcCards = await getMarket(topicsId);
-  console.log('customMarkets', customMarkets.length, 'pdcCards', pdcCards.length, customMarkets?.length !== pdcCards.length);
+
   if (customMarkets?.length !== pdcCards.length) {
-    await initMarket(topicsId, customMarkets);
+    await updateMarket(topicsId, customMarkets);
     pdcCards = await getMarket(topicsId);
   }
-  console.log('pdcCards', pdcCards);
+  pdcCardsOrigin = _.cloneDeep(pdcCards);
   isLoading = false;
 };
 
@@ -170,7 +134,6 @@ const touchMove = (e: TouchEvent | any) => {
 // Touch end
 const touchEnd = (card: Card) => {
   if (currentIndex >= pdcCards.length) return;
-
   if (offsetX >= threshold) {
     buyNo(card); // swipe to left means reject
   } else if (offsetX <= -threshold) {
@@ -196,6 +159,7 @@ const swipeCard = (status: any) => {
   setTimeout(() => {
     offsetX = 0;
     offsetY = 0;
+    // how to update the pdcCards without changing the value of pdccard
     pdcCards.shift();
   }, 0);
 };
@@ -218,14 +182,13 @@ const pickNext = () => {
   swipeCard(statusList[3]);
 };
 
-const updateAsset = async (userAsset: any) => {
-  let res = await doFetch('/api/assets/updateAsset', {
+const updateAsset = async (pAmount: any) => {
+  await doFetch('/api/assets/updateAsset', {
     method: 'POST',
     body: {
-      pAmount: userAsset,
+      pAmount: pAmount,
     }
   })
-  console.log('updateAsset res', res)
 }
 
 const updateUserMarkets = async (market: any) => {
@@ -242,22 +205,45 @@ const getUserMarkets = async () => {
   let res = await doFetch('/api/usermarkets', {
     method: 'GET',
   })
-  console.log('updateUserMarkets res', res)
+
+  if (res?.status === 200) {
+    yesMarkets = res?.data[0]?.yesMarkets || [];
+    noMarkets = res?.data[0]?.noMarkets || [];
+  } else {
+    return [];
+  }
 }
 
 const tradeSum = async () => {
-  userAsset = Math.max(0, userAsset - 1);
-  console.log('tradeSum userAsset', userAsset);
-  await updateAsset(userAsset);
+  await updateAsset(pAmount);
 }
 
 const tradeUserMarket = async (card: any, isYes: boolean) => {
-  const userMarkets = await getUserMarkets();
-  console.log('userMarkets', userMarkets);
-  await updateUserMarkets({
-    yesMarkets: isYes ? [card.id] : [],
-    noMarkets: isYes ? [] : [card.id],
-  });
+  try {
+    console.log('card----', card);
+    await getUserMarkets();
+    console.log('yesMarkets', yesMarkets, 'noMarkets', noMarkets);
+    if (yesMarkets.concat(noMarkets).includes(card.id)) {
+      pickNext();
+      showToast('You have voted on this market');
+      return;
+    }
+    const conbinedMarkets = isYes ? yesMarkets.concat([card.id]) : noMarkets.concat([card.id]);
+
+    const uniqueMarkets = Array.from(new Set(conbinedMarkets));
+    if (isYes) {
+      yesMarkets = uniqueMarkets;
+    } else {
+      noMarkets = uniqueMarkets;
+    }
+    console.log('tradeUserMarket', { yesMarkets, noMarkets });
+    await updateUserMarkets({
+      yesMarkets,
+      noMarkets,
+    });
+  } catch (error) {
+    console.log('getUserMarkets error', error);
+  }
 }
 
 // start transaction
@@ -266,24 +252,25 @@ const goDeposit = async (card: Card, isYes: boolean) => {
     return;
   }
 
-  console.log('pdcCards', pdcCards, 'card', card);
-  let currentIndex: any = pdcCards.findIndex((item: any) => item.id === card.id);
-  if (currentIndex !== -1) {
-    if (pdcCards[currentIndex]) {
-      if (isYes) {
-        pdcCards[currentIndex].yesNum += 1;
-      } else {
-        pdcCards[currentIndex].noNum += 1;
-      }
+  pAmount = Math.max(0, pAmount - 1);
+  if (pAmount === 0) {
+    showToast("You don't have enough PDC, please go to market page to get more.");
+    resetCard();
+    return;
+  }
+
+  let currentIndex = pdcCardsOrigin.findIndex((item: any) => item.id === card.id);
+  if (pdcCardsOrigin[currentIndex]) {
+    if (isYes) {
+      pdcCardsOrigin[currentIndex].yesNum += 1;
+    } else {
+      pdcCardsOrigin[currentIndex].noNum += 1;
     }
   }
-  // console.log('currentCard', currentCard);
-  await updateMarket(2, pdcCards)
-
-  await tradeSum();
-
   await tradeUserMarket(card, isYes);
-
+  console.log('pAmount after tradeUserMarket', pdcCardsOrigin);
+  await updateMarket(2, pdcCardsOrigin)
+  await tradeSum();
   resetCard();
 };
 
@@ -366,13 +353,12 @@ onMounted(() => {
                   <span> No Votes</span>
                 </div>
                 <div>
-                  <span> You have selected <span class="font-bold text-green-500">Yes</span></span>
+                  <span> You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo }}</span></span>
                 </div>
                 <div>
                   <van-button size="mini" type="primary">Claim</van-button>
                 </div>
               </div>
-
 
               <!-- Progress bar -->
               <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
@@ -380,7 +366,6 @@ onMounted(() => {
             </div>
             <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">
-              <!-- <text> ${{ convertCurrency(card.volume) }} Vol.</text> -->
               <SwipeCardShareCard :cardID="card.id" />
             </div>
           </div>

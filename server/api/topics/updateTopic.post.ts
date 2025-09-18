@@ -9,7 +9,6 @@ export default defineEventHandler(async (event) => {
   const { markets } = _.pick(bodyOrigin, ['markets'])
   const { topicId } = _.pick(bodyOrigin, ['topicId'])
 
-  console.log('update topicId, markets', topicId, markets)
   const rz = await adminClient.from('topics')
     .update({ markets })
     .eq('id', topicId)
