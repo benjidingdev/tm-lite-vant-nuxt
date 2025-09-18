@@ -9,13 +9,19 @@ export default defineEventHandler(async (event) => {
   const { markets } = _.pick(bodyOrigin, ['markets'])
   const { topicId } = _.pick(bodyOrigin, ['topicId'])
 
-  const rz = await adminClient.from('userMarkets')
+  const rz = await adminClient.from('topics')
     .update({ markets })
     .eq('id', topicId)
     .single()
-
+  console.log('rz', rz)
+  // if (error) {
+  //   throw createError({
+  //     statusCode: 400,
+  //     message: error.message
+  //   })
+  // }
   return {
     status: 200,
-    message: "Market updated successful"
+    message: "Market updated successfull,"
   };
 });
