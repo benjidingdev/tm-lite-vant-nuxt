@@ -167,34 +167,3 @@ export default defineEventHandler(async (event) => {
 
   return { data: { success: true } }
 });
-
-
-async function updateUserPAmount(adminClient: any, userId: string, incrementAmount: number, reason: string) {
-
-  const rz = await adminClient.from('assets')
-    .select()
-    .eq('userId', userId)
-    .single()
-
-  console.log('asset-pAmount', userId, rz)
-
-  let pAmount = rz.data?.pAmount || 0
-  pAmount += incrementAmount;
-
-  console.log({ pAmount })
-  // upsert inviter pAmount
-  const rz1 = await adminClient.from('assets')
-    .upsert({ pAmount, userId }, { onConflict: 'userId' })
-    .select()
-    .single()
-
-  console.log('asset-pAmount-update', userId, rz1)
-
-  const rz2 = await adminClient.from('assetsLog').insert({
-    userId,
-    delta: incrementAmount,
-    reason,
-  })
-
-  console.log('rz2', rz2)
-}
