@@ -55,9 +55,9 @@ export const authStore = defineStore(
       updateToken(data.data);
       setModal("loginModal", false);
       await loadUserInfo();
-      await getUserProfile({
-        proxyWallet: userInfo.proxyWallet,
-      });
+      // await getUserProfile({
+      //   proxyWallet: userInfo?.proxyWallet,
+      // });
       isNewUser && startOnboarding();
       await amountPermit();
       await updateWalletBalance();
@@ -80,7 +80,7 @@ export const authStore = defineStore(
           localStorage.setItem("debug", debugScope);
           sessionStorage?.clear();
           updateToken({});
-          userInfo = {};
+          userInfo = undefined;
           showToast(t("Logout successful"));
         }
       } catch (e) {

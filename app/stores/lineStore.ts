@@ -18,6 +18,8 @@ export type Transaction = {
 export const lineStore = defineStore(
   "lineStore",
   () => {
+    const isEnable = useRuntimeConfig().public.kaia?.enabled === true;
+
     let address = $ref<string>();
     let connected = $ref(false);
     let walletProvider = $ref<WalletProvider>();
@@ -178,7 +180,7 @@ export const lineStore = defineStore(
       userBalance,
       userCapital,
       walletClient,
-
+      isEnable,
       getLineDapp,
       getWalletProvider,
       getPaymentProvider,

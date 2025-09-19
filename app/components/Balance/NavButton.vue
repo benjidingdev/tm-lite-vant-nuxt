@@ -3,14 +3,11 @@ const { setModal } = $(uiStore());
 const { token } = $(authStore());
 const { userInfo } = $(userStore());
 const { userBalance } = $(walletStore());
-const { initWalletClient, requestAccount } = $(lineStore());
+const { isEnable, requestAccount } = $(lineStore());
 
 const avatar = computed(() => {
-  return userInfo?.profile?.avatar || '/logo.png'
+  return userInfo?.avatar || '/logo.png'
 })
-// onMounted(() => {
-//   initWalletClient()
-// })
 </script>
 
 <template>
@@ -23,11 +20,11 @@ const avatar = computed(() => {
       </div>
     </button>
     <div v-else>
-      <van-button size="small" round type="primary" class="px-3 text-white/80 right mr-2!"
+      <van-button v-if="isEnable" size="small" round type="primary" class="px-3 text-white/80 right mr-2!" @click="requestAccount">{{
+        $t("Login") }} with kaia</van-button>
+      <van-button v-else size="small" round type="primary" class="px-3 text-white/80 right mr-2!"
         @click="setModal('loginModal', true)">{{ $t("Login") }}</van-button>
       <van-divider vertical />
-      <van-button size="small" round type="primary" class="px-3 text-white/80 right mr-2!" @click="requestAccount">{{
-        $t("Login") }} by Line</van-button>
     </div>
   </div>
 </template>

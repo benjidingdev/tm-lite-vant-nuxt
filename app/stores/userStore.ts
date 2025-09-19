@@ -1,5 +1,6 @@
 import * as userApi from "~/api/userInfo";
 import { getOrderAmount } from "~/api/markets";
+import type { UserInfo } from "@/types"
 
 export const userStore = defineStore(
   "userStore",
@@ -7,7 +8,7 @@ export const userStore = defineStore(
     const { token } = $(authStore());
     const { userBalance } = $(walletStore());
 
-    let userInfo = $ref({});
+    let userInfo = $ref<UserInfo>();
     let userOrderAmountInfo = $ref({ feeAmount: 0, totalAmount: 0 });
     const userOrderAmount = $computed(
       () => userOrderAmountInfo.feeAmount + userOrderAmountInfo.totalAmount

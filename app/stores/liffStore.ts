@@ -1,19 +1,82 @@
 import { defineStore } from "pinia";
 import liff from "@line/liff";
 
+export interface LiffError {
+  code: string;
+  message: string;
+  cause: unknown;
+}
+export interface Profile {
+  userId: string;
+  displayName: string;
+  pictureUrl?: string;
+  statusMessage?: string;
+}
+
 export const liffStore = defineStore(
   "liffStore",
   () => {
     const { locale } = useI18n();
+    const route = useRoute();
     const config = useRuntimeConfig();
     const liffId = config.public.kaia?.liffId as string;
     const endpointUrl = config.public.kaia?.endpointUrl as string;
 
-    liff.init({ liffId });
-    liff.i18n.setLang(locale.value);
+    let isInitialized = $ref(false);
+    let isLoginIn = $ref<boolean>();
+    let profile = $ref<Profile>();
+    let granted = $ref<Array<string>>();
+    let friendship = $ref<boolean>();
 
-    const ready = () => {
-      return liff.ready;
+    liff
+      .init({ liffId: liffId })
+      .then(async () => {
+        isInitialized = true;
+        liff.i18n.setLang(locale.value);
+        if (liff.isLoggedIn() && !isLoginIn) {
+          isLoginIn = true;
+          granted = await getGrantedAllScopes();
+          if (
+            !granted?.includes("profile") ||
+            !granted?.includes("openid") ||
+            !granted?.includes("chat_message.write")
+          ) {
+            await requestAll();
+          }
+          profile = await getProfile();
+          friendship = await getFriendship();
+        }
+      })
+      .catch((err) => {
+        console.error("liff init error", err);
+      });
+
+    watchEffect(async () => {
+      if (!isInitialized) return;
+      if (liff.isLoggedIn() && !isLoginIn) {
+        // login in
+        isLoginIn = true;
+        granted = await getGrantedAllScopes();
+        if (
+          !granted?.includes("profile") ||
+          !granted?.includes("openid") ||
+          !granted?.includes("chat_message.write")
+        ) {
+          await requestAll();
+        }
+        profile = await getProfile();
+        friendship = await getFriendship();
+      } else if (!liff.isLoggedIn() && isLoginIn) {
+        // login out
+        isLoginIn = false;
+        profile = undefined;
+        granted = undefined;
+        friendship = undefined;
+      }
+    });
+
+    const ready = async () => {
+      return await liff.ready;
     };
 
     const getOS = () => {
@@ -34,7 +97,7 @@ export const liffStore = defineStore(
 
     const login = () => {
       if (!liff.isLoggedIn()) {
-        liff.login({ redirectUri: endpointUrl });
+        liff.login({ redirectUri: `${endpointUrl}` });
       }
     };
 
@@ -102,15 +165,28 @@ export const liffStore = defineStore(
       liff.closeWindow();
     };
 
-    const sendMessages = async (messages: []) => {
+    // https://developers.line.biz/en/reference/messaging-api/#message-objects
+    const sendMessages = async (messages: Array<any>) => {
       if (liff.isLoggedIn()) {
-        await liff.sendMessages(messages);
+        try {
+          await liff.sendMessages(messages);
+        } catch (err: any) {
+          console.error("sendMessages error", err);
+        }
       }
     };
 
-    const shareTargetPicker = async (messages: [], isMultiple: boolean) => {
+    // https://developers.line.biz/en/reference/messaging-api/#message-objects
+    const shareTargetPicker = async (
+      messages: Array<any>,
+      isMultiple: boolean
+    ) => {
       if (liff.isLoggedIn()) {
-        await liff.shareTargetPicker(messages, { isMultiple });
+        try {
+          await liff.shareTargetPicker(messages, { isMultiple });
+        } catch (err: any) {
+          console.error("sendMessages error", err);
+        }
       }
     };
 
@@ -124,6 +200,10 @@ export const liffStore = defineStore(
 
     return $$({
       liff,
+      isLoginIn,
+      profile,
+      granted,
+      friendship,
       ready,
       getOS,
       getAppLanguage,

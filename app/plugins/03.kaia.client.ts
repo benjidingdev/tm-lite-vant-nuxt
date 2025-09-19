@@ -34,6 +34,7 @@ export default defineNuxtPlugin(() => {
       lineWalletProvider: () => getSDK()?.getWalletProvider(),
       linePaymentProvider: () => getSDK()?.getPaymentProvider(),
       lineCurrentNetwork: () => getCurrentNetwork(),
+      isLineEnabled: isLineEnabled
     },
   };
 });

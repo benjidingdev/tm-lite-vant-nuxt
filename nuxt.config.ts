@@ -1,33 +1,32 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const modules = [
   "@vant/nuxt",
   "@vue-macros/nuxt",
   "@pinia/nuxt",
-  '@nuxtjs/supabase',
+  "@nuxtjs/supabase",
   "@nuxtjs/i18n",
   "pinia-plugin-persistedstate/nuxt",
   "@vueuse/motion/nuxt",
   "@vueuse/nuxt",
-  "nuxt-meta-pixel"
+  "nuxt-meta-pixel",
 ];
 
-const buildTime = Date.now() - 3600*1000*12
-const branch = process.env.VERCEL_GIT_COMMIT_REF || "localBranch"
-const hash = process.env.VERCEL_GIT_COMMIT_SHA || "localHash"
+const buildTime = Date.now() - 3600 * 1000 * 12;
+const branch = process.env.VERCEL_GIT_COMMIT_REF || "localBranch";
+const hash = process.env.VERCEL_GIT_COMMIT_SHA || "localHash";
 
-console.log("branch", branch)
-console.log("hash", hash)
-console.log("buildTime", buildTime)
+console.log("branch", branch);
+console.log("hash", hash);
+console.log("buildTime", buildTime);
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
-  plugins: [
-  ],
+  plugins: [],
 
   modules,
   css: ["~/assets/css/main.css"],
@@ -36,40 +35,56 @@ export default defineNuxtConfig({
   // 在 vite 部分添加 resolve.alias
   vite: {
     server: {
-      allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app", "frp.jdoffices.com"],
+      allowedHosts: [
+        "localhost",
+        "9f88f6df8068.ngrok-free.app",
+        "frp.jdoffices.com",
+      ],
     },
     plugins: [
       tailwindcss(),
       nodePolyfills({
-        include: ['path', 'crypto', 'stream', 'buffer', 'process'], // 添加 crypto 和 buffer
-        exclude: ['http'],
+        include: ["path", "crypto", "stream", "buffer", "process"], // 添加 crypto 和 buffer
+        exclude: ["http"],
         globals: {
           Buffer: true,
           global: true,
           process: true,
         },
         overrides: {
-          fs: 'memfs',
+          fs: "memfs",
         },
         protocolImports: true,
       }),
     ],
     define: {
       "window.FormData": "undefined",
-      "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(process.env.NUXT_PUBLIC_API_PREFIX),
-      "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID),
+      "import.meta.env.NUXT_PUBLIC_API_PREFIX": JSON.stringify(
+        process.env.NUXT_PUBLIC_API_PREFIX
+      ),
+      "import.meta.env.NUXT_PUBLIC_PRIVY_CLIENT_ID": JSON.stringify(
+        process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID
+      ),
       "import.meta.env.NUXT_PUBLIC_BRANCH": JSON.stringify(branch),
       "import.meta.env.NUXT_PUBLIC_HASH": JSON.stringify(hash),
-      "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""),
-      "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(process.env.NUXT_PUBLIC_TG_BOT_INFO || ""),
-      "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""),
-      "import.meta.env.NUXT_PUBLIC_IPFS_GATEWAY_URL": JSON.stringify(process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL || ""),
+      "import.meta.env.NUXT_PUBLIC_LOG_ROCKET_ID": JSON.stringify(
+        process.env.NUXT_PUBLIC_LOG_ROCKET_ID || ""
+      ),
+      "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(
+        process.env.NUXT_PUBLIC_TG_BOT_INFO || ""
+      ),
+      "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(
+        process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""
+      ),
+      "import.meta.env.NUXT_PUBLIC_IPFS_GATEWAY_URL": JSON.stringify(
+        process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL || ""
+      ),
     },
     resolve: {
       alias: {
-        crypto: 'crypto-browserify',
-        stream: 'stream-browserify',
-        buffer: 'buffer/',
+        crypto: "crypto-browserify",
+        stream: "stream-browserify",
+        buffer: "buffer/",
       },
     },
   },
@@ -79,8 +94,8 @@ export default defineNuxtConfig({
     locales: [
       { code: "en-US", language: "English", file: "en-US.json" },
       { code: "zh-TW", language: "繁體中文", file: "zh-TW.json" },
-      { code: 'ja-JP', language: '日本語', file: 'ja-JP.json' },
-      { code: 'ko-KR', language: '한국어', file: 'ko-KR.json' },
+      { code: "ja-JP", language: "日本語", file: "ja-JP.json" },
+      { code: "ko-KR", language: "한국어", file: "ko-KR.json" },
     ],
   },
 
@@ -89,22 +104,22 @@ export default defineNuxtConfig({
   },
 
   piniaPluginPersistedstate: {
-    key: 'v1_0_0_%id',
+    key: "v1_0_0_%id",
   },
 
   supabase: {
     redirect: false,
     redirectOptions: {
-      login: '/login',
-      callback: '/confirm',
-      exclude: ['/']
+      login: "/login",
+      callback: "/confirm",
+      exclude: ["/"],
     },
     clientOptions: {
       auth: {
-        flowType: 'pkce',
+        flowType: "pkce",
         detectSessionInUrl: true,
         persistSession: true,
-        autoRefreshToken: true
+        autoRefreshToken: true,
       },
     },
   },
@@ -118,7 +133,7 @@ export default defineNuxtConfig({
       ipfsGatewayUrl: process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL,
       tgBotInfo: process.env.NUXT_PUBLIC_TG_BOT_INFO,
       reownProjectId: process.env.NUXT_PUBLIC_REOWN_PROJECT_ID,
-      isTestnet: process.env.NUXT_PUBLIC_IS_TESTNET === 'true',
+      isTestnet: process.env.NUXT_PUBLIC_IS_TESTNET === "true",
       siteUrl: "",
       siteName: "",
       siteSlogan: "",
@@ -146,8 +161,8 @@ export default defineNuxtConfig({
       apiPrefix:
         process.env.NUXT_PUBLIC_API_PREFIX || "http://192.168.1.82:48082",
       metapixel: {
-        default: { id: '909961260585999' },
-      }
+        default: { id: "909961260585999" },
+      },
     },
-  }
+  },
 });
