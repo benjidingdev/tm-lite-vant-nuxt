@@ -16,9 +16,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (!reason.startsWith('wl.topic-')) {
+    throw createError({
+      statusCode: 400,
+      message: 'Reason is not topic reason',
+      statusMessage: 'ReasonNotTopicReason',
+    })
+  }
+
+  const topicId = reason.split('-')[1]
+  const { data: topic, error } = await adminClient.from('topics').select('*').eq('id', topicId).single()
+  if (error) {
+    throw createError({
+      statusCode: 400,
+      message: error.message,
+      statusMessage: 'GetTopicError',
+    })
+  }
+
   if (!refId) {
     console.log({ body }, 'no refId')
-    await updateTopicAuthInviterPAmount(adminClient, userId, body)
+    await updateTopicAuthInviterPAmount(adminClient, userId, body, topic)
     return { success: true }
   }
 
@@ -57,7 +75,7 @@ export default defineEventHandler(async (event) => {
   console.log('userauth-insert', rz1)
 
   // update invites table that increase refIdCount by 1
-  // get inviter
+  // get inviter wl.topic-1
   const rz2 = await adminClient.from('invites')
     .select()
     .eq('userId', refId)
@@ -65,7 +83,7 @@ export default defineEventHandler(async (event) => {
     .single()
   console.log('invite-refCount', rz2)
 
-  let refCount = rz2.data?.refCount || 0
+  let refCount = rz2?.data?.refCount || 0
   refCount++
   // upsert inviter refCount
   const rz3 = await adminClient.from('invites')
@@ -75,35 +93,16 @@ export default defineEventHandler(async (event) => {
 
   console.log('invite-refCount-update', rz3)
 
-  await updateTopicAuthInviterPAmount(adminClient, userId, body)
+  await updateTopicAuthInviterPAmount(adminClient, userId, body, topic)
 
   return {
     success: true,
   }
 });
 
-async function updateTopicAuthInviterPAmount(adminClient: any, userId: string, body: { refId: string, reason: string }) {
+async function updateTopicAuthInviterPAmount(adminClient: any, userId: string, body: { refId: string, reason: string }, topic: any) {
 
   const { refId, reason } = body
-  if (!reason.startsWith('wl.topic-')) {
-    return
-  }
-
-  const topicId = reason.split('-')[1]
-  const { data: topic, error } = await adminClient.from('topics').select('*').eq('id', topicId).single()
-  if (error) {
-    throw createError({
-      statusCode: 400,
-      message: error.message,
-      statusMessage: 'GetTopicError',
-    })
-  }
-
-  // const sharedTopic = topics()
-  // const topic = sharedTopic.find(t => t.id === Number(topicId))
-  // if (!topic) {
-  //   return
-  // }
 
   const authIncrementAmount = topic.meta?.rewards?.auth || 0
   await updateUserPAmount(adminClient, userId, authIncrementAmount, reason)
@@ -113,57 +112,5 @@ async function updateTopicAuthInviterPAmount(adminClient: any, userId: string, b
   }
 
   const inviteIncrementAmount = topic.meta?.rewards?.invite || 0
-  await updateUserPAmount(adminClient, refId, inviteIncrementAmount, reason)
-}
-
-
-async function updateUserPAmount(adminClient: any, userId: string, incrementAmount: number, reason: string) {
-
-  {
-    const { count } = await adminClient.from('assetsLog').select('*', { count: 'exact', head: true }).eq('userId', userId).eq('reason', reason);
-    if (count && count > 0) {
-      throw createError({
-        statusCode: 400,
-        message: 'You have already updated pAmount',
-        statusMessage: 'UpdatePAmountFailed',
-      })
-    }
-  }
-
-  const rz2 = await adminClient.from('assetsLog').insert({
-    userId,
-    delta: incrementAmount,
-    reason,
-  })
-
-  console.log('userauth-pAmount-log', rz2)
-
-  if (rz2.error) {
-    console.log('userauth-pAmount-log-error', rz2.error)
-    throw createError({
-      statusCode: 400,
-      message: 'Failed to update pAmount log',
-      statusMessage: 'FailedToUpdatePAmountLog',
-    })
-  }
-
-
-  const rz = await adminClient.from('assets')
-    .select()
-    .eq('userId', userId)
-    .single()
-
-  console.log('userauth-pAmount', userId, rz)
-
-  let pAmount = rz.data?.pAmount || 0
-  pAmount += incrementAmount;
-
-  console.log({ pAmount })
-  // upsert inviter pAmount
-  const rz1 = await adminClient.from('assets')
-    .upsert({ pAmount, userId }, { onConflict: 'userId' })
-    .select()
-    .single()
-
-  console.log('userauth-pAmount-update', rz1)
+  await updateUserPAmount(adminClient, refId, inviteIncrementAmount, `${reason}_invite_${userId}`)
 }

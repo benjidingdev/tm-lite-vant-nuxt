@@ -21,7 +21,7 @@ function onClickRetweet() {
     return
   }
 
-  console.log('topic', topic)
+  // console.log('topic', topic)
   handleRetweet({
     hashtags: topic.meta?.x_info?.hashtags,
     retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
