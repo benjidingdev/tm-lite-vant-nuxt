@@ -33,6 +33,7 @@ const threshold = 100; // Threshold of swiping
 let { isLoading } = $(requestQueueStore());
 const { x_user } = $(supabaseStore())
 let { pdcCards, pdcCardsOrigin, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
+const route = useRoute()
 
 const topicsId = 2; // default topic id
 let currentX = 0;
@@ -50,13 +51,13 @@ const { query, path } = $(useRoute());
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
-let selectedYesOrNo = $computed(() => {
-  // yesMarkets.concat(noMarkets).includes(pdcCards[firstCardIndex]?.id) && yesMarkets.includes(pdcCards[firstCardIndex]?.id) ? 'Yes' : 'No'
-  if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
-    return yesMarkets.includes(currentCardID) ? 'YES' : 'NO';
-  }
-  return '';
-})
+// let selectedYesOrNo = $computed(() => {
+//   // yesMarkets.concat(noMarkets).includes(pdcCards[firstCardIndex]?.id) && yesMarkets.includes(pdcCards[firstCardIndex]?.id) ? 'Yes' : 'No'
+//   if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
+//     return
+//   }
+//   return '';
+// })
 
 const updateMarket = async (topicId: number, markets: any) => {
   await doFetch('/api/topics/updateTopic', {
@@ -168,6 +169,22 @@ const swipeCard = (status: any) => {
   }, 0);
 };
 
+async function trade(marketId: any, isYes: any) {
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'topic-market-trade',
+      marketId: marketId,
+      isYes: isYes,
+    })
+
+  }).catch((err) => {
+    debug({ msg: 'topic-get error', err })
+    showToast('You have already traded this market!');
+    pickNext();
+  })
+}
+
 // reset the position of cards
 const resetCard = () => {
   offsetX = 0;
@@ -186,93 +203,32 @@ const pickNext = () => {
   swipeCard(statusList[3]);
 };
 
-const updateAsset = async (pAmount: any) => {
-  await doFetch('/api/assets/updateAsset', {
-    method: 'POST',
-    body: {
-      pAmount: pAmount,
-    }
-  })
-}
-
-const updateUserMarkets = async (market: any) => {
-  let res = await doFetch('/api/usermarkets/updateUserMarket', {
-    method: 'POST',
-    body: {
-      market,
-    }
-  })
-  console.log('updateUserMarkets res', res)
-}
-
-const getUserMarkets = async () => {
-  let res = await doFetch('/api/usermarkets', {
-    method: 'GET',
-  })
-
-  if (res?.status === 200) {
-    yesMarkets = res?.data[0]?.yesMarkets || [];
-    noMarkets = res?.data[0]?.noMarkets || [];
-  } else {
-    return [];
-  }
-}
-
-const tradeUserMarket = async (card: any, isYes: boolean) => {
-  try {
-    await getUserMarkets();
-    if (yesMarkets.concat(noMarkets).includes(card.id)) {
-      pickNext();
-      showToast('You have voted on this market');
-      return false;
-    }
-    const conbinedMarkets = isYes ? yesMarkets.concat([card.id]) : noMarkets.concat([card.id]);
-
-    const uniqueMarkets = Array.from(new Set(conbinedMarkets));
-    if (isYes) {
-      yesMarkets = uniqueMarkets;
-    } else {
-      noMarkets = uniqueMarkets;
-    }
-    await updateUserMarkets({
-      yesMarkets,
-      noMarkets,
-    });
-    return true
-  } catch (error) {
-    console.log('getUserMarkets error', error);
-  }
-}
-
 // start transaction
 const goDeposit = async (card: Card, isYes: boolean) => {
+  currentCardID = card.id;
   if (path.includes("market") === "true") {
     return;
   }
 
-  pAmount = Math.max(0, pAmount - 1);
+  pAmount = Math.max(0, pAmount - 100);
   if (pAmount === 0) {
     showToast("You don't have enough PDC, please go to market page to get more.");
+    resetCard();
+    closeToast();
+    return;
+  }
+
+  try {
+    const rz = await trade(card.id, isYes);
+    console.log('trade result', rz)
+  } catch (error) {
+    showToast('You have already traded this market!');
     resetCard();
     return;
   }
 
-  currentCardID = pdcCardsOrigin.findIndex((item: any) => item.id === card.id);
-  if (pdcCardsOrigin[currentCardID]) {
-    if (isYes) {
-      pdcCardsOrigin[currentCardID].yesNum += 1;
-    } else {
-      pdcCardsOrigin[currentCardID].noNum += 1;
-    }
-  }
-  const isProcessing = await tradeUserMarket(card, isYes);
-  if (!isProcessing) {
-    resetCard();
-    return;
-  }
-  await updateMarket(2, pdcCardsOrigin)
-  await updateAsset(pAmount);
   resetCard();
+  closeToast();
 };
 
 const getAsset = async () => {
@@ -288,9 +244,31 @@ const getAsset = async () => {
   return res;
 }
 
+const getUserMarkets = async () => {
+  let res = await doFetch('/api/usermarkets', {
+    method: 'GET',
+  })
+
+  if (res?.status === 200) {
+    yesMarkets = res?.data[0]?.yesMarkets || [];
+    noMarkets = res?.data[0]?.noMarkets || [];
+  } else {
+    return [];
+  }
+}
+
+const getUserSelectedStatus = (currentCardID: any) => {
+  console.log(noMarkets, yesMarkets,)
+  if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
+    return yesMarkets.includes(currentCardID) ? "Yes" : "No";
+  }
+  return '';
+}
+
 onMounted(async () => {
-  getInfoList();
-  await getAsset()
+  await getInfoList();
+  await getUserMarkets();
+  await getAsset();
   queryParams = getFatherInviteCode();
 });
 </script>
@@ -325,10 +303,11 @@ onMounted(async () => {
               <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
               <div class="text-black">
                 <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
-                <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>
+                <p class="text-[14px] opacity-60">${{ pAmount }}</p>
+                <!-- <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p> -->
               </div>
             </div>
-            <div class="text-black">${{ pAmount }}</div>
+
           </div>
 
           <van-image width="100%" height="40%" :src="card.image" class="p-2" fit="contain">
@@ -356,40 +335,28 @@ onMounted(async () => {
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      Yes
+                      Yes({{ card.yesNum }})
                     </span>
                   </div>
                   <div class="relative" @click="buyNo(card)">
                     <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      No
+                      No({{ card.noNum }})
                     </span>
                   </div>
                 </div>
               </div>
               <!--Card information-->
-              <div class="text-sm text-gray-500 mt-2">
-                <div>
-                  <span class="font-bold text-black">{{ card.yesNum }}</span>
-                  <span> Yes Votes</span>
-                </div>
-                <div>
-                  <span class="font-bold text-black">{{ card.noNum }}</span>
-                  <span> No Votes</span>
-                </div>
-                <div>You will win 2 $PM, if you predict right!</div>
-                <div>
-                  <span>You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo || 'YES'
-                      }}</span></span>
-                </div>
-                <van-count-down :time="time" />
+              <div class="text-sm text-gray-500 mt-2 text-center">
+                <span class="text-center text-gray-400">
+                  <span
+                    :class="`text-2xl text-bold ${getUserSelectedStatus(card.id) ? 'text-green-500' : 'text-red-500'}`">{{
+                      getUserSelectedStatus(card.id) }}</span>
+                </span>
+                <span> TO WIN </span>
+                <span class="text-center text-2xl mt-5 text-green-500 text-bold">$200PM</span>
               </div>
-              <!--countdown-->
-
-              <!-- Progress bar -->
-              <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
-              " /> -->
             </div>
             <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">

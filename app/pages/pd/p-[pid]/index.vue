@@ -79,30 +79,10 @@ onMounted(() => {
   loadData()
 })
 
-async function test() {
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'topic-market-trade',
-      marketId: 2,
-      isYes: false,
-    })
-  }).catch((err) => {
-    debug({ msg: 'topic-get error', err })
-  })
-
-  console.log('topic-market-trade', rz)
-}
-
 
 </script>
 
 <template>
-  <!-- <button class="text-base ml-2 absolute z-999 top-6 border-0" @click="test">
-    <span>
-      test
-    </span>
-  </button> -->
 
   <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
     <van-skeleton :loading="isLoading">
@@ -130,7 +110,7 @@ async function test() {
         <div v-if="!topic?.meta?.isWaitingClosed"
           class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
-          <button class="w-full my-4 bg-green-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]" @click="handleLogin">
+          <button v-if="!isLoading" class="w-full my-4 bg-blue-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]">
             Claim your $PM now
           </button>
         </div>
