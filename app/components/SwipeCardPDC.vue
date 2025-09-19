@@ -27,12 +27,11 @@ let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
-let time = $ref(3600 * 1000 * 24); // The value of countdown time
 const threshold = 100; // Threshold of swiping
 // The data from store
 let { isLoading } = $(requestQueueStore());
 const { x_user } = $(supabaseStore())
-let { pdcCards, pdcCardsOrigin, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
+let { pdcCards, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
 const route = useRoute()
 
 const topicsId = 2; // default topic id
@@ -85,7 +84,11 @@ const getInfoList = async () => {
     await updateMarket(topicsId, customMarkets);
     pdcCards = await getMarket(topicsId);
   }
-  pdcCardsOrigin = _.cloneDeep(pdcCards);
+  const index = pdcCards.findIndex((card: any) => card.id == query.marketID)
+  if (index > -1) {
+    pdcCards.unshift(pdcCards[index]); // add
+  }
+
   isLoading = false;
 };
 
@@ -358,10 +361,6 @@ onMounted(async () => {
                 <span class="text-center text-2xl mt-5 text-green-500 text-bold">$200PM</span>
               </div>
             </div>
-            <!-- Volume and share button -->
-            <div class="h-[15%] flex justify-between">
-              <SwipeCardShareCard :cardID="card.id" />
-            </div>
           </div>
         </div>
       </div>
@@ -375,6 +374,7 @@ onMounted(async () => {
           <van-button round type="primary" class="bottom-button">Launch App</van-button>
         </van-empty>
       </div>
+
     </van-skeleton>
   </div>
 </template>
