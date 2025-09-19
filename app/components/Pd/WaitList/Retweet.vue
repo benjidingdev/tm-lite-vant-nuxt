@@ -3,8 +3,6 @@ const emit = defineEmits(['onSuccess'])
 const { x_user } = $(supabaseStore())
 const hasRetweeted = $(defineModel())
 
-import { handleShare } from './utils'
-
 const route = useRoute()
 
 const sharedTopic = topics()
@@ -16,7 +14,13 @@ function onClickRetweet() {
   if (!x_user.id) {
     return
   }
-  handleShare(x_user, topic)
+  handleRetweet({
+    hashtags: topic.meta?.x_info?.hashtags,
+    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
+    text: topic.meta?.x_info?.text,
+    refId: x_user.id,
+    title: topic.title,
+  })
   hasRetweetClicked = true
 }
 

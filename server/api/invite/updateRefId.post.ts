@@ -90,11 +90,20 @@ async function updateTopicAuthInviterPAmount(adminClient: any, userId: string, b
   }
 
   const topicId = reason.split('-')[1]
-  const sharedTopic = topics()
-  const topic = sharedTopic.find(t => t.id === Number(topicId))
-  if (!topic) {
-    return
+  const { data: topic, error } = await adminClient.from('topics').select('*').eq('id', topicId).single()
+  if (error) {
+    throw createError({
+      statusCode: 400,
+      message: error.message,
+      statusMessage: 'GetTopicError',
+    })
   }
+
+  // const sharedTopic = topics()
+  // const topic = sharedTopic.find(t => t.id === Number(topicId))
+  // if (!topic) {
+  //   return
+  // }
 
   const authIncrementAmount = topic.rewards.auth
   await updateUserPAmount(adminClient, userId, authIncrementAmount, reason)

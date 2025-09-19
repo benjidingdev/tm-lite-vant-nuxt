@@ -1,6 +1,5 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { handleShare } from './utils'
 
 const { t } = useI18n()
 
@@ -15,7 +14,13 @@ function onClickRetweet() {
   if (!x_user.id) {
     return
   }
-  handleShare(x_user, topic)
+  handleRetweet({
+    hashtags: topic.hashtags,
+    retweetTargetUrl: topic.x_info.retweetTargetLink,
+    text: topic.x_info.text,
+    refId: x_user.id,
+    title: topic.title,
+  })
 }
 
 function onClickFollow() {
