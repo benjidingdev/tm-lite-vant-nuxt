@@ -1,5 +1,19 @@
 <script setup lang="ts">
-const { isLoginIn, profile, login, logout, getAccessToken, getIDToken, getDecodedIDToken, getGrantedAllScopes, sendMessages, shareTargetPicker } = $(liffStore());
+const {
+  endpointUrl,
+  isLoginIn,
+  profile,
+  login,
+  logout,
+  getAccessToken,
+  getIDToken,
+  getDecodedIDToken,
+  getGrantedAllScopes,
+  requestAll,
+  sendMessages,
+  shareTargetPicker,
+  createUrlBy
+} = $(liffStore());
 
 const origin = ref<string | null>(null)
 const isMultiple = ref(true)
@@ -33,8 +47,8 @@ const textMessage2 = reactive({
 })
 const imageMessage = reactive({
   type: 'image',
-  originalContentUrl: encodeURIComponent(`${origin.value}/logo.png`),
-  previewImageUrl: encodeURIComponent(`${origin.value}/logo.png`),
+  originalContentUrl: computed(() => encodeURIComponent(`${origin.value}/logo.png`)),
+  previewImageUrl: computed(() => encodeURIComponent(`${origin.value}/logo.png`)),
 })
 const templateMessage = reactive(
   {
@@ -42,7 +56,7 @@ const templateMessage = reactive(
     altText: "This is a buttons template",
     template: {
       type: "buttons",
-      thumbnailImageUrl: encodeURIComponent(`${origin.value}/media/twitter-card.png`),
+      thumbnailImageUrl: computed(() => encodeURIComponent(`${origin.value}/media/twitter-card.png`)),
       imageAspectRatio: "rectangle",
       imageSize: "cover",
       imageBackgroundColor: "#FFFFFF",
@@ -51,7 +65,7 @@ const templateMessage = reactive(
       defaultAction: {
         type: "uri",
         label: "View detail",
-        uri: encodeURIComponent(`${origin.value}/invite`),
+        uri: computed(() => encodeURIComponent(`${origin.value}/invite`)),
       },
       actions: [
         {
@@ -67,7 +81,7 @@ const templateMessage = reactive(
         {
           type: "uri",
           label: "View detail",
-          uri: encodeURIComponent(`${origin.value}/invite`)
+          uri: computed(() => encodeURIComponent(`${origin.value}/invite`))
         }
       ]
     }
@@ -93,6 +107,15 @@ const testGetGrantedAllScopes = async () => {
   grantedAllScopes.value = await getGrantedAllScopes()
 }
 
+const testRequestAllScopes = async () => {
+  await requestAll()
+}
+
+const createdUrl = ref()
+const createUrlByTest = async () => {
+  createdUrl.value = await createUrlBy(`${endpointUrl}/invite?userId=${profile?.userId}`)
+}
+
 // https://frp.jdoffices.com/?code=RkHYG1gKJYvE2ynvTmBh&state=eofJLAsg3vjR&liffClientId=2008136886&liffRedirectUri=https%3A%2F%2Ffrp.jdoffices.com%2F
 // https://access.line.me/oauth2/v2.1/login?returnUri=%2Foauth2%2Fv2.1%2Fauthorize%2Fconsent%3Fapp_id%3D2008136886-Nke5LwLP%26client_id%3D2008136886%26scope%3Dchat_message.write%2520openid%2520profile%26state%3DL7BV9wWsw7dH%26response_type%3Dcode%26code_challenge_method%3DS256%26code_challenge%3DAF-WNHwX4S7U-HRVuq9bNc6v_23vCFcOGYsHl-w9QNM%26liff_sdk_version%3D2.27.2%26type%3DL%26redirect_uri%3Dhttps%253A%252F%252Ffrp.jdoffices.com%252F&loginChannelId=2008136886&loginState=Y5zmOzg00NASvnjmDO9QFw&fromDomain=access-auto.line.me&line_auto_login_error=universal_link_error
 
@@ -109,9 +132,11 @@ onMounted(() => {
         <van-cell is-link title="获取IDToken" @click="testGetIDToken" :label="idToken" />
         <van-cell is-link title="获取DecodedIDToken" @click="testGetDecodedIDToken" :label="decodedIDToken" />
         <van-cell is-link title="获取全部权限" @click="testGetGrantedAllScopes" :label="grantedAllScopes" />
+        <van-cell is-link title="请求全部权限" @click="testRequestAllScopes" />
       </van-cell-group>
       <van-cell-group inset title="LIFF用户操作" class="text-[#fff]">
         <van-cell is-link title="profile" :label="JSON.stringify(profile)" />
+        <van-cell is-link title="createUrlBy" @click="createUrlByTest" :label="createdUrl" />
       </van-cell-group>
       <van-cell-group inset title="文本消息">
         <van-field v-model="textMessage.type" name="type" label="消息类型" />

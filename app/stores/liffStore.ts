@@ -20,7 +20,7 @@ export const liffStore = defineStore(
     const route = useRoute();
     const config = useRuntimeConfig();
     const liffId = config.public.kaia?.liffId as string;
-    const endpointUrl = config.public.kaia?.endpointUrl as string;
+    const endpointUrl = config.public.kaia?.endpointUrl as string + '/test/liff';
 
     let isInitialized = $ref(false);
     let isLoginIn = $ref<boolean>();
@@ -104,6 +104,13 @@ export const liffStore = defineStore(
     const logout = () => {
       if (liff.isLoggedIn()) {
         liff.logout();
+        if (!liff.isLoggedIn() && isLoginIn) {
+          // login out
+          isLoginIn = false;
+          profile = undefined;
+          granted = undefined;
+          friendship = undefined;
+        }
       }
     };
 
@@ -217,6 +224,7 @@ export const liffStore = defineStore(
     };
 
     return $$({
+      endpointUrl,
       liff,
       isLoginIn,
       profile,
