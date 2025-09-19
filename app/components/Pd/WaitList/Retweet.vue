@@ -74,9 +74,5 @@ const descText = $computed(() => {
         </div>
       </template>
     </template>
-
-
-
-
   </section>
 </template>

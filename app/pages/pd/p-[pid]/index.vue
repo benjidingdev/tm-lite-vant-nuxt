@@ -7,6 +7,8 @@ definePageMeta({
 let refreshTime = $ref(new Date())
 const { hasTwitterLogin, doLogout } = $(supabaseStore())
 
+const sharedTopic = topics()
+const { query } = $(useRoute());
 
 let topic = $ref({})
 let isLoading = $ref(false)
@@ -96,14 +98,20 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <template v-if="hasRetweeted">
-          <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
-          hasRetweeted, remove for test
-        </button> -->
-          <!-- <PdWaitListRetweet :hasRetweeted /> -->
-        </template>
+        <div v-if="topic?.meta?.isWaitingClosed"
+          class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center">
+          <SwipeCardPDC />
+        </div>
+        <div v-else>
+          <template v-if="hasRetweeted">
+            <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+            hasRetweeted, remove for test
+          </button> -->
+            <!-- <PdWaitListRetweet :hasRetweeted /> -->
+          </template>
+          <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+        </div>
 
-        <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
       </template>
 
       <PdWaitListLogin v-else />
