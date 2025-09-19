@@ -165,5 +165,88 @@ export default defineEventHandler(async (event) => {
     return { data: { success: true } }
   }
 
+  if (action === 'topic-market-trade') {
+    // console.log('topic-market-trade', body)
+    const { marketId, isYes = false } = body
+    if (!marketId) {
+      throw createError({
+        statusCode: 400,
+        message: 'marketId is required',
+        statusMessage: 'MarketIdRequired',
+      })
+    }
+
+    {
+      const rz = await adminClient.from('userMarkets').select('*').eq('userId', userId).single()
+      // console.log('user market data', rz)
+      const tradeMarkets = [...rz.data?.yesMarkets || [], ...rz.data?.noMarkets || []]
+      console.log('xxx', tradeMarkets, marketId, tradeMarkets.includes(marketId))
+      if (tradeMarkets.includes(marketId)) {
+        throw createError({
+          statusCode: 400,
+          message: 'You have already traded this market',
+          statusMessage: 'TradeMarketFailed',
+        })
+      }
+
+    }
+
+    const market = topic?.markets?.find(i => i.id == marketId)
+    if (!market) {
+      throw createError({
+        statusCode: 400,
+        message: 'Market not found',
+        statusMessage: 'MarketNotFound',
+      })
+    }
+
+    // console.log('topic-market-trade', market)
+
+    if (isYes) {
+      market.yesNum = (market.yesNum || 0) + 1
+    } else {
+      market.noNum = (market.noNum || 0) + 1
+    }
+
+
+    const { data: _marketData, error: marketError } = await adminClient.from('userMarkets').select('*').eq('userId', userId).single()
+    const marketData: any = _marketData || {};
+    let col = isYes ? 'yesMarkets' : 'noMarkets'
+    marketData[col] = marketData[col] || []
+    marketData[col].push(marketId)
+
+    const rz = await adminClient.from('userMarkets').upsert({
+      [col]: marketData[col],
+      userId
+    }, {onConflict: 'userId'})
+
+    // console.log(rz, 'xxx trade market')
+
+    if (rz.error) {
+      throw createError({
+        statusCode: 400,
+        message: rz.error.message,
+        statusMessage: 'TradeMarketError',
+      })
+    }
+
+    // console.log('topic-market-trade', marketData)
+    // console.log('topic-market-trade', topic?.markets, markets, market)
+    const rz2 = await adminClient.from('topics').update({ markets: topic?.markets || [] }).eq('id', topicId)
+    if (rz2.error) {
+      throw createError({
+        statusCode: 400,
+        message: rz2.error.message,
+        statusMessage: 'UpdateMarketError',
+      })
+    }
+
+    // console.log(rz2, 'xxx update topic market')
+
+    await updateUserPAmount(adminClient, userId, market?.meta?.market?.trade || -100, `trade market ${marketId} ${isYes ? 'yes' : 'no'}`)
+    return { data: { success: true, rz2 } }
+
+  }
+
   return { data: { success: true } }
 });
