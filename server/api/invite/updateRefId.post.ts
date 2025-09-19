@@ -105,14 +105,14 @@ async function updateTopicAuthInviterPAmount(adminClient: any, userId: string, b
   //   return
   // }
 
-  const authIncrementAmount = topic.rewards.auth
+  const authIncrementAmount = topic.meta?.rewards?.auth || 0
   await updateUserPAmount(adminClient, userId, authIncrementAmount, reason)
 
   if (!refId) {
     return
   }
 
-  const inviteIncrementAmount = topic.rewards.invite
+  const inviteIncrementAmount = topic.meta?.rewards?.invite || 0
   await updateUserPAmount(adminClient, refId, inviteIncrementAmount, reason)
 }
 

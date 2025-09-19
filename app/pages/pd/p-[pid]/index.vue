@@ -8,7 +8,7 @@ let refreshTime = $ref(new Date())
 const { hasTwitterLogin, doLogout } = $(supabaseStore())
 
 
-let topic = $ref(null)
+let topic = $ref({})
 let isLoading = $ref(false)
 
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
@@ -31,12 +31,11 @@ async function handleDel() {
 
 // 0, check if user has retweeted
 let hasRetweeted = $ref(false)
-async function loadData() {
+async function checkRetweeted() {
   if (!hasTwitterLogin) {
     return
   }
 
-  isLoading = true
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
     method: 'POST',
     body: JSON.stringify({
@@ -44,15 +43,26 @@ async function loadData() {
     })
   })
 
-  console.log('topic-join_check', rz)
-
   if (rz?.data?.success) {
     hasRetweeted = true
   }
+}
+
+async function loadData() {
+  isLoading = true
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'topic-get',
+    })
+  })
+
+  // console.log('topic-get', rz)
 
   if (rz?.data?.topic) {
     topic = rz.data.topic
   }
+  checkRetweeted()
   isLoading = false
 }
 
@@ -81,7 +91,7 @@ onMounted(() => {
         </div>
       </template>
 
-      <img src="/predmoon.png" alt="" class="w-30 my-10">
+      <img :src="topic?.meta?.logo" alt="" class="w-30 my-10">
       <p class="text-[30px] font-900 leading-[1.2]">{{ topic?.title }}</p>
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
@@ -93,7 +103,7 @@ onMounted(() => {
           <!-- <PdWaitListRetweet :hasRetweeted /> -->
         </template>
 
-        <PdWaitListRetweet v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+        <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
       </template>
 
       <PdWaitListLogin v-else />

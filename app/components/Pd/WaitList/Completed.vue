@@ -1,23 +1,31 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 
+const { topic } = defineProps({
+  topic: {
+    type: Object,
+    default: () => {},
+  }
+})
 const { t } = useI18n()
 
 const { x_user } = $(supabaseStore())
 
 const route = useRoute()
 
-const sharedTopic = topics()
-const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+// const sharedTopic = topics()
+// const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
 function onClickRetweet() {
   if (!x_user.id) {
     return
   }
+
+  console.log('topic', topic)
   handleRetweet({
-    hashtags: topic.hashtags,
-    retweetTargetUrl: topic.x_info.retweetTargetLink,
-    text: topic.x_info.text,
+    hashtags: topic.meta?.x_info?.hashtags,
+    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
+    text: topic.meta?.x_info?.text,
     refId: x_user.id,
     title: topic.title,
   })

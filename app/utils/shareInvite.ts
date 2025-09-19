@@ -96,7 +96,7 @@ function replacePlaceholders(text: string, variables: Record<string, string>) {
 
 export function handleRetweet({ hashtags, retweetTargetUrl, text, refId, title }: { hashtags: string; retweetTargetUrl: string; text: string; refId: string; title: string }) {
   const url = new URL("https://twitter.com/intent/tweet");
-  url.searchParams.append("hashtags", hashtags);
+  hashtags && url.searchParams.append("hashtags", hashtags);
   url.searchParams.append("url", retweetTargetUrl);
 
   const shareLink = new URL(location.href);

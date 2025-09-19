@@ -39,6 +39,10 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (action === 'topic-get') {
+    return { data: { success: true, topic } }
+  }
+
   if (action === 'topic-join_list') {
     // const { data, error } = await adminClient.from('retweets').select('*, x_profiles (*), assets (*)').eq('reason', reason)
     let { data, error } = await adminClient.from('retweets').select('*, x_profiles (*)').eq('reason', reason)
@@ -134,7 +138,7 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const incrementAmount = topic?.rewards?.retweet || 0;
+    const incrementAmount = topic?.meta?.rewards?.retweet || 0;
     await updateUserPAmount(adminClient, userId, incrementAmount, reason)
 
     return {

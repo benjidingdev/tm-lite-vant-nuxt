@@ -2,11 +2,17 @@
 const emit = defineEmits(['onSuccess'])
 const { x_user } = $(supabaseStore())
 const hasRetweeted = $(defineModel())
+const { topic } = defineProps({
+  topic: {
+    type: Object,
+    default: () => {},
+  }
+})
 
 const route = useRoute()
 
-const sharedTopic = topics()
-const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+// const sharedTopic = topics()
+// const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
 let hasRetweetClicked = $ref(false)
 
@@ -48,7 +54,7 @@ const descText = $computed(() => {
       </div>
     </div>
 
-    <PdWaitListCompleted v-if="hasRetweeted" />
+    <PdWaitListCompleted :topic v-if="hasRetweeted" />
     <template v-else>
 
       <p class="opacity-60 text-[14px] mt-8 mb-7">
