@@ -11,18 +11,14 @@ export const authStore = defineStore(
     const debug = useDebug("authStore");
     const { t } = $(useI18n());
     const { setModal, startOnboarding, setLoadingToast } = $(uiStore());
-    let { loadUserInfo, userInfo } = $(userStore());
-    const { amountPermit, updateWalletBalance } = $(walletStore());
     const { startParam } = $(shareStore());
-    const { walletClient: privyWalletClient, wallet, logoutPrivy, isNewUser } = $(privyStore());
-    const { walletClient: lineWalletClient, address: lineAddress, disconnect } = $(lineWalletStore());
-    const walletClient = $computed(() => {
-      return privyWalletClient ? privyWalletClient : lineWalletClient ? lineWalletClient : undefined;
-    });
-    const address = $computed(() => {
-      return wallet ? wallet.address : lineAddress ? lineAddress : undefined;
-    });
-    let { session, errorInfo } = $(privyStore());
+    const { amountPermit } = $(walletStore());
+    let { loadUserInfo, userInfo } = $(userStore());
+
+    const { address, walletClient, updateWalletBalance } = $(walletStore());
+    const { disconnect } = $(lineStore());
+    const { logoutPrivy, isNewUser } = $(privyStore());
+    let { errorInfo } = $(privyStore());
 
     let token: any = $ref({
       accessToken: "",
@@ -45,10 +41,12 @@ export const authStore = defineStore(
       let cookies = document.cookie.split(";");
       for (let i = 0; i < cookies.length; i++) {
         let cookie = cookies[i];
-        let eqPos = cookie.indexOf("=");
-        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        document.cookie =
-          name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+        if (cookie) {
+          let eqPos = cookie.indexOf("=");
+          let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+          document.cookie =
+            name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+        }
       }
     };
 
@@ -83,12 +81,10 @@ export const authStore = defineStore(
           sessionStorage?.clear();
           updateToken({});
           userInfo = {};
-          session = null;
-          errorInfo = null;
           showToast(t("Logout successful"));
         }
       } catch (e) {
-        console.error("Logout Failure message：", e);
+        console.error("Logout Failure message:", e);
       }
     };
 
@@ -98,10 +94,9 @@ export const authStore = defineStore(
      */
     const signLoginMessage = async (nonce: string) => {
       try {
-        const chainId = walletClient.chain?.id;
         const messageObj = {
           address: getAddress(address),
-          chainId: chainId as number,
+          chainId: walletClient.chain?.id as number,
           domain: location.host,
           nonce,
           uri: location.origin,
@@ -154,7 +149,6 @@ export const authStore = defineStore(
     const doSign = useDebounceFn(async () => {
       setLoadingToast(t("Start to login"));
       let signData;
-      debug({ address, wallet, walletClient });
       try {
         if (address) {
           const nonceRes = await getNonce(address);
@@ -179,10 +173,10 @@ export const authStore = defineStore(
     }, 100);
 
     watchEffect(async () => {
-      if (!walletClient) return
-      if (token.accessToken) return
+      if (!walletClient) return;
+      if (token.accessToken) return;
       await doSign();
-    })
+    });
 
     return $$({
       token,
@@ -193,6 +187,7 @@ export const authStore = defineStore(
     });
   },
   {
+    // @ts-ignore
     persist: {
       debug: true,
     },

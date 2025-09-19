@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { lineWalletStore } from "~/stores/lineWalletStore";
-
-const account = ref<string | null>(null);
+const account = ref<string | null>();
 const isLoading = ref(false);
-const error = ref<string | null>(null);
+const error = ref<string | null>();
 
-const lineStore = lineWalletStore();
+const { connectAndSign, disconnect } = $(lineStore());
 
 const connectKaiaWallet = async () => {
   isLoading.value = true;
@@ -13,7 +11,7 @@ const connectKaiaWallet = async () => {
 
   try {
     // 连接并签名
-    const [accountAddress] = await lineStore.connectAndSign('connect');
+    const [accountAddress] = await connectAndSign('connect');
     account.value = accountAddress;
   } catch (err) {
     console.error("Error connecting to Kaia wallet:", err);
@@ -28,7 +26,7 @@ const disconnectKaiaWallet = async () => {
   error.value = null;
 
   try {
-    await lineStore.disconnect();
+    await disconnect();
     account.value = null;
   } catch (err) {
     console.error("Error disconnecting from Kaia wallet:", err);

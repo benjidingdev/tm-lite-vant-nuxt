@@ -133,8 +133,9 @@ export default defineNuxtConfig({
         clientId: process.env.NUXT_PUBLIC_KAIA_CLIENT_ID || "",
         clientSecret: process.env.NUXT_PUBLIC_KAIA_CLIENT_SECRET || "",
         chainId: process.env.NUXT_PUBLIC_KAIA_CHAIN_ID || "1001",
+        liffId: process.env.NUXT_PUBLIC_LIFF_ID || "",
+        endpointUrl: process.env.NUXT_PUBLIC_ENDPOINT_URL || "",
       },
-      LIFF_ID: process.env.NUXT_PUBLIC_LIFF_ID || "",
 
       logRocket: {
         id: process.env.NUXT_PUBLIC_LOG_ROCKET_ID || "",

@@ -29,6 +29,11 @@ export interface UserInfo {
 }
 
 export interface Web3Config {
+  chain: {
+    id: number
+    rpcurls: string[]
+    scanUrl: string
+  }
   contract: {
     name: string
     version: number
