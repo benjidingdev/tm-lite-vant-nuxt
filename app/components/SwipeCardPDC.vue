@@ -22,11 +22,12 @@ type QueryParams = {
 };
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
-let currentIndex = $ref(0); // The index of current card
+let firstCardIndex = 0; // The index of current card
 let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
+let time = $ref(3600 * 1000 * 24); // The value of countdown time
 const threshold = 100; // Threshold of swiping
 // The data from store
 let { isLoading } = $(requestQueueStore());
@@ -37,6 +38,7 @@ let currentX = 0;
 let currentY = 0;
 let isSettlement = $ref(false);
 const customMarkets: any = $ref(markets());
+let currentCardID = $ref(0);
 
 let queryParams: any = {
   cardID: "",
@@ -49,7 +51,11 @@ let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
 let selectedYesOrNo = $computed(() => {
-  yesMarkets.concat(noMarkets).includes(pdcCards[currentIndex]?.id) && yesMarkets.includes(pdcCards[currentIndex]?.id) ? 'Yes' : 'No'
+  // yesMarkets.concat(noMarkets).includes(pdcCards[firstCardIndex]?.id) && yesMarkets.includes(pdcCards[firstCardIndex]?.id) ? 'Yes' : 'No'
+  if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
+    return yesMarkets.includes(currentCardID) ? 'YES' : 'NO';
+  }
+  return '';
 })
 
 const updateMarket = async (topicId: number, markets: any) => {
@@ -86,7 +92,7 @@ const getInfoList = async () => {
 
 // Obtain the style of card
 const getCardStyle = (index: number) => {
-  if (index === currentIndex) {
+  if (index === firstCardIndex) {
     return {
       transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${offsetX / 20
         }deg)`,
@@ -101,7 +107,7 @@ const getCardStyle = (index: number) => {
 
 // Touch start
 const touchStart = (e: TouchEvent | any) => {
-  if (currentIndex >= pdcCards.length) return;
+  if (firstCardIndex >= pdcCards.length) return;
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
   offsetX = 0;
@@ -110,7 +116,7 @@ const touchStart = (e: TouchEvent | any) => {
 
 // Touch move
 const touchMove = (e: TouchEvent | any) => {
-  if (currentIndex >= pdcCards.length) return;
+  if (firstCardIndex >= pdcCards.length) return;
 
   currentX = e.touches[0].clientX;
   currentY = e.touches[0].clientY;
@@ -133,7 +139,7 @@ const touchMove = (e: TouchEvent | any) => {
 
 // Touch end
 const touchEnd = (card: Card) => {
-  if (currentIndex >= pdcCards.length) return;
+  if (firstCardIndex >= pdcCards.length) return;
   if (offsetX >= threshold) {
     buyNo(card); // swipe to left means reject
   } else if (offsetX <= -threshold) {
@@ -226,7 +232,7 @@ const tradeUserMarket = async (card: any, isYes: boolean) => {
     if (yesMarkets.concat(noMarkets).includes(card.id)) {
       pickNext();
       showToast('You have voted on this market');
-      return;
+      return false;
     }
     const conbinedMarkets = isYes ? yesMarkets.concat([card.id]) : noMarkets.concat([card.id]);
 
@@ -241,6 +247,7 @@ const tradeUserMarket = async (card: any, isYes: boolean) => {
       yesMarkets,
       noMarkets,
     });
+    return true
   } catch (error) {
     console.log('getUserMarkets error', error);
   }
@@ -259,15 +266,20 @@ const goDeposit = async (card: Card, isYes: boolean) => {
     return;
   }
 
-  let currentIndex = pdcCardsOrigin.findIndex((item: any) => item.id === card.id);
-  if (pdcCardsOrigin[currentIndex]) {
+  currentCardID = pdcCardsOrigin.findIndex((item: any) => item.id === card.id);
+  console.log('currentCardID', currentCardID);
+  if (pdcCardsOrigin[currentCardID]) {
     if (isYes) {
-      pdcCardsOrigin[currentIndex].yesNum += 1;
+      pdcCardsOrigin[currentCardID].yesNum += 1;
     } else {
-      pdcCardsOrigin[currentIndex].noNum += 1;
+      pdcCardsOrigin[currentCardID].noNum += 1;
     }
   }
-  await tradeUserMarket(card, isYes);
+  const isProcessing = await tradeUserMarket(card, isYes);
+  if (!isProcessing) {
+    resetCard();
+    return;
+  }
   console.log('pAmount after tradeUserMarket', pdcCardsOrigin);
   await updateMarket(2, pdcCardsOrigin)
   await tradeSum();
@@ -275,13 +287,13 @@ const goDeposit = async (card: Card, isYes: boolean) => {
 };
 
 onMounted(() => {
-  getInfoList(false);
+  getInfoList();
   queryParams = getFatherInviteCode();
 });
 </script>
 
 <template>
-  <OnboardingGuide />
+  <!-- <OnboardingGuide /> -->
   <div class="w-full h-[90%] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
@@ -289,7 +301,6 @@ onMounted(() => {
           <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
             <van-loading size="48" />
           </div>
-
           <!-- <van-skeleton-image /> -->
           <div :style="{ marginTop: '42px', width: '100%' }">
             <van-skeleton-paragraph row-width="60%" />
@@ -302,7 +313,7 @@ onMounted(() => {
 
       <div v-if="pdcCards.length">
         <div v-for="(card, index) in pdcCards as cardsType" :key="card.id"
-          :class="['card', 'draggable-element', 'shadow-md', { active: currentIndex === index }]"
+          :class="['card', 'draggable-element', 'shadow-md', { active: firstCardIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
           <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
@@ -352,14 +363,17 @@ onMounted(() => {
                   <span class="font-bold text-black">{{ card.noNum }}</span>
                   <span> No Votes</span>
                 </div>
+                <div>You will win 2 $PM, if you predict </div>
                 <div>
-                  <span> You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo }}</span></span>
+                  <span>You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo || 'YES'
+                  }}</span></span>
                 </div>
                 <div>
                   <van-button size="mini" type="primary">Claim</van-button>
                 </div>
               </div>
-
+              <!--countdown-->
+              <van-count-down :time="time" />
               <!-- Progress bar -->
               <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
               " /> -->
@@ -397,6 +411,7 @@ onMounted(() => {
 }
 
 .name {
+  color: #333;
   font-size: 18px;
   font-weight: bold;
   display: block;

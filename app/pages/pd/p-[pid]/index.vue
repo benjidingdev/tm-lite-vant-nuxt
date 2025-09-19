@@ -9,6 +9,7 @@ const { hasTwitterLogin, doLogout } = $(supabaseStore())
 
 const sharedTopic = topics()
 const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+const { query } = $(useRoute());
 
 async function handleDel() {
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
@@ -60,14 +61,21 @@ onMounted(() => {
     <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
     <template v-if="hasTwitterLogin">
-      <template v-if="hasRetweeted">
-        <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+      <div v-if="query.showMarket === 'true'"
+        class="w-full h-[calc(100dvh)] flex flex-col justify-center items-center">
+        <SwipeCardPDC />
+      </div>
+      <div v-else>
+        <template v-if="hasRetweeted">
+          <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
           hasRetweeted, remove for test
         </button> -->
-        <!-- <PdWaitListRetweet :hasRetweeted /> -->
-      </template>
+          <!-- <PdWaitListRetweet :hasRetweeted /> -->
+        </template>
 
-      <PdWaitListRetweet v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+        <PdWaitListRetweet v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+      </div>
+
     </template>
 
     <PdWaitListLogin v-else />
