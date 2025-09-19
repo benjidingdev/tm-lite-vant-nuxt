@@ -138,9 +138,21 @@ export const liffStore = defineStore(
     };
 
     const requestAll = async () => {
-      const permissionStatus = await query("profile");
-      if (permissionStatus.state === "prompt") {
-        await liff.permission.requestAll();
+      try {
+        let permissionStatus = await query("profile");
+        if (permissionStatus.state === "prompt") {
+          await liff.permission.requestAll();
+        }
+        permissionStatus = await query("openid");
+        if (permissionStatus.state === "prompt") {
+          await liff.permission.requestAll();
+        }
+        permissionStatus = await query("chat_message.write");
+        if (permissionStatus.state === "prompt") {
+          await liff.permission.requestAll();
+        }
+      } catch (err: any) {
+        console.error("requestAll error", err);
       }
     };
 
@@ -169,6 +181,9 @@ export const liffStore = defineStore(
     const sendMessages = async (messages: Array<any>) => {
       if (liff.isLoggedIn()) {
         try {
+          if (!granted?.includes("chat_message.write")) {
+            await requestAll();
+          }
           await liff.sendMessages(messages);
         } catch (err: any) {
           console.error("sendMessages error", err);
@@ -183,6 +198,9 @@ export const liffStore = defineStore(
     ) => {
       if (liff.isLoggedIn()) {
         try {
+          if (!granted?.includes("chat_message.write")) {
+            await requestAll();
+          }
           await liff.shareTargetPicker(messages, { isMultiple });
         } catch (err: any) {
           console.error("sendMessages error", err);
