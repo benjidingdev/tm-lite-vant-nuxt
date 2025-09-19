@@ -20,7 +20,7 @@ const initAsset = async () => {
   console.log('res', res)
 }
 
-const getAsset = async (userId) => {
+const getAsset = async () => {
   let res = await doFetch(`/api/assets/getAsset`, {
     method: 'GET',
   })

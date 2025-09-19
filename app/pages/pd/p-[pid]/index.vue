@@ -59,7 +59,6 @@ async function loadData() {
     })
   })
 
-  // console.log('topic-get', rz)
 
   if (rz?.data?.topic) {
     topic = rz.data.topic
@@ -98,9 +97,12 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div v-if="topic?.meta?.isWaitingClosed"
-          class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center">
+        <div v-if="!topic?.meta?.isWaitingClosed"
+          class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
+          <button class="w-full my-4 bg-green-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]" @click="handleLogin">
+            Claim your $PM now
+          </button>
         </div>
         <div v-else>
           <template v-if="hasRetweeted">
@@ -116,7 +118,7 @@ onMounted(() => {
 
       <PdWaitListLogin v-else />
 
-      <PdWaitListRetweetList :refreshTime />
+      <PdWaitListRetweetList v-if="topic.id !== 2" :refreshTime />
     </van-skeleton>
   </article>
 </template>

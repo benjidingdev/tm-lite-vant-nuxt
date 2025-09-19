@@ -45,10 +45,8 @@ let queryParams: any = {
   cardID: "",
   inviteCode: "",
 };
-
-
+let { pAmount } = $(pdcSwipeCardStore())
 const { query, path } = $(useRoute());
-
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
@@ -77,8 +75,6 @@ const getMarket = async (topicId: any) => {
   const markets = res?.data?.markets || [];
   return markets;
 }
-
-let { pAmount } = $(pdcSwipeCardStore())
 
 // get the list of cards
 const getInfoList = async () => {
@@ -222,15 +218,9 @@ const getUserMarkets = async () => {
   }
 }
 
-const tradeSum = async () => {
-  await updateAsset(pAmount);
-}
-
 const tradeUserMarket = async (card: any, isYes: boolean) => {
   try {
-    console.log('card----', card);
     await getUserMarkets();
-    console.log('yesMarkets', yesMarkets, 'noMarkets', noMarkets);
     if (yesMarkets.concat(noMarkets).includes(card.id)) {
       pickNext();
       showToast('You have voted on this market');
@@ -244,7 +234,6 @@ const tradeUserMarket = async (card: any, isYes: boolean) => {
     } else {
       noMarkets = uniqueMarkets;
     }
-    console.log('tradeUserMarket', { yesMarkets, noMarkets });
     await updateUserMarkets({
       yesMarkets,
       noMarkets,
@@ -269,7 +258,6 @@ const goDeposit = async (card: Card, isYes: boolean) => {
   }
 
   currentCardID = pdcCardsOrigin.findIndex((item: any) => item.id === card.id);
-  console.log('currentCardID', currentCardID);
   if (pdcCardsOrigin[currentCardID]) {
     if (isYes) {
       pdcCardsOrigin[currentCardID].yesNum += 1;
@@ -282,14 +270,27 @@ const goDeposit = async (card: Card, isYes: boolean) => {
     resetCard();
     return;
   }
-  console.log('pAmount after tradeUserMarket', pdcCardsOrigin);
   await updateMarket(2, pdcCardsOrigin)
-  await tradeSum();
+  await updateAsset(pAmount);
   resetCard();
 };
 
-onMounted(() => {
+const getAsset = async () => {
+  let res = await doFetch(`/api/assets/getAsset`, {
+    method: 'GET',
+  })
+  if (res.status === 200) {
+    const asset = res?.data?.pAmount || 0;
+    pAmount = asset;
+  } else {
+    pAmount = 0;
+  }
+  return res;
+}
+
+onMounted(async () => {
   getInfoList();
+  await getAsset()
   queryParams = getFatherInviteCode();
 });
 </script>
@@ -319,7 +320,7 @@ onMounted(() => {
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
 
-          <div class="w-full flex items-center justify-between bg-white px-4">
+          <div class="w-full flex items-center justify-between px-4 bg-gray-200">
             <div class="flex items-center justify-start p-[6px]">
               <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
               <div class="text-black">
@@ -327,10 +328,8 @@ onMounted(() => {
                 <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>
               </div>
             </div>
-            <div class="text-black">ss</div>
+            <div class="text-black">${{ pAmount }}</div>
           </div>
-
-
 
           <van-image width="100%" height="40%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box" id="step6">
@@ -343,8 +342,6 @@ onMounted(() => {
               <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
             </div>
           </van-image>
-
-
 
           <div v-if="card" class="px-4 h-[50%]">
             <div class="h-[85%] overflow-hidden">
@@ -381,17 +378,15 @@ onMounted(() => {
                   <span class="font-bold text-black">{{ card.noNum }}</span>
                   <span> No Votes</span>
                 </div>
-                <div>You will win 2 $PM, if you predict </div>
+                <div>You will win 2 $PM, if you predict right!</div>
                 <div>
                   <span>You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo || 'YES'
                       }}</span></span>
                 </div>
-                <div>
-                  <van-button size="mini" type="primary">Claim</van-button>
-                </div>
+                <van-count-down :time="time" />
               </div>
               <!--countdown-->
-              <van-count-down :time="time" />
+
               <!-- Progress bar -->
               <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
               " /> -->
