@@ -98,7 +98,7 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div v-if="query.showMarket === 'true'"
+        <div v-if="topic?.meta?.isWaitingClosed"
           class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center">
           <SwipeCardPDC />
         </div>
@@ -108,8 +108,8 @@ onMounted(() => {
             hasRetweeted, remove for test
           </button> -->
             <!-- <PdWaitListRetweet :hasRetweeted /> -->
-            <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
           </template>
+          <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
         </div>
 
       </template>

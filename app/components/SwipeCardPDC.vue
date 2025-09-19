@@ -31,6 +31,7 @@ let time = $ref(3600 * 1000 * 24); // The value of countdown time
 const threshold = 100; // Threshold of swiping
 // The data from store
 let { isLoading } = $(requestQueueStore());
+const { x_user } = $(supabaseStore())
 let { pdcCards, pdcCardsOrigin, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
 
 const topicsId = 2; // default topic id
@@ -44,6 +45,7 @@ let queryParams: any = {
   cardID: "",
   inviteCode: "",
 };
+
 
 const { query, path } = $(useRoute());
 
@@ -316,7 +318,21 @@ onMounted(() => {
           :class="['card', 'draggable-element', 'shadow-md', { active: firstCardIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
-          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
+
+          <div class="w-full flex items-center justify-between bg-white px-4">
+            <div class="flex items-center justify-start p-[6px]">
+              <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
+              <div class="text-black">
+                <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
+                <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>
+              </div>
+            </div>
+            <div class="text-black">ss</div>
+          </div>
+
+
+
+          <van-image width="100%" height="40%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
@@ -327,6 +343,8 @@ onMounted(() => {
               <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
             </div>
           </van-image>
+
+
 
           <div v-if="card" class="px-4 h-[50%]">
             <div class="h-[85%] overflow-hidden">
@@ -366,7 +384,7 @@ onMounted(() => {
                 <div>You will win 2 $PM, if you predict </div>
                 <div>
                   <span>You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo || 'YES'
-                  }}</span></span>
+                      }}</span></span>
                 </div>
                 <div>
                   <van-button size="mini" type="primary">Claim</van-button>
