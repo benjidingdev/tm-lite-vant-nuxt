@@ -15,12 +15,16 @@ let isLoading = $ref(false)
 
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
+const debug = useDebug('pdTopic')
+
 async function handleDel() {
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-join_del',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-join_del error', err })
   })
 
   // console.log({ rz })
@@ -43,6 +47,8 @@ async function checkRetweeted() {
     body: JSON.stringify({
       action: 'topic-join_check',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-join_check error', err })
   })
 
   if (rz?.data?.success) {
@@ -57,6 +63,8 @@ async function loadData() {
     body: JSON.stringify({
       action: 'topic-get',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-get error', err })
   })
 
   // console.log('topic-get', rz)
@@ -72,9 +80,31 @@ onMounted(() => {
   loadData()
 })
 
+async function test() {
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'topic-market-trade',
+      marketId: 2,
+      isYes: false,
+    })
+  }).catch((err) => {
+    debug({ msg: 'topic-get error', err })
+  })
+
+  console.log('topic-market-trade', rz)
+}
+
+
 </script>
 
 <template>
+  <!-- <button class="text-base ml-2 absolute z-999 top-6 border-0" @click="test">
+    <span>
+      test
+    </span>
+  </button> -->
+
   <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
     <van-skeleton :loading="isLoading">
       <template #template>

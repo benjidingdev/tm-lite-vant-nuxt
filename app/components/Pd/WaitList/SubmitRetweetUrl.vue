@@ -6,6 +6,7 @@ const emit = defineEmits(['onBack', 'onSuccess'])
 
 const route = useRoute()
 
+const debug = useDebug('submitRetweetUrl')
 let submitLoading = $ref(false)
 let retweetLink = $ref('')
 // let retweetLink = $ref('https://x.com/John_TuringM/status/1968124413582381493')
@@ -23,10 +24,12 @@ async function handleSubmit() {
       retweetLink,
       action: 'topic-join',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-join error', err })
   })
 
   // console.log({ rz })
-  if (rz.data.success) {
+  if (rz?.data?.success) {
     emit('onSuccess')
   }
 
