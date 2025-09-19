@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import liff from "@line/liff";
+import { showSuccessToast, showFailToast } from "vant";
 
 export interface LiffError {
   code: string;
@@ -134,6 +135,7 @@ export const liffStore = defineStore(
         }
       } catch (err: any) {
         console.error("requestAll error", err);
+        showFailToast(err.toString());
       }
     };
 
@@ -168,6 +170,7 @@ export const liffStore = defineStore(
           await liff.sendMessages(messages);
         } catch (err: any) {
           console.error("sendMessages error", err);
+          showFailToast(err.toString());
         }
       }
     };
@@ -185,6 +188,7 @@ export const liffStore = defineStore(
           await liff.shareTargetPicker(messages, { isMultiple });
         } catch (err: any) {
           console.error("sendMessages error", err);
+          showFailToast(err.toString());
         }
       }
     };
