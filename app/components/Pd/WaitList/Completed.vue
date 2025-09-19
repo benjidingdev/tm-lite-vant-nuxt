@@ -1,21 +1,34 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { handleShare } from './utils'
 
+const { topic } = defineProps({
+  topic: {
+    type: Object,
+    default: () => {},
+  }
+})
 const { t } = useI18n()
 
 const { x_user } = $(supabaseStore())
 
 const route = useRoute()
 
-const sharedTopic = topics()
-const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+// const sharedTopic = topics()
+// const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
 function onClickRetweet() {
   if (!x_user.id) {
     return
   }
-  handleShare(x_user, topic)
+
+  console.log('topic', topic)
+  handleRetweet({
+    hashtags: topic.meta?.x_info?.hashtags,
+    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
+    text: topic.meta?.x_info?.text,
+    refId: x_user.id,
+    title: topic.title,
+  })
 }
 
 function onClickFollow() {
@@ -41,24 +54,28 @@ let show = $ref(false)
       <span class="text-white font-[900]">{{ t('Create Cover with Twitter PFP') }}</span>
     </button>
 
-    <button class="w-full bg-[#070707] h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-      @click="onClickFollow">
-      <img src="/x.webp" alt="" class="size-6">
-      <span class="text-white font-[900]">{{ t('Follow TuringM on X') }}</span>
-    </button>
+    <div class="w-full flex items-center justify-center space-x-2">
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
+        @click="onClickFollow">
+        <img src="/x.webp" alt="" class="size-4">
+        <span class="text-white font-[900] text-xs">{{ t('Follow on X') }}</span>
+      </button>
 
-    <button class="w-full bg-[#070707] h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-      @click="onClickRetweet">
-      <img src="/x.webp" alt="" class="size-6">
-      <span class="text-white font-[900]">{{ t('Share on X') }}</span>
-    </button>
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
+        @click="onClickRetweet">
+        <img src="/x.webp" alt="" class="size-4">
+        <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
+      </button>
+    </div>
+
+
   </section>
 
   <van-dialog v-model:show="show" :title="$t('Create Twitter profile cover')" closeable :show-confirm-button="false">
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
       <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black custom-bg">
 
-        <img src="/logo.webp" alt="" class="size-16">
+        <img src="/predmoon.png" alt="" class="w-30">
 
         <p class="text-[48px] font-bold text-white leading-[1] mb-6">{{ t('Pred to the moon') }}</p>
 
@@ -77,7 +94,7 @@ let show = $ref(false)
         <span class="text-white font-[900]">{{ t('Download Phote') }}</span>
       </button>
 
-      <button class="w-full bg-[#070707] h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
         @click="onClickRetweet">
         <img src="/x.webp" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Share on X') }}</span>
