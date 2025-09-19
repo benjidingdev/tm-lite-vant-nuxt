@@ -90,10 +90,19 @@ export async function captureTargetToPng(name = 'shareImageName', target: HTMLEl
   }
 }
 
-export function handleRetweet({ hashtags, shareTweetStatusLink, text }: { hashtags: string; shareTweetStatusLink: string; text: string }) {
+function replacePlaceholders(text: string, variables: Record<string, string>) {
+  return text.replace(/\{\{(\w+)\}\}/g, (match, key) => variables[key] || match);
+}
+
+export function handleRetweet({ hashtags, retweetTargetUrl, text, refId, title }: { hashtags: string; retweetTargetUrl: string; text: string; refId: string; title: string }) {
   const url = new URL("https://twitter.com/intent/tweet");
-  url.searchParams.append("hashtags", hashtags);
+  hashtags && url.searchParams.append("hashtags", hashtags);
+  url.searchParams.append("url", retweetTargetUrl);
+
+  const shareLink = new URL(location.href);
+  shareLink.searchParams.append('refId', refId)
+  text = replacePlaceholders(text, { url: shareLink.toString(), title })
+
   url.searchParams.append("text", text);
-  url.searchParams.append("url", shareTweetStatusLink);
   window.open(url.toString(), "_blank");
 }

@@ -36,8 +36,7 @@ Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 test
  `;
 
   const hashtags = "TuringM,TuringMaster,Airdrop";
-  const shareTweetStatusLink = "https://x.com/TuringMarket/status/1958786009753428017";
-  handleRetweet({ hashtags, shareTweetStatusLink, refId: x_user.id, text })
+  // handleRetweet({ hashtags, refId: x_user.id, text })  // TODO:: shareInvite from utils
 }
 
 let user = $ref({})
