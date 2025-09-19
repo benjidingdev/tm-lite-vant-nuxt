@@ -16,40 +16,14 @@ export interface Profile {
 export const liffStore = defineStore(
   "liffStore",
   () => {
-    const { locale } = useI18n();
-    const route = useRoute();
     const config = useRuntimeConfig();
-    const liffId = config.public.kaia?.liffId as string;
-    const endpointUrl = config.public.kaia?.endpointUrl as string + '/test/liff';
+    const endpointUrl = config.public.kaia?.endpointUrl as string;
 
     let isInitialized = $ref(false);
     let isLoginIn = $ref<boolean>();
     let profile = $ref<Profile>();
     let granted = $ref<Array<string>>();
     let friendship = $ref<boolean>();
-
-    liff
-      .init({ liffId: liffId })
-      .then(async () => {
-        isInitialized = true;
-        liff.i18n.setLang(locale.value);
-        if (liff.isLoggedIn() && !isLoginIn) {
-          isLoginIn = true;
-          granted = await getGrantedAllScopes();
-          if (
-            !granted?.includes("profile") ||
-            !granted?.includes("openid") ||
-            !granted?.includes("chat_message.write")
-          ) {
-            await requestAll();
-          }
-          profile = await getProfile();
-          friendship = await getFriendship();
-        }
-      })
-      .catch((err) => {
-        console.error("liff init error", err);
-      });
 
     watchEffect(async () => {
       if (!isInitialized) return;
@@ -95,9 +69,9 @@ export const liffStore = defineStore(
       return liff.getVersion();
     };
 
-    const login = () => {
+    const login = (path: string) => {
       if (!liff.isLoggedIn()) {
-        liff.login({ redirectUri: `${endpointUrl}` });
+        liff.login({ redirectUri: `${endpointUrl}${path}` });
       }
     };
 
@@ -224,8 +198,9 @@ export const liffStore = defineStore(
     };
 
     return $$({
-      endpointUrl,
       liff,
+      endpointUrl,
+      isInitialized,
       isLoginIn,
       profile,
       granted,
@@ -257,6 +232,7 @@ export const liffStore = defineStore(
     // @ts-ignore
     persist: {
       debug: true,
+      omit: ["isInitialized"],
     },
   }
 );

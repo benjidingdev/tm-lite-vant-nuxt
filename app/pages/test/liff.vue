@@ -127,7 +127,7 @@ onMounted(() => {
   <div class="h-screen pb-15 !text-[#fff] overflow-y-auto" style="padding-bottom: 150px;">
     <van-form>
       <van-cell-group inset title="LIFF测试" class="text-[#fff]">
-        <van-cell is-link :title="isLoginIn ? '登出' : '登录'" @click="isLoginIn ? logout() : login()" />
+        <van-cell is-link :title="isLoginIn ? '登出' : '登录'" @click="isLoginIn ? logout() : login('/test/liff')" />
         <van-cell is-link title="获取accessToken" @click="testGetAccessToken" :label="accessToken" />
         <van-cell is-link title="获取IDToken" @click="testGetIDToken" :label="idToken" />
         <van-cell is-link title="获取DecodedIDToken" @click="testGetDecodedIDToken" :label="decodedIDToken" />

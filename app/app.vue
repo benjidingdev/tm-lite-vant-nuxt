@@ -42,6 +42,7 @@ const initPixel = () => {
 };
 
 let { startParam } = $(shareStore());
+const route = useRoute();
 onMounted(async () => {
   Locale.use(locale.value);
 
@@ -59,6 +60,9 @@ onMounted(() => {
       localStorage.setItem('debug', debug)
     }
   })
+  if (route.query['liff.state']) {
+    navigateTo(route.query['liff.state'] as string)
+  }
 })
 </script>
 
