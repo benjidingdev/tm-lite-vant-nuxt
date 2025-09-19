@@ -55,7 +55,7 @@ onMounted(() => {
 
 <template>
   <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
-    <img src="/logo.webp" alt="" class="w-[110px] h-[90px] my-10">
+    <img src="/predmoon.png" alt="" class="w-30 my-10">
     <p class="text-[30px] font-900 leading-[1.2]">{{ topic?.title }}</p>
     <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 

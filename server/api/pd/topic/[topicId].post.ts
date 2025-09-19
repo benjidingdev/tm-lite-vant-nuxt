@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const userIds = data?.map(i => i.userId)
-    console.log('topic-join_list', {userIds})
+    console.log('topic-join_list', { userIds })
     if (!userIds?.length) {
       return { data: { success: true, data: [] } }
     }
@@ -87,13 +87,24 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    {
+      const { count } = await adminClient.from('retweets').select('*', { count: 'exact', head: true }).eq('url', retweetLink);
+      if (count && count > 0) {
+        throw createError({
+          statusCode: 400,
+          message: 'Url already joined',
+          statusMessage: 'JoinTopicFailed',
+        })
+      }
+    }
+
     const { data, error } = await adminClient.from('retweets').upsert({
       userId,
       url: retweetLink,
       reason,
     }, {
       onConflict: 'userId,reason',
-      ignoreDuplicates: true,
+      // ignoreDuplicates: true,
     }).select().single()
     // console.log(data, error, 'xxx join topic')
 
