@@ -17,7 +17,7 @@ let checkinStatus = $ref(null as null | {
   makeupCardCost: number
 })
 
-// 加载打卡状态
+// Loading check-in status
 const  fetchStatus = async () => {
   try {
     isLoading = true
@@ -76,7 +76,6 @@ const derived = $computed(() => {
   }
 })
 
-// 漏签日点击处理：优先使用已有补签卡，否则弹窗购买并自动补签
 const onMissedDayClick = async (day: number) => {
   if (isActing) return
 
@@ -128,7 +127,6 @@ const onMissedDayClick = async (day: number) => {
   }
 }
 
-// 仅购买补签卡
 const onRedeemMakeupCard = async () => {
   if (isActing) return
   try {
@@ -149,7 +147,6 @@ const onRedeemMakeupCard = async () => {
   }
 }
 
-// 今日打卡
 const onCheckIn = async () => {
   if (derived.isCheckin || isActing) return
 
@@ -189,7 +186,6 @@ const onCheckIn = async () => {
     </template>
 
     <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm space-y-4">
-      <!-- 顶部信息 -->
       <div class="flex items-start justify-between">
         <div class="flex items-center text-lg font-bold">
           <div class="text-gray-700">{{ t('dayProgress', { day: derived.checkedDays.length, total: derived.totalDays }) }}</div>
@@ -200,11 +196,9 @@ const onCheckIn = async () => {
         </div>
       </div>
 
-      <!-- 进度条 -->
       <van-progress :percentage="derived.progress" stroke-width="10" track-color="#f0f2f5"
         color="linear-gradient(to right, #3fecff, #6149f6)" />
 
-      <!-- 指标/提示 -->
       <div class="flex items-center justify-between">
         <div class="text-xs text-gray-500">
           {{ t('streak', { days: derived.consecutiveDays }) }}
@@ -212,7 +206,6 @@ const onCheckIn = async () => {
         <div class="text-xs text-gray-500">{{ t('completion', { percent: derived.progress }) }}</div>
       </div>
 
-      <!-- 购买补签卡入口 -->
       <div class="flex items-center justify-between text-xs">
         <div class="text-gray-500">{{ t('buyHint', { cost: derived.makeupCardCost }) }}</div>
         <van-button size="mini" type="primary" plain @click="onRedeemMakeupCard">

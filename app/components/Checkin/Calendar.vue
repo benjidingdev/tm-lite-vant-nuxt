@@ -3,9 +3,9 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   totalDays: number
-  checkedDays: number[]           // 已完成天数（含补签）
-  todayIndex: number              // 今天/下一可打卡日（1-based）
-  missedDays?: number[]           // 新增：可选，显式漏签天
+  checkedDays: number[]
+  todayIndex: number
+  missedDays?: number[]          
 }>()
 
 const emit = defineEmits<{

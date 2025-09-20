@@ -52,7 +52,6 @@ const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
 <template>
   <van-skeleton :loading="loading" animated class="!px-0">
     <template #template>
-      <!-- 骨架屏 -->
       <div class="w-full rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <div class="h-3 w-24 bg-[#f2f3f5] rounded" />
@@ -74,7 +73,6 @@ const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
         <div class="text-xs text-gray-500">{{ t('dailyCap', { cap: '1,000' }) }}</div>
       </div>
 
-      <!-- 分享/邀请动机与积分提示 -->
       <div class="rounded-lg bg-[#f7fff5] border border-[#e6f7e9] p-3 flex items-start gap-2">
         <van-icon name="gift-o" color="#16a34a" />
         <div class="text-xs text-gray-600">

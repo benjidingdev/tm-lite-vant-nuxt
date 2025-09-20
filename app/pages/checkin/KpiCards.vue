@@ -9,7 +9,6 @@ const { t } = useI18n()
 let participants = $ref(0)
 let pool = $ref(0)
 
-// 对应 DOM 引用，供 odometer 绑定
 const participantsEl = $ref<HTMLElement | null>(null)
 const poolEl = $ref<HTMLElement | null>(null)
 
@@ -18,7 +17,7 @@ let participantsOdo: any
 let poolOdo: any
 
 
-// 初始化 odometer
+// Initialize the odometer
 const initOdometers = async () => {
   if (participantsEl && !participantsOdo) {
     participantsOdo = await createOdometer(participantsEl, { initial: 0 })
@@ -36,7 +35,6 @@ const { data: kpiRes, isLoading } = useQuery({
   refetchInterval: 50000,
 })
 
-// 同步接口返回的 KPI 到本地状态
 watch(
   () => kpiRes?.value?.data?.kpi,
   (kpi) => {
@@ -47,7 +45,7 @@ watch(
   { immediate: true }
 )
 
-// 当加载完成后，统一进行 odometer 的初始化
+// After loading, the odometer will be evenly initialized
 watchEffect(async () => {
   if (!isLoading.value) {
     await nextTick()
@@ -62,7 +60,6 @@ watch(() => isLoading.value, async (v) => {
   }
 })
 
-// 数值变化时驱动 odometer 动画更新
 watch(() => participants, (val) => { if (participantsOdo) participantsOdo.update(val) })
 watch(() => pool, (val) => { if (poolOdo) poolOdo.update(val) })
 </script>
