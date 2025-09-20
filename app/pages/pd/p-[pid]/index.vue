@@ -67,7 +67,6 @@ async function loadData() {
     debug({ msg: 'topic-get error', err })
   })
 
-  // console.log('topic-get', rz)
 
   if (rz?.data?.topic) {
     topic = rz.data.topic
@@ -80,30 +79,10 @@ onMounted(() => {
   loadData()
 })
 
-async function test() {
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'topic-market-trade',
-      marketId: 2,
-      isYes: false,
-    })
-  }).catch((err) => {
-    debug({ msg: 'topic-get error', err })
-  })
-
-  console.log('topic-market-trade', rz)
-}
-
 
 </script>
 
 <template>
-  <!-- <button class="text-base ml-2 absolute z-999 top-6 border-0" @click="test">
-    <span>
-      test
-    </span>
-  </button> -->
 
   <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
     <van-skeleton :loading="isLoading">
@@ -128,9 +107,12 @@ async function test() {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div v-if="topic?.meta?.isWaitingClosed"
-          class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center">
+        <div v-if="!topic?.meta?.isWaitingClosed"
+          class="w-full h-[calc(100dvh-280px)] flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
+          <button class="w-full my-4 bg-blue-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]">
+            Claim your $PM now
+          </button>
         </div>
         <div v-else>
           <template v-if="hasRetweeted">
@@ -146,7 +128,7 @@ async function test() {
 
       <PdWaitListLogin v-else />
 
-      <PdWaitListRetweetList :refreshTime />
+      <PdWaitListRetweetList v-if="topic.id !== 2" :refreshTime />
     </van-skeleton>
   </article>
 </template>
