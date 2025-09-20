@@ -5,6 +5,7 @@
       <RequestQueueButton id="step2"/>
     </div>
     <div class="flex justify-center items-center space-x-2">
+      <!-- <KaiaButton /> -->
       <SettingsVolumeButton id="step3"/>
       <SettingsButton />
     </div>

@@ -1,0 +1,41 @@
+{
+  "totalDays": 15,
+  "checkedDays": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12,
+    15
+  ],
+  "isCheckin": true,
+  "availablePoints": 200,
+  "makeupCardCount": 0,
+  "makeupCardCost": 1200,
+  "kpi": {
+    "participants": 8412,
+    "pool": 12000,
+    "updatedAt": 1710000000000
+  },
+  "noticesList": [
+    {
+      "id": 1,
+      "key": "notices.return",
+      "createdAt": 1710000000000
+    },
+    {
+      "id": 2,
+      "key": "notices.poolSplit",
+      "createdAt": 1710000001000
+    },
+    {
+      "id": 3,
+      "key": "notices.reset",
+      "createdAt": 1710000002000
+    }
+  ]
+}
