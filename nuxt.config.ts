@@ -50,24 +50,6 @@ export default defineNuxtConfig({
         '@line/liff',
       ]
     },
-    build: {
-      sourcemap: false
-    },
-    optimizeDeps: {
-      include: [
-        'lodash',
-        'decimal.js',
-        'axios',
-        '@wagmi/core',
-        '@wagmi/vue',
-        'viem',
-        '@reown/appkit',
-        '@reown/appkit-adapter-wagmi',
-        '@privy-io/js-sdk-core',
-        '@lighthouse-web3/sdk',
-        '@line/liff',
-      ]
-    },
     server: {
       allowedHosts: [
         "localhost",
