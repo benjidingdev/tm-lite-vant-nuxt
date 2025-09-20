@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   // const sharedTopic = topics()
   // const topic = sharedTopic.find(t => t.id === Number(topicId))
 
-  console.log('topic', topic)
+  // console.log('topic', topic)
   const reason = 'retweet_topic_' + topicId
 
   const { action } = body
@@ -188,7 +188,6 @@ export default defineEventHandler(async (event) => {
           statusMessage: 'TradeMarketFailed',
         })
       }
-
     }
 
     const market = topic?.markets?.find(i => i.id == marketId)
@@ -201,13 +200,11 @@ export default defineEventHandler(async (event) => {
     }
 
     // console.log('topic-market-trade', market)
-
     if (isYes) {
       market.yesNum = (market.yesNum || 0) + 1
     } else {
       market.noNum = (market.noNum || 0) + 1
     }
-
 
     const { data: _marketData, error: marketError } = await adminClient.from('userMarkets').select('*').eq('userId', userId).single()
     const marketData: any = _marketData || {};
@@ -218,7 +215,7 @@ export default defineEventHandler(async (event) => {
     const rz = await adminClient.from('userMarkets').upsert({
       [col]: marketData[col],
       userId
-    }, {onConflict: 'userId'})
+    }, { onConflict: 'userId' })
 
     // console.log(rz, 'xxx trade market')
 
@@ -243,8 +240,59 @@ export default defineEventHandler(async (event) => {
 
     // console.log(rz2, 'xxx update topic market')
 
-    await updateUserPAmount(adminClient, userId, market?.meta?.market?.trade || -100, `trade market ${marketId} ${isYes ? 'yes' : 'no'}`)
-    return { data: { success: true, rz2 } }
+    await updateUserPAmount(adminClient, userId, market?.meta?.market?.trade || 200, `trade market ${marketId} ${isYes ? 'yes' : 'no'}`)
+    return { status: 200, msg: "trade successfully!" }
+  }
+
+
+  if (action === 'topic-market-claim') {
+    // get userid
+    // usermarkets claimedTopicIds
+    // topics meta claimedMarketId
+    // assets +200
+
+    const userMarketsrz = await adminClient.from('userMarkets').select('*').eq('userId', userId).single()
+    const claimedTopicIds = userMarketsrz.data.claimedTopicIds || [];
+    if (claimedTopicIds?.some(item => item == topicId)) {
+      throw createError({
+        statusCode: 400,
+        message: 'You have already claimed this topic',
+        statusMessage: 'ClaimTopicFailed',
+      })
+    }
+
+    const topicsrz = await adminClient.from('topics').select('*').eq('id', topicId).single()
+    if (topicsrz.error || !topicsrz.data) {
+      throw createError({
+        statusCode: 400,
+        message: topicsrz.error?.message || 'Topic not found',
+        statusMessage: 'TopicNotFound',
+      })
+    }
+    const userSelectedYesMarket = userMarketsrz?.data?.yesMarkets || [];
+    const correctId = topicsrz?.data?.meta?.claimedMarketId;
+    // console.log('xxx userSelectedYesMarket', userSelectedYesMarket, correctId)
+    if (!userSelectedYesMarket.some((marketId: any) => correctId == marketId)) {
+      return { status: 200, msg: "You select wrong answer, couldn't get reward" }
+    }
+
+    const updateUMrz = await adminClient.from('userMarkets').upsert({
+      claimedTopicIds: [...new Set([...claimedTopicIds, Number(topicId)])],
+      userId
+    }, { onConflict: 'userId' })
+
+    // console.log(rz, 'xxx trade market')
+
+    if (updateUMrz.error) {
+      throw createError({
+        statusCode: 400,
+        message: updateUMrz.error.message,
+        statusMessage: 'update user market',
+      })
+    }
+    // console.log('xxxclaim topic success', topicsrz?.data?.meta?.rewards?.trade)
+    await updateUserPAmount(adminClient, userId, topicsrz?.data?.meta?.rewards?.trade, `market claimed ${topicId} `)
+    return { status: 200, msg: "claim got!" }
 
   }
 

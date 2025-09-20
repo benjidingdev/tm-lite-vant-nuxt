@@ -79,7 +79,6 @@ onMounted(() => {
   loadData()
 })
 
-
 </script>
 
 <template>
@@ -108,11 +107,8 @@ onMounted(() => {
 
       <template v-if="hasTwitterLogin">
         <div v-if="!topic?.meta?.isWaitingClosed"
-          class="w-full h-[calc(100dvh-280px)] flex flex-col justify-center items-center mt-6">
+          class="w-full h-full flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
-          <button class="w-full my-4 bg-blue-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]">
-            Claim your $PM now
-          </button>
         </div>
         <div v-else>
           <template v-if="hasRetweeted">
