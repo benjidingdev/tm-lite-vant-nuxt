@@ -48,6 +48,7 @@
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "qrcode.vue": "^3.6.0",
+    "siwe": "^3.0.0",
     "stream-browserify": "^3.0.0",
     "tailwindcss": "^4.1.11",
     "v-onboarding": "^2.9.0",
