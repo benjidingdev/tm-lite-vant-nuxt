@@ -27,6 +27,8 @@ let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
+let claimedTopicIds = $ref([]);
+
 const threshold = 100; // Threshold of swiping
 // The data from store
 let { isLoading } = $(requestQueueStore());
@@ -50,13 +52,7 @@ const { query, path } = $(useRoute());
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
-// let selectedYesOrNo = $computed(() => {
-//   // yesMarkets.concat(noMarkets).includes(pdcCards[firstCardIndex]?.id) && yesMarkets.includes(pdcCards[firstCardIndex]?.id) ? 'Yes' : 'No'
-//   if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
-//     return
-//   }
-//   return '';
-// })
+let isFinished = $computed(() => claimedTopicIds?.some(item => item == route.params.pid));
 
 const updateMarket = async (topicId: number, markets: any) => {
   await doFetch('/api/topics/updateTopic', {
@@ -173,19 +169,23 @@ const swipeCard = (status: any) => {
 };
 
 async function trade(marketId: any, isYes: any) {
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'topic-market-trade',
-      marketId: marketId,
-      isYes: isYes,
+  try {
+    const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'topic-market-trade',
+        marketId: marketId,
+        isYes: isYes,
+      })
     })
-
-  }).catch((err) => {
-    debug({ msg: 'topic-get error', err })
-    showToast('You have already traded this market!');
+    if (rz.status === 200) {
+      useConfetti();
+    }
     pickNext();
-  })
+  } catch (error) {
+    showToast('You have already traded this market or server error!');
+    pickNext();
+  }
 }
 
 // reset the position of cards
@@ -255,17 +255,36 @@ const getUserMarkets = async () => {
   if (res?.status === 200) {
     yesMarkets = res?.data[0]?.yesMarkets || [];
     noMarkets = res?.data[0]?.noMarkets || [];
+    claimedTopicIds = res?.data[0]?.claimedTopicIds || [];
   } else {
     return [];
   }
 }
 
 const getUserSelectedStatus = (currentCardID: any) => {
-  console.log(noMarkets, yesMarkets,)
   if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
     return yesMarkets.includes(currentCardID) ? "Yes" : "No";
   }
   return '';
+}
+
+const claim = async () => {
+  try {
+    const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'topic-market-claim'
+      })
+    });
+    if (rz?.status === 200 && rz?.msg === "claim got!") {
+      useConfetti();
+    } else {
+      showToast(rz?.msg);
+    }
+  } catch (error) {
+    showToast('Calim failed!');
+    closeToast();
+  }
 }
 
 onMounted(async () => {
@@ -278,7 +297,7 @@ onMounted(async () => {
 
 <template>
   <!-- <OnboardingGuide /> -->
-  <div class="w-full h-[90%] relative z-10!">
+  <div class="w-full h-[500px] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
         <div class="w-full h-[80vh] flex flex-col justify-center items-center ">
@@ -294,15 +313,21 @@ onMounted(async () => {
           </div>
         </div>
       </template>
-
-      <div v-if="pdcCards.length">
+      <div>{{ }}</div>
+      <div v-if="isFinished">
+        <div class="card draggable-element shadow-md active">
+          <van-empty image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png" image-size="80"
+            description="Waiting for next reward!" />
+        </div>
+      </div>
+      <div v-else-if="pdcCards.length">
         <div v-for="(card, index) in pdcCards as cardsType" :key="card.id"
           :class="['card', 'draggable-element', 'shadow-md', { active: firstCardIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
 
           <div class="w-full flex items-center justify-between px-4 bg-gray-200">
-            <div class="flex items-center justify-start p-[6px]">
+            <div class="flex items-center justify-start p-[6px] space-x-2">
               <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
               <div class="text-black">
                 <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
@@ -351,14 +376,15 @@ onMounted(async () => {
                 </div>
               </div>
               <!--Card information-->
-              <div class="text-sm text-gray-500 mt-2 text-center">
-                <span class="text-center text-gray-400">
-                  <span
-                    :class="`text-2xl text-bold ${getUserSelectedStatus(card.id) ? 'text-green-500' : 'text-red-500'}`">{{
-                      getUserSelectedStatus(card.id) }}</span>
+              <div class="text-sm text-gray-500 mt-1">
+                <span v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
+                  class="text-gray-400">
+                  <span>You have selected </span>
+                  <span class="text-bold">{{
+                    getUserSelectedStatus(card.id) }}</span>
                 </span>
-                <span> TO WIN </span>
-                <span class="text-center text-2xl mt-5 text-green-500 text-bold">$200PM</span>
+                <span v-else>Trade now!</span>
+                <p class="text-2xl text-green-500 text-bold">+$200PM</p>
               </div>
             </div>
           </div>
@@ -377,6 +403,10 @@ onMounted(async () => {
 
     </van-skeleton>
   </div>
+  <van-button v-if="!isLoading" type="primary"
+    class="w-full px-4 my-4! bg-blue-500 text-white  rounded-[8px]! bg-[#7000FF]" :disabled="isFinished" @click="claim">
+    {{ isFinished ? 'You have got 200 $PM!' : 'Claim your $PM now!' }}
+  </van-button>
 </template>
 
 <style>

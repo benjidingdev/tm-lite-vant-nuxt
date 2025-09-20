@@ -50,6 +50,24 @@ export default defineNuxtConfig({
         '@line/liff',
       ]
     },
+    build: {
+      sourcemap: false
+    },
+    optimizeDeps: {
+      include: [
+        'lodash',
+        'decimal.js',
+        'axios',
+        '@wagmi/core',
+        '@wagmi/vue',
+        'viem',
+        '@reown/appkit',
+        '@reown/appkit-adapter-wagmi',
+        '@privy-io/js-sdk-core',
+        '@lighthouse-web3/sdk',
+        '@line/liff',
+      ]
+    },
     server: {
       allowedHosts: [
         "localhost",
@@ -60,8 +78,7 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
       nodePolyfills({
-        include: ["path", "crypto", "stream", "buffer", "process"], // 添加 crypto 和 buffer
-        exclude: ["http"],
+        exclude: ['http'],
         globals: {
           Buffer: true,
           global: true,
@@ -95,14 +112,7 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_IPFS_GATEWAY_URL": JSON.stringify(
         process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL || ""
       ),
-    },
-    resolve: {
-      alias: {
-        crypto: "crypto-browserify",
-        stream: "stream-browserify",
-        buffer: "buffer/",
-      },
-    },
+    }
   },
 
   i18n: {
