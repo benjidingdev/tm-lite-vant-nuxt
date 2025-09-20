@@ -16,7 +16,7 @@ const { t } = useI18n();
 const { isSupported, copy, copied, text } = useClipboard();
 
 const { userInfo } = $(userStore());
-const { isInitialized, isLoginIn, login, sendMessages, createUrlBy } = $(liffStore());
+const { isInitialized, isLoginIn, login, shareTargetPicker, createUrlBy } = $(liffStore());
 
 const showShare = ref(false);
 const showQRCode = ref(false);
@@ -66,10 +66,10 @@ const onSelect = async (option: { name: string, icon: string }) => {
       break;
     case t('Line'):
       if (isLoginIn) {
-        sendMessages([{
+        shareTargetPicker([{
           type: 'text',
           text: shareText
-        }])
+        }], true)
       } else {
         login('');
       }
