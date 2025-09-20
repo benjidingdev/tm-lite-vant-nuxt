@@ -1,26 +1,24 @@
 <script setup lang="ts">
+import { getCheckinNoticeList } from '~/api/checkin'
 const { t } = useI18n()
-// import { getInterestNoticeList } from '~/api/interest'
 
 let loading = $ref(true)
-setTimeout(() => {
-  loading = false
-}, 1000)
+let notices = $ref<string[]>([])
 
-let notices = $ref([
-  t('notices.return'),
-  t('notices.poolSplit'),
-  t('notices.reset'),
-])
+const getList = async () => {
+  try {
+    const res = await getCheckinNoticeList()
+   notices = res?.data?.noticesList.map((i:string)=> {
+    return t(i.key)
+   }) || []
+  } finally {
+    loading = false
+  }
+}
 
-// const getList = async () => {
-//   const res = await getInterestNoticeList()
-//   console.log(res);
-// }
-
-// onMounted(()=> {
-//   getList()
-// })
+onMounted(() => {
+  getList()
+})
 </script>
 
 <template>
