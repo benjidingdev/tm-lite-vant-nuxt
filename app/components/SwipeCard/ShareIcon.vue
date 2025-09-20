@@ -68,7 +68,7 @@ const onSelect = async (option: { name: string, icon: string }) => {
       if (isLoginIn) {
         shareTargetPicker([{
           type: 'text',
-          text: pickRandom(SHARE_MARKET_TEXT(topicInfo.title, topicInfo.markets[0], createUrlBy(shareUrl)))
+          text: pickRandom(SHARE_MARKET_TEXT(topicInfo.title, topicInfo.markets[0], await createUrlBy(shareUrl)))
         }], true)
       } else {
         login('');

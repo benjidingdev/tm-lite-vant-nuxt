@@ -94,6 +94,7 @@
   "You receive": "You receive",
   "Topic Voting": "Topic Voting",
   "Initiate a topic": "Initiate a advise",
+  "Test Liff": "Test Liff",
   "Title": "Title",
   "Ttitle Prompt": "Please fill in the topic title",
   "Description": "Description",
@@ -179,5 +180,4 @@
   "Please check yourEmail for an email from privy.io and enter your code below.": "Please check {email} for an email from privy.io and enter your code below.",
   "Didn't get an email?": "Didn't get an email?",
   "Initializing wallet...": "Initializing wallet..."
-
 }
