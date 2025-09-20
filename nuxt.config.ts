@@ -33,16 +33,31 @@ export default defineNuxtConfig({
   modules,
   css: ["~/assets/css/main.css"],
 
-  // 在 vite.plugins 部分修改
-  // 在 vite 部分添加 resolve.alias
   vite: {
+    build: {
+      sourcemap: false
+    },
+    optimizeDeps: {
+      include: [
+        'lodash',
+        'decimal.js',
+        'axios',
+        '@wagmi/core',
+        '@wagmi/vue',
+        'viem',
+        '@reown/appkit',
+        '@reown/appkit-adapter-wagmi',
+        '@privy-io/js-sdk-core',
+        '@lighthouse-web3/sdk',
+        '@line/liff',
+      ]
+    },
     server: {
       allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app", "frp.jdoffices.com"],
     },
     plugins: [
       tailwindcss(),
       nodePolyfills({
-        include: ['path', 'crypto', 'stream', 'buffer', 'process'], // 添加 crypto 和 buffer
         exclude: ['http'],
         globals: {
           Buffer: true,
@@ -65,14 +80,7 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_PUBLIC_TG_BOT_INFO": JSON.stringify(process.env.NUXT_PUBLIC_TG_BOT_INFO || ""),
       "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""),
       "import.meta.env.NUXT_PUBLIC_IPFS_GATEWAY_URL": JSON.stringify(process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL || ""),
-    },
-    resolve: {
-      alias: {
-        crypto: 'crypto-browserify',
-        stream: 'stream-browserify',
-        buffer: 'buffer/',
-      },
-    },
+    }
   },
 
   i18n: {
