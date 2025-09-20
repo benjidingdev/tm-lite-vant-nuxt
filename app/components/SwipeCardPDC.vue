@@ -327,7 +327,7 @@ onMounted(async () => {
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
 
           <div class="w-full flex items-center justify-between px-4 bg-gray-200">
-            <div class="flex items-center justify-start p-[6px]">
+            <div class="flex items-center justify-start p-[6px] space-x-2">
               <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
               <div class="text-black">
                 <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
