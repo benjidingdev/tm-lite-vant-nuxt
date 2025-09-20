@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import liff from "@line/liff";
-import { showSuccessToast, showFailToast } from "vant";
+import { showFailToast } from "vant";
 
 export interface LiffError {
   code: string;

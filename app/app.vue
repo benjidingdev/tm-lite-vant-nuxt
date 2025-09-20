@@ -10,6 +10,7 @@ import { useRouteQuery } from '@vueuse/router'
 const { token } = $(authStore());
 const { userInfo } = $(userStore())
 const href = useRequestURL().href
+const origin = useRequestURL().origin
 
 useHead({
   title: "Turing Market | Mini Dapp",
@@ -23,13 +24,13 @@ useHead({
     { name: 'description', content: () => 'Bet on your beliefs!' },
     { property: 'og:title', content: () => 'Turing Market' },
     { property: 'og:description', content: () => 'Bet on your beliefs!' },
-    { property: 'og:image', content: () => '/icons/twitter-card.png' },
+    { property: 'og:image', content: () => `${origin}/media/twitter-card.png` },
     { property: 'og:url', content: () => `${href}${token.accessToken !== '' ? '?inviteCode=' + userInfo?.inviteCode : ''}` },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' }, // 或 'summary'
     { name: 'twitter:title', content: () => 'Turing Market' },
     { name: 'twitter:description', content: () => 'Bet on your beliefs!' },
-    { name: 'twitter:image', content: () => '/icons/twitter-card.png' },
+    { name: 'twitter:image', content: () => `${origin}/media/twitter-card.png` },
     { name: 'twitter:url', content: () => `${href}${token.accessToken !== '' ? '?inviteCode=' + userInfo?.inviteCode : ''}` }
   ],
   script: [

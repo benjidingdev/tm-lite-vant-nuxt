@@ -13,7 +13,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n();
-const { isSupported, copy, copied, text } = useClipboard();
+const { isSupported, copy, copied } = useClipboard();
 
 const { userInfo } = $(userStore());
 const { isInitialized, isLoginIn, login, shareTargetPicker, createUrlBy } = $(liffStore());
@@ -68,7 +68,7 @@ const onSelect = async (option: { name: string, icon: string }) => {
       if (isLoginIn) {
         shareTargetPicker([{
           type: 'text',
-          text: shareText
+          text: pickRandom(SHARE_MARKET_TEXT(topicInfo.title, topicInfo.markets[0], createUrlBy(shareUrl)))
         }], true)
       } else {
         login('');
@@ -77,13 +77,15 @@ const onSelect = async (option: { name: string, icon: string }) => {
     case t('Copy Link'):
       if (isSupported) {
         copy(shareText);
-        showToast(t('Copied'));
+        if (copied) showToast(t('Copied'));
+        else showToast(t('Copy Failed'));
       }
       break;
     case t('Copy Line Link'):
       if (isInitialized && isSupported) {
         copy(await createUrlBy(shareUrl));
-        showToast(t('Copied'));
+        if (copied) showToast(t('Copied'));
+        else showToast(t('Copy Failed'));
       }
       break;
     // case t('Share Poster'):
@@ -109,18 +111,18 @@ const shareCard = () => {
   <div @click="handleShowShare()" class="cursor-pointer">
     <van-icon name="share-o" />
   </div>
+
   <van-share-sheet v-model:show="showShare" :options="options" :title="t('Share Now')" description="" @select="onSelect"
     teleport="body" />
-  <van-popup v-model:show="showQRCode" :style="{ padding: '24px' }">
+
+  <van-popup v-model:show="showQRCode" :style="{ padding: '24px' }" teleport="body">
     <div class="flex flex-col items-center text-center bg-white rounded-2xl p-6 shadow-lg">
       <div class="text-lg font-semibold mb-3">{{ t('Scan to Join') }}</div>
-
       <div class="p-[3px] rounded-2xl bg-gradient-to-tr from-blue-400 to-cyan-300">
         <div class="bg-white rounded-xl p-3">
           <QrcodeVue :value="qrcodeContent" :size="140" />
         </div>
       </div>
-
       <div class="text-sm text-gray-500 mt-3">{{ t('Scan with phone') }}</div>
     </div>
   </van-popup>
