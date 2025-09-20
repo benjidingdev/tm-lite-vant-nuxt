@@ -4,7 +4,7 @@ const { hasTwitterLogin, x_user, doLogin } = $(supabaseStore())
 
 <template>
 
-  <div class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
+  <div class="flex items-center justify-center min-h-screen text-white p-4">
 
     <PdUser :user="x_user" v-if="hasTwitterLogin" />
 
@@ -16,8 +16,8 @@ const { hasTwitterLogin, x_user, doLogin } = $(supabaseStore())
     </div>
     <div class="bg-blue-500 rounded-md px-2" @click="doLogout">logout</div>
   </div> -->
-    <template v-else class="flex items-center justify-center min-h-screen bg-[#07090b] text-white p-4">
-      <div class="w-full max-w-sm rounded-lg border border-[#1a1b1c] bg-[#111316] p-6 text-center shadow-lg">
+    <template v-else class="flex items-center justify-center min-h-screen text-white p-4">
+      <div class="w-full max-w-sm rounded-lg border border-[#0e100f] bg-[#200052] p-6 text-center shadow-lg">
 
         <div class="flex flex-col items-center">
           <svg class="h-8 w-8 fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

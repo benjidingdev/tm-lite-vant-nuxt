@@ -55,9 +55,10 @@ onMounted(() => {
   <div class="w-full bg-color-white p-4" v-if="order?.historyList.length !== 0">
     <van-swipe-cell v-for="item in order?.historyList" :key="item.marketId">
       <van-card
+        currency=""
         :key="item.marketId"
         :price="
-          amountMoney(item.volume || 0) +
+          item.volume +
           ' shares at ' +
           dollars2cents(item.price || 0) +
           '€'

@@ -5,9 +5,6 @@ definePageMeta({
   layout: "x",
 });
 
-const shareTweetStatusLink = "https://x.com/TuringMarket/status/1958786009753428017";
-
-
 const { t } = useI18n()
 const route = useRoute()
 
@@ -23,84 +20,113 @@ async function capture(targetId = 'my-div', name = 'shareImageName') {
   // }
 
   // await captureTargetToPng(name, target);
-
-  handleRetweet()
 }
 
-function handleRetweet() {
-  const url = new URL("https://twitter.com/intent/tweet");
+function handleShare() {
 
-  const hashtags = "TuringM,TuringMaster,Airdrop";
-  url.searchParams.append("hashtags", hashtags);
-
-  const shareLink = `${location.href}`;
+  let shareLink = new URL(location.href);
+  shareLink.searchParams.append('refId', x_user.id)
+  shareLink = shareLink.toString()
   const text = `
-I’m joining the TuringM Prediction Master 🏆🏆🏆🏆🏆
+  I’m joining the TuringM Prediction Master 🏆🏆🏆🏆🏆
 
 Follow @TuringMarket, @TuringM_CN, RT and LIKE via ${shareLink} to get 1000 testnet $TUIT.
 
 1000 USDT up for grabs!
  `;
-  url.searchParams.append("text", text);
-  url.searchParams.append("url", shareTweetStatusLink);
-  window.open(url.toString(), "_blank");
+
+  const hashtags = "TuringM,TuringMaster,Airdrop";
+  // handleRetweet({ hashtags, refId: x_user.id, text })  // TODO:: shareInvite from utils
 }
 
 let user = $ref({})
-const isMe = $computed(() => !!hasTwitterLogin && route.params.uid === x_user.id)
+let isLoading = $ref(true)
 async function loadUser(uid) {
-  const rz = await doFetch(`/api/pd/${uid}`)
-  console.log(rz)
-  user = {
-    id: rz.id,
-    avatar: rz?.avatar,
-    name: rz?.fullname,
-    user_name: rz?.slug,
-    refCount: rz.refCount,
+  try {
+    isLoading = true
+    const rz = await doFetch(`/api/pd/${uid}`)
+    console.log(rz)
+    user = {
+      id: rz.id,
+      avatar: rz?.avatar,
+      name: rz?.fullname,
+      user_name: rz?.slug,
+      refCount: rz.refCount,
+    }
+  } catch (error) {
+    console.log('load user error', error)
+  } finally {
+    isLoading = false
   }
 }
 
 onMounted(async () => {
   // console.log(route.params.uid, hasTwitterLogin, x_user.id, isMe)
-  if (isMe) {
-    user = x_user
-    return
-  }
   await loadUser(route.params.uid)
 })
 
 const handleLogin = async () => {
-  await doLogin({ pathname: '/pd/u-[uid]', refId: route.params.uid })
+  const params = {
+    pathname: '/pd/u-[uid]',
+  }
+
+  const url = new URL(location.href);
+  const refId = url.searchParams.get('refId')
+  if (refId) {
+    params.refId = refId
+  }
+  await doLogin(params)
 }
 </script>
 
 <template>
   <article class="w-full h-full flex flex-col justify-center items-center px-8">
 
-    <PdUser :user />
+    <van-skeleton :loading="isLoading">
+      <template #template>
+        <div class="w-[calc(100vw-64px)] h-[80vh] flex flex-col justify-center items-center">
+          <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
+            <van-loading size="48" />
+          </div>
 
-    <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
-      <template v-if="isMe">
-        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
-          @click="capture('my-div', 'shareImageName')">
-          <span>{{ t('share') }}</span>
-        </button>
-
-        <div class="relative flex items-center rounded-xl bg-[#090b0e] text-sm text-gray-400">
-          <span class="flex-grow text-left">{{ t('share-desc', { coin: 'PDCoin' }) }}</span>
+          <!-- <van-skeleton-image /> -->
+          <div :style="{ marginTop: '42px', width: '100%' }">
+            <van-skeleton-paragraph row-width="60%" />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+          </div>
         </div>
       </template>
+    </van-skeleton>
 
-      <template v-if="!hasTwitterLogin">
-        <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="handleLogin">
-          <span>{{ t('btn', { coin: 'PDCoin' }) }}</span>
-        </button>
+    <template v-if="!isLoading">
+      <PdUser :user />
 
-        <div class="relative flex items-center rounded-xl bg-[#090b0e] text-sm text-gray-400">
-          <span class="flex-grow text-left">{{ t('btn-desc', { coin: 'PDCoin' }) }}</span>
-        </div>
-      </template>
-    </div>
+      <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
+        <template v-if="hasTwitterLogin">
+          <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
+            @click="handleShare">
+            <span>{{ t('share') }}</span>
+          </button>
+
+          <div class="relative flex items-center rounded-xl bg-[#090b0e] text-sm text-gray-400">
+            <span class="flex-grow text-left">{{ t('share-desc', { coin: 'PDCoin' }) }}</span>
+          </div>
+        </template>
+
+        <template v-else>
+          <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black" @click="handleLogin">
+            <span>{{ t('btn', { coin: 'PDCoin' }) }}</span>
+          </button>
+
+          <div class="relative flex items-center rounded-xl bg-[#090b0e] text-sm text-gray-400">
+            <span class="flex-grow text-left">{{ t('btn-desc', { coin: 'PDCoin' }) }}</span>
+          </div>
+        </template>
+      </div>
+    </template>
+
 
   </article>
 </template>

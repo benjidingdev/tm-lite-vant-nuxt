@@ -1,7 +1,7 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { getUserProfile } from "@/api/userInfo";
+import { getUserProfile, getUserPortfolio } from "@/api/userInfo";
 import {
   amountSeparate,
 } from "@/utils/processing";
@@ -10,6 +10,7 @@ const { wallet } = $(walletStore());
 const { userInfo } = $(userStore());
 
 let voData = $ref({
+  portfolio: 0,
   userInfo: {},
   pageNo: 1,
   pageSize: 10,
@@ -73,8 +74,18 @@ const getUserInfo = async () => {
   } catch (e) {}
 };
 
+const getPortfolio = async () => {
+  try {
+    let res = await getUserPortfolio();
+    if (res.code === 0) {
+      voData.portfolio = res.data.portfolio;
+    }
+  } catch (e) {}
+};
+
 onMounted(() => {
   getUserInfo();
+  getPortfolio();
 });
 </script>
 
@@ -107,10 +118,9 @@ onMounted(() => {
               <p class="my-1 text-xs text-[#727272]">
                 {{ $t("Position Value") }}
               </p>
-              <p v-if="positionValue" class="text-xl font-bold">
-                {{ positionValueFiexed }}
+              <p class="text-xl font-bold">
+                {{ voData.portfolio }}
               </p>
-              <p v-else class="text-xl font-bold">{{ positionValue }}</p>
             </div>
           </li>
 
