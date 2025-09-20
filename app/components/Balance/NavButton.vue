@@ -20,11 +20,11 @@ const avatar = computed(() => {
       </div>
     </button>
     <div v-else>
-      <van-button v-if="isEnable" size="small" round type="primary" class="px-3 text-white/80 right mr-2!" @click="requestAccount">{{
-        $t("Login") }} with kaia</van-button>
+      <van-button v-if="isEnable" size="small" round type="primary" class="px-3 text-white/80 right mr-2!"
+        @click="requestAccount">{{
+          $t("Login") }} with kaia</van-button>
       <van-button v-else size="small" round type="primary" class="px-3 text-white/80 right mr-2!"
         @click="setModal('loginModal', true)">{{ $t("Login") }}</van-button>
-      <van-divider vertical />
     </div>
   </div>
 </template>

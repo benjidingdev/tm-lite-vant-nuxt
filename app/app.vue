@@ -7,14 +7,30 @@ import jaJP from "vant/es/locale/lang/ja-JP";
 import koKR from "vant/es/locale/lang/ko-KR";
 import { useRouteQuery } from '@vueuse/router'
 
+const { token } = $(authStore());
+const { userInfo } = $(userStore())
+const href = useRequestURL().href
+
 useHead({
-  title: "Turing Market",
+  title: "Turing Market | Mini Dapp",
   meta: [
     {
       name: "viewport",
       content:
         "width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover",
     },
+    // Open Graph
+    { name: 'description', content: () => 'Bet on your beliefs!' },
+    { property: 'og:title', content: () => 'Turing Market' },
+    { property: 'og:description', content: () => 'Bet on your beliefs!' },
+    { property: 'og:image', content: () => '/icons/twitter-card.png' },
+    { property: 'og:url', content: () => `${href}${token.accessToken !== '' ? '?inviteCode=' + userInfo?.inviteCode : ''}` },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' }, // 或 'summary'
+    { name: 'twitter:title', content: () => 'Turing Market' },
+    { name: 'twitter:description', content: () => 'Bet on your beliefs!' },
+    { name: 'twitter:image', content: () => '/icons/twitter-card.png' },
+    { name: 'twitter:url', content: () => `${href}${token.accessToken !== '' ? '?inviteCode=' + userInfo?.inviteCode : ''}` }
   ],
   script: [
     { src: "https://telegram.org/js/telegram-web-app.js", defer: true },
@@ -68,18 +84,18 @@ onMounted(() => {
 
 <template>
   <div>
-  <van-config-provider>
-    <NuxtLoadingIndicator />
-    <NuxtLayout>
-      <NuxtPage />
-      <SettingsRightDrawer />
-      <LangSwitcherPopup />
-      <TradeSettingPopup />
-      <OrderSharePopup />
-      <AuthLoginModal />
-      <BalancePopupV1 />
-      <RequestQueueError />
-    </NuxtLayout>
+    <van-config-provider>
+      <NuxtLoadingIndicator />
+      <NuxtLayout>
+        <NuxtPage />
+        <SettingsRightDrawer />
+        <LangSwitcherPopup />
+        <TradeSettingPopup />
+        <OrderSharePopup />
+        <AuthLoginModal />
+        <BalancePopupV1 />
+        <RequestQueueError />
+      </NuxtLayout>
     </van-config-provider>
     <iframe ref="iframeRef" />
   </div>

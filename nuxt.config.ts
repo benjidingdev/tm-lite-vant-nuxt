@@ -31,9 +31,25 @@ export default defineNuxtConfig({
   modules,
   css: ["~/assets/css/main.css"],
 
-  // 在 vite.plugins 部分修改
-  // 在 vite 部分添加 resolve.alias
   vite: {
+    build: {
+      sourcemap: false
+    },
+    optimizeDeps: {
+      include: [
+        'lodash',
+        'decimal.js',
+        'axios',
+        '@wagmi/core',
+        '@wagmi/vue',
+        'viem',
+        '@reown/appkit',
+        '@reown/appkit-adapter-wagmi',
+        '@privy-io/js-sdk-core',
+        '@lighthouse-web3/sdk',
+        '@line/liff',
+      ]
+    },
     server: {
       allowedHosts: [
         "localhost",

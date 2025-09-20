@@ -158,7 +158,7 @@ onMounted(() => {
       <van-cell-group inset title="短信消息">
         <van-field v-model="textMessage2.type" name="type" label="消息类型" />
         <van-field v-model="textMessage2.text" name="text" label="文本内容" />
-        <van-field :value="JSON.stringify(textMessage2.substitution)" name="text" label="文本内容" />
+        <van-field :model-value="JSON.stringify(textMessage2.substitution)" name="substitution" label="替代文本" />
         <van-cell center title="是否群发">
           <template #right-icon>
             <van-switch v-model="isMultiple" />
@@ -194,7 +194,7 @@ onMounted(() => {
       <van-cell-group inset title="模板消息">
         <van-field v-model="templateMessage.type" name="type" label="消息类型" />
         <van-field v-model="templateMessage.altText" name="altText" label="替代文本" />
-        <van-field :value="JSON.stringify(templateMessage.template)" name="template" label="模板内容" />
+        <van-field :model-value="JSON.stringify(templateMessage.template)" name="template" label="模板内容" />
         <van-cell center title="是否群发">
           <template #right-icon>
             <van-switch v-model="isMultiple" />
