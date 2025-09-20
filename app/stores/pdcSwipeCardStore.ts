@@ -1,20 +1,18 @@
 export const pdcSwipeCardStore = defineStore("pdcSwipeCardStore", () => {
-  let userAsset = $ref({
-    userId: "",
-    pAmount: 0,
-  });
+  let pAmount = $ref(0);
   let pdcCards = $ref([]);
+  let pdcCardsOrigin = $ref([]);
+  let yesMarkets = $ref([]);
+  let noMarkets = $ref([]);
 
   return $$({
-    userAsset,
+    pAmount,
     pdcCards,
+    yesMarkets,
+    noMarkets,
+    pdcCardsOrigin,
   });
-},
-  {
-    persist: {
-      debug: true,
-    },
-  });
+});
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(pdcSwipeCardStore, import.meta.hot));

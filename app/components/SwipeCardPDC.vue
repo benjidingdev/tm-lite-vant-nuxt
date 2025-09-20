@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getTopicsRecommend, addTopicsWatchlist } from "~/api/markets";
 import { convertCurrency, percentage } from "@/utils/processing";
 import { _debounce } from "@/utils/debounce";
+import _ from 'lodash'
 const debug = useDebug('SwipeCard')
 
 type Card = {
@@ -22,68 +22,52 @@ type QueryParams = {
 };
 
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
-let currentIndex = $ref(0); // The index of current card
+let firstCardIndex = 0; // The index of current card
 let offsetX = $ref(0); // The value  of offsetX
 let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
+let time = $ref(3600 * 1000 * 24); // The value of countdown time
 const threshold = 100; // Threshold of swiping
 // The data from store
-const { setModal } = $(uiStore());
 let { isLoading } = $(requestQueueStore());
-let { pdcCards }: any = $(pdcSwipeCardStore());
+const { x_user } = $(supabaseStore())
+let { pdcCards, pdcCardsOrigin, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
 
 const topicsId = 2; // default topic id
 let currentX = 0;
 let currentY = 0;
-const pageSize = 12;
-let total = 0;
 let isSettlement = $ref(false);
 const customMarkets: any = $ref(markets());
+let currentCardID = $ref(0);
 
-let queryParams: QueryParams = {
+let queryParams: any = {
   cardID: "",
   inviteCode: "",
 };
-const recommondQueryParams = $ref({
-  pageNo: 1,
-  pageSize,
-  title: null,
-  active: null,
-  closed: null,
-  order: "trending",
-  ascending: false,
-  page: 1,
-  tagId: null,
-  followed: false,
-});
+
 
 const { query, path } = $(useRoute());
 
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
+let selectedYesOrNo = $computed(() => {
+  // yesMarkets.concat(noMarkets).includes(pdcCards[firstCardIndex]?.id) && yesMarkets.includes(pdcCards[firstCardIndex]?.id) ? 'Yes' : 'No'
+  if (yesMarkets.concat(noMarkets).includes(currentCardID)) {
+    return yesMarkets.includes(currentCardID) ? 'YES' : 'NO';
+  }
+  return '';
+})
 
-const initMarket = async (topicId: number, markets: any) => {
-  let res = await doFetch('/api/topics/update', {
+const updateMarket = async (topicId: number, markets: any) => {
+  await doFetch('/api/topics/updateTopic', {
     method: 'POST',
     body: {
       topicId,
       markets,
     }
   })
-  console.log('initMarket res', res);
-}
-
-const updateMarket = async (topicId, markets) => {
-  let res = await doFetch('/api/topics/update', {
-    method: 'POST',
-    body: {
-      topicId,
-      markets,
-    }
-  })
-  console.log('createMarket res', res)
 }
 
 const getMarket = async (topicId: any) => {
@@ -91,39 +75,26 @@ const getMarket = async (topicId: any) => {
     method: 'GET',
   })
   const markets = res?.data?.markets || [];
-  console.log('getMarket res', markets)
   return markets;
 }
 
-let { userAsset } = $(pdcSwipeCardStore())
+let { pAmount } = $(pdcSwipeCardStore())
 
 // get the list of cards
-const getInfoList = async (refresh: boolean) => {
-  if (refresh) {
-    isLoading = false;
-    if (recommondQueryParams.pageNo * pageSize >= total) {
-      recommondQueryParams.pageNo = 1;
-      getInfoList(false);
-      return;
-    }
-    recommondQueryParams.pageNo++;
-  } else {
-    isLoading = true;
-  }
-
+const getInfoList = async () => {
   pdcCards = await getMarket(topicsId);
-  console.log('customMarkets', customMarkets.length, 'pdcCards', pdcCards.length, customMarkets?.length !== pdcCards.length);
+
   if (customMarkets?.length !== pdcCards.length) {
-    await initMarket(topicsId, customMarkets);
+    await updateMarket(topicsId, customMarkets);
     pdcCards = await getMarket(topicsId);
   }
-  console.log('pdcCards', pdcCards);
+  pdcCardsOrigin = _.cloneDeep(pdcCards);
   isLoading = false;
 };
 
 // Obtain the style of card
 const getCardStyle = (index: number) => {
-  if (index === currentIndex) {
+  if (index === firstCardIndex) {
     return {
       transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${offsetX / 20
         }deg)`,
@@ -138,7 +109,7 @@ const getCardStyle = (index: number) => {
 
 // Touch start
 const touchStart = (e: TouchEvent | any) => {
-  if (currentIndex >= pdcCards.length) return;
+  if (firstCardIndex >= pdcCards.length) return;
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
   offsetX = 0;
@@ -147,7 +118,7 @@ const touchStart = (e: TouchEvent | any) => {
 
 // Touch move
 const touchMove = (e: TouchEvent | any) => {
-  if (currentIndex >= pdcCards.length) return;
+  if (firstCardIndex >= pdcCards.length) return;
 
   currentX = e.touches[0].clientX;
   currentY = e.touches[0].clientY;
@@ -170,8 +141,7 @@ const touchMove = (e: TouchEvent | any) => {
 
 // Touch end
 const touchEnd = (card: Card) => {
-  if (currentIndex >= pdcCards.length) return;
-
+  if (firstCardIndex >= pdcCards.length) return;
   if (offsetX >= threshold) {
     buyNo(card); // swipe to left means reject
   } else if (offsetX <= -threshold) {
@@ -197,6 +167,7 @@ const swipeCard = (status: any) => {
   setTimeout(() => {
     offsetX = 0;
     offsetY = 0;
+    // how to update the pdcCards without changing the value of pdccard
     pdcCards.shift();
   }, 0);
 };
@@ -219,51 +190,112 @@ const pickNext = () => {
   swipeCard(statusList[3]);
 };
 
-const updateAsset = async (pAmount:any) => {
-  let res = await doFetch('/api/assets/update', {
+const updateAsset = async (pAmount: any) => {
+  await doFetch('/api/assets/updateAsset', {
     method: 'POST',
     body: {
-      userId: x_user.id,
-      pAmount,
+      pAmount: pAmount,
     }
   })
-  console.log('updateAsset res', res)
+}
+
+const updateUserMarkets = async (market: any) => {
+  let res = await doFetch('/api/usermarkets/updateUserMarket', {
+    method: 'POST',
+    body: {
+      market,
+    }
+  })
+  console.log('updateUserMarkets res', res)
+}
+
+const getUserMarkets = async () => {
+  let res = await doFetch('/api/usermarkets', {
+    method: 'GET',
+  })
+
+  if (res?.status === 200) {
+    yesMarkets = res?.data[0]?.yesMarkets || [];
+    noMarkets = res?.data[0]?.noMarkets || [];
+  } else {
+    return [];
+  }
+}
+
+const tradeSum = async () => {
+  await updateAsset(pAmount);
+}
+
+const tradeUserMarket = async (card: any, isYes: boolean) => {
+  try {
+    console.log('card----', card);
+    await getUserMarkets();
+    console.log('yesMarkets', yesMarkets, 'noMarkets', noMarkets);
+    if (yesMarkets.concat(noMarkets).includes(card.id)) {
+      pickNext();
+      showToast('You have voted on this market');
+      return false;
+    }
+    const conbinedMarkets = isYes ? yesMarkets.concat([card.id]) : noMarkets.concat([card.id]);
+
+    const uniqueMarkets = Array.from(new Set(conbinedMarkets));
+    if (isYes) {
+      yesMarkets = uniqueMarkets;
+    } else {
+      noMarkets = uniqueMarkets;
+    }
+    console.log('tradeUserMarket', { yesMarkets, noMarkets });
+    await updateUserMarkets({
+      yesMarkets,
+      noMarkets,
+    });
+    return true
+  } catch (error) {
+    console.log('getUserMarkets error', error);
+  }
 }
 
 // start transaction
-const goDeposit = async(card: Card, isYes: boolean) => {
+const goDeposit = async (card: Card, isYes: boolean) => {
   if (path.includes("market") === "true") {
     return;
   }
 
-  console.log('pdcCards', pdcCards, 'card', card);
-  let currentIndex: any = pdcCards.findIndex((item: any) => item.id === card.id);
-  if (currentIndex !== -1) {
-    if (pdcCards[currentIndex]) {
-      if (isYes) {
-        pdcCards[currentIndex].yesNum += 1;
-      } else {
-        pdcCards[currentIndex].noNum += 1;
-      }
+  pAmount = Math.max(0, pAmount - 1);
+  if (pAmount === 0) {
+    showToast("You don't have enough PDC, please go to market page to get more.");
+    resetCard();
+    return;
+  }
+
+  currentCardID = pdcCardsOrigin.findIndex((item: any) => item.id === card.id);
+  console.log('currentCardID', currentCardID);
+  if (pdcCardsOrigin[currentCardID]) {
+    if (isYes) {
+      pdcCardsOrigin[currentCardID].yesNum += 1;
+    } else {
+      pdcCardsOrigin[currentCardID].noNum += 1;
     }
   }
-  // console.log('currentCard', currentCard);
-  await updateMarket(2, pdcCards)
-
-  userAsset.pAmount -= 1;
-  updateAsset(userAsset.pAmount);
-
+  const isProcessing = await tradeUserMarket(card, isYes);
+  if (!isProcessing) {
+    resetCard();
+    return;
+  }
+  console.log('pAmount after tradeUserMarket', pdcCardsOrigin);
+  await updateMarket(2, pdcCardsOrigin)
+  await tradeSum();
   resetCard();
 };
 
 onMounted(() => {
-  getInfoList(false);
+  getInfoList();
   queryParams = getFatherInviteCode();
 });
 </script>
 
 <template>
-  <OnboardingGuide />
+  <!-- <OnboardingGuide /> -->
   <div class="w-full h-[90%] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
@@ -271,7 +303,6 @@ onMounted(() => {
           <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
             <van-loading size="48" />
           </div>
-
           <!-- <van-skeleton-image /> -->
           <div :style="{ marginTop: '42px', width: '100%' }">
             <van-skeleton-paragraph row-width="60%" />
@@ -284,10 +315,24 @@ onMounted(() => {
 
       <div v-if="pdcCards.length">
         <div v-for="(card, index) in pdcCards as cardsType" :key="card.id"
-          :class="['card', 'draggable-element', 'shadow-md', { active: currentIndex === index }]"
+          :class="['card', 'draggable-element', 'shadow-md', { active: firstCardIndex === index }]"
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
-          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
+
+          <div class="w-full flex items-center justify-between bg-white px-4">
+            <div class="flex items-center justify-start p-[6px]">
+              <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
+              <div class="text-black">
+                <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
+                <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>
+              </div>
+            </div>
+            <div class="text-black">ss</div>
+          </div>
+
+
+
+          <van-image width="100%" height="40%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
@@ -299,6 +344,8 @@ onMounted(() => {
             </div>
           </van-image>
 
+
+
           <div v-if="card" class="px-4 h-[50%]">
             <div class="h-[85%] overflow-hidden">
               <!-- Title and question -->
@@ -308,14 +355,14 @@ onMounted(() => {
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">
                 <div class="flex justify-between items-center h-full">
-                  <div id="step4" class="relative" @click="buyYes(card)">
+                  <div class="relative" @click="buyYes(card)">
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
                       Yes
                     </span>
                   </div>
-                  <div id="step5" class="relative" @click="buyNo(card)">
+                  <div class="relative" @click="buyNo(card)">
                     <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
@@ -324,14 +371,33 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
-
+              <!--Card information-->
+              <div class="text-sm text-gray-500 mt-2">
+                <div>
+                  <span class="font-bold text-black">{{ card.yesNum }}</span>
+                  <span> Yes Votes</span>
+                </div>
+                <div>
+                  <span class="font-bold text-black">{{ card.noNum }}</span>
+                  <span> No Votes</span>
+                </div>
+                <div>You will win 2 $PM, if you predict </div>
+                <div>
+                  <span>You have selected <span class="font-bold text-green-500">{{ selectedYesOrNo || 'YES'
+                      }}</span></span>
+                </div>
+                <div>
+                  <van-button size="mini" type="primary">Claim</van-button>
+                </div>
+              </div>
+              <!--countdown-->
+              <van-count-down :time="time" />
               <!-- Progress bar -->
               <!-- <SwipeCardProgressBar class="mt-5" :lastTradePrice="percentage(card?.markets[0].lastTradePrice, 'num')
               " /> -->
             </div>
             <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">
-              <!-- <text> ${{ convertCurrency(card.volume) }} Vol.</text> -->
               <SwipeCardShareCard :cardID="card.id" />
             </div>
           </div>
@@ -363,6 +429,7 @@ onMounted(() => {
 }
 
 .name {
+  color: #333;
   font-size: 18px;
   font-weight: bold;
   display: block;

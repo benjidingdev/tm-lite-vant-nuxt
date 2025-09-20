@@ -1,50 +1,78 @@
 <script setup>
-const emit = defineEmits(['handleClick'])
+const emit = defineEmits(['onSuccess'])
 const { x_user } = $(supabaseStore())
-const { hasRetweeted } = defineProps(['hasRetweeted'])
+const hasRetweeted = $(defineModel())
+const { topic } = defineProps({
+  topic: {
+    type: Object,
+    default: () => {},
+  }
+})
 
 const route = useRoute()
 
-const sharedTopic = topics()
-const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+// const sharedTopic = topics()
+// const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-function handleShare() {
+let hasRetweetClicked = $ref(false)
+
+function onClickRetweet() {
   if (!x_user.id) {
     return
   }
-  let shareLink = new URL(location.href);
-  shareLink.searchParams.append('refId', x_user.id)
-  shareLink = shareLink.toString()
-  const text = `Turing Market has a topic of ${topic.title} ,Join the waitlist via ${shareLink}`;
-
   handleRetweet({
-    hashtags: 'TuringM,TuringMaster,Airdrop',
-    shareTweetStatusLink: 'https://x.com/TuringMarket/status/1958786009753428017',
-    text
+    hashtags: topic.meta?.x_info?.hashtags,
+    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
+    text: topic.meta?.x_info?.text,
+    refId: x_user.id,
+    title: topic.title,
   })
-
-  emit('handleClick')
+  hasRetweetClicked = true
 }
+
+const descText = $computed(() => {
+  let text
+
+  if (hasRetweetClicked) {
+    text = 'Then, paste the retweet link above and click submit.'
+  } else {
+    text = 'First, click the retweet button below to retweet the topic tweet and paste the retweet link below.'
+  }
+  return text
+})
 
 </script>
 
 <template>
-  <section class="w-full flex flex-col items-center justify-center space-y-4 bg-[#200052] p-4 rounded-md">
-    <div class="flex items-center justify-center space-x-2">
-      <img :src="x_user?.avatar" alt="logo" class="w-12 h-12">
-      <div>
-        <p>{{ x_user?.name }}</p>
-        <p class="text-gray-400 text-xs">@{{ x_user?.user_name }}</p>
+  <section
+    class="w-full flex flex-col items-center justify-center space-y-4 bg-white p-5 rounded-[16px] mt-5 text-black">
+    <div class="w-full flex items-center justify-center space-x-[14px]">
+      <img :src="x_user?.avatar" alt="logo" class="size-11 rounded-[8px]">
+      <div class="flex-1">
+        <p class="opacity-80 text-[20px]">{{ x_user?.name }}</p>
+        <p class="text-[14px] opacity-60">@{{ x_user?.user_name }}</p>
       </div>
     </div>
-    <p class="text-gray-300 text-xs">
-      {{ hasRetweeted ? 'You have retweeted this topic' : 'First, click the retweet button below to retweet the topic tweet and paste the retweet link below.' }}
-    </p>
 
-    <div class="w-full flex justify-between items-center space-x-2">
-      <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleShare">
-        retweet
-      </button>
-    </div>
+    <PdWaitListCompleted :topic v-if="hasRetweeted" />
+    <template v-else>
+
+      <p class="opacity-60 text-[14px] mt-8 mb-7">
+        {{ descText }}
+      </p>
+
+      <PdWaitListSubmitRetweetUrl v-if="hasRetweetClicked" @onBack="() => { hasRetweetClicked = false }"
+        @onSuccess="() => { hasRetweeted = true; emit('onSuccess') }" />
+
+      <template v-else>
+
+        <div class="w-full flex justify-between items-center mb-[15px]">
+          <button class="w-full bg-[#7000FF] h-11 rounded-[8px]" @click="onClickRetweet"
+            style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);">
+            <text class="text-white font-[900]">Retweet</text>
+          </button>
+        </div>
+      </template>
+    </template>
   </section>
 </template>

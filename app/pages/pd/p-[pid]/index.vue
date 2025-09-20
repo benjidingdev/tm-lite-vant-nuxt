@@ -8,10 +8,12 @@ let refreshTime = $ref(new Date())
 const { hasTwitterLogin, doLogout } = $(supabaseStore())
 
 const sharedTopic = topics()
-const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
+const { query } = $(useRoute());
 
-// 2 share
-let hasRetweetClicked = $ref(false)
+let topic = $ref({})
+let isLoading = $ref(false)
+
+// const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
 async function handleDel() {
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
@@ -31,7 +33,7 @@ async function handleDel() {
 
 // 0, check if user has retweeted
 let hasRetweeted = $ref(false)
-async function loadData() {
+async function checkRetweeted() {
   if (!hasTwitterLogin) {
     return
   }
@@ -43,11 +45,27 @@ async function loadData() {
     })
   })
 
-  // console.log('topic-join_check', rz.data)
-
   if (rz?.data?.success) {
     hasRetweeted = true
   }
+}
+
+async function loadData() {
+  isLoading = true
+  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'topic-get',
+    })
+  })
+
+  // console.log('topic-get', rz)
+
+  if (rz?.data?.topic) {
+    topic = rz.data.topic
+  }
+  checkRetweeted()
+  isLoading = false
 }
 
 onMounted(() => {
@@ -57,27 +75,48 @@ onMounted(() => {
 </script>
 
 <template>
-  <article class="w-full h-full flex flex-col items-center justify-center space-y-8 px-8">
-    <h1 class="text-xl font-bold">{{ topic?.title }}</h1>
-    <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2>
+  <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
+    <van-skeleton :loading="isLoading">
+      <template #template>
+        <div class="w-[calc(100dvw-28px)] h-[80vh] flex flex-col justify-center items-center ">
+          <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
+            <van-loading size="48" />
+          </div>
 
-    <template v-if="hasTwitterLogin">
-      <template v-if="hasRetweeted">
-        <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
-          hasRetweeted, remove for test
-        </button>
-        <PdWaitListRetweet :hasRetweeted />
+          <!-- <van-skeleton-image /> -->
+          <div :style="{ marginTop: '42px', width: '100%' }">
+            <van-skeleton-paragraph row-width="60%" />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+          </div>
+        </div>
       </template>
 
-      <template v-else>
-        <PdWaitListSubmitRetweetUrl @handleSuccess="() => { hasRetweeted = true; refreshTime = new Date() }"
-          @handleBack="() => { hasRetweetClicked = false }" v-if="hasRetweetClicked" />
-        <PdWaitListRetweet @handleClick="() => { hasRetweetClicked = true }" v-else />
+      <img :src="topic?.meta?.logo" alt="" class="w-30 my-10">
+      <p class="text-[30px] font-900 leading-[1.2]">{{ topic?.title }}</p>
+      <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
+
+      <template v-if="hasTwitterLogin">
+        <div v-if="topic?.meta?.isWaitingClosed"
+          class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center">
+          <SwipeCardPDC />
+        </div>
+        <div v-else>
+          <template v-if="hasRetweeted">
+            <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+            hasRetweeted, remove for test
+          </button> -->
+            <!-- <PdWaitListRetweet :hasRetweeted /> -->
+          </template>
+          <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+        </div>
+
       </template>
-    </template>
 
-    <PdWaitListLogin v-else />
+      <PdWaitListLogin v-else />
 
-    <PdWaitListRetweetList :refreshTime />
+      <PdWaitListRetweetList :refreshTime />
+    </van-skeleton>
   </article>
 </template>
