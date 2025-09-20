@@ -6,12 +6,6 @@ import tgImg from '~/assets/icon/telegram.svg'
 import xImg from '~/assets/icon/x.svg'
 import link from '~/assets/icon/copy-link.svg'
 
-let shareUsers = $ref(
-  Array.from({ length: 12 }).map((_, i) => ({
-    avatar: `https://api.dicebear.com/7.x/identicon/svg?seed=${i + 1}`,
-  }))
-)
-
 let showShare = $ref(false)
 let shareOptions = $ref<ShareSheetOption[][]>([
   [{ name: 'telegram', icon: tgImg }, { name: 'X', icon: xImg }, { name: t('option.copyLink'), icon: link }],
@@ -41,21 +35,32 @@ let loading = $ref(true)
 setTimeout(() => {
   loading = false
 }, 1000)
+
+type TickerItem = { user: string; points: number; avatar: string }
+
+let inviteTicker = $ref<TickerItem[]>([
+  { user: 'Alice', points: 150, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=1' },
+  { user: 'Bob', points: 120, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=2' },
+  { user: 'Charlie', points: 200, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=3' },
+  { user: 'Diana', points: 180, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=4' },
+  { user: 'Eve', points: 160, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=5' },
+  { user: 'Frank', points: 130, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=6' },
+])
+const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
 </script>
 
 <template>
   <van-skeleton :loading="loading" animated class="!px-0">
     <template #template>
+      <!-- 骨架屏 -->
       <div class="w-full rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <div class="h-3 w-24 bg-[#f2f3f5] rounded" />
           <div class="h-3 w-36 bg-[#f2f3f5] rounded" />
         </div>
-
         <div class="flex items-center overflow-x-auto gap-3 py-1 scrollbar-hidden">
           <div v-for="i in 8" :key="i" class="w-10 h-10 rounded-full bg-[#f2f3f5] shrink-0" />
         </div>
-
         <div class="flex gap-3">
           <div class="h-8 w-24 bg-[#f2f3f5] rounded-full" />
           <div class="h-8 w-28 bg-[#f2f3f5] rounded-full" />
@@ -69,9 +74,27 @@ setTimeout(() => {
         <div class="text-xs text-gray-500">{{ t('dailyCap', { cap: '1,000' }) }}</div>
       </div>
 
-      <div class="flex items-center overflow-x-auto scrollbar-hidden gap-3 py-1">
-        <van-image v-for="(u, i) in shareUsers" :key="i" :src="u.avatar" width="40" height="40" round fit="cover"
-          class="shrink-0 object-cover" />
+      <!-- 分享/邀请动机与积分提示 -->
+      <div class="rounded-lg bg-[#f7fff5] border border-[#e6f7e9] p-3 flex items-start gap-2">
+        <van-icon name="gift-o" color="#16a34a" />
+        <div class="text-xs text-gray-600">
+          <ul class="list-disc pl-4 mt-1 space-y-0.5">
+            <li>{{ t('whyShare.pointsForShare') }}</li>
+            <li>{{ t('whyShare.pointsForInvite') }}</li>
+            <li>{{ t('whyShare.moreMore') }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="relative overflow-hidden h-28 rounded-md bg-[#fafafa] border border-[#f2f3f5]">
+        <ul class="ticker-list py-2">
+          <li v-for="(item, idx) in tickerItems" :key="idx" class="ticker-item px-2 flex items-center gap-2">
+            <van-image :src="item.avatar" width="18" height="18" round fit="cover" class="shrink-0" />
+            <span class="text-xs text-gray-600">
+              {{ t('ticker.inviteEarned', { user: item.user, points: item.points }) }}
+            </span>
+          </li>
+        </ul>
       </div>
 
       <div class="flex gap-3">
@@ -83,6 +106,32 @@ setTimeout(() => {
     </div>
   </van-skeleton>
 </template>
+
+<style scoped>
+@keyframes ticker-up {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.ticker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: ticker-up 14s linear infinite;
+}
+
+.ticker-item {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+</style>
 
 <i18n lang="json">{
   "en-US": {
@@ -101,6 +150,14 @@ setTimeout(() => {
     },
     "share": {
       "postText": "Hello, welcome"
+    },
+    "whyShare": {
+      "pointsForShare": "Share once: +10 points",
+      "pointsForInvite": "Each successful invite: +100 points",
+      "moreMore": "The more friends you invite, the more points you earn"
+    },
+    "ticker": {
+      "inviteEarned": "{user} invited successfully, +{points} pts"
     }
   },
   "zh-TW": {
@@ -119,6 +176,14 @@ setTimeout(() => {
     },
     "share": {
       "postText": "你好，歡迎"
+    },
+    "whyShare": {
+      "pointsForShare": "每分享一次：+100 積分",
+      "pointsForInvite": "每成功邀請 1 位朋友：+150 積分",
+      "moreMore": "邀請越多，積分越多"
+    },
+    "ticker": {
+      "inviteEarned": "{user} 邀請成功，獲得 {points} 積分"
     }
   },
   "ja-JP": {
@@ -137,6 +202,14 @@ setTimeout(() => {
     },
     "share": {
       "postText": "こんにちは、ようこそ"
+    },
+    "whyShare": {
+      "pointsForShare": "1回のシェアで：+100 ポイント",
+      "pointsForInvite": "1人招待ごとに：+150 ポイント",
+      "moreMore": "招待するほどポイントが増えます"
+    },
+    "ticker": {
+      "inviteEarned": "{user} さんが招待に成功、{points} ポイント獲得"
     }
   },
   "ko-KR": {
@@ -155,6 +228,15 @@ setTimeout(() => {
     },
     "share": {
       "postText": "안녕하세요, 환영합니다"
+    },
+    "whyShare": {
+      "title": "왜 공유하나요?",
+      "pointsForShare": "한 번 공유할 때마다: +100 포인트",
+      "pointsForInvite": "친구 1명 초대 성공 시: +150 포인트",
+      "moreMore": "많이 초대할수록 더 많은 포인트를 받아요"
+    },
+    "ticker": {
+      "inviteEarned": "{user} 님 초대 성공, {points} 포인트 획득"
     }
   }
 }</i18n>
