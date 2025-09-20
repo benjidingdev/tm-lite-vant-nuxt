@@ -60,6 +60,7 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
       nodePolyfills({
+        include: ['path'],
         exclude: ['http'],
         globals: {
           Buffer: true,
