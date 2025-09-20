@@ -15,12 +15,16 @@ let isLoading = $ref(false)
 
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
+const debug = useDebug('pdTopic')
+
 async function handleDel() {
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-join_del',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-join_del error', err })
   })
 
   // console.log({ rz })
@@ -43,6 +47,8 @@ async function checkRetweeted() {
     body: JSON.stringify({
       action: 'topic-join_check',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-join_check error', err })
   })
 
   if (rz?.data?.success) {
@@ -57,9 +63,10 @@ async function loadData() {
     body: JSON.stringify({
       action: 'topic-get',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-get error', err })
   })
 
-  // console.log('topic-get', rz)
 
   if (rz?.data?.topic) {
     topic = rz.data.topic
@@ -72,9 +79,11 @@ onMounted(() => {
   loadData()
 })
 
+
 </script>
 
 <template>
+
   <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
     <van-skeleton :loading="isLoading">
       <template #template>
@@ -98,9 +107,12 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div v-if="topic?.meta?.isWaitingClosed"
-          class="w-full h-[calc(100dvh-200px)] flex flex-col justify-center items-center">
+        <div v-if="!topic?.meta?.isWaitingClosed"
+          class="w-full h-[calc(100dvh-280px)] flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
+          <button class="w-full my-4 bg-blue-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]">
+            Claim your $PM now
+          </button>
         </div>
         <div v-else>
           <template v-if="hasRetweeted">
@@ -116,7 +128,7 @@ onMounted(() => {
 
       <PdWaitListLogin v-else />
 
-      <PdWaitListRetweetList :refreshTime />
+      <PdWaitListRetweetList v-if="topic.id !== 2" :refreshTime />
     </van-skeleton>
   </article>
 </template>

@@ -6,6 +6,8 @@ const { refreshTime } = defineProps(['refreshTime'])
 
 let retweetList = $ref([])
 
+const debug = useDebug('retweetList')
+
 // 0, load user retweet list
 async function loadList(params) {
   if (!hasTwitterLogin) {
@@ -16,6 +18,8 @@ async function loadList(params) {
     body: JSON.stringify({
       action: 'topic-join_list',
     })
+  }).catch((err) => {
+    debug({ msg: 'topic-join_list error', err })
   })
 
   if (rz?.data?.success) {
@@ -46,7 +50,8 @@ watchEffect(() => {
           <p class="opacity-80 font-[900]">{{ user.x_profiles?.fullname }}</p>
           <p class="text-[14px] opacity-40">
             <!-- {{ user.created_at }} -->
-            <NuxtTime :datetime="user.created_at" year="numeric" month="numeric" day="numeric" hour="numeric" minute="2-digit" />
+            <NuxtTime :datetime="user.created_at" year="numeric" month="numeric" day="numeric" hour="numeric"
+              minute="2-digit" />
           </p>
         </div>
       </div>
