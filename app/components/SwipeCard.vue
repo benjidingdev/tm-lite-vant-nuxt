@@ -340,7 +340,7 @@ onMounted(() => {
             <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">
               <text> ${{ convertCurrency(card.volume) }} Vol.</text>
-              <SwipeCardShareCard :cardID="card.id" />
+              <SwipeCardShareIcon :topicInfo="card" />
             </div>
           </div>
         </div>

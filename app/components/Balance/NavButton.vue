@@ -1,12 +1,13 @@
 <script setup lang="ts">
-  const { setModal } = $(uiStore());
-  const { token } = $(authStore());
-  const { userInfo, userCanUseAmount } = $(userStore())
-  const { userBalance } = $(walletStore());
+const { setModal } = $(uiStore());
+const { token } = $(authStore());
+const { userInfo } = $(userStore());
+const { userBalance } = $(walletStore());
+const { isEnable, requestAccount } = $(lineStore());
 
-  const avatar = computed(() => {
-    return userInfo?.profile?.avatar || '/logo.png'
-  })
+const avatar = computed(() => {
+  return userInfo?.avatar || '/logo.png'
+})
 </script>
 
 <template>
@@ -18,8 +19,13 @@
         <span class="text-white/80">${{ Math.floor(userBalance * 100) / 100 }}</span>
       </div>
     </button>
-    <van-button size="small" v-else round type="primary" class="px-3 text-white/80 right mr-2!"
-      @click="setModal('loginModal', true)">{{ $t("Login") }}</van-button>
+    <div v-else>
+      <van-button v-if="isEnable" size="small" round type="primary" class="px-3 text-white/80 right mr-2!"
+        @click="requestAccount">{{
+          $t("Login") }} with kaia</van-button>
+      <van-button v-else size="small" round type="primary" class="px-3 text-white/80 right mr-2!"
+        @click="setModal('loginModal', true)">{{ $t("Login") }}</van-button>
+    </div>
   </div>
 </template>
 

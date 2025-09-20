@@ -32,6 +32,7 @@ const openTab = () => {
         <TradeSettingLabel />
         <van-cell :title="$t('Topic Voting')" is-link @click="useNavigateTo('/advise')" />
         <van-cell :title="$t('Initiate a topic')" is-link @click="useNavigateTo('/advise/launch')" />
+        <van-cell :title="$t('Test Liff')" is-link @click="useNavigateTo('/test/liff')" />
         <van-cell :title="$t('Users Guide')" is-link @click="openTab" v-if="locale === 'zh-TW'" />
         <AuthLogoutLabel v-if="token.accessToken" />
       </div>

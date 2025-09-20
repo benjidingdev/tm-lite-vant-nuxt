@@ -18,17 +18,21 @@ export interface Token {
 
 export interface UserInfo {
   id: string;
-  username: string;
   proxyWallet: string;
   nickname?: string;
   email?: string;
   avatar?: string;
   inviteCode?: string;
   traderType: number;
-  roles: string[];
+  inviteCount: number;
 }
 
 export interface Web3Config {
+  chain: {
+    id: number
+    rpcurls: string[]
+    scanUrl: string
+  }
   contract: {
     name: string
     version: number

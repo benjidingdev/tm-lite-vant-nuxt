@@ -82,6 +82,9 @@ onMounted(() => {
         :thumb="item.image"
         class="mt-2"
       >
+        <template #num>
+          <span>{{ item.deal }}/{{ item.volume }}</span>
+        </template>
         <template #footer>
           <van-button plain size="mini" type="primary" @click="showShares(item)"
             >{{ $t("Shares") }}
