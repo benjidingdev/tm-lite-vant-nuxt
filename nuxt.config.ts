@@ -17,14 +17,24 @@ const modules = [
 const buildTime = Date.now() - 3600*1000*12
 const branch = process.env.VERCEL_GIT_COMMIT_REF || "localBranch"
 const hash = process.env.VERCEL_GIT_COMMIT_SHA || "localHash"
+
 console.log("branch", branch)
 console.log("hash", hash)
 console.log("buildTime", buildTime)
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+
+  plugins: [
+    '~/plugins/04.polyfill-random.client.ts',
+  ],
+
   modules,
   css: ["~/assets/css/main.css"],
+
+  // 在 vite.plugins 部分修改
+  // 在 vite 部分添加 resolve.alias
   vite: {
     server: {
       allowedHosts: ["localhost", "9f88f6df8068.ngrok-free.app", "frp.jdoffices.com"],
@@ -32,23 +42,16 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
       nodePolyfills({
-        include: ['path'],
-        // To exclude specific polyfills, add them to this list. Note: if include is provided, this has no effect
-        exclude: [
-          'http', // Excludes the polyfill for `http` and `node:http`.
-        ],
-        // Whether to polyfill specific globals.
+        include: ['path', 'crypto', 'stream', 'buffer', 'process'], // 添加 crypto 和 buffer
+        exclude: ['http'],
         globals: {
-          Buffer: true, // can also be 'build', 'dev', or false
+          Buffer: true,
           global: true,
           process: true,
         },
-        // Override the default polyfills for specific modules.
         overrides: {
-          // Since `fs` is not supported in browsers, we can use the `memfs` package to polyfill it.
           fs: 'memfs',
         },
-        // Whether to polyfill `node:` protocol imports.
         protocolImports: true,
       }),
     ],
@@ -63,7 +66,15 @@ export default defineNuxtConfig({
       "import.meta.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY": JSON.stringify(process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY || ""),
       "import.meta.env.NUXT_PUBLIC_IPFS_GATEWAY_URL": JSON.stringify(process.env.NUXT_PUBLIC_IPFS_GATEWAY_URL || ""),
     },
+    resolve: {
+      alias: {
+        crypto: 'crypto-browserify',
+        stream: 'stream-browserify',
+        buffer: 'buffer/',
+      },
+    },
   },
+
   i18n: {
     defaultLocale: "en-US",
     locales: [
@@ -73,13 +84,15 @@ export default defineNuxtConfig({
       { code: 'ko-KR', language: '한국어', file: 'ko-KR.json' },
     ],
   },
-  // @vueuse/motion is configured through the module in the modules array
+
   build: {
     transpile: ["form-data"],
   },
+
   piniaPluginPersistedstate: {
     key: 'v1_0_0_%id',
   },
+
   supabase: {
     redirect: false,
     redirectOptions: {
@@ -96,6 +109,7 @@ export default defineNuxtConfig({
       },
     },
   },
+
   runtimeConfig: {
     lighthouseStorageApiKey: process.env.NUXT_LIGHTHOUSE_STORAGE_API_KEY,
     public: {
@@ -115,11 +129,17 @@ export default defineNuxtConfig({
         clientId: process.env.NUXT_PUBLIC_PRIVY_CLIENT_ID || "",
       },
 
-      // all options can be found here: https://www.npmjs.com/package/logrocket?activeTab=code
-      // dist/types.d.ts --> interface IOptions
+      kaia: {
+        enabled: process.env.NUXT_PUBLIC_ENABLE_KAIA === "true",
+        clientId: process.env.NUXT_PUBLIC_KAIA_CLIENT_ID || "",
+        clientSecret: process.env.NUXT_PUBLIC_KAIA_CLIENT_SECRET || "",
+        chainId: process.env.NUXT_PUBLIC_KAIA_CHAIN_ID || "1001",
+      },
+      LIFF_ID: process.env.NUXT_PUBLIC_LIFF_ID || "",
+
       logRocket: {
         id: process.env.NUXT_PUBLIC_LOG_ROCKET_ID || "",
-        dev: false, // or true if you want
+        dev: false,
         enablePinia: true,
         config: {},
       },
