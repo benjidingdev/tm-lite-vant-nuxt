@@ -290,21 +290,7 @@ onMounted(async () => {
 <template>
   <!-- <OnboardingGuide /> -->
   <div class="w-full h-[400px] relative z-10!">
-    <van-skeleton :loading="isLoading">
-      <template #template>
-        <div class="w-full h-[80vh] flex flex-col justify-center items-center ">
-          <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
-            <van-loading size="48" />
-          </div>
-          <!-- <van-skeleton-image /> -->
-          <div :style="{ marginTop: '42px', width: '100%' }">
-            <van-skeleton-paragraph row-width="60%" />
-            <van-skeleton-paragraph />
-            <van-skeleton-paragraph />
-            <van-skeleton-paragraph />
-          </div>
-        </div>
-      </template>
+    <div>
       <div v-if="isFinished">
         <div class="card draggable-element shadow-md active">
           <van-empty image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png" image-size="80"
@@ -355,10 +341,10 @@ onMounted(async () => {
                 <!--selected status-->
                 <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
                   :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
-                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 rounded-lg flex items-center justify-center text-2xl cursor-pointer text-white"
+                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
                   @click="claim"
                   >
-                  Try claim now!
+                  Try Claim Now!
                 </div>
                 <!--loading on buttons-->
                 <div v-if="isTrading"
@@ -383,7 +369,7 @@ onMounted(async () => {
             watinglist</van-button>
         </van-empty>
       </div>
-    </van-skeleton>
+    </div>
   </div>
 </template>
 
