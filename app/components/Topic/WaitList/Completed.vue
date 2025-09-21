@@ -90,7 +90,6 @@ const shareTitle = computed(() => {
       </button>
     </div>
 
-    <TopicWaitListRetweetList />
   </section>
 
   <van-dialog v-model:show="show" :title="$t('Create Twitter profile cover')" closeable :show-confirm-button="false">

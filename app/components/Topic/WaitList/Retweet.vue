@@ -87,5 +87,8 @@ onMounted(() => {
         </div>
       </template>
     </template>
+
+    <TopicWaitListRetweetList />
+
   </section>
 </template>
