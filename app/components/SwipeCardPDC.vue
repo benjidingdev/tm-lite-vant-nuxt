@@ -241,18 +241,18 @@ const goDeposit = async (card: Card, isYes: boolean) => {
   }
 };
 
-const getAsset = async () => {
-  let res = await doFetch(`/api/assets/getAsset`, {
-    method: 'GET',
-  })
-  if (res.status === 200) {
-    const asset = res?.data?.pAmount || 0;
-    pAmount = asset;
-  } else {
-    pAmount = 0;
-  }
-  return res;
-}
+// const getAsset = async () => {
+//   let res = await doFetch(`/api/assets/getAsset`, {
+//     method: 'GET',
+//   })
+//   if (res.status === 200) {
+//     const asset = res?.data?.pAmount || 0;
+//     pAmount = asset;
+//   } else {
+//     pAmount = 0;
+//   }
+//   return res;
+// }
 
 const getUserMarkets = async () => {
   let res = await doFetch('/api/usermarkets', {
@@ -400,7 +400,7 @@ onMounted(async () => {
     </van-skeleton>
   </div>
   <van-button v-if="!isLoading" type="primary"
-    class="w-full px-4 my-4! bg-blue-500 text-white  rounded-[8px]! bg-[#7000FF]" :disabled="isFinished" @click="claim">
+    class="w-full px-4 mt-4! bg-blue-500 text-white  rounded-[8px]! bg-[#7000FF]" :disabled="isFinished" @click="claim">
     {{ isFinished ? 'You have got 200 $PM!' : 'Claim your $PM now!' }}
   </van-button>
 </template>
