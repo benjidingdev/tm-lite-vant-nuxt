@@ -100,8 +100,8 @@ onMounted(() => {
         </div>
       </template>
 
-      <img :src="topic?.meta?.logo" alt="" class="w-30 my-10">
-      <p class="text-[30px] font-900 leading-[1.2]">{{ topic?.title }}</p>
+      <img :src="topic?.meta?.logo" alt="" class="w-30 mt-10">
+      <p class="text-[30px] font-900 mb-10 leading-[1.2] px-2">{{ topic?.title }}</p>
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
