@@ -3,7 +3,6 @@
 const { hasTwitterLogin, x_user } = $(supabaseStore())
 const route = useRoute()
 const { refreshTime } = defineProps(['refreshTime'])
-
 let retweetList = $ref([])
 
 const debug = useDebug('retweetList')
@@ -26,12 +25,13 @@ async function loadList(params) {
   if (rz?.data?.success) {
     retweetList = rz.data.data
   }
+  console.log('retweetList', { retweetList })
   isLoading = false
 }
 
-watchEffect(() => {
+watchEffect(async () => {
   refreshTime;
-  loadList()
+  await loadList();
 })
 
 </script>
