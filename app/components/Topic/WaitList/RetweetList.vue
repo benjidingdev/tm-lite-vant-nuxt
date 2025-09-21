@@ -15,7 +15,7 @@ async function loadList(params) {
   // if (!hasTwitterLogin) {
   //   return
   // }
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-join_list',
@@ -31,21 +31,21 @@ async function loadList(params) {
   isLoading = false
 }
 
-const getAsset = async () => {
-  let res = await doFetch(`/api/assets/getAsset`, {
-    method: 'GET',
-  })
-  if (res.status === 200) {
-    pAmount = res?.data?.pAmount || 0;
-  } else {
-    pAmount = 0;
-  }
-  return res;
-}
+// const getAsset = async () => {
+//   let res = await doFetch(`/api/assets/getAsset`, {
+//     method: 'GET',
+//   })
+//   if (res.status === 200) {
+//     pAmount = res?.data?.pAmount || 0;
+//   } else {
+//     pAmount = 0;
+//   }
+//   return res;
+// }
 
 watchEffect(async () => {
   refreshTime;
-  await getAsset();
+  // await getAsset();
   await loadList();
 })
 

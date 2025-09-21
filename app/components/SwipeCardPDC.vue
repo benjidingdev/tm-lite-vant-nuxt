@@ -241,7 +241,6 @@ const goDeposit = async (card: Card, isYes: boolean) => {
     closeToast();
   }
 };
-
 const getUserMarkets = async () => {
   let res = await doFetch('/api/usermarkets', {
     method: 'GET',

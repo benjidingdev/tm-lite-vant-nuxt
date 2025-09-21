@@ -5,35 +5,14 @@ definePageMeta({
 });
 
 let refreshTime = $ref(new Date())
-const { hasTwitterLogin, doLogout } = $(supabaseStore())
-
-const sharedTopic = topics()
-const { query } = $(useRoute());
+const { hasTwitterLogin } = $(supabaseStore())
 
 let topic = $ref({})
 let isLoading = $ref(true)
 
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-const debug = useDebug('pdTopic')
-
-async function handleDel() {
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'topic-join_del',
-    })
-  }).catch((err) => {
-    debug({ msg: 'topic-join_del error', err })
-  })
-
-  // console.log({ rz })
-  if (rz.data.success) {
-    hasRetweeted = false
-    refreshTime = new Date()
-    doLogout()
-  }
-}
+const debug = useDebug('topic')
 
 // 0, check if user has retweeted
 let hasRetweeted = $ref(false)
@@ -42,7 +21,7 @@ async function checkRetweeted() {
     return
   }
 
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-join_check',
@@ -58,8 +37,7 @@ async function checkRetweeted() {
 
 async function loadData() {
   isLoading = true
-  console.log('route.params.pid', route.params)
-  const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-get',
@@ -109,24 +87,23 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
-          <SwipeCardPDC />
-        </div>
-
-        <div v-else>
+        <div>
           <template v-if="hasRetweeted">
             <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
             hasRetweeted, remove for test
           </button> -->
             <!-- <PdWaitListRetweet :hasRetweeted /> -->
           </template>
-          <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+          <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+          <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
+            <SwipeCardPDC />
+          </div>
         </div>
       </template>
 
-      <PdWaitListLogin v-else />
+      <TopicWaitListLogin v-else />
 
-      <PdWaitListRetweetList :refreshTime />
+      <TopicWaitListRetweetList :refreshTime />
     </van-skeleton>
   </article>
 </template>
