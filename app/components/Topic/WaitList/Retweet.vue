@@ -1,7 +1,7 @@
 <script setup>
 const emit = defineEmits(['onSuccess'])
 const { x_user } = $(supabaseStore())
-let { pAmount } = $(pdcSwipeCardStore())
+let { pAmount } = $(pmDataStore())
 const hasRetweeted = $(defineModel())
 const { topic } = defineProps({
   topic: {

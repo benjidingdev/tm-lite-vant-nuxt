@@ -35,8 +35,7 @@ let isTrading = $ref(false);
 const threshold = 100; // Threshold of swiping
 // The data from store
 let { isLoading } = $(requestQueueStore());
-const { x_user } = $(supabaseStore())
-let { pdcCards, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
+let { pdcCards, yesMarkets, noMarkets, pAmount }: any = $(pmDataStore());
 const route = useRoute()
 
 const topicsId = 2; // default topic id
@@ -48,7 +47,6 @@ let queryParams: any = {
   cardID: "",
   inviteCode: "",
 };
-let { pAmount } = $(pdcSwipeCardStore())
 const { query, path } = $(useRoute());
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);

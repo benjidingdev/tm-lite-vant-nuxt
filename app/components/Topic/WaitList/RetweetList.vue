@@ -2,7 +2,8 @@
 
 const { hasTwitterLogin, x_user } = $(supabaseStore())
 const route = useRoute()
-const { refreshTime } = defineProps(['refreshTime'])
+
+let { refreshTime } = $(pmDataStore());
 let retweetList = $ref([])
 
 const debug = useDebug('retweetList')
@@ -38,8 +39,8 @@ watchEffect(async () => {
 
 <template>
   <section
-    class="w-full min-h-100 mt-4 rounded-[16px] bg-white text-black px-[14px] py-[30px] flex flex-col items-center justify-start space-y-2">
-    <p class="text-[18px] font-bold -mt-4 mb-2">Retweet List</p>
+    class="w-full min-h-100 mt-4 bg-white text-black py-[30px] flex flex-col items-center justify-start space-y-2">
+    <p class="text-[18px] font-bold mt-2 mb-4 text-gray-600">Retweet List</p>
     <div v-if="isLoading" class="w-full flex-1 flex justify-center items-center">
       <van-loading size="48" />
     </div>
