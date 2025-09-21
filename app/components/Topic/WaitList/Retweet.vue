@@ -62,7 +62,7 @@ onMounted(() => {
         <p class="text-[14px] opacity-60">@{{ x_user?.user_name }}</p>
       </div>
       <div class="flex items-center justify-center space-x-1 bg-[rgba(112,0,255,0.1)] rounded-[8px] px-3 py-1">
-        <van-image class="size-6 ml-1" src="/icons/btc.svg" />
+        <van-image class="size-6 ml-1" src="/p.png" />
         <div class="font-bold">${{ pAmount }}</div>
       </div>
     </div>

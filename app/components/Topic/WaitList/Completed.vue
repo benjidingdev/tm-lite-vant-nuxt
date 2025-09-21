@@ -54,9 +54,22 @@ const shareTitle = computed(() => {
 
 <template>
   <section class="w-full flex flex-col items-center justify-center rounded-[16px] ">
-    <p class="text-[#7000FF] text-[24px] mt-8">You are on the waitlist!</p>
-    <p class="text-center text-[14px] opacity-60 mt-4">Profile picture found. first, download your custom invitation and
-      then click “share on Twitter” and upload the photo.</p>
+
+    <template v-if="topic?.meta?.isWaitingClosed">
+      <p class="text-center text-[24px] flex items-center mt-4">
+        <span class="opacity-80 text-[#7000FF]">{{ t('Share to get more') }}</span>
+        <van-image class="size-6 ml-1" src="/p.png" />
+
+      </p>
+    </template>
+
+    <template v-else>
+      <p class="text-[#7000FF] text-[24px] mt-8">You are on the waitlist!</p>
+      <p class="text-center text-[14px] opacity-60 mt-4">
+        Profile picture found. first, download your custom invitation
+        and
+        then click “share on Twitter” and upload the photo.</p>
+    </template>
 
     <button class="w-full bg-[#7000FF] h-11 rounded-[8px] mt-8"
       style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="show = true">
@@ -84,7 +97,8 @@ const shareTitle = computed(() => {
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
 
       <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black overflow-hidden relative custom-bg">
-        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover bg-[url(${topic?.meta?.shareBg})]`"></div>
+        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover bg-[url(${topic?.meta?.shareBg})]`">
+        </div>
         <!-- /topic/monad-bg.jpg -->
         <div class="absolute z-1 top-0 left-0 w-full h-full bg-[#AA9CFF]/70 backdrop-blur-[0px]"></div>
 

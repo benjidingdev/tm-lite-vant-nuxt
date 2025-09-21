@@ -83,22 +83,22 @@ onMounted(() => {
       </template>
 
       <img :src="topic?.meta?.logo" alt="" class="w-30 mt-10">
-      <p class="text-[30px] font-900 mb-10 leading-[1.2] py-2">{{ topic?.title }}</p>
+      <p class="text-[30px] font-900 mb-10 leading-[1.2] py-2 text-center">{{ topic?.title }}</p>
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div>
-          <template v-if="hasRetweeted">
-            <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
+
+        <template v-if="hasRetweeted">
+          <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
             hasRetweeted, remove for test
           </button> -->
-            <!-- <PdWaitListRetweet :hasRetweeted /> -->
-          </template>
-          <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
-            <SwipeCardPDC />
-          </div>
-          <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+          <!-- <PdWaitListRetweet :hasRetweeted /> -->
+        </template>
+        <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
+          <SwipeCardPDC />
         </div>
+        <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+
       </template>
 
       <TopicWaitListLogin v-else />

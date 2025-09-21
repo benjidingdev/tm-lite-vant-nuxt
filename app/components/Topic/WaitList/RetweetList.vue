@@ -66,7 +66,7 @@ watchEffect(async () => {
         </div>
         <div class="text-[18px] font-bold mr-3 flex items-center">
           <span>{{ user.pAmount || '-' }}</span>
-          <van-image class="size-6 ml-1" src="/icons/btc.svg" />
+          <van-image class="size-6 ml-1" src="/p.png" />
         </div>
       </div>
     </template>
