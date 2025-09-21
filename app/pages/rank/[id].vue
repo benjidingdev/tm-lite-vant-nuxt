@@ -35,8 +35,6 @@ async function loadData() {
       tiers[tierIndex].users.push(user)
     }
   })
-
-
 }
 
 onMounted(() => {
