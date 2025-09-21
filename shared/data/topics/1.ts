@@ -15,7 +15,7 @@ export default {
       "invite": 1000,
       "retweet": 100
     },
-    "isWaitingClosed": true
+    "isWaitingClosed": false
   },
   markets: [
     {
