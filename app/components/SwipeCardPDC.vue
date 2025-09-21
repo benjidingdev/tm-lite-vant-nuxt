@@ -297,7 +297,7 @@ onMounted(async () => {
 
 <template>
   <!-- <OnboardingGuide /> -->
-  <div class="w-full h-[500px] relative z-10!">
+  <div class="w-full h-[400px] relative z-10!">
     <van-skeleton :loading="isLoading">
       <template #template>
         <div class="w-full h-[80vh] flex flex-col justify-center items-center ">
@@ -313,7 +313,6 @@ onMounted(async () => {
           </div>
         </div>
       </template>
-      <div>{{ }}</div>
       <div v-if="isFinished">
         <div class="card draggable-element shadow-md active">
           <van-empty image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png" image-size="80"
@@ -350,14 +349,13 @@ onMounted(async () => {
             </div>
           </van-image>
 
-          <div v-if="card" class="px-4 h-[50%]">
-            <div class="h-[85%] overflow-hidden">
+          <div v-if="card" class="px-4 ">
+            <div class="overflow-hidden">
               <!-- Title and question -->
               <div class="mh-[120px]">
                 <p class="name">{{ card.title }}</p>
               </div>
-              <!-- Yes and No button -->
-              <div class="w-full h-16 z-50 mt-5">
+              <div class="w-full  h-16 z-50 mt-5">
                 <div class="flex justify-between items-center h-full">
                   <div class="relative" @click="buyYes(card)">
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
@@ -383,8 +381,6 @@ onMounted(async () => {
                   <span class="text-bold">{{
                     getUserSelectedStatus(card.id) }}</span>
                 </span>
-                <span v-else>Trade now!</span>
-                <p class="text-2xl text-green-500 text-bold">+$200PM</p>
               </div>
             </div>
           </div>

@@ -105,8 +105,7 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <!-- <div v-if="topic?.meta?.isWaitingClosed" -->
-        <div v-if="false"
+        <div v-if="topic?.meta?.isWaitingClosed"
           class="w-full h-full flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
         </div>
