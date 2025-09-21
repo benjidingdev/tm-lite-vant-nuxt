@@ -10,9 +10,9 @@ const debug = useDebug('retweetList')
 
 // 0, load user retweet list
 async function loadList(params) {
-  if (!hasTwitterLogin) {
-    return
-  }
+  // if (!hasTwitterLogin) {
+  //   return
+  // }
   const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
     method: 'POST',
     body: JSON.stringify({

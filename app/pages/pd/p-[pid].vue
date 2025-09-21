@@ -11,7 +11,7 @@ const sharedTopic = topics()
 const { query } = $(useRoute());
 
 let topic = $ref({})
-let isLoading = $ref(false)
+let isLoading = $ref(true)
 
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
@@ -82,8 +82,7 @@ onMounted(() => {
 </script>
 
 <template>
-
-  <article class="max-w-sm m-auto flex flex-col items-center justify-center px-7 border-0">
+  <article class="max-w-sm m-auto flex flex-col items-center justify-center border-0">
     <van-skeleton :loading="isLoading">
       <template #template>
         <div class="w-[calc(100dvw-28px)] h-[80vh] flex flex-col justify-center items-center ">
