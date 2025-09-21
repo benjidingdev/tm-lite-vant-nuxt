@@ -2,9 +2,12 @@ export default {
   title: 'Who will be the biggest winner when the Monad mainnet goes live?',
   meta: {
     "logo": "/topic/predmoon.png",
+    "shareBg": "/topic/monad-bg.png",
+    "shareLogo": "/topic/shareLogo.png",
     "x_info": {
+      "hashtags": "TuringM,TuringMaster,Airdrop",
+      "retweetTargetLink": "https://x.com/TuringMarket/status/1958786009753428017",
       "text": "Turing Market has a topic of {{title}} ,Claim the reward via {{url}}",
-      "retweetTargetLink": "https://x.com/TuringMarket/status/1958786009753428017"
     },
     "rewards": {
       "auth": 1000,
