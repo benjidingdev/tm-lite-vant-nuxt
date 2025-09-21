@@ -106,7 +106,7 @@ onMounted(() => {
 
       <template v-if="hasTwitterLogin">
         <div v-if="topic?.meta?.isWaitingClosed"
-          class="w-full h-full flex flex-col justify-center items-center mt-6">
+          class="w-full h-full flex flex-col justify-center items-center mt-6 px-4">
           <SwipeCardPDC />
         </div>
         <div v-else>

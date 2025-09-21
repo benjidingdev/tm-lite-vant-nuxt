@@ -28,6 +28,9 @@ let offsetY = $ref(0); // The value  of offsetY
 let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let claimedTopicIds = $ref([]);
+let isSettlement = $ref(false);
+const customMarkets: any = $ref(markets());
+let isTrading = $ref(false);
 
 const threshold = 100; // Threshold of swiping
 // The data from store
@@ -39,8 +42,7 @@ const route = useRoute()
 const topicsId = 2; // default topic id
 let currentX = 0;
 let currentY = 0;
-let isSettlement = $ref(false);
-const customMarkets: any = $ref(markets());
+
 let currentCardID = $ref(0);
 
 let queryParams: any = {
@@ -208,30 +210,30 @@ const pickNext = () => {
 
 // start transaction
 const goDeposit = async (card: Card, isYes: boolean) => {
-  currentCardID = card.id;
-  if (path.includes("market") === "true") {
-    return;
-  }
-
-  pAmount = Math.max(0, pAmount - 100);
-  if (pAmount === 0) {
-    showToast("You don't have enough PDC, please go to market page to get more.");
-    resetCard();
-    closeToast();
-    return;
-  }
-
+  isTrading = true;
   try {
+    currentCardID = card.id;
+    if (path.includes("market") === "true") {
+      return;
+    }
+
+    pAmount = Math.max(0, pAmount - 100);
+    if (pAmount === 0) {
+      showToast("You don't have enough PDC, please go to market page to get more.");
+      resetCard();
+      closeToast();
+      return;
+    }
+
     const rz = await trade(card.id, isYes);
     console.log('trade result', rz)
   } catch (error) {
-    showToast('You have already traded this market!');
     resetCard();
-    return;
+  } finally {
+    resetCard();
+    isTrading = false;
+    closeToast();
   }
-
-  resetCard();
-  closeToast();
 };
 
 const getAsset = async () => {
@@ -325,19 +327,7 @@ onMounted(async () => {
           :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
           @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
 
-          <div class="w-full flex items-center justify-between px-4 bg-gray-200">
-            <div class="flex items-center justify-start p-[6px] space-x-2">
-              <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
-              <div class="text-black">
-                <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
-                <p class="text-[14px] opacity-60">${{ pAmount }}</p>
-                <!-- <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p> -->
-              </div>
-            </div>
-
-          </div>
-
-          <van-image width="100%" height="40%" :src="card.image" class="p-2" fit="contain">
+          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box" id="step6">
               <div v-if="isSettlement && movingYes" class="hint-box hint like">
                 YES
@@ -349,13 +339,13 @@ onMounted(async () => {
             </div>
           </van-image>
 
-          <div v-if="card" class="px-4 ">
+          <div v-if="card" class="px-4">
             <div class="overflow-hidden">
               <!-- Title and question -->
               <div class="mh-[120px]">
                 <p class="name">{{ card.title }}</p>
               </div>
-              <div class="w-full  h-16 z-50 mt-5">
+              <div class="w-full h-16 z-50 mt-5 relative">
                 <div class="flex justify-between items-center h-full">
                   <div class="relative" @click="buyYes(card)">
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
@@ -372,16 +362,20 @@ onMounted(async () => {
                     </span>
                   </div>
                 </div>
+                <!--selected status-->
+                <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
+                  :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
+                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0  opacity-85 rounded-lg flex items-center justify-center">
+                  {{ getUserSelectedStatus(card.id) }}
+                </div>
+                <!--loading on buttons-->
+                <div v-if="isTrading"
+                  class="absolute top-[2px] right-0 bottom-[2px] left-0 bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
+                  trading...
+                </div>
               </div>
-              <!--Card information-->
-              <div class="text-sm text-gray-500 mt-1">
-                <span v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
-                  class="text-gray-400">
-                  <span>You have selected </span>
-                  <span class="text-bold">{{
-                    getUserSelectedStatus(card.id) }}</span>
-                </span>
-              </div>
+              <!--next click-->
+              <div class="text-gray-400 underline text-right" @click="pickNext">next>></div>
             </div>
           </div>
         </div>
@@ -389,11 +383,12 @@ onMounted(async () => {
 
       <div v-else>
         <van-empty description="If you are interested in Turing Market, please go to our official version"
-          style="--van-empty-description-color: #323232">
+          style="--van-empty-description-color: #7e7e7e">
           <template #image>
             <img src="/assets/icon/logo.svg" />
           </template>
-          <van-button round type="primary" class="bottom-button">Launch App</van-button>
+          <van-button round type="primary" class="bottom-button" @click="navigateTo('/pd')">Go to
+            watinglist</van-button>
         </van-empty>
       </div>
 

@@ -240,7 +240,7 @@ export default defineEventHandler(async (event) => {
 
     // console.log(rz2, 'xxx update topic market')
 
-    await updateUserPAmount(adminClient, userId, market?.meta?.market?.trade || 200, `trade market ${marketId} ${isYes ? 'yes' : 'no'}`)
+    await updateUserPAmount(adminClient, userId, market?.meta?.market?.trade || -100, `trade market ${marketId} ${isYes ? 'yes' : 'no'}`)
     return { status: 200, msg: "trade successfully!" }
   }
 
