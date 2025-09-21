@@ -29,14 +29,12 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let claimedTopicIds = $ref([]);
 let isSettlement = $ref(false);
-const customMarkets: any = $ref(markets());
 let isTrading = $ref(false);
 
 const threshold = 100; // Threshold of swiping
 // The data from store
 let { isLoading } = $(requestQueueStore());
-const { x_user } = $(supabaseStore())
-let { pdcCards, yesMarkets, noMarkets }: any = $(pdcSwipeCardStore());
+let { pdcCards, yesMarkets, noMarkets, pAmount }: any = $(pmDataStore());
 const route = useRoute()
 
 const topicsId = 2; // default topic id
@@ -44,17 +42,17 @@ let currentX = 0;
 let currentY = 0;
 
 let currentCardID = $ref(0);
-
 let queryParams: any = {
   cardID: "",
   inviteCode: "",
 };
-let { pAmount } = $(pdcSwipeCardStore())
 const { query, path } = $(useRoute());
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
-let isFinished = $computed(() => claimedTopicIds?.some(item => item == route.params.pid));
+let isFinished = $computed(() => claimedTopicIds?.some(item => item == route.params.id));
+
+console.log('route.params', route.params);
 
 const updateMarket = async (topicId: number, markets: any) => {
   await doFetch('/api/topics/updateTopic', {
@@ -77,11 +75,6 @@ const getMarket = async (topicId: any) => {
 // get the list of cards
 const getInfoList = async () => {
   pdcCards = await getMarket(topicsId);
-
-  if (customMarkets?.length !== pdcCards.length) {
-    await updateMarket(topicsId, customMarkets);
-    pdcCards = await getMarket(topicsId);
-  }
   const index = pdcCards.findIndex((card: any) => card.id == query.marketID)
   if (index > -1) {
     pdcCards.unshift(pdcCards[index]); // add
@@ -172,7 +165,7 @@ const swipeCard = (status: any) => {
 
 async function trade(marketId: any, isYes: any) {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    const rz = await doFetch(`/api/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-trade',
@@ -241,19 +234,6 @@ const goDeposit = async (card: Card, isYes: boolean) => {
   }
 };
 
-const getAsset = async () => {
-  let res = await doFetch(`/api/assets/getAsset`, {
-    method: 'GET',
-  })
-  if (res.status === 200) {
-    const asset = res?.data?.pAmount || 0;
-    pAmount = asset;
-  } else {
-    pAmount = 0;
-  }
-  return res;
-}
-
 const getUserMarkets = async () => {
   let res = await doFetch('/api/usermarkets', {
     method: 'GET',
@@ -277,7 +257,7 @@ const getUserSelectedStatus = (currentCardID: any) => {
 
 const claim = async () => {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    const rz = await doFetch(`/api/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-claim'
@@ -297,7 +277,6 @@ const claim = async () => {
 onMounted(async () => {
   await getInfoList();
   await getUserMarkets();
-  await getAsset();
   queryParams = getFatherInviteCode();
 });
 </script>
@@ -305,21 +284,7 @@ onMounted(async () => {
 <template>
   <!-- <OnboardingGuide /> -->
   <div class="w-full h-[400px] relative z-10!">
-    <van-skeleton :loading="isLoading">
-      <template #template>
-        <div class="w-full h-[80vh] flex flex-col justify-center items-center ">
-          <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
-            <van-loading size="48" />
-          </div>
-          <!-- <van-skeleton-image /> -->
-          <div :style="{ marginTop: '42px', width: '100%' }">
-            <van-skeleton-paragraph row-width="60%" />
-            <van-skeleton-paragraph />
-            <van-skeleton-paragraph />
-            <van-skeleton-paragraph />
-          </div>
-        </div>
-      </template>
+    <div>
       <div v-if="isFinished">
         <div class="card draggable-element shadow-md active">
           <van-empty image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png" image-size="80"
@@ -351,36 +316,41 @@ onMounted(async () => {
                 <p class="name">{{ card.title }}</p>
               </div>
               <div class="w-full h-16 z-50 mt-5 relative">
-                <div class="flex justify-between items-center h-full">
-                  <div class="relative" @click="buyYes(card)">
-                    <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
-                    <span
-                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      Yes({{ card.yesNum }})
-                    </span>
-                  </div>
-                  <div class="relative" @click="buyNo(card)">
-                    <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
-                    <span
-                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      No({{ card.noNum }})
-                    </span>
-                  </div>
-                </div>
-                <!--selected status-->
-                <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
-                  :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
-                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 opacity-85 rounded-lg flex items-center justify-center text-2xl">
-                  {{ getUserSelectedStatus(card.id) }}
-                </div>
                 <!--loading on buttons-->
                 <div v-if="isTrading"
-                  class="absolute top-[2px] right-0 bottom-[2px] left-0 bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
+                  class="h-full bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
                   trading...
                 </div>
+
+                <template v-else>
+                  <!--selected status-->
+                  <div v-if="(getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No') && true"
+                    :class="(getUserSelectedStatus(card.id) === 'Yes') ? 'bg-[#7000FF]' : 'bg-[#B30FE7]'"
+                    class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
+                    @click="claim">
+                    Try Claim Now!
+                  </div>
+
+                  <div v-else class="flex justify-between items-center h-full">
+                    <div class="relative" @click="buyYes(card)">
+                      <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
+                      <span
+                        class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                        Yes({{ card.yesNum }})
+                      </span>
+                    </div>
+                    <div class="relative" @click="buyNo(card)">
+                      <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
+                      <span
+                        class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                        No({{ card.noNum }})
+                      </span>
+                    </div>
+                  </div>
+                </template>
               </div>
               <!--next click-->
-              <div class="text-gray-400 underline text-right" @click="pickNext">next>></div>
+              <div class="text-gray-400 underline text-right cursor-pointer" @click="pickNext">next>></div>
             </div>
           </div>
         </div>
@@ -396,13 +366,8 @@ onMounted(async () => {
             watinglist</van-button>
         </van-empty>
       </div>
-
-    </van-skeleton>
+    </div>
   </div>
-  <van-button v-if="!isLoading" type="primary"
-    class="w-full px-4 my-4! bg-blue-500 text-white  rounded-[8px]! bg-[#7000FF]" :disabled="isFinished" @click="claim">
-    {{ isFinished ? 'You have got 200 $PM!' : 'Claim your $PM now!' }}
-  </van-button>
 </template>
 
 <style>

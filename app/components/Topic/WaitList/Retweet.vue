@@ -1,11 +1,12 @@
 <script setup>
 const emit = defineEmits(['onSuccess'])
 const { x_user } = $(supabaseStore())
+let { pAmount } = $(pmDataStore())
 const hasRetweeted = $(defineModel())
 const { topic } = defineProps({
   topic: {
     type: Object,
-    default: () => {},
+    default: () => { },
   }
 })
 let hasRetweetClicked = $ref(false)
@@ -21,6 +22,19 @@ function onClickRetweet() {
   hasRetweetClicked = true
 }
 
+const getAsset = async () => {
+  let res = await doFetch(`/api/assets/getAsset`, {
+    method: 'GET',
+  })
+  if (res.status === 200) {
+    const asset = res?.data?.pAmount || 0;
+    pAmount = asset;
+  } else {
+    pAmount = 0;
+  }
+  return res;
+}
+
 const descText = $computed(() => {
   let text
 
@@ -32,6 +46,10 @@ const descText = $computed(() => {
   return text
 })
 
+onMounted(() => {
+  getAsset();
+})
+
 </script>
 
 <template>
@@ -40,8 +58,12 @@ const descText = $computed(() => {
     <div class="w-full flex items-center justify-center space-x-[14px]">
       <img :src="x_user?.avatar" alt="logo" class="size-11 rounded-[8px]">
       <div class="flex-1">
-        <p class="opacity-80 text-[20px]">{{ x_user?.name }}</p>
+        <p class="opacity-80 text-md">{{ x_user?.name }}</p>
         <p class="text-[14px] opacity-60">@{{ x_user?.user_name }}</p>
+      </div>
+      <div class="flex items-center justify-center space-x-1 bg-[rgba(112,0,255,0.1)] rounded-[8px] px-3 py-1">
+        <van-image class="size-6 ml-1" src="/p.png" />
+        <div class="font-bold">${{ pAmount }}</div>
       </div>
     </div>
 
@@ -65,5 +87,8 @@ const descText = $computed(() => {
         </div>
       </template>
     </template>
+
+    <TopicWaitListRetweetList />
+
   </section>
 </template>

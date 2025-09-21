@@ -2,8 +2,8 @@
 
 const { hasTwitterLogin, x_user } = $(supabaseStore())
 const route = useRoute()
-const { refreshTime } = defineProps(['refreshTime'])
 
+let { refreshTime } = $(pmDataStore());
 let retweetList = $ref([])
 
 const debug = useDebug('retweetList')
@@ -26,20 +26,21 @@ async function loadList(params) {
   if (rz?.data?.success) {
     retweetList = rz.data.data
   }
+  console.log('retweetList', { retweetList })
   isLoading = false
 }
 
-watchEffect(() => {
+watchEffect(async () => {
   refreshTime;
-  loadList()
+  await loadList();
 })
 
 </script>
 
 <template>
   <section
-    class="w-full min-h-100 mt-4 rounded-[16px] bg-white text-black px-[14px] py-[30px] flex flex-col items-center justify-start space-y-2">
-    <p class="text-[18px] font-bold -mt-4 mb-2">Retweet List</p>
+    class="w-full min-h-100 mt-4 bg-white text-black py-[30px] rounded-[8px] flex flex-col items-center justify-start space-y-2">
+    <p class="text-[18px] font-bold -mt-2 mb-4 text-gray-600">Retweet List</p>
     <div v-if="isLoading" class="w-full flex-1 flex justify-center items-center">
       <van-loading size="48" />
     </div>
@@ -65,7 +66,7 @@ watchEffect(() => {
         </div>
         <div class="text-[18px] font-bold mr-3 flex items-center">
           <span>{{ user.pAmount || '-' }}</span>
-          <van-image class="size-6 ml-1" src="/icons/btc.svg" />
+          <van-image class="size-6 ml-1" src="/p.png" />
         </div>
       </div>
     </template>

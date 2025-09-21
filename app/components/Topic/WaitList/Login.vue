@@ -19,5 +19,9 @@ async function handleLogin() {
       Join the TuringM Prediction Master waitlist and get early access to the
       platform.
     </p>
+
+    <TopicWaitListRetweetList class="px-5" />
+
   </section>
+  <TopicWaitListRetweetList />
 </template>
