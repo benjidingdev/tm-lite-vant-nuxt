@@ -74,7 +74,7 @@ let show = $ref(false)
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
       <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black custom-bg">
 
-        <img src="/predmoon.png" alt="" class="w-30">
+        <img :src="topic.meta?.logo" alt="" class="w-30">
 
         <p class="text-[48px] font-bold text-white leading-[1] mb-6">{{ t('Pred to the moon') }}</p>
 

@@ -58,7 +58,7 @@ onMounted(() => {
     <div class="w-full flex items-center justify-center space-x-[14px]">
       <img :src="x_user?.avatar" alt="logo" class="size-11 rounded-[8px]">
       <div class="flex-1">
-        <p class="opacity-80 text-[20px]">{{ x_user?.name }}</p>
+        <p class="opacity-80 text-md">{{ x_user?.name }}</p>
         <p class="text-[14px] opacity-60">@{{ x_user?.user_name }}</p>
       </div>
       <div class="flex items-center justify-center space-x-1 bg-[rgba(112,0,255,0.1)] rounded-[8px] px-3 py-1">
