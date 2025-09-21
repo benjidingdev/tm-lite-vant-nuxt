@@ -4,7 +4,7 @@ definePageMeta({
   layout: "x",
 });
 
-let refreshTime = $ref(new Date())
+let { refreshTime } = $(pmDataStore());
 const { hasTwitterLogin } = $(supabaseStore())
 
 let topic = $ref({})
@@ -94,16 +94,14 @@ onMounted(() => {
           </button> -->
             <!-- <PdWaitListRetweet :hasRetweeted /> -->
           </template>
-          <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
           <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
             <SwipeCardPDC />
           </div>
+          <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
         </div>
       </template>
 
       <TopicWaitListLogin v-else />
-
-      <TopicWaitListRetweetList :refreshTime />
     </van-skeleton>
   </article>
 </template>

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 const { topic } = defineProps({
   topic: {
     type: Object,
-    default: () => {},
+    default: () => { },
   }
 })
 const { t } = useI18n()
@@ -68,7 +68,7 @@ let show = $ref(false)
       </button>
     </div>
 
-
+    <TopicWaitListRetweetList />
   </section>
 
   <van-dialog v-model:show="show" :title="$t('Create Twitter profile cover')" closeable :show-confirm-button="false">
