@@ -87,13 +87,6 @@ onMounted(() => {
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-
-        <template v-if="hasRetweeted">
-          <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
-            hasRetweeted, remove for test
-          </button> -->
-          <!-- <PdWaitListRetweet :hasRetweeted /> -->
-        </template>
         <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
         </div>

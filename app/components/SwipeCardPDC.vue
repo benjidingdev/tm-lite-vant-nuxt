@@ -316,35 +316,38 @@ onMounted(async () => {
                 <p class="name">{{ card.title }}</p>
               </div>
               <div class="w-full h-16 z-50 mt-5 relative">
-                <div class="flex justify-between items-center h-full">
-                  <div class="relative" @click="buyYes(card)">
-                    <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
-                    <span
-                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      Yes({{ card.yesNum }})
-                    </span>
-                  </div>
-                  <div class="relative" @click="buyNo(card)">
-                    <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
-                    <span
-                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                      No({{ card.noNum }})
-                    </span>
-                  </div>
-                </div>
-                <!--selected status-->
-                <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
-                  :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
-                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
-                  @click="claim"
-                  >
-                  Try Claim Now!
-                </div>
                 <!--loading on buttons-->
                 <div v-if="isTrading"
-                  class="absolute top-[2px] right-0 bottom-[2px] left-0 bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
+                  class="h-full bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
                   trading...
                 </div>
+
+                <template v-else>
+                  <!--selected status-->
+                  <div v-if="(getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No') && true"
+                    :class="(getUserSelectedStatus(card.id) === 'Yes') ? 'bg-[#7000FF]' : 'bg-[#B30FE7]'"
+                    class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
+                    @click="claim">
+                    Try Claim Now!
+                  </div>
+
+                  <div v-else class="flex justify-between items-center h-full">
+                    <div class="relative" @click="buyYes(card)">
+                      <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
+                      <span
+                        class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                        Yes({{ card.yesNum }})
+                      </span>
+                    </div>
+                    <div class="relative" @click="buyNo(card)">
+                      <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
+                      <span
+                        class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                        No({{ card.noNum }})
+                      </span>
+                    </div>
+                  </div>
+                </template>
               </div>
               <!--next click-->
               <div class="text-gray-400 underline text-right cursor-pointer" @click="pickNext">next>></div>
