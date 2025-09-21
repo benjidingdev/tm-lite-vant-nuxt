@@ -4,9 +4,22 @@ import all from '#shared/data/topics/all'
 export default defineEventHandler(async (event) => {
   const { id } = getQuery(event)
   const data = all[id]
+  if (!data) {
+    throw createError({
+      statusCode: 400,
+      message: 'topic data source not found'
+    })
+  }
   const adminClient = serverSupabaseServiceRole(event)
   // update data
-  const { data: { markets } } = await adminClient.from('topics').select('*').eq('id', id).single()
+  const rz1 = await adminClient.from('topics').select('*').eq('id', id).single()
+  if (!rz1.data) {
+    return adminClient.from('topics').insert({
+      id,
+      ...data,
+    }).select()
+  }
+  const { data: { markets } } = rz1
   const marketMapByIdFromJson = _.keyBy(data.markets, 'id')
   markets.forEach((market) => {
     marketMapByIdFromJson[market.id].noNum = market.noNum
