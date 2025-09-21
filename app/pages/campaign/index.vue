@@ -76,7 +76,7 @@ const stepsButtonHandle = (ind) => {
       share()
       break;
     case 2:
-      navigateTo('/')
+      navigateTo(`/${locale.value}`)
       break;
   }
 }
@@ -116,7 +116,7 @@ onMounted(() => {
 <template>
   <div class="w-full h-screen overflow-y-scroll">
     <div
-      class="w-full text-white bg-black bg-[url('/campaign/page_bg_mobile.png')] lg:bg-[url('/campaign/page_bg.jpg')] bg-contain lg:bg-[length:auto_100%] lg:bg-center bg-no-repeat lg:pb-66 pb-10">
+      class="w-full text-white bg-black bg-[url('/campaign/page_bg_mobile.png')] lg:bg-[url('/campaign/page_bg.jpg')] bg-contain lg:bg-[length:100%_auto] lg:bg-center bg-no-repeat lg:pb-66 pb-10">
       <van-row class="justify-end">
         <van-switch class="mt-2 mr-2" v-model="isEnglish" size="24" active-color="var(--van-switch-background)"
           @change="toggleLang">
@@ -137,19 +137,19 @@ onMounted(() => {
       </van-row>
       <van-row :class="{ 'lg:!text-[75px] !text-[60px]': isEnglish }"
         class="!block lg:!flex justify-center mt-4 text-[120px] lg:text-[100px] font-black bg-gradient-to-r from-[#06FFF0] to-[#03FB75] bg-clip-text text-transparent">
-        <van-row class="h-30 justify-center" :class="{ '!h-18': isEnglish }">{{ t('Compete') }}</van-row>
+        <van-row class="!hidden lg:!block h-30 justify-center" :class="{ '!h-18': isEnglish }">{{ t('Compete') }}</van-row>
         <van-row class="!hidden lg:!block lg:px-4">•</van-row>
-        <van-row class="h-30 justify-center" :class="{ '!h-18': isEnglish }">{{ t('Conquer') }}</van-row>
+        <van-row class="!hidden lg:!block h-30 justify-center" :class="{ '!h-18': isEnglish }">{{ t('Conquer') }}</van-row>
         <van-row class="!hidden lg:!block lg:px-4">•</van-row>
-        <van-row class="justify-center">{{ t('Harvest') }}</van-row>
+        <van-row class="!hidden lg:!block justify-center">{{ t('Harvest') }}</van-row>
       </van-row>
-      <van-row class="flex justify-center mt-8 text-[30px] font-black"
-        :class="{ '!text-[24px] lg:!text-[30px]': isEnglish }">
-        <van-highlight class="text-white text-center px-14 lg:w-1/2" :class="{ '!px-6': isEnglish }"
+      <van-row class="flex justify-center mt-8 text-[16px] lg:text-[30px] font-black"
+        :class="{ '!text-[16px] lg:!text-[30px]': isEnglish }">
+        <van-highlight class="text-white text-center px-14 lg:w-1/2" :class="{ '!px-4': isEnglish }"
           highlight-class="!text-[#B3FF26]" :source-string="t('Campaign Headline')" keywords="$TUIT" />
       </van-row>
       <van-row
-        class="font-roboto flex justify-center mt-10 lg:mt-4 text-[20px] text-center px-6 lg:px-28 mx-auto lg:w-1/2"
+        class="!hidden font-roboto lg:!flex justify-center mt-10 lg:mt-4 text-[20px] text-center px-6 lg:px-28 mx-auto lg:w-1/2"
         :class="{ 'lg:!px-20': isEnglish }">
         {{ t('Campaign Introduction') }}
       </van-row>
@@ -161,7 +161,7 @@ onMounted(() => {
           icon="/campaign/x.svg" @click="share">{{ t('Share on X') }}</van-button>
       </van-row>
       <div
-        class="w-[90%] lg:w-[1222px] lg:px-[152px] px-5 backdrop-blur-xs bg-[#11111199] bg-[url('/campaign/card_bg_mobile.png')] lg:bg-[url('/campaign/card_bg.svg')] bg-[length:100%_100%] lg:bg-[length:100%_auto] bg-no-repeat rounded-4xl mx-auto lg:mt-15 mt-74">
+        class="w-[90%] lg:w-[1222px] lg:px-[152px] px-5 backdrop-blur-xs bg-[#11111199] bg-[url('/campaign/card_bg_mobile.png')] lg:bg-[url('/campaign/card_bg.svg')] bg-[length:100%_100%] lg:bg-[length:100%_auto] bg-no-repeat rounded-4xl mx-auto mt-15">
         <van-row class="font-roboto flex justify-center font-bold text-2xl lg:text-[36px] lg:pt-12 pt-9">
           {{ t('Participate Activity') }}
         </van-row>
@@ -338,8 +338,8 @@ onMounted(() => {
     "Harvest": "Harvest",
     "Campaign Headline": "Your strategic limit orders now generate dual yields: from winning predictions AND from daily $TUIT rewards. Don't just trade, farm.",
     "Campaign Introduction": "At TuringMarket, we're merging the power of prediction with the innovation of DeFi. Welcome to Predictive Yield Farming, a groundbreaking program that rewards you for building liquidity and depth in our markets. Every valid limit order you place doesn't just wait for a outcome—it actively farms our native token, $TUIT.",
-    "Activity Rules": "Activity Rules",
-    "Share on X": "Share on X",
+    "Activity Rules": "Rules",
+    "Share on X": "Share",
     "Participate Activity": "Complete the steps to join",
     "Login/Register": "Login/Register",
     "Place Order": "Place Order",
@@ -374,7 +374,7 @@ onMounted(() => {
     "Campaign Headline": "下有效限價單，登上排行榜，贏取每日 $TUIT 獎勵。",
     "Campaign Introduction": "在 TuringMarket，不只是預測，更是建設市場流動性的機會。 為了鼓勵用戶積極掛單、提升盤口深度，我們推出 「掛單榮耀爭霸計劃」 —— 每一筆真實有效的掛單，都能為你帶來 $TUIT 獎勵與榮耀排名。",
     "Activity Rules": "活動規則",
-    "Share on X": "分享到推特",
+    "Share on X": "分享",
     "Participate Activity": "完成已下步骤参与活动",
     "Login/Register": "登录/注册账号",
     "Place Order": "挂单",
