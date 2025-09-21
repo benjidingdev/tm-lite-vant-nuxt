@@ -44,8 +44,8 @@ export default defineEventHandler(async (event) => {
   }
 
   if (action === 'topic-join_list') {
-    // const { data, error } = await adminClient.from('retweets').select('*, x_profiles (*), assets (*)').eq('reason', reason)
-    let { data, error } = await adminClient.from('retweets').select('*, x_profiles (*)').eq('reason', reason)
+    // const { data, error } = await adminClient.from('retweet0921').select('*, x_profiles (*), assets (*)').eq('reason', reason)
+    let { data, error } = await adminClient.from('retweet0921').select('*, x_profiles (*)').eq('reason', reason)
     if (error) {
       throw createError({
         statusCode: 400,
@@ -102,7 +102,7 @@ export default defineEventHandler(async (event) => {
     }
 
     {
-      const { count } = await adminClient.from('retweets').select('*', { count: 'exact', head: true }).eq('url', retweetLink);
+      const { count } = await adminClient.from('retweet0921').select('*', { count: 'exact', head: true }).eq('url', retweetLink);
       if (count && count > 0) {
         throw createError({
           statusCode: 400,
@@ -112,7 +112,7 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const { data, error } = await adminClient.from('retweets').upsert({
+    const { data, error } = await adminClient.from('retweet0921').upsert({
       userId,
       url: retweetLink,
       reason,
@@ -147,13 +147,13 @@ export default defineEventHandler(async (event) => {
   }
 
   if (action === 'topic-join_check') {
-    const { count } = await adminClient.from('retweets').select('*', { count: 'exact', head: true }).eq('reason', reason).eq('userId', userId);
+    const { count } = await adminClient.from('retweet0921').select('*', { count: 'exact', head: true }).eq('reason', reason).eq('userId', userId);
     // console.log({ count, reason, userId })
     return { data: { success: !!(count && count > 0), topic } }
   }
 
   if (action === 'topic-join_del') {
-    const { data, error } = await adminClient.from('retweets').delete().eq('reason', reason).eq('userId', userId)
+    const { data, error } = await adminClient.from('retweet0921').delete().eq('reason', reason).eq('userId', userId)
     if (error) {
       throw createError({
         statusCode: 400,
