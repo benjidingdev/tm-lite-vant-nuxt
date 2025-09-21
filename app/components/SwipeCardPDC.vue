@@ -29,7 +29,6 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let claimedTopicIds = $ref([]);
 let isSettlement = $ref(false);
-const customMarkets: any = $ref(markets());
 let isTrading = $ref(false);
 
 const threshold = 100; // Threshold of swiping
@@ -76,11 +75,6 @@ const getMarket = async (topicId: any) => {
 // get the list of cards
 const getInfoList = async () => {
   pdcCards = await getMarket(topicsId);
-
-  if (customMarkets?.length !== pdcCards.length) {
-    await updateMarket(topicsId, customMarkets);
-    pdcCards = await getMarket(topicsId);
-  }
   const index = pdcCards.findIndex((card: any) => card.id == query.marketID)
   if (index > -1) {
     pdcCards.unshift(pdcCards[index]); // add
