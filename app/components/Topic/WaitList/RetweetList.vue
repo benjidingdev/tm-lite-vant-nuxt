@@ -3,8 +3,6 @@
 const { hasTwitterLogin, x_user } = $(supabaseStore())
 const route = useRoute()
 const { refreshTime } = defineProps(['refreshTime'])
-let { pAmount } = $(pdcSwipeCardStore())
-
 let retweetList = $ref([])
 
 const debug = useDebug('retweetList')
@@ -31,21 +29,8 @@ async function loadList(params) {
   isLoading = false
 }
 
-// const getAsset = async () => {
-//   let res = await doFetch(`/api/assets/getAsset`, {
-//     method: 'GET',
-//   })
-//   if (res.status === 200) {
-//     pAmount = res?.data?.pAmount || 0;
-//   } else {
-//     pAmount = 0;
-//   }
-//   return res;
-// }
-
 watchEffect(async () => {
   refreshTime;
-  // await getAsset();
   await loadList();
 })
 
