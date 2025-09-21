@@ -7,7 +7,7 @@ const { topic } = defineProps({
     default: () => { },
   }
 })
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { x_user, hasTwitterLogin } = $(supabaseStore())
 
 const route = useRoute()
@@ -40,6 +40,16 @@ async function onClickDownload() {
 }
 
 let show = $ref(false)
+
+const shareTitle = computed(() => {
+  // topic.meta?.shareTitle
+  let text = topic.meta?.shareTitle
+  const key = `shareTitle_${locale.value}`
+  if (topic.meta?.[key]) {
+    text = topic.meta?.[key]
+  }
+  return text
+})
 </script>
 
 <template>
@@ -74,16 +84,17 @@ let show = $ref(false)
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
 
       <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black overflow-hidden relative custom-bg">
-        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-[url(${topic?.meta?.shareBg})]`"></div>
-        <div class="absolute z-1 top-0 left-0 w-full h-full bg-[#AA9CFF]/70"></div>
+        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover bg-[url(${topic?.meta?.shareBg})]`"></div>
+        <!-- /topic/monad-bg.jpg -->
+        <div class="absolute z-1 top-0 left-0 w-full h-full bg-[#AA9CFF]/70 backdrop-blur-[0px]"></div>
 
         <div class="relative z-3">
           <img :src="topic?.meta?.shareLogo" alt="" class="w-30 z-1">
 
-          <p class="text-[48px] font-bold text-white leading-[1] mb-6">{{ t('Pred to the moon') }}</p>
+          <p class="text-[48px] font-bold text-white leading-[1] mb-6">{{ shareTitle }}</p>
 
-          <div class="flex items-center justify-center space-x-2 bg-[rgba(0,0,0,.1)] rounded-[12px] p-[6px]">
-            <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
+          <div class="flex items-center justify-center space-x-2 bg-white rounded-[12px] p-[6px] mt-12">
+            <img :src="x_user?.avatar" alt="" class="size-11 rounded-full">
             <div>
               <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
               <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>

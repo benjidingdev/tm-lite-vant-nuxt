@@ -29,7 +29,6 @@ let startX = $ref(0); // The value of startX
 let startY = $ref(0); // The value of startY
 let claimedTopicIds = $ref([]);
 let isSettlement = $ref(false);
-const customMarkets: any = $ref(markets());
 let isTrading = $ref(false);
 
 const threshold = 100; // Threshold of swiping
@@ -76,11 +75,6 @@ const getMarket = async (topicId: any) => {
 // get the list of cards
 const getInfoList = async () => {
   pdcCards = await getMarket(topicsId);
-
-  if (customMarkets?.length !== pdcCards.length) {
-    await updateMarket(topicsId, customMarkets);
-    pdcCards = await getMarket(topicsId);
-  }
   const index = pdcCards.findIndex((card: any) => card.id == query.marketID)
   if (index > -1) {
     pdcCards.unshift(pdcCards[index]); // add
@@ -171,7 +165,7 @@ const swipeCard = (status: any) => {
 
 async function trade(marketId: any, isYes: any) {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
+    const rz = await doFetch(`/api/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-trade',
@@ -263,7 +257,7 @@ const getUserSelectedStatus = (currentCardID: any) => {
 
 const claim = async () => {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
+    const rz = await doFetch(`/api/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-claim'
@@ -290,21 +284,7 @@ onMounted(async () => {
 <template>
   <!-- <OnboardingGuide /> -->
   <div class="w-full h-[400px] relative z-10!">
-    <van-skeleton :loading="isLoading">
-      <template #template>
-        <div class="w-full h-[80vh] flex flex-col justify-center items-center ">
-          <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
-            <van-loading size="48" />
-          </div>
-          <!-- <van-skeleton-image /> -->
-          <div :style="{ marginTop: '42px', width: '100%' }">
-            <van-skeleton-paragraph row-width="60%" />
-            <van-skeleton-paragraph />
-            <van-skeleton-paragraph />
-            <van-skeleton-paragraph />
-          </div>
-        </div>
-      </template>
+    <div>
       <div v-if="isFinished">
         <div class="card draggable-element shadow-md active">
           <van-empty image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png" image-size="80"
@@ -355,8 +335,10 @@ onMounted(async () => {
                 <!--selected status-->
                 <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
                   :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
-                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 opacity-85 rounded-lg flex items-center justify-center text-2xl">
-                  {{ getUserSelectedStatus(card.id) }}
+                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
+                  @click="claim"
+                  >
+                  Try Claim Now!
                 </div>
                 <!--loading on buttons-->
                 <div v-if="isTrading"
@@ -365,7 +347,7 @@ onMounted(async () => {
                 </div>
               </div>
               <!--next click-->
-              <div class="text-gray-400 underline text-right" @click="pickNext">next>></div>
+              <div class="text-gray-400 underline text-right cursor-pointer" @click="pickNext">next>></div>
             </div>
           </div>
         </div>
@@ -381,13 +363,8 @@ onMounted(async () => {
             watinglist</van-button>
         </van-empty>
       </div>
-
-    </van-skeleton>
+    </div>
   </div>
-  <van-button v-if="!isLoading" type="primary"
-    class="w-full px-4 mt-4! bg-blue-500 text-white  rounded-[8px]! bg-[#7000FF]" :disabled="isFinished" @click="claim">
-    {{ isFinished ? 'You have got 200 $PM!' : 'Claim your $PM now!' }}
-  </van-button>
 </template>
 
 <style>
