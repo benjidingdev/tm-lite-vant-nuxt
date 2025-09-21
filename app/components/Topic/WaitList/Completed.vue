@@ -8,8 +8,7 @@ const { topic } = defineProps({
   }
 })
 const { t } = useI18n()
-
-const { x_user } = $(supabaseStore())
+const { x_user, hasTwitterLogin } = $(supabaseStore())
 
 const route = useRoute()
 

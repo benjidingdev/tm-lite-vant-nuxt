@@ -51,7 +51,7 @@ const { query, path } = $(useRoute());
 let movingYes = $computed(() => offsetX < 0);
 let movingNo = $computed(() => offsetX > 0);
 let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
-let isFinished = $computed(() => claimedTopicIds?.some(item => item == route.params.pid));
+let isFinished = $computed(() => claimedTopicIds?.some(item => item == route.params.id));
 
 console.log('route.params', route.params);
 
@@ -171,7 +171,7 @@ const swipeCard = (status: any) => {
 
 async function trade(marketId: any, isYes: any) {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-trade',
@@ -263,7 +263,7 @@ const getUserSelectedStatus = (currentCardID: any) => {
 
 const claim = async () => {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+    const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-claim'

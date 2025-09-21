@@ -11,6 +11,7 @@ async function handleLogin() {
 
 <template>
   <section class="mt-20 w-full flex flex-col items-center justify-center space-y-4 py-4 rounded-md">
+    <TopicWaitListRetweetList />
     <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-[8px] bg-[#7000FF]" @click="handleLogin">
       Authorize X account
     </button>
