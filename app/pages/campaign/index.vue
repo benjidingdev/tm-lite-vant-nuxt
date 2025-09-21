@@ -76,7 +76,7 @@ const stepsButtonHandle = (ind) => {
       share()
       break;
     case 2:
-      navigateTo(`/${locale.value}`)
+      useNavigateTo('/')
       break;
   }
 }
