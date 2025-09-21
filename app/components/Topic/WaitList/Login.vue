@@ -23,4 +23,5 @@ async function handleLogin() {
     <TopicWaitListRetweetList class="px-5" />
 
   </section>
+  <TopicWaitListRetweetList />
 </template>
