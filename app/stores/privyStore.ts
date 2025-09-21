@@ -5,10 +5,12 @@ import { getNetworks } from "~/config/networks";
 export const privyStore = defineStore(
   "privyStore",
   () => {
-    const debug = useDebug('privyStore')
+    const debug = useDebug("privyStore");
     const { $privy, $PrivySDK }: any = useNuxtApp();
     const { token } = $(authStore());
-    const networks = getNetworks(useRuntimeConfig().public.isTestnet as boolean)
+    const networks = getNetworks(
+      useRuntimeConfig().public.isTestnet as boolean
+    );
     const { setLoadingToast } = $(uiStore());
     const { t } = $(useI18n());
 
@@ -18,33 +20,34 @@ export const privyStore = defineStore(
     let isLoading = $ref(false);
     let session: any = $ref(null);
     const isNewUser = $computed(() => {
-      return session?.user?.is_new_user
-    })
-    let errorInfo: any = $ref('');
+      return session?.user?.is_new_user;
+    });
+    let errorInfo: any = $ref("");
     let walletClient: any = $ref(null);
-    let cleanupIframe: () => void = () => { };
-    let iframeRef: (HTMLIFrameElement | null) = $ref(null);
+    let cleanupIframe: () => void = () => {};
+    let iframeRef: HTMLIFrameElement | null = $ref(null);
 
     const userId = $computed(() => session?.user?.id || false);
-    let wallet = $ref<any>(null)
+    let wallet = $ref<any>(null);
     const userEmail = $computed(() => {
       return (
-        session?.user?.linked_accounts?.find((item: any) => item.type === "email")
-          ?.address || ""
+        session?.user?.linked_accounts?.find(
+          (item: any) => item.type === "email"
+        )?.address || ""
       );
     });
 
     const doLogin = async () => {
-      if(isLoading) return
+      if (isLoading) return;
       isLoading = true;
 
       try {
         session = await $privy.auth.email.loginWithCode(email, oneTimePassword);
-        debug({ session, action: 'doLogin' })
-        hasSend = false
+        debug({ session, action: "doLogin" });
+        hasSend = false;
       } catch (error: Error | any) {
         errorInfo = "login error: " + error.message;
-        debug({errorInfo, action: 'doLogin'})
+        debug({ errorInfo, action: "doLogin" });
       }
       isLoading = false;
     };
@@ -68,118 +71,127 @@ export const privyStore = defineStore(
         await $privy.auth.logout();
         session = null;
         wallet = null;
-        email = '';
+        email = "";
         walletClient = null;
       } catch (error) {
-        debug({ error, action: 'logoutPrivy' })
+        debug({ error, action: "logoutPrivy" });
       }
       cleanupIframe();
     };
 
     // above wait for clear
-    let isInitWallet = false
+    let isInitWallet = false;
     const initWallet = async () => {
-      if (isInitWallet) return
-      isInitWallet = true
+      if (isInitWallet) return;
+      isInitWallet = true;
       setLoadingToast(t("Initializing wallet..."));
       try {
         let theWallet = $PrivySDK.getUserEmbeddedWallet(session.user);
-        let user = session.user
+        let user = session.user;
         if (!theWallet) {
           const rz = await $privy.embeddedWallet.create({});
-          user = rz.user
+          user = rz.user;
           theWallet = $PrivySDK.getUserEmbeddedWallet(user);
         }
-        debug({ theWallet })
+        debug({ theWallet });
         if (!theWallet) {
-          debug({ session })
+          debug({ session });
           throw new Error("wallet not found");
         }
-        wallet = theWallet
+        wallet = theWallet;
 
-        debug({ session })
-        const { entropyId, entropyIdVerifier } = $PrivySDK.getEntropyDetailsFromUser(user);
-        const provider = await $privy.embeddedWallet.getEthereumProvider({
-          wallet: theWallet,
-          entropyId,
-          entropyIdVerifier,
-        });
-
-        walletClient = createWalletClient({
-          account: theWallet.address,
-          chain: networks[0],
-          transport: custom(provider),
-        }).extend(publicActions)
-        debug({ walletClient })
+        debug({ session });
+        await initWalletClient();
       } catch (error) {
-        debug({ error, action: 'initWallet' })
+        debug({ error, action: "initWallet" });
       } finally {
-        isInitWallet = false
+        isInitWallet = false;
       }
-    }
+    };
 
     const msgPoster = {
       postMessage: (msg: any, targetOrigin: string) => {
         // debug({ tag: 'postMessage', msg, targetOrigin })
-        return iframeRef!.contentWindow!.postMessage(msg, targetOrigin)
+        return iframeRef!.contentWindow!.postMessage(msg, targetOrigin);
       },
       reload: async () => {
-        debug({ action: 'reload' })
+        debug({ action: "reload" });
       },
-    }
+    };
 
-    const setupEmbeddedWalletIframe = async() => {
+    const setupEmbeddedWalletIframe = async () => {
       const iframeUrl = $privy.embeddedWallet.getURL();
       iframeRef!.src = iframeUrl;
-      debug({ action: 'setupEmbeddedWalletIframe', iframeUrl })
+      debug({ action: "setupEmbeddedWalletIframe", iframeUrl });
       $privy.setMessagePoster(msgPoster);
       const listener = (e: MessageEvent) => {
-        const target = e?.data?.target
-        const targetArr = ['metamask-inpage', 'metamask-contentscript']
+        const target = e?.data?.target;
+        const targetArr = ["metamask-inpage", "metamask-contentscript"];
         if (target && targetArr.includes(target)) {
           return;
         }
         switch (e.data.event) {
-          case 'privy:iframe:ready':
-            debug({privyIsReady: true})
+          case "privy:iframe:ready":
+            debug({ privyIsReady: true });
             break;
           default:
-            debug({ 'privy:iframe': e, origin: e.origin })
+            debug({ "privy:iframe": e, origin: e.origin });
             break;
         }
         try {
           $privy.embeddedWallet.onMessage(e.data);
         } catch (err) {
-          debug({ 'privy:iframe:error': err, e })
+          debug({ "privy:iframe:error": err, e });
         }
-
       };
       window.addEventListener("message", listener);
       try {
         session = await $privy.user.get();
       } catch (error) {
-        debug({ error, action: 'setupEmbeddedWalletIframe' })
+        debug({ error, action: "setupEmbeddedWalletIframe" });
       }
 
       cleanupIframe = async () => {
         window.removeEventListener("message", listener);
         iframeRef!.src = "";
         setTimeout(() => {
-          setupEmbeddedWalletIframe()
-        }, 1000)
+          setupEmbeddedWalletIframe();
+        }, 1000);
       };
     };
 
-    watchEffect(async() => {
-      if (!iframeRef) return
-      await setupEmbeddedWalletIframe()
-    })
+    const initWalletClient = async () => {
+      if (!wallet || !session) return;
 
-    watch(() => userId, async (newVal) => {
-      if(!newVal) return
-      if(token.accessToken) return
-      await initWallet();
-    })
+      const { entropyId, entropyIdVerifier } =
+        $PrivySDK.getEntropyDetailsFromUser(session.user);
+      const provider = await $privy.embeddedWallet.getEthereumProvider({
+        wallet,
+        entropyId,
+        entropyIdVerifier,
+      });
+
+      walletClient = createWalletClient({
+        account: wallet.address,
+        chain: networks[0],
+        transport: custom(provider),
+      }).extend(publicActions);
+    };
+
+    watchEffect(async () => {
+      if (!iframeRef) return;
+      await setupEmbeddedWalletIframe();
+      await initWalletClient();
+    });
+
+    watch(
+      () => userId,
+      async (newVal) => {
+        if (!newVal) return;
+        if (token.accessToken) return;
+        await initWallet();
+      }
+    );
 
     return $$({
       iframeRef,
@@ -203,6 +215,7 @@ export const privyStore = defineStore(
     });
   },
   {
+    // @ts-ignore
     persist: {
       omit: [
         "isLoading",

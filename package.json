@@ -1,7 +1,7 @@
 {
   "name": "nuxt-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.3",
   "type": "module",
   "scripts": {
     "build": "./scripts/build.sh",
@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@lighthouse-web3/sdk": "^0.4.2",
+    "@line/liff": "^2.27.2",
+    "@linenext/dapp-portal-sdk": "^1.4.4",
     "@nuxtjs/i18n": "^10.0.5",
     "@nuxtjs/supabase": "^1.6.1",
     "@pinia/nuxt": "^0.11.2",
@@ -32,6 +34,7 @@
     "@wagmi/vue": "^0.1.24",
     "axios": "^1.11.0",
     "buffer": "^6.0.3",
+    "canvas-confetti": "^1.9.3",
     "debug": "^4.4.1",
     "decimal.js": "^10.6.0",
     "dom-to-image": "^2.6.0",
@@ -39,6 +42,7 @@
     "logrocket": "^10.1.0",
     "nuxt": "^4.0.1",
     "nuxt-meta-pixel": "2.0.2",
+    "odometer": "^0.4.8",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "qrcode.vue": "^3.6.0",

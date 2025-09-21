@@ -42,7 +42,7 @@ let queryParams: QueryParams = {
   cardID: "",
   inviteCode: "",
 };
-const customMarkets: any = $ref(markets()[0]);
+
 let isSettlement = $ref(false);
 const recommondQueryParams = $ref({
   pageNo: 1,
@@ -91,10 +91,6 @@ const getInfoList = async (refresh: boolean) => {
         const card = cards.splice(index, 1)[0];
         cards.unshift(card);
       }
-    }
-
-    if (query.sharedMarket === 'true') {
-      cards.unshift(customMarkets); // add
     }
   }
   isLoading = false;
@@ -340,7 +336,7 @@ onMounted(() => {
             <!-- Volume and share button -->
             <div class="h-[15%] flex justify-between">
               <text> ${{ convertCurrency(card.volume) }} Vol.</text>
-              <SwipeCardShareCard :cardID="card.id" />
+              <SwipeCardShareIcon :topicInfo="card" />
             </div>
           </div>
         </div>
