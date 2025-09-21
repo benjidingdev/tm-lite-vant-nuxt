@@ -39,7 +39,7 @@ watchEffect(async () => {
 <template>
   <section
     class="w-full min-h-100 mt-4 rounded-[16px] bg-white text-black px-[14px] py-[30px] flex flex-col items-center justify-start space-y-2">
-
+    <p class="text-[18px] font-bold -mt-4 mb-2">Retweet List</p>
     <div v-if="isLoading" class="w-full flex-1 flex justify-center items-center">
       <van-loading size="48" />
     </div>

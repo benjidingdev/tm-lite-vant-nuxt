@@ -35,8 +35,6 @@ async function loadData() {
       tiers[tierIndex].users.push(user)
     }
   })
-
-
 }
 
 onMounted(() => {
@@ -50,23 +48,16 @@ onMounted(() => {
   <section class="w-full h-[calc(100dvh)] h-auto flex flex-col items-center justify-center space-y-[10px] mt-8">
     <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
       :key="tier.rank">
-
       <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
-
       <div class="flex-1 grid grid-cols-4 gap-[1px]">
-        <NuxtLink :to="`/topic/u-${user.id}`" v-for="user in tier.users" :key="user.id"
+        <NuxtLink :to="`/u/${user.id}`" v-for="user in tier.users" :key="user.id"
           class="border-0 flex flex-col items-center justify-center relative">
-          <van-image class="w-full h-full bg-cover" :src="xAvatar(user.avatar)">
-            <template v-slot:loading>
-              <van-loading type="spinner" size="20" />
-            </template>
-          </van-image>
+          <XAvatar :src="user.avatar" />
           <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{
             user.name ||
             'name' }}</p>
         </NuxtLink>
       </div>
-
     </div>
   </section>
 </template>
