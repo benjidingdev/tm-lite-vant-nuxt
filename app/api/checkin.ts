@@ -1,5 +1,9 @@
 import { doFetch } from '@/composables/doFetch'
 
+export const getCheckinJackpot = () => {
+  return doFetch('/api/checkin/jackpot', { method: 'GET' })
+}
+
 export const getCheckinNoticeList = () => {
   return doFetch('/api/checkin/notice', { method: 'GET' })
 }
@@ -8,12 +12,12 @@ export const getCheckinKpi = () => {
   return doFetch('/api/checkin/kpi', { method: 'GET' })
 }
 
-export const getCheckinStatus = () => {
-  return doFetch('/api/checkin/status', { method: 'GET' })
+export const getCheckinStatus = (jackpotId: number) => {
+  return doFetch('/api/checkin/status', { method: 'GET', query: { jackpotId } })
 }
 
-export const postCheckin = () => {
-  return doFetch('/api/checkin/do', { method: 'GET' })
+export const postCheckin = (params: any) => {
+  return doFetch('/api/checkin/do', { method: 'POST', body: params })
 }
 
 export const redeemMakeupCard = () => {

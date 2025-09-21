@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import 'odometer/themes/odometer-theme-default.css'
 import { useQuery } from '@tanstack/vue-query'
-import { getCheckinKpi } from '~/api/checkin'
+import { getCheckinJackpot, getCheckinKpi } from '~/api/checkin'
 import { createOdometer } from '@/utils/odometer'
 
+let { jackpot } = $(checkinStore())
 const { t } = useI18n()
 
 let participants = $ref(0)
@@ -35,15 +36,22 @@ const { data: kpiRes, isLoading } = useQuery({
   refetchInterval: 50000,
 })
 
-watch(
-  () => kpiRes?.value?.data?.kpi,
-  (kpi) => {
-    if (!kpi) return
-    participants = Number(kpi.participants || 0)
-    pool = Number(kpi.pool || 0)
-  },
-  { immediate: true }
-)
+const getPool = async () => {
+  const res = await getCheckinJackpot()
+  jackpot = res?.data?.jackpot
+  participants = Number(res?.data?.userCount || 0)
+  pool = Number(res?.data?.jackpot.totalPoints || 0)
+}
+
+// watch(
+//   () => kpiRes?.value?.data?.kpi,
+//   (kpi) => {
+//     if (!kpi) return
+//     participants = Number(kpi.participants || 0)
+//     pool = Number(kpi.pool || 0)
+//   },
+//   { immediate: true }
+// )
 
 // After loading, the odometer will be evenly initialized
 watchEffect(async () => {
@@ -62,6 +70,10 @@ watch(() => isLoading.value, async (v) => {
 
 watch(() => participants, (val) => { if (participantsOdo) participantsOdo.update(val) })
 watch(() => pool, (val) => { if (poolOdo) poolOdo.update(val) })
+
+onMounted(() => {
+  getPool()
+})
 </script>
 
 <template>

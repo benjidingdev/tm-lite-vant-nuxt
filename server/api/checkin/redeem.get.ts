@@ -1,26 +1,28 @@
-export default defineEventHandler(async () => {
-  const { promises: fs } = await import('node:fs')
-  const { join } = await import('node:path')
-  const DB_PATH = join(process.cwd(), 'app', 'db', 'checkin.json')
-  const raw = await fs.readFile(DB_PATH, 'utf-8')
-  const db = JSON.parse(raw)
+import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
 
-  const cost = db.makeupCardCost || 1200
-  if ((db.availablePoints || 0) < cost) {
-    return {
-      message: 'Insufficient points',
-      code: 1,
-      data: false,
-    }
-  }
+export default defineEventHandler(async (event) => {
+  const adminClient = serverSupabaseServiceRole(event);
+  const user = serverSupabaseUser(event);
+  const { jackpotId } = await readBody(event)
 
-  db.availablePoints -= cost
-  db.makeupCardCount = (db.makeupCardCount || 0) + 1
+  const { data: jackpot } = await adminClient
+    .from('checkin_jackpots')
+    .select('*')
+    .eq('id', jackpotId)
+    .single()
 
-  await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), 'utf-8')
-  return {
-    message: '',
-    code: 0,
-    data: true,
-  }
+  if (!jackpot)
+    return { code: 500, message: 'Jackpot not found' }
+  if (!user || user.points < jackpot.makeupPoints)
+    return { code: 500, message: 'Insufficient points' }
+
+  await updateUserPAmount(adminClient, user.id, -jackpot.makeupPoints, `User redeem makeup card, jackpot id: ${jackpot.id}`)
+
+  const { data: card } = await adminClient.from('checkin_makeup_cards').insert([{
+    userId: user.id,
+    jackpotId: jackpot.id,
+    status: 0
+  }]).select('*').single()
+
+  return { code: 200, data: card?.id }
 })

@@ -4,55 +4,81 @@ import confetti from "canvas-confetti";
 import { showConfirmDialog, showToast } from 'vant'
 import { getCheckinStatus, postCheckin, redeemMakeupCard, useMakeupCard } from '~/api/checkin'
 
+const { hasTwitterLogin } = $(supabaseStore())
+let { jackpot } = $(checkinStore())
 let isLoading = $ref(true)
 let isActing = $ref(false)
 
-let checkinStatus = $ref(null as null | {
-  totalDays: number
-  checkedDays: number[]
-  consecutiveDays: number
-  isCheckin: boolean
-  availablePoints: number
-  makeupCardCount: number
-  makeupCardCost: number
+let checkinStatus = $ref({
+  checkedDays: [] as number[],
+  consecutiveDays: 0,
+  isCheckin: false,
+  availablePoints: 0,
+  makeupCardCount: 0,
+})
+
+const totalDays = $computed(() => {
+  const start = new Date(jackpot.startDate);
+  const end = new Date(jackpot.endDate);
+  const diffTime = end.getTime() - start.getTime();
+  const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+  return diffDays ?? 30
+})
+
+const makeupCardCost = $computed(() => {
+  return jackpot?.makeupPoints ?? 2000
+})
+
+const todayIndex = $computed(() => {
+  return getTodayIndex(jackpot.startDate, jackpot.endDate) ?? 0
+})
+
+const consecutiveDays = $computed(() => {
+  return checkinStatus?.consecutiveDays ?? 0
 })
 
 // Loading check-in status
 const  fetchStatus = async () => {
   try {
     isLoading = true
-    const res = await getCheckinStatus()
+    const res = await getCheckinStatus(jackpot.id)
     const data = res?.data || null
     if (res?.code === 0 && data) {
-      checkinStatus = {
-        totalDays: data.totalDays ?? 30,
-        checkedDays: Array.isArray(data.checkedDays) ? data.checkedDays : [],
-        consecutiveDays: data.consecutiveDays ?? 0,
-        isCheckin: !!data.isCheckin,
-        availablePoints: data.availablePoints ?? 0,
-        makeupCardCount: data.makeupCardCount ?? 0,
-        makeupCardCost: data.makeupCardCost ?? 1200,
-      }
+      checkinStatus.checkedDays = data.dates
+      checkinStatus.availablePoints = data.points
+      checkinStatus.makeupCardCount = data.makerupCardNum
+      checkinStatus.consecutiveDays = getContinuousDays(data.dates) ?? 0
+      checkinStatus.isCheckin = data.dates.includes(new Date().getDate())
+      // checkinStatus = {
+      //   totalDays: data.totalDays ?? 30,
+      //   checkedDays: Array.isArray(data.checkedDays) ? data.checkedDays : [],
+      //   consecutiveDays: data.consecutiveDays ?? 0,
+      //   isCheckin: !!data.isCheckin,
+      //   availablePoints: data.availablePoints ?? 0,
+      //   makeupCardCount: data.makeupCardCount ?? 0,
+      //   makeupCardCost: data.makeupCardCost ?? 1200,
+      // }
     }
   }  finally {
     isLoading = false
   }
 }
 
-onMounted(fetchStatus)
+watch(() => jackpot,
+(jackpot) => {
+  if (jackpot.id) fetchStatus()
+})
 
 const derived = $computed(() => {
-  const totalDays = checkinStatus?.totalDays ?? 30
   const checkedDays = Array.isArray(checkinStatus?.checkedDays) ? checkinStatus!.checkedDays : []
   const consecutiveDays = checkinStatus?.consecutiveDays ?? 0
   const isCheckin = !!checkinStatus?.isCheckin
   const availablePoints = checkinStatus?.availablePoints ?? 0
   const makeupCardCount = checkinStatus?.makeupCardCount ?? 0
-  const makeupCardCost = checkinStatus?.makeupCardCost ?? 1200
 
   const lastChecked = checkedDays.length ? Math.max(...checkedDays) : 0
   const nextDay = Math.min(lastChecked + 1, totalDays)
-  const todayIndex = isCheckin ? 0 : nextDay
+  // const todayIndex = isCheckin ? 0 : nextDay
 
   const set = new Set(checkedDays)
   const missedDays: number[] = []
@@ -76,8 +102,45 @@ const derived = $computed(() => {
   }
 })
 
+const getTodayIndex = (startDate: string, endDate: string): number | null =>  {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (today < start || today > end) {
+    return null;
+  }
+
+  const diffTime = today.getTime() - start.getTime();
+  const dayIndex = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  return dayIndex;
+}
+
+const getContinuousDays = (dates: string[]): number => {
+  if (!dates || dates.length === 0) return 0;
+
+  const sorted: Date[] = dates
+    .map(d => new Date(d))
+    .sort((a, b) => a.getTime() - b.getTime());
+
+  let count = 1;
+  for (let i = sorted.length - 1; i > 0; i--) {
+    const diff = (sorted[i].getTime() - sorted[i - 1].getTime()) / (1000 * 60 * 60 * 24);
+    if (diff === 1) {
+      count++;
+    } else {
+      break;
+    }
+  }
+
+  return count;
+}
+
 const onMissedDayClick = async (day: number) => {
-  if (isActing) return
+  if (!hasTwitterLogin || isActing) return
 
   if (derived.makeupCardCount > 0) {
     try {
@@ -149,10 +212,18 @@ const onRedeemMakeupCard = async () => {
 
 const onCheckIn = async () => {
   if (derived.isCheckin || isActing) return
+  if (checkinStatus.availablePoints < jackpot.checkinPoints) {
+    showToast('Insufficient points')
+    return
+  }
 
   try {
     isActing = true
-    const res = await postCheckin()
+    const params = {
+      jackpotId: jackpot.id,
+      date: new Date().toISOString()
+    }
+    const res = await postCheckin(params)
     if (res?.code === 0 && res?.data === true) {
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } })
       await fetchStatus()
@@ -208,7 +279,7 @@ const onCheckIn = async () => {
 
       <div class="flex items-center justify-between text-xs">
         <div class="text-gray-500">{{ t('buyHint', { cost: derived.makeupCardCost }) }}</div>
-        <van-button size="mini" type="primary" plain @click="onRedeemMakeupCard">
+        <van-button v-if="hasTwitterLogin" size="mini" type="primary" plain @click="onRedeemMakeupCard">
           {{ t('redeemMakeupCard') }}
         </van-button>
       </div>
@@ -221,7 +292,9 @@ const onCheckIn = async () => {
         @select-missed="onMissedDayClick"
       />
 
-      <van-button
+      <CheckinAuth v-if="!hasTwitterLogin" />
+
+      <van-button v-else
         block
         type="primary"
         :disabled="derived.isCheckin || derived.checkedDays.length >= derived.totalDays"
