@@ -20,6 +20,6 @@ import RulesCard from './RulesCard.vue'
 import Notice from './Notice.vue'
 
 definePageMeta({
-  layout: "pdc-default",
+  layout: "x",
 });
 </script>

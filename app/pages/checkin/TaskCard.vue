@@ -2,12 +2,13 @@
 const { t } = useI18n()
 import confetti from "canvas-confetti";
 import { showConfirmDialog, showToast } from 'vant'
-import { getCheckinStatus, postCheckin, redeemMakeupCard, useMakeupCard } from '~/api/checkin'
+import { getCheckinStatus, postCheckin, redeemMakeupCard } from '~/api/checkin'
 
 const { hasTwitterLogin } = $(supabaseStore())
-let { jackpot } = $(checkinStore())
+let { jackpot, refreshJackpot } = $(checkinStore())
 let isLoading = $ref(true)
 let isActing = $ref(false)
+let isRedeeming = $ref(false)
 
 let checkinStatus = $ref({
   checkedDays: [] as number[],
@@ -33,22 +34,27 @@ const todayIndex = $computed(() => {
   return getTodayIndex(jackpot.startDate, jackpot.endDate) ?? 0
 })
 
-const consecutiveDays = $computed(() => {
-  return checkinStatus?.consecutiveDays ?? 0
-})
+const todayString: string = (() => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+})()
 
 // Loading check-in status
-const  fetchStatus = async () => {
+const fetchStatus = async () => {
   try {
-    isLoading = true
+    // isLoading = true
     const res = await getCheckinStatus(jackpot.id)
     const data = res?.data || null
     if (res?.code === 0 && data) {
-      checkinStatus.checkedDays = data.dates
+      checkinStatus.checkedDays = getDateIndexes(data.dates, jackpot.startDate, jackpot.endDate)
       checkinStatus.availablePoints = data.points
       checkinStatus.makeupCardCount = data.makerupCardNum
       checkinStatus.consecutiveDays = getContinuousDays(data.dates) ?? 0
-      checkinStatus.isCheckin = data.dates.includes(new Date().getDate())
+      checkinStatus.isCheckin = data.dates.includes(todayString)
       // checkinStatus = {
       //   totalDays: data.totalDays ?? 30,
       //   checkedDays: Array.isArray(data.checkedDays) ? data.checkedDays : [],
@@ -59,15 +65,10 @@ const  fetchStatus = async () => {
       //   makeupCardCost: data.makeupCardCost ?? 1200,
       // }
     }
-  }  finally {
+  } finally {
     isLoading = false
   }
 }
-
-watch(() => jackpot,
-(jackpot) => {
-  if (jackpot.id) fetchStatus()
-})
 
 const derived = $computed(() => {
   const checkedDays = Array.isArray(checkinStatus?.checkedDays) ? checkinStatus!.checkedDays : []
@@ -102,7 +103,49 @@ const derived = $computed(() => {
   }
 })
 
-const getTodayIndex = (startDate: string, endDate: string): number | null =>  {
+const getDateIndexes = (
+  dates: string[],
+  startDate: string,
+  endDate: string
+): number[] => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  // 确保日期顺序正确
+  const totalDays = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+  const indices: number[] = [];
+
+  dates.forEach(d => {
+    const date = new Date(d);
+    if (date >= start && date <= end) {
+      const index = Math.floor((date.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      indices.push(index); // 0 开始，如果想要 1 开始就 +1
+    }
+  });
+
+  return indices;
+}
+
+const getDateByIndex = (startDate: string, endDate: string, index: number): string | null => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const target = new Date(start);
+  target.setDate(start.getDate() + (index - 1));
+
+  if (target > end) {
+    return null;
+  }
+
+  const year = target.getFullYear();
+  const month = String(target.getMonth() + 1).padStart(2, "0");
+  const day = String(target.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+const getTodayIndex = (startDate: string, endDate: string): number | null => {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
@@ -142,77 +185,47 @@ const getContinuousDays = (dates: string[]): number => {
 const onMissedDayClick = async (day: number) => {
   if (!hasTwitterLogin || isActing) return
 
+  if (derived.makeupCardCount == 0) {
+    await onRedeemMakeupCard()
+  }
+
   if (derived.makeupCardCount > 0) {
     try {
       await showConfirmDialog({ message: t('useMakeupConfirm', { day }) })
     } catch { return }
 
-    try {
-      isActing = true
-      const res = await useMakeupCard(day)
-      if (res?.data === true) {
-        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } })
-        showToast(t('useSuccess'))
-        await fetchStatus()
-      } else {
-        showToast(res?.message || t('networkError'))
-      }
-    } catch {
-      showToast(t('networkError'))
-    } finally {
-      isActing = false
+    const date = getDateByIndex(jackpot.startDate, jackpot.endDate, day)
+    if (!date) {
+      showToast(t('Checkin date not found'))
+      return
     }
-    return
-  }
-
-  try {
-    await showConfirmDialog({ message: t('purchaseConfirm', { cost: derived.makeupCardCost }) })
-  } catch { return }
-
-  try {
-    isActing = true
-    const buyRes = await redeemMakeupCard()
-    if (buyRes?.data === true) {
-      showToast(t('purchaseSuccess'))
-      const useRes = await useMakeupCard(day)
-      if (useRes?.data === true) {
-        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } })
-        showToast(t('useSuccess'))
-        await fetchStatus()
-      } else {
-        showToast(useRes?.message || t('networkError'))
-      }
-    } else {
-      showToast(buyRes?.message || t('insufficientPoints'))
-    }
-  } finally {
-    isActing = false
+    await onCheckIn(date, true)
   }
 }
 
 const onRedeemMakeupCard = async () => {
-  if (isActing) return
+  if (isRedeeming) return
   try {
     await showConfirmDialog({ message: t('purchaseConfirm', { cost: derived.makeupCardCost }) })
   } catch { return }
 
   try {
-    isActing = true
-    const res = await redeemMakeupCard()
-    if (res?.code === 0 && res?.data === true) {
+    isRedeeming = true
+    const res = await redeemMakeupCard({ jackpotId: jackpot.id })
+    if (res?.code === 200) {
+      checkinStatus.makeupCardCount++
       showToast(t('purchaseSuccess'))
-      await fetchStatus()
     } else {
       showToast(res?.message || t('insufficientPoints'))
     }
   } finally {
-    isActing = false
+    isRedeeming = false
   }
 }
 
-const onCheckIn = async () => {
-  if (derived.isCheckin || isActing) return
-  if (checkinStatus.availablePoints < jackpot.checkinPoints) {
+const onCheckIn = async (checkinDate: string = '', useCard: boolean = false) => {
+  if (!useCard && derived.isCheckin || isActing) return
+  if (!useCard && checkinStatus.availablePoints < jackpot.checkinPoints) {
     showToast('Insufficient points')
     return
   }
@@ -221,10 +234,12 @@ const onCheckIn = async () => {
     isActing = true
     const params = {
       jackpotId: jackpot.id,
-      date: new Date().toISOString()
+      date: checkinDate || new Date().toISOString(),
+      useMakeupCard: useCard
     }
     const res = await postCheckin(params)
-    if (res?.code === 0 && res?.data === true) {
+    if (res?.code === 200) {
+      refreshJackpot = true
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } })
       await fetchStatus()
     } else {
@@ -234,6 +249,12 @@ const onCheckIn = async () => {
     isActing = false
   }
 }
+
+watch(() => jackpot,
+  (jackpot) => {
+    if (jackpot.id) fetchStatus()
+  }, { immediate: true })
+
 </script>
 
 <template>
@@ -259,11 +280,14 @@ const onCheckIn = async () => {
     <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm space-y-4">
       <div class="flex items-start justify-between">
         <div class="flex items-center text-lg font-bold">
-          <div class="text-gray-700">{{ t('dayProgress', { day: derived.checkedDays.length, total: derived.totalDays }) }}</div>
+          <div class="text-gray-700">{{ t('dayProgress', { day: derived.checkedDays.length, total: derived.totalDays })
+          }}
+          </div>
         </div>
         <div class="text-right text-xs text-gray-500 space-y-1">
           <div>{{ t('points') }}: <span class="font-medium text-gray-700">{{ derived.availablePoints }}</span></div>
-          <div>{{ t('makeupCard') }}: <span class="font-medium text-gray-700">x{{ derived.makeupCardCount }}</span></div>
+          <div>{{ t('makeupCard') }}: <span class="font-medium text-gray-700">x{{ derived.makeupCardCount }}</span>
+          </div>
         </div>
       </div>
 
@@ -279,27 +303,19 @@ const onCheckIn = async () => {
 
       <div class="flex items-center justify-between text-xs">
         <div class="text-gray-500">{{ t('buyHint', { cost: derived.makeupCardCost }) }}</div>
-        <van-button v-if="hasTwitterLogin" size="mini" type="primary" plain @click="onRedeemMakeupCard">
+        <van-button class="w-[111px]" v-if="hasTwitterLogin" size="mini" type="primary" plain :loading="isRedeeming"
+          @click="onRedeemMakeupCard">
           {{ t('redeemMakeupCard') }}
         </van-button>
       </div>
 
-      <CheckinCalendar
-        :total-days="derived.totalDays"
-        :checked-days="derived.checkedDays"
-        :today-index="derived.todayIndex"
-        :missed-days="derived.missedDays"
-        @select-missed="onMissedDayClick"
-      />
+      <CheckinCalendar :total-days="derived.totalDays" :checked-days="derived.checkedDays"
+        :today-index="derived.todayIndex" :missed-days="derived.missedDays" @select-missed="onMissedDayClick" />
 
       <CheckinAuth v-if="!hasTwitterLogin" />
 
-      <van-button v-else
-        block
-        type="primary"
-        :disabled="derived.isCheckin || derived.checkedDays.length >= derived.totalDays"
-        @click="onCheckIn"
-      >
+      <van-button v-else block type="primary" :loading="isActing"
+        :disabled="derived.isCheckin || derived.checkedDays.length >= derived.totalDays" @click="onCheckIn()">
         {{
           derived.checkedDays.length >= derived.totalDays
             ? t('btnCompleted')

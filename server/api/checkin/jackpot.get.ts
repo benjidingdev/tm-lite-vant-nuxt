@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   if (error2) throw error2
 
   return {
-    code: 0,
+    code: 200,
     data: {
       jackpot,
       userCount

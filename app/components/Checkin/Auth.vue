@@ -4,7 +4,7 @@ const { hasTwitterLogin, doLogin } = $(supabaseStore())
 async function handleLogin() {
   const query = new URLSearchParams(location.search)
   const refId = query.get('refId')
-  await doLogin({ pathname: location.pathname, refId, reason: `wl.topic-2` })
+  await doLogin({ pathname: location.pathname, refId, reason: `topic-2` })
 }
 </script>
 

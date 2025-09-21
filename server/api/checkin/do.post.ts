@@ -2,8 +2,8 @@ import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server"
 
 export default defineEventHandler(async (event) => {
   const adminClient = serverSupabaseServiceRole(event);
-  const user = serverSupabaseUser(event);
-  const userId = user?.id
+  const user = await serverSupabaseUser(event);
+  const userId = user?.id as string
   const { jackpotId, date, useMakeupCard } = await readBody(event)
 
   const { data: jackpot } = await adminClient
@@ -14,11 +14,17 @@ export default defineEventHandler(async (event) => {
 
   if (!jackpot)
     return { code: 500, message: 'Jackpot not found' }
-  if (date < jackpot.startDate || date > jackpot.endDate)
-    return { code: 500, message: `Date not in range ${jackpot.startDate} -  ${jackpot.endDate}` }
+
+  const { startDate, endDate, checkinPoints, makeupPoints, totalPoints, returnMultiplier } = jackpot
+
+  if (!date)
+    return { code: 500, message: 'Date is required' }
+
+  if (date < startDate || date > endDate)
+    return { code: 500, message: `Date not in range ${startDate} -  ${endDate}` }
 
   const { data: exists } = await adminClient
-    .from('checkins')
+    .from('checkin_records')
     .select('*')
     .eq('userId', userId)
     .eq('jackpotId', jackpotId)
@@ -43,7 +49,7 @@ export default defineEventHandler(async (event) => {
       userId,
       jackpotId,
       date,
-      points: jackpot.checkinPoints,
+      points: checkinPoints,
     }, {
       onConflict: 'userId,jackpotId,date',
     })
@@ -52,24 +58,49 @@ export default defineEventHandler(async (event) => {
 
   } else {
     // Normal checkin
-    if (!user || user.pAmount < jackpot.checkinPoints)
+    const { data: assets, error: assetsError } = await adminClient.from('assets')
+      .select('pAmount')
+      .eq('userId', userId)
+      .single()
+
+    if (assetsError) throw assetsError
+
+    if (!assets || assets.pAmount < checkinPoints)
       return { code: 500, message: 'Points not enough' }
 
-    await updateUserPAmount(adminClient, userId, -jackpot.checkinPoints, `User checkin ${date}`)
+    await updateUserPAmount(adminClient, userId, -checkinPoints, `User checkin ${date}`)
 
     await adminClient.from('checkin_records').upsert({
       userId,
       jackpotId,
       date,
-      points: jackpot.checkinPoints,
+      points: checkinPoints,
     }, {
       onConflict: 'userId,jackpotId,date',
     })
   }
 
+  const { count: checkinCount } = await adminClient.from('checkin_records')
+    .select('*', { count: 'exact', head: true })
+    .eq('jackpotId', jackpotId)
+    .eq('userId', userId)
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffTime = end.getTime() - start.getTime();
+  const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+
+  let addPoints = (useMakeupCard ? makeupPoints : checkinPoints) as number
+
+  if (checkinCount === diffDays) {
+    const returnPoints = checkinPoints * checkinCount * returnMultiplier
+    await updateUserPAmount(adminClient, userId, returnPoints, `User checkin return ${jackpot.id}`)
+    // addPoints -= returnPoints
+  }
+
   // Update jackpot total points
   await adminClient.from('checkin_jackpots')
-    .update({ totalPoints: jackpot.totalPoints + jackpot.checkinPoints })
+    .update({ totalPoints: totalPoints + addPoints })
     .eq('id', jackpotId)
 
   return { code: 200, message: useMakeupCard ? 'Makeup checkin successful' : 'Checkin successful' }

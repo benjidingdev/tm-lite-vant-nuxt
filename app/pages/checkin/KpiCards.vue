@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import 'odometer/themes/odometer-theme-default.css'
 import { useQuery } from '@tanstack/vue-query'
-import { getCheckinJackpot, getCheckinKpi } from '~/api/checkin'
+import { getCheckinJackpot } from '~/api/checkin'
 import { createOdometer } from '@/utils/odometer'
 
-let { jackpot } = $(checkinStore())
+let { jackpot, refreshJackpot } = $(checkinStore())
 const { t } = useI18n()
 
 let participants = $ref(0)
 let pool = $ref(0)
+let isLoading = $ref(true)
 
 const participantsEl = $ref<HTMLElement | null>(null)
 const poolEl = $ref<HTMLElement | null>(null)
@@ -30,18 +31,23 @@ const initOdometers = async () => {
   }
 }
 
-const { data: kpiRes, isLoading } = useQuery({
-  queryKey: ['checkin-kpi'],
-  queryFn: getCheckinKpi,
-  refetchInterval: 50000,
-})
-
 const getPool = async () => {
-  const res = await getCheckinJackpot()
-  jackpot = res?.data?.jackpot
-  participants = Number(res?.data?.userCount || 0)
-  pool = Number(res?.data?.jackpot.totalPoints || 0)
+  try {
+    const res = await getCheckinJackpot()
+    if (res?.code !== 200) return
+    jackpot = res?.data?.jackpot
+    participants = Number(res?.data?.userCount || 0)
+    pool = Number(res?.data?.jackpot.totalPoints || 0)
+  } finally {
+    isLoading = false
+  }
 }
+
+watch(() => refreshJackpot,
+(val) => {
+  if (val) getPool()
+  refreshJackpot = false
+})
 
 // watch(
 //   () => kpiRes?.value?.data?.kpi,
@@ -94,11 +100,11 @@ onMounted(() => {
     <div class="grid grid-cols-2 gap-3">
       <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm">
         <div class="text-xs text-gray-500">{{ t('labels.participants') }}</div>
-        <div ref="participantsEl" class="text-2xl font-semibold mt-1 odometer">{{ participants }}</div>
+        <div ref="participantsEl" class="text-2xl text-black font-semibold mt-1 odometer">{{ participants }}</div>
       </div>
       <div class="rounded-xl bg-white border border-[#f0f0f0] p-4 shadow-sm">
         <div class="text-xs text-gray-500">{{ t('labels.pool') }}</div>
-        <div ref="poolEl" class="text-2xl font-semibold mt-1 odometer">{{ pool }}</div>
+        <div ref="poolEl" class="text-2xl text-black font-semibold mt-1 odometer">{{ pool }}</div>
       </div>
     </div>
   </van-skeleton>
