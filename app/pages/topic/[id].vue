@@ -58,7 +58,8 @@ async function checkRetweeted() {
 
 async function loadData() {
   isLoading = true
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  console.log('route.params.pid', route.params)
+  const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-get',
@@ -111,6 +112,7 @@ onMounted(() => {
         <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
           <SwipeCardPDC />
         </div>
+
         <div v-else>
           <template v-if="hasRetweeted">
             <!-- <button class="bg-red-500 text-white px-4 py-2 rounded-md" @click="handleDel">
@@ -120,7 +122,6 @@ onMounted(() => {
           </template>
           <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
         </div>
-
       </template>
 
       <PdWaitListLogin v-else />
