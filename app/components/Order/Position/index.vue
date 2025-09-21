@@ -113,36 +113,34 @@ onMounted(() => {
         class="mt-2"
       >
         <template #footer>
-          <van-button plain size="mini" type="primary" @click="showShares(item)"
-            >{{ $t("Shares") }}
+          <van-button plain size="mini" type="primary" @click="showShares(item)">
+            {{ $t("Shares") }}
           </van-button>
         </template>
         <template #price>
-          <div>
+          <!-- shares -->
+          <p class="w-32 text-sm mt-1">
+            {{ item.usableVolume }} {{ $t("Shares") }} {{ item.typeName }}
+          </p>
+          <div class="grid grid-cols-2 mt-1">
+            <!-- cost -->
+            <p class="w-32 text-gray-500">
+              {{ $t("Cost") }}: {{ amountMoney(item.initialValue) }}$
+            </p>
             <!-- hold price -->
-            <p class="w-[150px] text-gray-500 mt-4">
+            <p class="w-[150px] text-gray-500">
               {{ $t("Hold price") }}: {{ dollars2cents(item.holdPrice) }}€
+            </p>
+            <p class="w-[150px] text-gray-500">
+              {{ $t("Current") }}:
+              <span :class="item.profitRate >= 0 ? 'text-green-500' : 'text-red-500'">
+                {{ item.currentValue }}$({{ item.profitRate }}%)
+              </span>
             </p>
             <!-- the latest price -->
             <p class="w-[150px] text-gray-500">
               {{ $t("Current price") }}: {{ dollars2cents(item.lastPrice) }}€
             </p>
-            <!-- shares -->
-            <p class="w-32 text-gray-500">
-              {{ $t("Shares") }}: {{ item.usableVolume }}
-            </p>
-            <!-- cost -->
-            <p class="w-32 text-gray-500">
-              {{ $t("Cost") }}: {{ item.typeName }} ({{
-                amountMoney(item.initialValue)
-              }}$)
-            </p>
-          </div>
-          <div class="w-[150px]">
-            <span
-              :class="item.profitRate >= 0 ? 'text-green-500' : 'text-red-500'"
-              >{{ item.currentValue }}$({{ item.profitRate }}%)</span
-            >
           </div>
         </template>
         <template #tags>

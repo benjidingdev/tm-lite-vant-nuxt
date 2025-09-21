@@ -1,18 +1,16 @@
-import {
-  initializeKaiaSDK,
-  isKaiaEnabled,
-  getKaiaSDK,
-} from "~/config/kaia";
+import { initializeSDK, isLineEnabled, getSDK, getCurrentNetwork } from "~/config/kaia";
 
 export default defineNuxtPlugin(() => {
-
-  if (!isKaiaEnabled.value) {
-    console.log("Kaia SDK: Disabled by configuration");
-
+  if (import.meta.server) {
     return;
   }
 
-  initializeKaiaSDK()
+  if (!isLineEnabled.value) {
+    console.log("Kaia SDK: Disabled by configuration");
+    return;
+  }
+
+  initializeSDK()
     .then((sdk) => {
       if (!sdk) {
         console.error("Kaia SDK: Failed to initialize");
@@ -30,12 +28,13 @@ export default defineNuxtPlugin(() => {
       console.error("Kaia SDK Plugin Error:", error);
     });
 
-
   return {
     provide: {
-      kaiaSDK: () => getKaiaSDK(),
-      kaiaWalletProvider: () => getKaiaSDK()?.getWalletProvider(),
-      kaiaPaymentProvider: () => getKaiaSDK()?.getPaymentProvider(),
+      lineSDK: () => getSDK(),
+      lineWalletProvider: () => getSDK()?.getWalletProvider(),
+      linePaymentProvider: () => getSDK()?.getPaymentProvider(),
+      lineCurrentNetwork: () => getCurrentNetwork(),
+      isLineEnabled: isLineEnabled
     },
   };
 });

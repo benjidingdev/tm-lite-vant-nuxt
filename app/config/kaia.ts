@@ -1,34 +1,54 @@
 import DappPortalSDK from "@linenext/dapp-portal-sdk";
 import type { DappPortalSDKClientConfig } from "@linenext/dapp-portal-sdk";
+import { defineChain } from "viem";
 
 // Kaia Network configurations
 export const KAIA_NETWORKS = {
-  mainnet: {
-    chainId: "8217",
+  mainnet: defineChain({
+    id: 8217,
     name: "Kaia Mainnet",
-    currency: "KAIA",
-    explorerUrl: "https://kaiascan.io",
-    rpcUrl: "https://public-en.node.kaia.io",
-  },
-  testnet: {
-    chainId: "1001",
+    nativeCurrency: { name: "KAIA", symbol: "KAIA", decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ["https://public-en.node.kaia.io"],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: "KaiaScan",
+        url: "https://kaiascan.io",
+      },
+    },
+  }),
+  testnet: defineChain({
+    id: 1001,
     name: "Kaia Kairos Testnet",
-    currency: "KAIA",
-    explorerUrl: "https://kairos.kaiascan.io",
-    rpcUrl: "https://public-en-kairos.node.kaia.io",
-  },
+    nativeCurrency: { name: "KAIA", symbol: "KAIA", decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ["https://public-en-kairos.node.kaia.io"],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: "KaiaScan",
+        url: "https://kairos.kaiascan.io",
+      },
+    },
+    testnet: true,
+  }),
 } as const;
 
 // Singleton variables
-let kaiaSDK: DappPortalSDK | null = null;
+let lineSDK: DappPortalSDK | null = null;
 let isInitializing = false;
 
-export const getKaiaSDK = (): DappPortalSDK | null => {
-  return kaiaSDK;
+export const getSDK = (): DappPortalSDK | null => {
+  return lineSDK;
 };
 
-export const initializeKaiaSDK = async (): Promise<DappPortalSDK | null> => {
-  if (kaiaSDK || isInitializing) return kaiaSDK;
+export const initializeSDK = async (): Promise<DappPortalSDK | null> => {
+  if (lineSDK || isInitializing) return lineSDK;
 
   isInitializing = true;
 
@@ -46,10 +66,10 @@ export const initializeKaiaSDK = async (): Promise<DappPortalSDK | null> => {
       clientId,
       chainId: chainId || "1001",
     };
-    kaiaSDK = await DappPortalSDK.init(sdkConfig);
+    lineSDK = await DappPortalSDK.init(sdkConfig);
     // debugger
 
-    return kaiaSDK;
+    return lineSDK;
   } catch (error) {
     console.error("Failed to initialize Kaia SDK:", error);
     return null;
@@ -58,38 +78,38 @@ export const initializeKaiaSDK = async (): Promise<DappPortalSDK | null> => {
   }
 };
 
-export const getInitializedKaiaSDK = (): DappPortalSDK | null => {
-  return kaiaSDK;
+export const getInitializedSDK = (): DappPortalSDK | null => {
+  return lineSDK;
 };
 
-export const isKaiaEnabled = computed(() => {
+export const isLineEnabled = computed(() => {
   const config = useRuntimeConfig();
   return config.public.kaia?.enabled === true;
 });
 
 export const isSupportedBrowser = computed(() => {
-  const sdk = getKaiaSDK();
+  const sdk = getSDK();
   return sdk?.isSupportedBrowser() ?? false;
 });
 
 export async function showUnsupportedBrowserGuide(): Promise<void> {
-  const sdk = getKaiaSDK();
+  const sdk = getSDK();
   if (sdk) {
     await sdk.showUnsupportedBrowserGuide();
   }
 }
 
-export function getKaiaWalletProvider() {
-  const sdk = getKaiaSDK();
+export function getWalletProvider() {
+  const sdk = getSDK();
   return sdk?.getWalletProvider();
 }
 
-export function getKaiaPaymentProvider() {
-  const sdk = getKaiaSDK();
+export function getPaymentProvider() {
+  const sdk = getSDK();
   return sdk?.getPaymentProvider();
 }
 
-export function getCurrentKaiaNetwork() {
+export function getCurrentNetwork() {
   const config = useRuntimeConfig();
   const chainId = config.public.kaia?.chainId as string;
 

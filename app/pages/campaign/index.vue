@@ -36,7 +36,8 @@ const isEnglish = $computed(
 
 const tempRankList = computed(() => {
   const temp = [...rankList.value]
-  temp.splice(0, 2, temp[1], temp[0]);
+  if (temp.length > 1)
+    temp.splice(0, 2, temp[1], temp[0]);
   return temp
 })
 
@@ -56,6 +57,10 @@ const toggleLang = () => {
 }
 
 const share = () => {
+  if (!token?.accessToken) {
+    setModal('loginModal', true)
+    return
+  }
   const randomIndex = Math.random() < 0.6 ? 0 : 1
   window.open(`${shareLink}?text=${encodeURIComponent(shareText[randomIndex])}&url=${window.location.href}`, '_blank')
   active.value = 2
@@ -126,7 +131,7 @@ onMounted(() => {
       <van-row class="flex justify-center lg:pt-10 pt-4">
         <van-image class="lg:!h-20 h-14" src="/campaign/logo.png" />
       </van-row>
-      <van-row class="flex justify-center mt-12 lg:text-[40px] text-[30px] font-black text-white"
+      <van-row class="flex justify-center mt-12 lg:!text-[40px] text-[30px] font-black text-white"
         :class="{ '!text-[26px]': isEnglish }">
         {{ t('Campaign Title') }}
       </van-row>
@@ -335,24 +340,6 @@ onMounted(() => {
     "Campaign Introduction": "At TuringMarket, we're merging the power of prediction with the innovation of DeFi. Welcome to Predictive Yield Farming, a groundbreaking program that rewards you for building liquidity and depth in our markets. Every valid limit order you place doesn't just wait for a outcome—it actively farms our native token, $TUIT.",
     "Activity Rules": "Activity Rules",
     "Share on X": "Share on X",
-    "Valid Order Standard": "What is a \"Valid Farm Order\"?",
-    "Valid Order Standard Desc": "To earn yield, your order must meet these criteria:",
-    "Must Provide Liquidity": "Must Provide Liquidity",
-    "Bid Orders Standard": "Bid Orders: Must be placed below the last traded price.",
-    "Ask Orders Standard": "Ask Orders: Must be placed above the last traded price.",
-    "Do Not Cancel": "Do Not Cancel: Canceling an order removes it from the daily farming calculation.",
-    "Limit Orders Only": "Limit Orders Only: Market orders are not eligible.",
-    "Maximize Harvest": "The Three Pillars of Yield: Maximize Your $TUIT Harvest",
-    "Maximize Harvest Desc": "Your rewards are not linear. They are amplified by three key multipliers. Optimize these to maximize your daily harvest.",
-    "Time Multiplier": "Time Multiplier (HODL Your Orders)",
-    "Time Multiplier Desc": "> 1 hour: Dedication Bonus (> 1.1x)",
-    "Time Multiplier Desc2": "≥ 20 hours: Max Bonus (1.5x)",
-    "Precision Multiplier": "Precision Multiplier (Sharpshooter Rewards)",
-    "Precision Multiplier Desc": "Orders closer to the current market price are deemed more valuable and receive a higher reward weight.",
-    "Precision Multiplier Desc2": "Orders too far from the price feed receive a progressively lower weight, eventually decaying to zero.",
-    "Precision Multiplier Desc3": "Orders outside a certain price range will not receive any reward.",
-    "Size Multiplier": "Size Multiplier (Deep Liquidity Rewards)",
-    "Size Multiplier Desc": "Larger order sizes (Order Amount × Price) have a greater impact on market health and are rewarded accordingly.",
     "Participate Activity": "Complete the steps to join",
     "Login/Register": "Login/Register",
     "Place Order": "Place Order",
@@ -388,24 +375,6 @@ onMounted(() => {
     "Campaign Introduction": "在 TuringMarket，不只是預測，更是建設市場流動性的機會。 為了鼓勵用戶積極掛單、提升盤口深度，我們推出 「掛單榮耀爭霸計劃」 —— 每一筆真實有效的掛單，都能為你帶來 $TUIT 獎勵與榮耀排名。",
     "Activity Rules": "活動規則",
     "Share on X": "分享到推特",
-    "Valid Order Standard": "有效掛單標準",
-    "Valid Order Standard Desc": "要獲得收益率，您的訂單必須符合以下條件：",
-    "Must Provide Liquidity": "盤口內：",
-    "Bid Orders Standard": "買單：必須掛在最後成交價以下。",
-    "Ask Orders Standard": "賣單：必須掛在最後成交價以上。",
-    "Do Not Cancel": "不可撤單：撤單即視為無效。",
-    "Limit Orders Only": "限價單僅限有效掛單，市價單不參與。",
-    "Maximize Harvest": "獎勵計算邏輯",
-    "Maximize Harvest Desc": "獎勵不拼「誰掛得多」，而是拼「誰貢獻更大」。貢獻度由 掛得久、掛得近、掛得多 三個維度綜合評估：",
-    "Time Multiplier": "掛得久 = 時間加成",
-    "Time Multiplier Desc": "超過 1 小時起算獎勵加成",
-    "Time Multiplier Desc2": "掛滿 20 小時，獎勵可提升至 1.5 倍",
-    "Precision Multiplier": "掛得近 = 價格加成",
-    "Precision Multiplier Desc": "掛單價格越接近盤口，獎勵越高",
-    "Precision Multiplier Desc2": "偏離越遠，獎勵遞減",
-    "Precision Multiplier Desc3": "超出一定區間，將不再獲得獎勵",
-    "Size Multiplier": "掛得多 = 金額加成",
-    "Size Multiplier Desc": "掛單金額越大，對市場影響越大，獎勵也會相應提升",
     "Participate Activity": "完成已下步骤参与活动",
     "Login/Register": "登录/注册账号",
     "Place Order": "挂单",

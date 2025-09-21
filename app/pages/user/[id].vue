@@ -44,7 +44,7 @@ let isLoading = $ref(true)
 async function loadUser(uid) {
   try {
     isLoading = true
-    const rz = await doFetch(`/api/pd/${uid}`)
+    const rz = await doFetch(`/api/topic/${uid}`)
     console.log(rz)
     user = {
       id: rz.id,
@@ -67,7 +67,7 @@ onMounted(async () => {
 
 const handleLogin = async () => {
   const params = {
-    pathname: '/pd/u-[uid]',
+    pathname: '/topic/u-[uid]',
   }
 
   const url = new URL(location.href);
@@ -103,7 +103,7 @@ const handleLogin = async () => {
     <template v-if="!isLoading">
       <PdUser :user />
 
-      <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
+      <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12 pb-4">
         <template v-if="hasTwitterLogin">
           <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
             @click="handleShare">

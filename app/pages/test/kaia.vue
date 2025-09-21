@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import { useKaiaWalletStore } from "~/stores/kaiaWalletStore";
-import { ref } from "vue";
-
-const account = ref<string | null>(null);
+const account = ref<string | null>();
 const isLoading = ref(false);
-const error = ref<string | null>(null);
+const error = ref<string | null>();
 
-const kaiaStore = useKaiaWalletStore();
+const { connectAndSign, disconnect } = $(lineStore());
 
 const connectKaiaWallet = async () => {
   isLoading.value = true;
   error.value = null;
 
   try {
-    // 检查 Kaia 是否启用
-    if (!kaiaStore.isEnabled) {
-      // 尝试初始化
-      const sdk = await kaiaStore.initialize();
-      if (!sdk) {
-        throw new Error("Failed to initialize Kaia SDK");
-      }
-    }
-
     // 连接并签名
-    const [accountAddress] = await kaiaStore.connectAndSign('connect');
+    const [accountAddress] = await connectAndSign('connect');
     account.value = accountAddress;
   } catch (err) {
     console.error("Error connecting to Kaia wallet:", err);
+    error.value = err instanceof Error ? err.message : "Unknown error occurred";
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+const disconnectKaiaWallet = async () => {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    await disconnect();
+    account.value = null;
+  } catch (err) {
+    console.error("Error disconnecting from Kaia wallet:", err);
     error.value = err instanceof Error ? err.message : "Unknown error occurred";
   } finally {
     isLoading.value = false;
@@ -36,9 +39,13 @@ const connectKaiaWallet = async () => {
 
 <template>
   <div>
-    <button @click="connectKaiaWallet" :disabled="isLoading">
+    <van-button type="primary" @click="connectKaiaWallet">
       {{ isLoading ? 'Connecting...' : 'Connect Kaia Wallet' }}
-    </button>
+    </van-button>
+    <van-button v-if="account" type="danger" @click="disconnectKaiaWallet">
+      Disconnect
+    </van-button>
+    <span>Wallet Type: {{  }}</span>
     <div v-if="error" style="color: red;">
       Error: {{ error }}
     </div>
