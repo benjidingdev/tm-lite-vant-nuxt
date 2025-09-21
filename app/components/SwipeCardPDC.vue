@@ -171,7 +171,7 @@ const swipeCard = (status: any) => {
 
 async function trade(marketId: any, isYes: any) {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
+    const rz = await doFetch(`/api/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-trade',
@@ -263,7 +263,7 @@ const getUserSelectedStatus = (currentCardID: any) => {
 
 const claim = async () => {
   try {
-    const rz = await doFetch(`/api/pd/topic/${route.params.id}`, {
+    const rz = await doFetch(`/api/topic/${route.params.id}`, {
       method: 'POST',
       body: JSON.stringify({
         action: 'topic-market-claim'
@@ -355,8 +355,10 @@ onMounted(async () => {
                 <!--selected status-->
                 <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
                   :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
-                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 opacity-85 rounded-lg flex items-center justify-center text-2xl">
-                  {{ getUserSelectedStatus(card.id) }}
+                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 rounded-lg flex items-center justify-center text-2xl cursor-pointer text-white"
+                  @click="claim"
+                  >
+                  Try claim now!
                 </div>
                 <!--loading on buttons-->
                 <div v-if="isTrading"
@@ -365,7 +367,7 @@ onMounted(async () => {
                 </div>
               </div>
               <!--next click-->
-              <div class="text-gray-400 underline text-right" @click="pickNext">next>></div>
+              <div class="text-gray-400 underline text-right cursor-pointer" @click="pickNext">next>></div>
             </div>
           </div>
         </div>
@@ -381,13 +383,8 @@ onMounted(async () => {
             watinglist</van-button>
         </van-empty>
       </div>
-
     </van-skeleton>
   </div>
-  <van-button v-if="!isLoading" type="primary"
-    class="w-full px-4 mt-4! bg-blue-500 text-white  rounded-[8px]! bg-[#7000FF]" :disabled="isFinished" @click="claim">
-    {{ isFinished ? 'You have got 200 $PM!' : 'Claim your $PM now!' }}
-  </van-button>
 </template>
 
 <style>
