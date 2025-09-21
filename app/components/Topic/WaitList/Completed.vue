@@ -72,19 +72,26 @@ let show = $ref(false)
 
   <van-dialog v-model:show="show" :title="$t('Create Twitter profile cover')" closeable :show-confirm-button="false">
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
-      <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black custom-bg">
 
-        <img src="/predmoon.png" alt="" class="w-30">
+      <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black overflow-hidden relative custom-bg">
+        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-[url(${topic?.meta?.shareBg})]`"></div>
+        <div class="absolute z-1 top-0 left-0 w-full h-full bg-[#AA9CFF]/70"></div>
 
-        <p class="text-[48px] font-bold text-white leading-[1] mb-6">{{ t('Pred to the moon') }}</p>
+        <div class="relative z-3">
+          <img :src="topic?.meta?.shareLogo" alt="" class="w-30 z-1">
 
-        <div class="flex items-center justify-center space-x-2 bg-[rgba(0,0,0,0.1)] rounded-[12px] p-[6px]">
-          <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
-          <div>
-            <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
-            <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>
+          <p class="text-[48px] font-bold text-white leading-[1] mb-6">{{ t('Pred to the moon') }}</p>
+
+          <div class="flex items-center justify-center space-x-2 bg-[rgba(0,0,0,.1)] rounded-[12px] p-[6px]">
+            <img :src="x_user?.avatar" alt="" class="size-11 rounded-[8px]">
+            <div>
+              <p class="opacity-80 font-[900]">{{ x_user?.name }}</p>
+              <p class="text-[14px] opacity-40">@{{ x_user?.user_name }}</p>
+            </div>
           </div>
         </div>
+
+
       </div>
 
       <button class="w-full bg-[#7000FF] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
