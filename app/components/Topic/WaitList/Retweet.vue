@@ -8,18 +8,9 @@ const { topic } = defineProps({
     default: () => {},
   }
 })
-
-const route = useRoute()
-
-// const sharedTopic = topics()
-// const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
-
 let hasRetweetClicked = $ref(false)
 
 function onClickRetweet() {
-  if (!x_user.id) {
-    return
-  }
   handleRetweet({
     hashtags: topic.meta?.x_info?.hashtags,
     retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
@@ -54,14 +45,14 @@ const descText = $computed(() => {
       </div>
     </div>
 
-    <PdWaitListCompleted :topic v-if="hasRetweeted" />
+    <TopicWaitListCompleted :topic v-if="hasRetweeted" />
     <template v-else>
 
       <p class="opacity-60 text-[14px] mt-8 mb-7">
         {{ descText }}
       </p>
 
-      <PdWaitListSubmitRetweetUrl v-if="hasRetweetClicked" @onBack="() => { hasRetweetClicked = false }"
+      <TopicWaitListSubmitRetweetUrl v-if="hasRetweetClicked" @onBack="() => { hasRetweetClicked = false }"
         @onSuccess="() => { hasRetweeted = true; emit('onSuccess') }" />
 
       <template v-else>

@@ -18,7 +18,7 @@ async function handleSubmit() {
   }
 
   submitLoading = true
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       retweetLink,

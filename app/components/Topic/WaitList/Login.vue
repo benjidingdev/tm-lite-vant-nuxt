@@ -5,7 +5,7 @@ const route = useRoute()
 async function handleLogin() {
   const query = new URLSearchParams(location.search)
   const refId = query.get('refId')
-  await doLogin({ pathname: location.pathname, refId, reason: `wl.topic-${route.params.pid}` })
+  await doLogin({ pathname: location.pathname, refId, reason: `topic-${route.params.pid}` })
 }
 </script>
 

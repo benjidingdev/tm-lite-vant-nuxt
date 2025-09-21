@@ -5,35 +5,14 @@ definePageMeta({
 });
 
 let refreshTime = $ref(new Date())
-const { hasTwitterLogin, doLogout } = $(supabaseStore())
-
-const sharedTopic = topics()
-const { query } = $(useRoute());
+const { hasTwitterLogin } = $(supabaseStore())
 
 let topic = $ref({})
 let isLoading = $ref(true)
 
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-const debug = useDebug('pdTopic')
-
-async function handleDel() {
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'topic-join_del',
-    })
-  }).catch((err) => {
-    debug({ msg: 'topic-join_del error', err })
-  })
-
-  // console.log({ rz })
-  if (rz.data.success) {
-    hasRetweeted = false
-    refreshTime = new Date()
-    doLogout()
-  }
-}
+const debug = useDebug('topic')
 
 // 0, check if user has retweeted
 let hasRetweeted = $ref(false)
@@ -42,7 +21,7 @@ async function checkRetweeted() {
     return
   }
 
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-join_check',
@@ -58,7 +37,7 @@ async function checkRetweeted() {
 
 async function loadData() {
   isLoading = true
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-get',
@@ -118,14 +97,14 @@ onMounted(() => {
           </button> -->
             <!-- <PdWaitListRetweet :hasRetweeted /> -->
           </template>
-          <PdWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
+          <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
         </div>
 
       </template>
 
-      <PdWaitListLogin v-else />
+      <TopicWaitListLogin v-else />
 
-      <PdWaitListRetweetList v-if="topic.id !== 2" :refreshTime />
+      <TopicWaitListRetweetList v-if="topic.id !== 2" :refreshTime />
     </van-skeleton>
   </article>
 </template>

@@ -44,7 +44,7 @@ let isLoading = $ref(true)
 async function loadUser(uid) {
   try {
     isLoading = true
-    const rz = await doFetch(`/api/pd/${uid}`)
+    const rz = await doFetch(`/api/topic/${uid}`)
     console.log(rz)
     user = {
       id: rz.id,
@@ -67,7 +67,7 @@ onMounted(async () => {
 
 const handleLogin = async () => {
   const params = {
-    pathname: '/pd/u-[uid]',
+    pathname: '/topic/u-[uid]',
   }
 
   const url = new URL(location.href);

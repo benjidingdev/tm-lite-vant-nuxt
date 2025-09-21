@@ -14,7 +14,7 @@ async function loadList(params) {
   // if (!hasTwitterLogin) {
   //   return
   // }
-  const rz = await doFetch(`/api/pd/topic/${route.params.pid}`, {
+  const rz = await doFetch(`/api/topic/${route.params.id}`, {
     method: 'POST',
     body: JSON.stringify({
       action: 'topic-join_list',

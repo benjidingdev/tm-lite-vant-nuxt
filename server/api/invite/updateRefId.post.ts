@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (!reason.startsWith('wl.topic-')) {
+  if (!reason.startsWith('topic-')) {
     throw createError({
       statusCode: 400,
       message: 'Reason is not topic reason',

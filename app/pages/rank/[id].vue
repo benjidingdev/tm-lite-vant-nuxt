@@ -54,7 +54,7 @@ onMounted(() => {
       <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
 
       <div class="flex-1 grid grid-cols-4 gap-[1px]">
-        <NuxtLink :to="`/pd/u-${user.id}`" v-for="user in tier.users" :key="user.id"
+        <NuxtLink :to="`/topic/u-${user.id}`" v-for="user in tier.users" :key="user.id"
           class="border-0 flex flex-col items-center justify-center relative">
           <van-image class="w-full h-full bg-cover" :src="xAvatar(user.avatar)">
             <template v-slot:loading>
@@ -65,24 +65,8 @@ onMounted(() => {
             user.name ||
             'name' }}</p>
         </NuxtLink>
-
-        <!-- <NuxtLink v-if="index >= 3" :to="`/pd/t-${tier.rank}`"
-          class="border-0 flex flex-col items-center justify-center">
-          <p class="border-0 w-full flex items-center justify-center">
-            <span class="border-0 mb-[2px] leading-10">more</span>
-            <van-icon name="arrow" />
-          </p>
-        </NuxtLink> -->
       </div>
 
     </div>
-
-    <!-- <NuxtLink to="/pd/guid"
-      class="fixed bottom-[5vh] right-[5vw] size-10 rounded-full border border-white overflow-hidden flex justify-center items-center bg-white">
-      <img v-if="hasTwitterLogin && true" :src="twitterIdentity?.identity_data?.avatar_url" alt=""></img>
-      <div v-else>
-        <van-icon name="share-o" color="red" size="24" />
-      </div>
-    </NuxtLink> -->
   </section>
 </template>
