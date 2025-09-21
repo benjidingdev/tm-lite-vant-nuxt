@@ -82,31 +82,33 @@ onMounted(() => {
 </script>
 
 <template>
-  <article class="max-w-sm m-auto flex flex-col items-center justify-center border-0">
-    <van-skeleton :loading="isLoading">
+  <article class="w-[calc(100dvw-28px)] sm:w-90 m-auto flex flex-col items-center justify-center pb-4 border-0">
+    <van-skeleton :loading="isLoading || false">
       <template #template>
-        <div class="w-[calc(100dvw-28px)] h-[80vh] flex flex-col justify-center items-center ">
-          <div class="w-full h-[70vw] flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
-            <van-loading size="48" />
-          </div>
-
-          <!-- <van-skeleton-image /> -->
+        <div class="w-[calc(100dvw-28px)] sm:w-90 h-[100dvh] flex flex-col justify-center items-center ">
           <div :style="{ marginTop: '42px', width: '100%' }">
             <van-skeleton-paragraph row-width="60%" />
             <van-skeleton-paragraph />
             <van-skeleton-paragraph />
             <van-skeleton-paragraph />
           </div>
+
+          <div class="w-full my-10 flex-1 flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
+            <van-loading size="48" />
+          </div>
+
+          <div class="w-full mb-10 flex-1 flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
+            <van-loading size="48" />
+          </div>
         </div>
       </template>
 
       <img :src="topic?.meta?.logo" alt="" class="w-30 mt-10">
-      <p class="text-[30px] font-900 mb-10 leading-[1.2] px-2">{{ topic?.title }}</p>
+      <p class="text-[30px] font-900 mb-10 leading-[1.2] py-2">{{ topic?.title }}</p>
       <!-- <h2 class="text-lg font-bold">{{ hasRetweeted ? 'You are on the Waitlist' : 'Join the Waitlist' }}</h2> -->
 
       <template v-if="hasTwitterLogin">
-        <div v-if="topic?.meta?.isWaitingClosed"
-          class="w-full h-full flex flex-col justify-center items-center mt-6 px-4">
+        <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6 px-4">
           <SwipeCardPDC />
         </div>
         <div v-else>

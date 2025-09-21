@@ -103,7 +103,7 @@ const handleLogin = async () => {
     <template v-if="!isLoading">
       <PdUser :user />
 
-      <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12">
+      <div class="w-full flex flex-col items-center justify-center bg-[#000000] text-white mt-12 pb-4">
         <template v-if="hasTwitterLogin">
           <button class="mb-2 w-full rounded-md bg-[#1ce4a8] py-4 font-bold text-black"
             @click="handleShare">

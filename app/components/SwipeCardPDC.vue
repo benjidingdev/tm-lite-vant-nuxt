@@ -210,9 +210,14 @@ const pickNext = () => {
 
 // start transaction
 const goDeposit = async (card: Card, isYes: boolean) => {
+  currentCardID = card.id;
+  if (getUserSelectedStatus(currentCardID) !== '') {
+    pickNext();
+    return;
+  }
+
   isTrading = true;
   try {
-    currentCardID = card.id;
     if (path.includes("market") === "true") {
       return;
     }
@@ -365,7 +370,7 @@ onMounted(async () => {
                 <!--selected status-->
                 <div v-if="getUserSelectedStatus(card.id) === 'Yes' || getUserSelectedStatus(card.id) === 'No'"
                   :class="getUserSelectedStatus(card.id) === 'Yes' ? 'bg-green-600' : 'bg-red-600'"
-                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0  opacity-85 rounded-lg flex items-center justify-center">
+                  class="absolute top-[2px] right-0 bottom-[2px] font-bold left-0 opacity-85 rounded-lg flex items-center justify-center text-2xl">
                   {{ getUserSelectedStatus(card.id) }}
                 </div>
                 <!--loading on buttons-->
