@@ -81,10 +81,7 @@ onMounted(() => {
           </div>
         </div>
       </template>
-
-      <NuxtLink :to="useLinkTo('/')" class="w-10 h-10 absolute top-2 left-2 bg-gray-400">
-        <xAvatar src="/icons/market.svg" />
-      </NuxtLink>
+      <FloatMenu />
       <div class="w-full flex flex-col justify-center items-center">
         <img :src="topic?.meta?.logo" alt="" class="w-30 mt-10">
         <p class="text-[30px] font-900 mb-10 leading-[1.2] py-2 text-center">{{ topic?.title }}</p>

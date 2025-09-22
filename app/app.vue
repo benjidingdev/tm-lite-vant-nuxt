@@ -105,5 +105,6 @@ onMounted(() => {
 <style>
 :root {
   --nav-height: 110px;
+  --van-floating-bubble-icon-size: 50px;
 }
 </style>
