@@ -5,6 +5,7 @@ export default {
     "shareBg": "/topic/monad-bg.jpg",
     "shareLogo": "/topic/shareLogo.png",
     shareTitle: 'Pred to the moon',
+    isWaitingClosed: true,
     "x_info": {
       "hashtags": "TuringM,TuringMaster,Airdrop",
       "retweetTargetLink": "https://x.com/TuringMarket/status/1958786009753428017",
@@ -14,8 +15,7 @@ export default {
       "auth": 1000,
       "invite": 1000,
       "retweet": 100
-    },
-    "isWaitingClosed": false
+    }
   },
   markets: [
     {

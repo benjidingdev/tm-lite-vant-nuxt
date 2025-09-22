@@ -88,7 +88,7 @@ onMounted(() => {
 
       <template v-if="hasTwitterLogin">
         <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
-          <SwipeCardPDC />
+          <SwipeCardPDC :topic />
         </div>
         <TopicWaitListRetweet :topic v-model="hasRetweeted" @onSuccess="() => { refreshTime = new Date() }" />
 
