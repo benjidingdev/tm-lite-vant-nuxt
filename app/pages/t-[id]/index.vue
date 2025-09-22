@@ -81,7 +81,7 @@ onMounted(() => {
           </div>
         </div>
       </template>
-      <TopicHeader :topic="topic" />
+      <TopicHeader :topic />
 
       <!--show waitinglist activity and retweet page(include retweet list)-->
       <template v-if="hasTwitterLogin">

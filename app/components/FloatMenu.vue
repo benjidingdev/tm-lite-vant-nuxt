@@ -6,7 +6,7 @@ const { t } = useI18n()
 let show = $ref(false);
 
 const onOffsetChange = (p) => {
-  showToast(`x: ${p.x.toFixed(0)}, y: ${p.y.toFixed(0)}`);
+  // showToast(`x: ${p.x.toFixed(0)}, y: ${p.y.toFixed(0)}`);
 };
 
 const id = $(useRouteQuery('id'))
@@ -27,7 +27,8 @@ const onSelect = (item) => {
 </script>
 <template>
   <div>
-      <van-floating-bubble axis="xy" icon="/tuit.png" magnetic="x" @offset-change="onOffsetChange" @click="show = true" />
+      <van-floating-bubble axis="xy" :offset icon="/tuit.png" magnetic="x" @offset-change="onOffsetChange"
+        @click="show = true" />
       <van-action-sheet v-model:show="show" :actions="actions" @select="onSelect"  :cancel-text="$t('Cancel')" />
   </div>
 </template>
