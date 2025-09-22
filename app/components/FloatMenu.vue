@@ -12,13 +12,12 @@ const onOffsetChange = (p) => {
 
 
 const actions = $computed(() => [
-  { to: '/', icon: '/logo.png', name: t('Turing Market'), subname: t('Predition with USDT on-chain') },
-  { to: `/t-${route.params.id}/rank`, icon: '/icons/rank.svg', name: t('Rank Wall'), subname: t('A rank wall shows the top 50 inviters') },
-  { to: `/t-${route.params.id}/friends`, icon:'/icons/friends.svg', name: t('Friends'), subname: t('More friends, more rewards') },
-  { to: `/checkin`, icon:'/icons/deposit.svg', name: t('Daily Deposit'), subname: t('Daily deposit rewards') },``
+  { to: '/', icon: '/logo.png', name: t('Turing Market'), subname: t('PEX: Prediction Market with USDT on chain') },
+  // { to: `/t-${id}/rank`, icon: '/icons/rank.svg', name: t('Rank Wall'), subname: t('A rank wall shows the top 50 inviters') },
+  // { to: `/t-${id}/friends`, icon:'/icons/friends.svg', name: t('Friends'), subname: t('More friends, more rewards') },
+  // { to: `/checkin`, icon:'/icons/deposit.svg', name: t('Daily Deposit'), subname: t('Daily deposit rewards') },``
 ])
 const onSelect = (item) => {
-  console.log('item', item)
   show = false;
   useNavigateTo(item.to)
 };

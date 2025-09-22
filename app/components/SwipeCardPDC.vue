@@ -26,14 +26,12 @@ const touchStart = (e: TouchEvent | any) => {
   start.Y = clientY;
   offset.X = 0;
   offset.Y = 0;
-  console.log('touchStart', { clientX, clientY, offset })
 };
 
 const touchMove: any = (e: TouchEvent | any) => {
   const { clientX, clientY } = e.touches[0];
   offset.X = clientX - start.X;
   offset.Y = clientY - start.Y;
-  console.log('touchMove', offset.X, { clientX, clientY, })
 
   if (Math.abs(offset.X) > threshold.X) {
     offset.X = offset.X > 0 ? threshold.X : -threshold.X;
@@ -68,8 +66,9 @@ const swipeCard = () => {
   setTimeout(() => {
     offset.X = 0;
     offset.Y = 0;
-    // how to update the pdcCards without changing the value of pdccard
-    markets.shift();
+    // how to update the $PCards without changing the value of $Pcard
+    const market = markets.shift();
+    markets.push(market);
   }, 0);
 };
 
@@ -108,15 +107,16 @@ const goDeposit = async (card: any, isYes: boolean) => {
   isTrading = true;
 
   if (Math.max(0, pAmount - 100) < 0) {
-    showToast("You don't have enough PDC, please go to market page to get more.");
+    showToast("You don't have enough $P, please go to market page to get more.");
     resetCard();
     closeToast();
     return;
   }
   try {
+    resetCard();
     await trade(card.id, isYes);
   } catch (error) {
-    showToast("Update PDC amount failed, please try again.");
+    showToast("Update $P amount failed, please try again.");
     return;
   } finally {
     isTrading = false;
@@ -144,7 +144,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
+  <div v-if="topic.meta.status !== 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
     <article class="w-full h-[400px] relative z-10!">
       <section v-if="markets.length">
         <div v-for="(card, index) in markets" :key="card.id"
@@ -156,7 +156,7 @@ onMounted(async () => {
               : `translateX(${0}px) translateY(${1 * index}px)`
           }" @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))" @touchend="touchEnd(card)">
 
-          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
+          <van-image width="100%" height="60%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box">
               <div v-if="movingYes" class="hint-box hint like">
                 YES
@@ -169,8 +169,13 @@ onMounted(async () => {
           </van-image>
 
           <div class="overflow-hidden px-4">
-            <div class="mh-[120px]">
-              <p class="name">{{ card.title }}</p>
+            <div class="mh-[120px] text-center">
+              <div class="items-center flex justify-center">
+                <div class="text-gray-900 flex items-center justify-between">{{ card.title }}</div>
+                <a v-if="card.xUrl" :href="card.xUrl" class="p-2" target="_blank">
+                  <van-icon name="/icons/x.svg" />
+                </a>
+              </div>
             </div>
 
             <div class="w-full h-16 z-50 mt-5 relative">
@@ -182,10 +187,10 @@ onMounted(async () => {
               <template v-else>
                 <!--selected status-->
                 <div v-if="userSelectedMarkets.includes(card.id)"
-                  :class="(yesMarkets.includes(card.id)) ? 'bg-[#7000FF]' : 'bg-[#B30FE7]'"
+                  :class="(yesMarkets.includes(card.id)) ? 'bg-[var(--turing-purple-color)]' : 'bg-[#B30FE7]'"
                   class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
                   @click="">
-                  Try Claim Now!
+                  YOU SELECTED {{ yesMarkets.includes(card.id) ? 'YES' : 'NO' }}({{ card.yesNum }})
                 </div>
 
                 <div v-else class="flex justify-between items-center h-full">
@@ -208,21 +213,8 @@ onMounted(async () => {
             </div>
 
             <div class="text-gray-400 underline text-right cursor-pointer" @click="swipeCard">next>></div>
-
           </div>
-
         </div>
-      </section>
-
-      <section v-else>
-        <van-empty description="If you are interested in Turing Market, please go to our official version"
-          style="--van-empty-description-color: #7e7e7e">
-          <template #image>
-            <img src="/assets/icon/logo.svg" />
-          </template>
-          <van-button round type="primary" class="bottom-button" @click="navigateTo('/pd')">Go to
-            watinglist</van-button>
-        </van-empty>
       </section>
     </article>
   </div>
@@ -230,25 +222,8 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.name {
-  color: #333;
-  font-size: 18px;
-  font-weight: bold;
-  display: block;
-  line-height: 1.2;
-}
-
 .hint-box {
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
-  z-index: 0;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @apply absolute top-[2px] bottom-[2px] left-[2px] right-[2px] z-0 rounded-[15px] flex justify-center items-center
 }
 
 .hint {

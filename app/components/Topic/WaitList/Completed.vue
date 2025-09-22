@@ -1,5 +1,13 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import {
+  web_share_url,
+  x_share_url,
+  telegram_share_url,
+  telegram_bot_app_url,
+  telegram_bot_group_url,
+  replacePlaceholders,
+} from '@/utils/inviteUtils'
 
 const { topic } = defineProps({
   topic: {
@@ -9,7 +17,7 @@ const { topic } = defineProps({
 })
 const { t, locale } = useI18n()
 const { x_user, hasTwitterLogin } = $(supabaseStore())
-
+const { botUsername } = $(tgStore());
 const route = useRoute()
 
 // const sharedTopic = topics()
@@ -20,14 +28,27 @@ function onClickShareX() {
     return
   }
 
-  // console.log('topic', topic)
-  handleRetweet({
-    hashtags: topic.meta?.x_info?.hashtags,
-    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
-    text: topic.meta?.x_info?.text,
-    refId: x_user.id,
-    title: topic.title,
-  })
+  const shareText = topic.meta?.x_info?.text;
+  if (shareText) {
+    const text = replacePlaceholders(shareText, { url: web_share_url("", { refId: x_user.id }), title: topic.title });
+    const url = x_share_url(text, topic.meta?.x_info?.retweetTargetLink, topic.meta?.x_info?.hashtags);
+    window.open(url, "_blank");
+    hasRetweetClicked = true
+  }
+}
+
+function onShareToTg() {
+  const shareText = topic.meta?.x_info?.text;
+  if (shareText) {
+    const text = replacePlaceholders(shareText, { url: telegram_bot_app_url(botUsername, { refId: x_user.id }), title: topic.title });
+    const url = telegram_share_url(text);
+    window.open(url, "_blank");
+  }
+}
+
+function onAddToTgGroup() {
+  const url = telegram_bot_group_url(botUsername, { refId: x_user.id });
+  window.open(url, "_blank");
 }
 
 function onClickFollow() {
@@ -55,23 +76,23 @@ const shareTitle = computed(() => {
 <template>
   <section class="w-full flex flex-col items-center justify-center rounded-[16px] ">
 
-    <template v-if="topic?.meta?.isWaitingClosed">
+    <template v-if="topic.meta.status === 'started'">
       <p class="text-center text-[24px] flex items-center mt-4">
-        <span class="opacity-80 text-[#7000FF]">{{ t('Share to get more') }}</span>
+        <span class="opacity-80 text-[var(--turing-purple-color)]">{{ t('Share to get more') }}</span>
         <van-image class="size-6 ml-1" src="/p.png" />
 
       </p>
     </template>
 
     <template v-else>
-      <p class="text-[#7000FF] text-[24px] mt-8">You are on the waitlist!</p>
+      <p class="text-[var(--turing-purple-color)] text-[24px] mt-8">You are on the waitlist!</p>
       <p class="text-center text-[14px] opacity-60 mt-4">
         Profile picture found. first, download your custom invitation
         and
         then click “share on Twitter” and upload the photo.</p>
     </template>
 
-    <button class="w-full bg-[#7000FF] h-11 rounded-[8px] mt-8"
+    <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8"
       style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="show = true">
       <span class="text-white font-[900]">{{ t('Create Cover with Twitter PFP') }}</span>
     </button>
@@ -87,6 +108,20 @@ const shareTitle = computed(() => {
         @click="onClickRetweet">
         <img src="/x.webp" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
+      </button>
+    </div>
+
+    <div class="w-full flex items-center justify-center space-x-2">
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
+        @click="onAddToTgGroup">
+        <img name="/tg.svg" alt="" class="size-4">
+        <span class="text-white font-[900] text-xs">{{ t('Add to TG') }}</span>
+      </button>
+
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
+        @click="onShareToTg">
+        <img src="/tg.svg" alt="" class="size-4">
+        <span class="text-white font-[900] text-xs">{{ t('Share on TG') }}</span>
       </button>
     </div>
 
@@ -118,7 +153,8 @@ const shareTitle = computed(() => {
 
       </div>
 
-      <button class="w-full bg-[#7000FF] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
+      <button
+        class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
         style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="onClickDownload">
         <img src="/download.webp" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Download Phote') }}</span>
@@ -135,8 +171,8 @@ const shareTitle = computed(() => {
 
 <style scoped>
 .custom-bg {
-  background: radial-gradient(ellipse 80% 40% at 90% -20%, #7000FF, rgba(0, 0, 0, 0.1)),
-    radial-gradient(ellipse 80% 40% at -20% 95%, #7000FF, rgba(0, 0, 0, 0.1)),
+  background: radial-gradient(ellipse 80% 40% at 90% -20%, var(--turing-purple-color), rgba(0, 0, 0, 0.1)),
+    radial-gradient(ellipse 80% 40% at -20% 95%, var(--turing-purple-color), rgba(0, 0, 0, 0.1)),
     radial-gradient(ellipse 40% 80% at 10% -0%, #e82cc9, rgba(0, 0, 0, 0.1)),
     radial-gradient(ellipse 90% 80% at 100% 100%, #e82cc9, rgba(0, 0, 0, 0.1));
 }

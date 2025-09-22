@@ -41,13 +41,13 @@ async function handleSubmit() {
 
 <template>
   <textarea type="text" name="retweetLink" v-model="retweetLink"
-    class="w-full border-1 px-4 py-3 rounded-md border-gray-500 focus:border-[#7000FF]"
+    class="w-full border-1 px-4 py-3 rounded-md border-gray-500 focus:border-[var(--turing-purple-color)]"
     placeholder="Enter your retweet link">
   </textarea>
 
   <div class="w-full flex flex-col justify-between items-center space-y-4">
     <button :disabled class="w-full text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
-      :class="disabled ? 'bg-gray-500' : 'bg-[#7000FF] active'" @click="handleSubmit">
+      :class="disabled ? 'bg-gray-500' : 'bg-[var(--turing-purple-color)] active'" @click="handleSubmit">
       <span class="text-white font-[900]">submit</span>
       <van-loading size="12" v-if="submitLoading" />
     </button>

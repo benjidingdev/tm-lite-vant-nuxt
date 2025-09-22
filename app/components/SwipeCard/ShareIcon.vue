@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import QrcodeVue from "qrcode.vue";
 import {
-  SHARE_URL,
-  TELEGRAM_SHARE_URL,
-  X_SHARE_URL,
-  SHARE_MARKET_TEXT
-} from "~/types/constant"
-import { shortenURL } from '~/utils/shorten'
+  web_share_url,
+  telegram_bot_app_url,
+  telegram_bot_group_url,
+  telegram_share_url,
+  x_share_url,
+  share_market_text,
+  shortenURL
+} from "~/utils/inviteUtils"
 
 const props = defineProps<{
   topicInfo: any
@@ -17,6 +19,7 @@ const { isSupported, copy, copied } = useClipboard();
 
 const { userInfo } = $(userStore());
 const { isInitialized, isLoginIn, login, shareTargetPicker, createUrlBy } = $(liffStore());
+const { botUsername } = $(tgStore());
 
 const showShare = ref(false);
 const showQRCode = ref(false);
@@ -24,6 +27,7 @@ const qrcodeContent = ref('');
 const options = [
   [
     { name: t('Telegram'), icon: 'https://api.iconify.design/jam:telegram.svg' },
+    { name: t('Telegram Group'), icon: 'https://api.iconify.design/jam:telegram.svg' },
     { name: t('Twitter'), icon: 'https://api.iconify.design/jam:twitter.svg' },
     { name: t('Line'), icon: 'https://api.iconify.design/jam:line.svg' },
   ], [
@@ -40,18 +44,12 @@ const handleShowShare = () => {
 
 const { topicInfo } = props;
 
-function pickRandom<T>(arr: string[]): string | undefined {
-  if (!arr.length) return undefined;
-  const idx = Math.floor(Math.random() * arr.length);
-  return arr[idx];
-}
-
 const onSelect = async (option: { name: string, icon: string }) => {
   //showToast(option.name);
 
-  const shareUrl = SHARE_URL('', userInfo?.inviteCode);
+  const shareUrl = web_share_url('', userInfo?.inviteCode);
   const shortUrl = await shortenURL(shareUrl);
-  const shareText = pickRandom(SHARE_MARKET_TEXT(topicInfo.title, topicInfo.markets[0], shortUrl));
+  const shareText = share_market_text(topicInfo.title, topicInfo.markets[0], shortUrl);
   if (!shareText) {
     showToast(t('Share Failed'));
     return;
@@ -59,16 +57,19 @@ const onSelect = async (option: { name: string, icon: string }) => {
 
   switch (option.name) {
     case t('Telegram'):
-      window.open(`${TELEGRAM_SHARE_URL(shareText)}`, '_blank');
+      window.open(`${telegram_share_url(share_market_text(topicInfo.title, topicInfo.markets[0], telegram_bot_app_url(botUsername, { inviteCode: userInfo?.inviteCode })))}`, '_blank');
+      break;
+    case t('Telegram Group'):
+      window.open(`${telegram_bot_group_url(botUsername, { inviteCode: userInfo?.inviteCode })}`, '_blank');
       break;
     case t('Twitter'):
-      window.open(`${X_SHARE_URL(shareText)}`, '_blank');
+      window.open(`${x_share_url(shareText)}`, '_blank');
       break;
     case t('Line'):
       if (isLoginIn) {
         shareTargetPicker([{
           type: 'text',
-          text: pickRandom(SHARE_MARKET_TEXT(topicInfo.title, topicInfo.markets[0], await createUrlBy(shareUrl)))
+          text: share_market_text(topicInfo.title, topicInfo.markets[0], await createUrlBy(shareUrl))
         }], true)
       } else {
         login('');
@@ -131,6 +132,7 @@ const shareCard = () => {
   "en-US": {
     "Share Now": "Share Now",
     "Telegram": "Telegram",
+    "Telegram Group": "Add to Telegram Group",
     "Twitter": "X",
     "Line": "Line",
     "Copy Link": "Copy Link",
@@ -142,6 +144,7 @@ const shareCard = () => {
   "zh-TW": {
     "Share Now": "立即分享",
     "Telegram": "Telegram",
+    "Telegram Group": "Add to Telegram Group",
     "Twitter": "X",
     "Line": "Line",
     "Copy Link": "複製連結",
@@ -153,6 +156,7 @@ const shareCard = () => {
   "ja-JP": {
     "Share Now": "今すぐ共有",
     "Telegram": "Telegram",
+    "Telegram Group": "Add to Telegram Group",
     "Twitter": "X",
     "Line": "Line",
     "Copy Link": "リンクのコピー",
@@ -164,6 +168,7 @@ const shareCard = () => {
   "ko-KR": {
     "Share Now": "지금 공유",
     "Telegram": "Telegram",
+    "Telegram Group": "Add to Telegram Group",
     "Twitter": "X",
     "Line": "Line",
     "Copy Link": "링크 복사",

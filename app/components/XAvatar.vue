@@ -4,10 +4,14 @@ defineProps({
     type: String,
     default: '',
   },
+  isRound: {
+    type: Boolean,
+    default: false,
+  }
 })
 </script>
 <template>
-  <van-image :src="xAvatar(src)">
+  <van-image :src="xAvatar(src)" :round="isRound">
     <template v-slot:loading>
       <van-loading type="spinner" size="20" />
     </template>
