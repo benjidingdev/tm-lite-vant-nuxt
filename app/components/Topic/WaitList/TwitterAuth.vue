@@ -11,7 +11,7 @@ async function handleLogin() {
 
 <template>
   <section class="w-full flex flex-col items-center justify-center space-y-4 rounded-md">
-    <button class="w-full bg-blue-500 text-white! px-4 py-2 rounded-[8px] bg-[#7000FF]" @click="handleLogin">
+    <button class="w-full text-white! px-4 py-2 rounded-[8px] bg-[var(--turing-purple-color)] cursor-pointer" @click="handleLogin">
       Authorize X account
     </button>
     <p class="text-center text-gray-500 text-xs mt-0">

@@ -287,7 +287,7 @@ onMounted(() => {
           </van-col>
         </van-row>
         <van-row
-          class="h-12 leading-12 font-bold rounded-2xl bg-gradient-to-tr from-[#1652F033] to-[#7000FF] lg:mt-4 mt-8">
+          class="h-12 leading-12 font-bold rounded-2xl bg-gradient-to-tr from-[#1652F033] to-[var(--turing-purple-color)] lg:mt-4 mt-8">
           <van-col class="lg:pl-16 px-4 lg:pr-6">{{ t('Rank') }}</van-col>
           <van-col class="w-1/2">{{ t('Trader') }}</van-col>
           <van-col>{{ t('Amount') }}</van-col>

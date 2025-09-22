@@ -7,8 +7,8 @@
 <style scoped>
 .bg {
   background: #141414;
-  background-image: radial-gradient(ellipse 80% 40% at 90% -20%, #7000FF, transparent),
-  radial-gradient(ellipse 80% 40% at -20% 95%, #7000FF, transparent);
+  background-image: radial-gradient(ellipse 80% 40% at 90% -20%, var(--turing-purple-color), transparent),
+  radial-gradient(ellipse 80% 40% at -20% 95%, var(--turing-purple-color), transparent);
   /* &::before {
     content: '';
     position: absolute;
@@ -16,7 +16,7 @@
     left: -80%;
     width: 100dvw;
     height: 100dvh;
-    background: linear-gradient( 264deg, #7000FF 0%, #06FFF0 100%);
+    background: linear-gradient( 264deg, var(--turing-purple-color) 0%, #06FFF0 100%);
     rotate: 255deg;
     border-radius: 0px 0px 0px 0px;
     filter: blur(267.9403076171875px);

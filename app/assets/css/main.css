@@ -19,3 +19,6 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+:root{
+  --turing-purple-color: #7000FF;
+}

@@ -57,21 +57,21 @@ const shareTitle = computed(() => {
 
     <template v-if="topic?.meta?.isWaitingClosed">
       <p class="text-center text-[24px] flex items-center mt-4">
-        <span class="opacity-80 text-[#7000FF]">{{ t('Share to get more') }}</span>
+        <span class="opacity-80 text-[var(--turing-purple-color)]">{{ t('Share to get more') }}</span>
         <van-image class="size-6 ml-1" src="/p.png" />
 
       </p>
     </template>
 
     <template v-else>
-      <p class="text-[#7000FF] text-[24px] mt-8">You are on the waitlist!</p>
+      <p class="text-[var(--turing-purple-color)] text-[24px] mt-8">You are on the waitlist!</p>
       <p class="text-center text-[14px] opacity-60 mt-4">
         Profile picture found. first, download your custom invitation
         and
         then click “share on Twitter” and upload the photo.</p>
     </template>
 
-    <button class="w-full bg-[#7000FF] h-11 rounded-[8px] mt-8"
+    <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8"
       style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="show = true">
       <span class="text-white font-[900]">{{ t('Create Cover with Twitter PFP') }}</span>
     </button>
@@ -118,7 +118,7 @@ const shareTitle = computed(() => {
 
       </div>
 
-      <button class="w-full bg-[#7000FF] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
+      <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
         style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="onClickDownload">
         <img src="/download.webp" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Download Phote') }}</span>
@@ -135,8 +135,8 @@ const shareTitle = computed(() => {
 
 <style scoped>
 .custom-bg {
-  background: radial-gradient(ellipse 80% 40% at 90% -20%, #7000FF, rgba(0, 0, 0, 0.1)),
-    radial-gradient(ellipse 80% 40% at -20% 95%, #7000FF, rgba(0, 0, 0, 0.1)),
+  background: radial-gradient(ellipse 80% 40% at 90% -20%, var(--turing-purple-color), rgba(0, 0, 0, 0.1)),
+    radial-gradient(ellipse 80% 40% at -20% 95%, var(--turing-purple-color), rgba(0, 0, 0, 0.1)),
     radial-gradient(ellipse 40% 80% at 10% -0%, #e82cc9, rgba(0, 0, 0, 0.1)),
     radial-gradient(ellipse 90% 80% at 100% 100%, #e82cc9, rgba(0, 0, 0, 0.1));
 }
