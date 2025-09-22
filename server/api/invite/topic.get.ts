@@ -1,7 +1,7 @@
 import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
 export default defineEventHandler(async (event) => {
-  const user = await serverSupabaseUser(event)
-  const userId = user?.id as string
+  // const user = await serverSupabaseUser(event)
+  // const userId = user?.id as string
   const adminClient = serverSupabaseServiceRole(event)
 
   const { id: topicId } = getQuery(event)

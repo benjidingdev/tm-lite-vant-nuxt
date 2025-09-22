@@ -3,6 +3,8 @@ definePageMeta({
   layout: "x",
 });
 
+let { topic } = $(pmDataStore())
+
 const route = useRoute()
 
 const debug = useDebug('rank_' + route.params.id)
@@ -20,8 +22,7 @@ let tiers = $ref([
   { rank: 'H', bg: 'rgb(255, 127, 10)', users: [] },
 ])
 
-let topic = $ref({})
-let isLoading = $ref(false)
+let isLoading = $ref(true)
 async function loadData() {
   isLoading = true
   const rz = await doFetch(`/api/invite/topic?id=${route.params.id}`).catch((err) => {
@@ -29,7 +30,9 @@ async function loadData() {
     return
   })
 
-  topic = rz?.topic
+  if (rz?.topic) {
+    topic = rz?.topic
+  }
   const users = rz?.data?.map(item => ({
     id: item?.x_profiles?.id,
     avatar: item?.x_profiles?.avatar,
@@ -70,7 +73,7 @@ onMounted(() => {
         </div>
       </template>
       <TopicHeader :topic />
-      <section class="w-full h-auto flex flex-col items-center justify-center space-y-[10px] mt-0">
+      <section id="share-download" class="w-full h-auto flex flex-col items-center justify-center space-y-[10px] mt-0">
         <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
           :key="tier.rank">
           <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
@@ -85,6 +88,7 @@ onMounted(() => {
           </div>
         </div>
       </section>
+      <FloatShare />
     </van-skeleton>
   </article>
 </template>

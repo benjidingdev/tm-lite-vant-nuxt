@@ -15,7 +15,7 @@ const route = useRoute()
 // const sharedTopic = topics()
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-function onClickRetweet() {
+function onClickShareX() {
   if (!x_user.id) {
     return
   }
@@ -125,7 +125,7 @@ const shareTitle = computed(() => {
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-        @click="onClickRetweet">
+        @click="onClickShareX">
         <img src="/x.webp" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Share on X') }}</span>
       </button>
