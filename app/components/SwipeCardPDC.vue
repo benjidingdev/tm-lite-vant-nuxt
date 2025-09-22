@@ -8,19 +8,16 @@ const { topic } = $defineProps<{
 const route = useRoute()
 let markets = $ref(topic?.markets || [])
 let { pAmount, yesMarkets, noMarkets }: any = $(pmDataStore());
-const userSelectedMarkets = [...(yesMarkets || []), ...(noMarkets || [])]
-
 
 let offset = $ref({ X: 0, Y: 0 });
-let threshold = { X: 100, Y: 100 };
-
 let isTrading = $ref(false)
 let isSettlement = $ref(false)  //
 
+let threshold = { X: 100, Y: 100 };
 let movingYes = $computed(() => isSettlement && offset.X < 0);
 let movingNo = $computed(() => isSettlement && offset.X > 0);
 const movingNext = $computed(() => offset.Y > 50 || offset.Y < -50);
-
+const userSelectedMarkets = $computed(() => yesMarkets.concat(noMarkets));
 
 let start = { X: 0, Y: 0 }
 const touchStart = (e: TouchEvent | any) => {
@@ -29,29 +26,27 @@ const touchStart = (e: TouchEvent | any) => {
   start.Y = clientY;
   offset.X = 0;
   offset.Y = 0;
+  console.log('touchStart', { clientX, clientY, offset })
 };
 
-const touchMove = (e: TouchEvent | any) => {
-  (useDebounceFn(() => {
-    const { clientX, clientY } = e.touches[0];
-    offset.X = clientX - start.X;
-    offset.Y = clientY - start.Y;
-    console.log('touchMove', { clientX, clientY, offset })
+const touchMove: any = (e: TouchEvent | any) => {
+  const { clientX, clientY } = e.touches[0];
+  offset.X = clientX - start.X;
+  offset.Y = clientY - start.Y;
+  console.log('touchMove', offset.X, { clientX, clientY, })
 
-    if (Math.abs(offset.X) > threshold.X) {
-      offset.X = offset.X > 0 ? threshold.X : -threshold.X;
-      isSettlement = true;
-    } else {
-      isSettlement = false;
-    }
-    if (Math.abs(offset.Y) > threshold.Y) {
-      offset.Y = offset.Y > 0 ? threshold.Y : -threshold.Y;
-    }
-  }, 20))()
+  if (Math.abs(offset.X) > threshold.X) {
+    offset.X = offset.X > 0 ? threshold.X : -threshold.X;
+    isSettlement = true;
+  } else {
+    isSettlement = false;
+  }
+  if (Math.abs(offset.Y) > threshold.Y) {
+    offset.Y = offset.Y > 0 ? threshold.Y : -threshold.Y;
+  }
 };
 
 const touchEnd = (card: any) => {
-  // useDebounceFn(() => {
   if (offset.X >= threshold.X) {
     goDeposit(card, false); // swipe to left means reject
   } else if (offset.X <= -threshold.X) {
@@ -63,7 +58,6 @@ const touchEnd = (card: any) => {
   } else {
     resetCard(); // reset the position of card
   }
-  // }, 200)
 };
 
 const swipeCard = () => {
@@ -84,6 +78,26 @@ const resetCard = () => {
   offset.Y = 0;
 };
 
+async function trade(marketId: any, isYes: any) {
+  try {
+    const rz: any = await doFetch(`/api/topic/${route.params.id}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'topic-market-trade',
+        marketId: marketId,
+        isYes: isYes,
+      })
+    })
+    if (rz?.status === 200) {
+      useConfetti();
+      pAmount -= 100;
+    }
+    swipeCard();
+  } catch (error) {
+    throw error;
+  }
+}
+
 // start transaction
 const goDeposit = async (card: any, isYes: boolean) => {
   if (userSelectedMarkets.includes(card.id)) {
@@ -93,39 +107,39 @@ const goDeposit = async (card: any, isYes: boolean) => {
 
   isTrading = true;
 
-  pAmount = Math.max(0, pAmount - 100);
-  if (pAmount < 0) {
+  if (Math.max(0, pAmount - 100) < 0) {
     showToast("You don't have enough PDC, please go to market page to get more.");
     resetCard();
     closeToast();
     return;
   }
-
-  const rz: any = await doFetch(`/api/topic/${route.params.id}`, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'topic-market-trade',
-      marketId: card.id,
-      isYes: isYes,
-    })
-  }).catch((err) => {
-    console.error(err)
-    showToast('You have already traded this market or server error!');
-  })
-
-  if (rz.status === 200) {
-    useConfetti();
+  try {
+    await trade(card.id, isYes);
+  } catch (error) {
+    showToast("Update PDC amount failed, please try again.");
+    return;
+  } finally {
+    isTrading = false;
+    resetCard();
+    closeToast();
   }
-  swipeCard();
-  console.log('trade result', rz)
-
-  resetCard();
-  isTrading = false;
-  closeToast();
-
 };
 
+const getUserMarkets = async () => {
+  let res: any = await doFetch('/api/usermarkets', {
+    method: 'GET',
+  })
+
+  if (res?.status === 200) {
+    yesMarkets = res?.data[0]?.yesMarkets || [];
+    noMarkets = res?.data[0]?.noMarkets || [];
+  } else {
+    return [];
+  }
+}
+
 onMounted(async () => {
+  await getUserMarkets();
 });
 </script>
 
@@ -139,7 +153,7 @@ onMounted(async () => {
           transform: index == 0 ?
             `translateX(${offset.X}px) translateY(${offset.Y}px) rotate(${offset.X / 20}deg)`
             : `translateX(${0}px) translateY(${1 * index}px)`
-        }" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd(card)">
+        }" @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))" @touchend="touchEnd(card)">
 
         <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
           <div v-if="index === 0" class="hint-box">
@@ -174,14 +188,14 @@ onMounted(async () => {
               </div>
 
               <div v-else class="flex justify-between items-center h-full">
-                <div class="relative" @click="goDeposit(card, true)">
+                <div class="relative cursor-pointer" @click="goDeposit(card, true)">
                   <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
                   <span
                     class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
                     Yes({{ card.yesNum }})
                   </span>
                 </div>
-                <div class="relative" @click="goDeposit(card, false)">
+                <div class="relative cursor-pointer" @click="goDeposit(card, false)">
                   <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
                   <span
                     class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
@@ -267,11 +281,4 @@ onMounted(async () => {
   contain: content;
 }
 
-.gradient-left {
-  background-image: linear-gradient(to right, #1652F0, #1854ee);
-}
-
-.gradient-right {
-  background-image: linear-gradient(to right, #D103FB, rgb(242, 111, 179));
-}
 </style>
