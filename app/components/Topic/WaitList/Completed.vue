@@ -100,13 +100,13 @@ const shareTitle = computed(() => {
     <div class="w-full flex items-center justify-center space-x-2">
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
         @click="onClickFollow">
-        <van-icon name="/icons/x.svg" color="#000000" />
+        <van-icon name="/topic/x.svg" color="#000000" />
         <span class="text-white font-[900] text-xs">{{ t('Follow on X') }}</span>
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
         @click="onClickRetweet">
-        <img src="/icons/x.svg" alt="" class="size-4">
+        <img src="/topic/x.svg" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
       </button>
     </div>
@@ -160,7 +160,7 @@ const shareTitle = computed(() => {
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
         @click="onClickShareX">
-        <img src="/icons/x.svg" alt="" class="size-6">
+        <img src="/topic/x.svg" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Share on X') }}</span>
       </button>
     </section>
