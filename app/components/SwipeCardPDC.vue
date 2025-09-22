@@ -11,7 +11,15 @@ let { pAmount, yesMarkets, noMarkets }: any = $(pmDataStore());
 
 let offset = $ref({ X: 0, Y: 0 });
 let isTrading = $ref(false)
-let isSettlement = $ref(false)  //
+let isSettlement = $ref(false)
+const carouselTrack = $ref(null);
+let currentDelta = $ref(0);
+
+const { apply } = useMotion(carouselTrack, {
+  initial: { x: 0, rotate: 0 },
+  next: { x: 0, transition: { type: 'spring' } }
+});
+
 
 let threshold = { X: 100, Y: 100 };
 let movingYes = $computed(() => isSettlement && offset.X < 0);
@@ -20,7 +28,7 @@ const movingNext = $computed(() => offset.Y > 50 || offset.Y < -50);
 const userSelectedMarkets = $computed(() => yesMarkets.concat(noMarkets));
 
 let start = { X: 0, Y: 0 }
-const touchStart = (e: TouchEvent | any) => {
+const touchStart = (e: TouchEvent | any, index: number) => {
   const { clientX, clientY } = e.touches[0];
   start.X = clientX;
   start.Y = clientY;
@@ -32,15 +40,18 @@ const touchMove: any = (e: TouchEvent | any) => {
   const { clientX, clientY } = e.touches[0];
   offset.X = clientX - start.X;
   offset.Y = clientY - start.Y;
-
   if (Math.abs(offset.X) > threshold.X) {
     offset.X = offset.X > 0 ? threshold.X : -threshold.X;
     isSettlement = true;
   } else {
     isSettlement = false;
   }
-  if (Math.abs(offset.Y) > threshold.Y) {
-    offset.Y = offset.Y > 0 ? threshold.Y : -threshold.Y;
+  if (offset.X > 0) {
+    currentDelta = 1;
+    apply({ x: currentDelta * 100 });
+  } else {
+    currentDelta = -1;
+    apply({ x: -currentDelta * 100 });
   }
 };
 
@@ -49,13 +60,10 @@ const touchEnd = (card: any) => {
     goDeposit(card, false); // swipe to left means reject
   } else if (offset.X <= -threshold.X) {
     goDeposit(card, true); // swipe to right means accept
-  } else if (offset.Y >= threshold.Y - 50) {
-    swipeCard(); // swipe down means pick next card
-  } else if (offset.Y <= -threshold.Y + 50) {
-    swipeCard(); // swipe up means bookmark
   } else {
     resetCard(); // reset the position of card
   }
+  currentDelta = 0;
 };
 
 const swipeCard = () => {
@@ -97,6 +105,12 @@ async function trade(marketId: any, isYes: any) {
   }
 }
 
+const tradeEnd = () => {
+  isTrading = false;
+  resetCard();
+  closeToast();
+}
+
 // start transaction
 const goDeposit = async (card: any, isYes: boolean) => {
   if (userSelectedMarkets.includes(card.id)) {
@@ -106,10 +120,9 @@ const goDeposit = async (card: any, isYes: boolean) => {
 
   isTrading = true;
 
-  if (Math.max(0, pAmount - 100) < 0) {
+  if (pAmount - 100 < 0) {
     showToast("You don't have enough $P, please go to market page to get more.");
-    resetCard();
-    closeToast();
+    tradeEnd();
     return;
   }
   try {
@@ -119,9 +132,7 @@ const goDeposit = async (card: any, isYes: boolean) => {
     showToast("Update $P amount failed, please try again.");
     return;
   } finally {
-    isTrading = false;
-    resetCard();
-    closeToast();
+    tradeEnd();
   }
 };
 
@@ -147,15 +158,15 @@ onMounted(async () => {
   <div v-if="topic.meta.status !== 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
     <article class="w-full h-[400px] relative z-10!">
       <section v-if="markets.length">
-        <div v-for="(card, index) in markets" :key="card.id"
+        <div v-for="(card, index) in markets" :key="card.id" ref="carouselTrack"
           class="absolute w-full h-full bg-white rounded-[15px] overflow-hidden transition-all duration-300 ease-in-out shadow-md draggable-element"
+          @touchstart="(e) => (touchStart(e, index))" @touchmove="(e) => (touchMove(e))" @touchend="touchEnd(card)"
           :style="{
             'z-index': 30 - index,
             transform: index == 0 ?
-              `translateX(${offset.X}px) translateY(${offset.Y}px) rotate(${offset.X / 20}deg)`
+              `translateX(${currentDelta * 100}px) rotate(${currentDelta * 8}deg)`
               : `translateX(${0}px) translateY(${1 * index}px)`
-          }" @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))" @touchend="touchEnd(card)">
-
+          }">
           <van-image width="100%" height="60%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box">
               <div v-if="movingYes" class="hint-box hint like">
@@ -188,8 +199,7 @@ onMounted(async () => {
                 <!--selected status-->
                 <div v-if="userSelectedMarkets.includes(card.id)"
                   :class="(yesMarkets.includes(card.id)) ? 'text-[var(--turing-purple-color)]' : 'text-[#B30FE7]'"
-                  class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl"
-                  @click="">
+                  class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl" @click="">
                   YOU SELECTED {{ yesMarkets.includes(card.id) ? 'YES' : 'NO' }}({{ card.yesNum }})
                 </div>
 
