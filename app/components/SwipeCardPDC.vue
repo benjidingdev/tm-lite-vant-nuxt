@@ -67,7 +67,8 @@ const swipeCard = () => {
     offset.X = 0;
     offset.Y = 0;
     // how to update the $PCards without changing the value of $Pcard
-    markets.shift();
+    const market = markets.shift();
+    markets.push(market);
   }, 0);
 };
 
@@ -112,6 +113,7 @@ const goDeposit = async (card: any, isYes: boolean) => {
     return;
   }
   try {
+    resetCard();
     await trade(card.id, isYes);
   } catch (error) {
     showToast("Update $P amount failed, please try again.");
@@ -142,7 +144,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="topic.meta.status === 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
+  <div v-if="topic.meta.status !== 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
     <article class="w-full h-[400px] relative z-10!">
       <section v-if="markets.length">
         <div v-for="(card, index) in markets" :key="card.id"
@@ -154,7 +156,7 @@ onMounted(async () => {
               : `translateX(${0}px) translateY(${1 * index}px)`
           }" @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))" @touchend="touchEnd(card)">
 
-          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
+          <van-image width="100%" height="60%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box">
               <div v-if="movingYes" class="hint-box hint like">
                 YES
@@ -213,17 +215,6 @@ onMounted(async () => {
             <div class="text-gray-400 underline text-right cursor-pointer" @click="swipeCard">next>></div>
           </div>
         </div>
-      </section>
-
-      <section v-else>
-        <van-empty description="If you are interested in Turing Market, please go to our official version"
-          style="--van-empty-description-color: #7e7e7e">
-          <template #image>
-            <img src="/assets/icon/logo.svg" />
-          </template>
-          <van-button round type="primary" class="bottom-button" @click="navigateTo('/pd')">Go to
-            watinglist</van-button>
-        </van-empty>
       </section>
     </article>
   </div>
