@@ -131,9 +131,7 @@ const shareTitle = computed(() => {
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
 
       <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black overflow-hidden relative custom-bg">
-        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover bg-[url(${topic?.meta?.shareBg})]`">
-        </div>
-        <!-- /topic/monad-bg.jpg -->
+        <div class="w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover" :style="{ backgroundImage: `url(${topic?.meta?.shareBg})` }"></div>
         <div class="absolute z-1 top-0 left-0 w-full h-full bg-[#AA9CFF]/70 backdrop-blur-[0px]"></div>
 
         <div class="relative z-3">
