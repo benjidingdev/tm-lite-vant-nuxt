@@ -3,6 +3,7 @@ definePageMeta({
   layout: "x",
 });
 
+const { t } = useI18n()
 let { topic } = $(pmDataStore())
 
 const route = useRoute()
@@ -47,6 +48,7 @@ async function loadData() {
       tiers[tierIndex].users.push(user)
     }
   })
+  console.log('topic-rank', topic, users)
   isLoading = false
 }
 
@@ -73,13 +75,15 @@ onMounted(() => {
         </div>
       </template>
       <TopicHeader :topic />
+
+      <p class="text-center my-4 text-lg">{{ t('Invite Rank Wall') }}</p>
       <section id="share-download" class="w-full h-auto flex flex-col items-center justify-center space-y-[10px] mt-0">
         <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
           :key="tier.rank">
           <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
           <div class="flex-1 grid grid-cols-4 gap-[1px]">
-            <NuxtLink :to="`/u/${user.id}`" v-for="user in tier.users" :key="user.id"
-              class="border-0 flex flex-col items-center justify-center relative">
+            <NuxtLink :to="`https://x.com/${user?.user_name}`" v-for="user in tier.users" :key="user.id"
+              class="border-0 flex flex-col items-center justify-center relative" target="_blank">
               <XAvatar :src="user.avatar" />
               <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">
                 {{ user.name || 'name' }}

@@ -100,13 +100,13 @@ const shareTitle = computed(() => {
     <div class="w-full flex items-center justify-center space-x-2">
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
         @click="onClickFollow">
-        <img src="/x.webp" alt="" class="size-4">
+        <van-icon name="/icons/x.svg" color="#000000" />
         <span class="text-white font-[900] text-xs">{{ t('Follow on X') }}</span>
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
         @click="onClickRetweet">
-        <img src="/x.webp" alt="" class="size-4">
+        <img src="/icons/x.svg" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
       </button>
     </div>
@@ -156,13 +156,13 @@ const shareTitle = computed(() => {
       <button
         class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
         style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="onClickDownload">
-        <img src="/download.webp" alt="" class="size-6">
+        <img src="/icons/download.svg" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Download Phote') }}</span>
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
         @click="onClickShareX">
-        <img src="/x.webp" alt="" class="size-6">
+        <img src="/icons/x.svg" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Share on X') }}</span>
       </button>
     </section>
