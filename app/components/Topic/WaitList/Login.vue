@@ -10,15 +10,17 @@ const { topic } = defineProps({
   }
 })
 
+const { t } = useI18n()
+
 const route = useRoute()
 let hasRetweetClicked = $ref(false)
 const descText = $computed(() => {
   let text
 
   if (hasRetweetClicked) {
-    text = 'Then, paste the retweet link above and click submit.'
+    text = t('Then, paste the retweet link above and click submit.')
   } else {
-    text = 'First, click the retweet button below to retweet the topic tweet and paste the retweet link below.'
+    text = t('Click the retweet button below to retweet the topic tweet and paste the retweet link below.')
   }
   return text
 })
