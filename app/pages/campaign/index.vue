@@ -62,7 +62,7 @@ const share = () => {
     return
   }
   const randomIndex = Math.random() < 0.6 ? 0 : 1
-  window.open(`${shareLink}?text=${encodeURIComponent(shareText[randomIndex])}&url=${window.location.href}`, '_blank')
+  window.open(`${shareLink}?text=${encodeURIComponent(shareText[randomIndex])}&url=${window.location.href}?inviteCode=${userInfo.inviteCode}`, '_blank')
   active.value = 2
   localStorage.setItem('shareX', 'true')
 }
@@ -116,7 +116,7 @@ onMounted(() => {
 <template>
   <div class="w-full h-screen overflow-y-scroll">
     <div
-      class="w-full text-white bg-black bg-[url('/campaign/page_bg_mobile.png')] lg:bg-[url('/campaign/page_bg.jpg')] bg-contain lg:bg-[length:100%_auto] lg:bg-center bg-no-repeat lg:pb-66 pb-10">
+      class="w-full text-white bg-black bg-[url('/campaign/page_bg_mobile.png')] lg:bg-[url('/campaign/page_bg.jpg')] bg-[length:100%_auto] bg-no-repeat lg:pb-66 pb-10">
       <van-row class="justify-end">
         <van-switch class="mt-2 mr-2" v-model="isEnglish" size="24" active-color="var(--van-switch-background)"
           @change="toggleLang">
