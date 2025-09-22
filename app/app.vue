@@ -43,7 +43,7 @@ useHead({
 });
 
 const { $fbq } = useNuxtApp()
-
+const { startParams } = $(tgStore());
 const { iframeRef } = $(privyStore());
 const { locale } = useI18n();
 Locale.add({
@@ -58,27 +58,23 @@ const initPixel = () => {
   $fbq('trackSingle', useRuntimeConfig().public.metapixel.default.id, 'CompleteRegistration')
 };
 
-let { startParam } = $(shareStore());
 const route = useRoute();
-onMounted(async () => {
-  Locale.use(locale.value);
-
-  initPixel();
-  startParam = getFatherInviteCode() as any;
-  if (startParam.redirect) {
-    await navigateTo(startParam.redirect);
-  }
-});
-
 const debug = $(useRouteQuery('debug'))
+
 onMounted(() => {
+  Locale.use(locale.value);
+  initPixel();
+
   watchEffect(() => {
     if (debug) {
       localStorage.setItem('debug', debug)
     }
   })
+
   if (route.query['liff.state']) {
     navigateTo(route.query['liff.state'] as string)
+  } else if (startParams?.redirect) {
+    navigateTo(startParams.redirect);
   }
 })
 </script>
@@ -105,5 +101,11 @@ onMounted(() => {
 <style>
 :root {
   --nav-height: 110px;
+}
+
+.van-floating-bubble {
+  overflow: hidden;
+  --van-floating-bubble-background: none;
+  --van-floating-bubble-icon-size: 40px;
 }
 </style>

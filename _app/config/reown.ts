@@ -1,5 +1,5 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { getNetworks } from './networks'
+import { getNetworks } from '../../app/config/networks'
 import { createAppKit } from '@reown/appkit/vue'
 import { type AppKitNetwork } from '@reown/appkit/networks'
 // import { http, webSocket } from '@wagmi/core'

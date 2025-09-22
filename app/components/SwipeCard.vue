@@ -356,7 +356,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .card {
   position: absolute;
   width: 100%;
