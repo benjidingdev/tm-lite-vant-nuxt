@@ -155,11 +155,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="topic.meta.status !== 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
+  <div v-if="topic.meta.status === 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
     <article class="w-full h-[400px] relative z-10!">
       <section v-if="markets.length">
         <div v-for="(card, index) in markets" :key="card.id" ref="carouselTrack"
-          class="absolute w-full h-full bg-white rounded-[15px] overflow-hidden transition-all duration-300 ease-in-out shadow-md draggable-element"
+          class="absolute w-full h-full bg-white rounded-[15px] overflow-hidden transition-all duration-300 ease-in-out shadow-md"
           @touchstart="(e) => (touchStart(e, index))" @touchmove="(e) => (touchMove(e))" @touchend="touchEnd(card)"
           :style="{
             'z-index': 30 - index,
@@ -169,13 +169,14 @@ onMounted(async () => {
           }">
           <van-image width="100%" height="60%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box">
-              <div v-if="movingYes" class="hint-box hint like">
+              <div v-if="movingYes" class="hint-box hint font-bold text-white border-white bg-[var(--user-selected-yes-color)]">
                 YES
               </div>
-              <div v-else-if="movingNo" class="hint-box hint nope">
+              <div v-else-if="movingNo" class="hint-box hint font-bold  text-white border-white bg-[var(--user-selected-no-color)]">
                 NO
               </div>
-              <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
+              <div v-else-if="movingNext" class="hint-box hint font-bold  text-white border-white bg-[var(--user-selected-next-color)]">
+                NEXT</div>
             </div>
           </van-image>
 
@@ -228,44 +229,15 @@ onMounted(async () => {
       </section>
     </article>
   </div>
-
 </template>
 
 <style scoped>
 .hint-box {
-  @apply absolute top-[2px] bottom-[2px] left-[2px] right-[2px] z-0 rounded-[15px] flex justify-center items-center
+  @apply absolute top-[2px] bottom-[2px] left-[2px] right-[2px] z-0 rounded-[15px] flex justify-center items-center;
 }
 
 .hint {
-  font-weight: bold;
-  font-size: 36px;
-  color: white;
-  border: 3px solid white;
-  opacity: 1;
-  transition: opacity 0.3s;
+  @apply text-[36px] border-[3px] border-solid opacity-100 transition-opacity duration-300
 }
 
-.hint.like {
-  background: rgba(82, 196, 26, 0.7);
-}
-
-.hint.nope {
-  background: rgba(255, 77, 79, 0.7);
-}
-
-.hint.next {
-  background: rgba(173, 173, 173, 0.7);
-}
-
-.van-image img {
-  border-radius: 15px;
-}
-
-.draggable-element {
-  will-change: transform;
-  touch-action: none;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  contain: content;
-}
 </style>

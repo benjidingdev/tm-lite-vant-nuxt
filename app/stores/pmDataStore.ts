@@ -1,18 +1,18 @@
 export const pmDataStore = defineStore("pmDataStore", () => {
   let pAmount = $ref(0);
   let pdcCards = $ref([]);
-  let pdcCardsOrigin = $ref([]);
   let yesMarkets = $ref([]);
   let noMarkets = $ref([]);
   let refreshTime = $ref(new Date());
+  let topic = $ref({})
 
   return $$({
     pAmount,
     pdcCards,
     yesMarkets,
     noMarkets,
-    pdcCardsOrigin,
     refreshTime,
+    topic,
   });
 });
 

@@ -1,38 +1,39 @@
-export default defineEventHandler(async () => {
-  const { promises: fs } = await import('node:fs')
-  const { join } = await import('node:path')
-  const DB_PATH = join(process.cwd(), 'app', 'db', 'checkin.json')
-  const raw = await fs.readFile(DB_PATH, 'utf-8')
-  const db = JSON.parse(raw)
+import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
 
-  const days: number[] = Array.isArray(db.checkedDays) ? db.checkedDays : []
-  const sorted = [...new Set(days)].sort((a, b) => a - b)
+export default defineEventHandler(async (event) => {
+  const adminClient = serverSupabaseServiceRole(event);
+  const user = await serverSupabaseUser(event);
+  const userId = user?.id as string
+  const query = getQuery(event);
+  const jackpotId = Number(query.jackpotId)
 
-  let consecutiveDays = 0
-  if (sorted.length) {
-    consecutiveDays = 1
-    for (let i = sorted.length - 1; i > 0; i--) {
-      if (sorted[i] - sorted[i - 1] === 1) consecutiveDays++
-      else break
-    }
-  }
+  if (!jackpotId) throw createError({ statusCode: 400, message: 'jackpotId is required' })
 
-  const lastChecked = sorted.length ? Math.max(...sorted) : 0
-  const nextDay = Math.min(lastChecked + 1, db.totalDays || 30)
-  const currentDay = db.isCheckin ? lastChecked : nextDay
+  const { data, error } = await adminClient.from('checkin_records')
+    .select('date')
+    .eq('userId', userId)
+    .eq('jackpotId', jackpotId)
 
-  return {
-    message: '',
-    code: 0,
-    data: {
-      totalDays: db.totalDays,
-      checkedDays: sorted,
-      consecutiveDays,
-      isCheckin: !!db.isCheckin,
-      availablePoints: db.availablePoints || 0,
-      makeupCardCount: db.makeupCardCount || 0,
-      makeupCardCost: db.makeupCardCost || 1200,
-      currentDay,
-    },
-  }
+  if (error) throw error
+
+  const dates = data.map(item => item.date as string)
+
+  const { data: cards, error: makerupCardError } = await adminClient.from('checkin_makeup_cards')
+    .select('*')
+    .eq('userId', userId)
+    .eq('jackpotId', jackpotId)
+
+  const makerupCardNum = cards?.filter(item => item.status === 0)?.length || 0
+  const makerupCardUsed = cards?.filter(item => item.status === 1)?.length || 0
+
+  if (makerupCardError) throw makerupCardError
+
+  const { data: assets, error: assetsError } = await adminClient.from('assets')
+    .select('pAmount')
+    .eq('userId', userId)
+    .single()
+
+  if (assetsError) throw assetsError
+
+  return { code: 200, data: { userId, points: assets?.pAmount || 0, makerupCardNum: makerupCardNum, makerupCardUsed: makerupCardUsed, dates: dates } }
 })

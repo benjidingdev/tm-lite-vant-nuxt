@@ -11,6 +11,7 @@ export default {
       "hashtags": "TuringM,TuringMaster,Airdrop",
       "retweetTargetLink": "https://x.com/TuringMarket/status/1958786009753428017",
       "text": "Turing Market has a topic of {{title}} ,Claim the reward via {{url}}",
+      shareRankText: "Turing Market has a topic of {{title}} ,Share rank wall to Claim the reward via {{url}}",
     },
     "rewards": {
       "auth": 1000,

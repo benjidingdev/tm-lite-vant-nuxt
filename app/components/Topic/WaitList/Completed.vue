@@ -23,17 +23,12 @@ const route = useRoute()
 // const sharedTopic = topics()
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-function onClickRetweet() {
-  if (!x_user.id) {
-    return
-  }
-
+function onClickShareX() {
   const shareText = topic.meta?.x_info?.text;
   if (shareText) {
     const text = replacePlaceholders(shareText, { url: web_share_url("", { refId: x_user.id }), title: topic.title });
     const url = x_share_url(text, topic.meta?.x_info?.retweetTargetLink, topic.meta?.x_info?.hashtags);
     window.open(url, "_blank");
-    hasRetweetClicked = true
   }
 }
 
@@ -80,7 +75,6 @@ const shareTitle = computed(() => {
       <p class="text-center text-[24px] flex items-center mt-4">
         <span class="opacity-80 text-[var(--turing-purple-color)]">{{ t('Share to get more') }}</span>
         <van-image class="size-6 ml-1" src="/p.png" />
-
       </p>
     </template>
 
@@ -100,21 +94,21 @@ const shareTitle = computed(() => {
     <div class="w-full flex items-center justify-center space-x-2">
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
         @click="onClickFollow">
-        <img src="/x.webp" alt="" class="size-4">
+        <van-icon name="/topic/x.svg" color="#000000" />
         <span class="text-white font-[900] text-xs">{{ t('Follow on X') }}</span>
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-        @click="onClickRetweet">
-        <img src="/x.webp" alt="" class="size-4">
+        @click="onClickShareX">
+        <img src="/topic/x.svg" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
       </button>
     </div>
 
-    <div class="w-full flex items-center justify-center space-x-2">
+    <div v-if="false" class="w-full flex items-center justify-center space-x-2">
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
         @click="onAddToTgGroup">
-        <img name="/tg.svg" alt="" class="size-4">
+        <img src="/tg.svg" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Add to TG') }}</span>
       </button>
 
@@ -131,9 +125,7 @@ const shareTitle = computed(() => {
     <section class="w-full flex flex-col items-center justify-center px-6 py-8">
 
       <div id="share-download" class="w-full rounded-[12px] px-5 py-4 bg-black overflow-hidden relative custom-bg">
-        <div :class="`w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover bg-[url(${topic?.meta?.shareBg})]`">
-        </div>
-        <!-- /topic/monad-bg.jpg -->
+        <div class="w-full h-full absolute z-0 top-0 left-0 bg-center bg-cover" :style="{ backgroundImage: `url(${topic?.meta?.shareBg})` }"></div>
         <div class="absolute z-1 top-0 left-0 w-full h-full bg-[#AA9CFF]/70 backdrop-blur-[0px]"></div>
 
         <div class="relative z-3">
@@ -156,13 +148,13 @@ const shareTitle = computed(() => {
       <button
         class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
         style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="onClickDownload">
-        <img src="/download.webp" alt="" class="size-6">
+        <img src="/icons/download.svg" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Download Phote') }}</span>
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-        @click="onClickRetweet">
-        <img src="/x.webp" alt="" class="size-6">
+        @click="onClickShareX">
+        <img src="/topic/x.svg" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Share on X') }}</span>
       </button>
     </section>
