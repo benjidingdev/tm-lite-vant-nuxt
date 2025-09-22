@@ -6,6 +6,14 @@ export default defineEventHandler(async (event) => {
 
   const { id: topicId } = getQuery(event)
 
+  if (!topicId) {
+    throw createError({
+      statusCode: 400,
+      message: 'Topic id is required',
+      statusMessage: 'TopicIdRequired',
+    })
+  }
+
   const { count } = await adminClient.from('topics').select('*', { count: 'exact', head: true }).eq('id', topicId);
   if (count != 1) {
     throw createError({
