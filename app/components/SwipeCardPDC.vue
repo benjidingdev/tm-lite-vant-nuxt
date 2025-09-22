@@ -26,14 +26,12 @@ const touchStart = (e: TouchEvent | any) => {
   start.Y = clientY;
   offset.X = 0;
   offset.Y = 0;
-  console.log('touchStart', { clientX, clientY, offset })
 };
 
 const touchMove: any = (e: TouchEvent | any) => {
   const { clientX, clientY } = e.touches[0];
   offset.X = clientX - start.X;
   offset.Y = clientY - start.Y;
-  console.log('touchMove', offset.X, { clientX, clientY, })
 
   if (Math.abs(offset.X) > threshold.X) {
     offset.X = offset.X > 0 ? threshold.X : -threshold.X;
@@ -68,7 +66,7 @@ const swipeCard = () => {
   setTimeout(() => {
     offset.X = 0;
     offset.Y = 0;
-    // how to update the pdcCards without changing the value of pdccard
+    // how to update the $PCards without changing the value of $Pcard
     markets.shift();
   }, 0);
 };
@@ -108,7 +106,7 @@ const goDeposit = async (card: any, isYes: boolean) => {
   isTrading = true;
 
   if (Math.max(0, pAmount - 100) < 0) {
-    showToast("You don't have enough PDC, please go to market page to get more.");
+    showToast("You don't have enough $P, please go to market page to get more.");
     resetCard();
     closeToast();
     return;
@@ -116,7 +114,7 @@ const goDeposit = async (card: any, isYes: boolean) => {
   try {
     await trade(card.id, isYes);
   } catch (error) {
-    showToast("Update PDC amount failed, please try again.");
+    showToast("Update $P amount failed, please try again.");
     return;
   } finally {
     isTrading = false;
@@ -169,7 +167,7 @@ onMounted(async () => {
           </van-image>
 
           <div class="overflow-hidden px-4">
-            <div class="mh-[120px]">
+            <div class="mh-[120px] text-center">
               <p class="name">{{ card.title }}</p>
             </div>
 
