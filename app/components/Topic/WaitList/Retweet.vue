@@ -66,19 +66,18 @@ onMounted(() => {
         <div class="font-bold">${{ pAmount }}</div>
       </div>
     </div>
-
-    <TopicWaitListCompleted :topic v-if="hasRetweeted" />
+    <template v-if="hasRetweeted">
+      <TopicWaitListCompleted :topic />
+    </template>
     <template v-else>
-
       <p class="opacity-60 text-[14px] mt-8 mb-7">
         {{ descText }}
       </p>
-
-      <TopicWaitListSubmitRetweetUrl v-if="hasRetweetClicked" @onBack="() => { hasRetweetClicked = false }"
-        @onSuccess="() => { hasRetweeted = true; emit('onSuccess') }" />
-
+      <template v-if="hasRetweetClicked">
+        <TopicWaitListSubmitRetweetUrl @onBack="() => { hasRetweetClicked = false }"
+          @onSuccess="() => { hasRetweeted = true; emit('onSuccess') }" />
+      </template>
       <template v-else>
-
         <div class="w-full flex justify-between items-center mb-[15px]">
           <button class="w-full bg-[#7000FF] h-11 rounded-[8px]" @click="onClickRetweet"
             style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);">
@@ -87,8 +86,6 @@ onMounted(() => {
         </div>
       </template>
     </template>
-
     <TopicWaitListRetweetList />
-
   </section>
 </template>
