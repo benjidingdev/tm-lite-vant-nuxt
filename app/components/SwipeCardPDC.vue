@@ -144,7 +144,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="topic.meta.status !== 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
+  <div v-if="topic.meta.status === 'started'" class="w-full h-full flex flex-col justify-center items-center mt-6">
     <article class="w-full h-[400px] relative z-10!">
       <section v-if="markets.length">
         <div v-for="(card, index) in markets" :key="card.id"
@@ -219,7 +219,6 @@ onMounted(async () => {
       </section>
     </article>
   </div>
-
 </template>
 
 <style scoped>
