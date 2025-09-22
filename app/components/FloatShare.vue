@@ -11,13 +11,13 @@ const actions = computed(() => {
   if (hasTwitterLogin) {
     return [
       { icon: '/icons/rank.svg', name: t('Back to Topic'), subname: t('Back to topic home page'), callback: () => useNavigateTo(`/t-${route.params.id}`) },
-      { icon: '/download.webp', name: t('Download Phote'), subname: t('Download rank wall to a picture'), callback: onClickDownload },
-      { icon: '/x.webp', name: t('Share on X'), subname: t('Share rank wall link to inivite friends'), callback: onClickShareX }
+      { icon: '/icons/download.svg', name: t('Download Phote'), subname: t('Download rank wall to a picture'), callback: onClickDownload },
+      { icon: '/icons/x.svg', name: t('Share on X'), subname: t('Share rank wall link to inivite friends'), callback: onClickShareX }
     ]
   }
   return [
     { icon: '/icons/rank.svg', name: t('Back to Topic'), subname: t('Back to topic home page'), callback: () => useNavigateTo(`/t-${route.params.id}`) },
-    { icon: '/x.webp', name: t('Auth with X'), subname: t('Auth you X account to login'), callback: handleLogin },
+    { icon: '/icons/x.svg', name: t('Auth with X'), subname: t('Auth you X account to login'), callback: handleLogin },
   ]
 })
 
