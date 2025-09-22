@@ -76,7 +76,7 @@ onMounted(() => {
       </template>
       <TopicHeader :topic />
 
-      <p class="text-center my-4 text-lg">{{ t('Invite Rank Wall') }}</p>
+      <p class="text-center my-4 text-2xl text-[var(--turing-green-color)]">{{ t('Invite Rank Wall') }}</p>
       <section id="share-download" class="w-full h-auto flex flex-col items-center justify-center space-y-[10px] mt-0">
         <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
           :key="tier.rank">
