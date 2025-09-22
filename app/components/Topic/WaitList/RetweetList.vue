@@ -57,7 +57,7 @@ watchEffect(async () => {
         class="w-full flex items-center justify-between space-x-2 bg-purple-100 rounded-[8px] p-[6px]">
         <div class="flex items-center justify-center space-x-2">
           <a :href="`https://x.com/${user.x_profiles?.slug}`" target="_blank">
-            <img :src="user.x_profiles.avatar" alt="" class="size-11 rounded-[8px]">
+            <img :src="user.x_profiles.avatar" alt="" class="size-11 rounded-full">
           </a>
           <div>
             <p class="opacity-80 font-bold text-sm">{{ user.x_profiles?.fullname }}</p>
@@ -68,8 +68,8 @@ watchEffect(async () => {
           </div>
         </div>
         <div class="font-bold mr-3 flex items-center">
-          <span>{{ user.pAmount || '-' }}</span>
-          <van-image class="size-6 ml-1" src="/p.png" round/>
+          <van-image class="size-6 mr-1" src="/p.png" round />
+          <span>${{ user.pAmount || '0' }}</span>
         </div>
       </div>
     </template>
