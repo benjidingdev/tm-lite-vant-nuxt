@@ -4,6 +4,7 @@ import all from '#shared/data/topics/all'
 export default defineEventHandler(async (event) => {
   const { id } = getQuery(event)
   const data = all[id]
+  // console.log({id, data})
   if (!data) {
     throw createError({
       statusCode: 400,
@@ -20,12 +21,14 @@ export default defineEventHandler(async (event) => {
     }).select()
   }
   const { data: { markets } } = rz1
-  const marketMapByIdFromJson = _.keyBy(data.markets, 'id')
-  markets.forEach((market) => {
-    marketMapByIdFromJson[market.id].noNum = market.noNum
-    marketMapByIdFromJson[market.id].yesNum = market.yesNum
-  })
-  data.markets = _.map(marketMapByIdFromJson)
+  if (!markets?.length) {
+    const marketMapByIdFromJson = _.keyBy(data.markets, 'id')
+    markets.forEach((market) => {
+      marketMapByIdFromJson[market.id].noNum = market.noNum
+      marketMapByIdFromJson[market.id].yesNum = market.yesNum
+    })
+    data.markets = _.map(marketMapByIdFromJson)
+  }
   const rz = await adminClient.from('topics').update({
     ...data,
   }).eq('id', id).select()
