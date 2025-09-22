@@ -106,7 +106,7 @@ const shareTitle = computed(() => {
       </button>
     </div>
 
-    <div class="w-full flex items-center justify-center space-x-2">
+    <div v-if="false" class="w-full flex items-center justify-center space-x-2">
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
         @click="onAddToTgGroup">
         <img src="/tg.svg" alt="" class="size-4">
