@@ -24,10 +24,6 @@ const route = useRoute()
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
 function onClickShareX() {
-  if (!x_user.id) {
-    return
-  }
-
   const shareText = topic.meta?.x_info?.text;
   if (shareText) {
     const text = replacePlaceholders(shareText, { url: web_share_url("", { refId: x_user.id }), title: topic.title });
@@ -105,7 +101,7 @@ const shareTitle = computed(() => {
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-        @click="onClickRetweet">
+        @click="onClickShareX">
         <img src="/topic/x.svg" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
       </button>
