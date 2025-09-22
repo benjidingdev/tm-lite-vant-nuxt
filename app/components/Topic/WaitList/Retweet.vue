@@ -62,7 +62,7 @@ onMounted(() => {
         <p class="text-[14px] opacity-60">@{{ x_user?.user_name }}</p>
       </div>
       <div class="flex items-center justify-center space-x-1 bg-[rgba(112,0,255,0.1)] rounded-[8px] px-3 py-1">
-        <van-image class="size-6 ml-1" src="/p.png" />
+        <van-image class="size-6 ml-1" src="/p.png" round />
         <div class="font-bold">${{ pAmount }}</div>
       </div>
     </div>
@@ -79,8 +79,7 @@ onMounted(() => {
       </template>
       <template v-else>
         <div class="w-full flex justify-between items-center mb-[15px]">
-          <button class="w-full bg-[#7000FF] h-11 rounded-[8px]" @click="onClickRetweet"
-            style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);">
+          <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px]" @click="onClickRetweet">
             <text class="text-white font-[900]">{{ $t('Retweet') }}</text>
           </button>
         </div>
