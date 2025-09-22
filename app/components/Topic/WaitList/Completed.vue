@@ -29,7 +29,6 @@ function onClickShareX() {
     const text = replacePlaceholders(shareText, { url: web_share_url("", { refId: x_user.id }), title: topic.title });
     const url = x_share_url(text, topic.meta?.x_info?.retweetTargetLink, topic.meta?.x_info?.hashtags);
     window.open(url, "_blank");
-    hasRetweetClicked = true
   }
 }
 
