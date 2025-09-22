@@ -1,7 +1,7 @@
 import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
 export default defineEventHandler(async (event) => {
-  const user = await serverSupabaseUser(event)
-  const userId = user?.id as string
+  // const user = await serverSupabaseUser(event)
+  // const userId = user?.id as string
   const adminClient = serverSupabaseServiceRole(event)
 
   const { id: topicId } = getQuery(event)
@@ -14,8 +14,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { count } = await adminClient.from('topics').select('*', { count: 'exact', head: true }).eq('id', topicId);
-  if (count != 1) {
+  const { data: topic } = await adminClient.from('topics').select('*').eq('id', topicId).single();
+  if (!topic) {
     throw createError({
       statusCode: 400,
       message: 'Topic not found',
@@ -23,9 +23,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  console.log({ topicId, count })
+  console.log({ topicId })
 
-  const { data, error } = await adminClient.from('invites')
+  const { data } = await adminClient.from('invites')
     .select(`
       userId,
       reason,
@@ -35,5 +35,5 @@ export default defineEventHandler(async (event) => {
     .order('refCount', { ascending: false })
     .limit(50)
 
-  return data
+  return {data, topic}
 });

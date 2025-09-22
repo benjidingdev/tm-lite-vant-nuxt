@@ -6,25 +6,31 @@ import tgImg from '~/assets/icon/telegram.svg'
 import xImg from '~/assets/icon/x.svg'
 import link from '~/assets/icon/copy-link.svg'
 
+let { userId } = $(checkinStore())
 let showShare = $ref(false)
 let shareOptions = $ref<ShareSheetOption[][]>([
   [{ name: 'telegram', icon: tgImg }, { name: 'X', icon: xImg }, { name: t('option.copyLink'), icon: link }],
 ])
 
+const shareUrl = $(computed(() => `${location.origin}/checkin?refId=${userId}`))
+
 const onShare = (opt: ShareSheetOption) => {
   showToast(t('toast.selected', { name: opt.name as string }))
+  const shareText =
+`${t('share.postText')}
+#TuringM #TUIT
+`
   if (opt.name === 'X') {
-    window.open(`https://www.x.com/intent/post?text=${encodeURIComponent(t('share.postText'))}`, '_blank')
+    window.open(`https://www.x.com/intent/post?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank')
   } if (opt.name === 'telegram') {
-    window.open(`https:t.me/share/url?text=${encodeURIComponent(t('share.postText'))}`, '_blank')
+    window.open(`https://t.me/share/url?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank')
   }
   showShare = false
 }
 
 const copyLink = async () => {
   try {
-    const url = `${location.origin}/invite?ref=demo-user`
-    await navigator.clipboard.writeText(url)
+    await navigator.clipboard.writeText(shareUrl)
     showToast(t('toast.copied'))
   } catch {
     showToast(t('toast.copyFail'))
@@ -147,7 +153,7 @@ const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
       "copyFail": "Copy failed, please copy manually"
     },
     "share": {
-      "postText": "Hello, welcome"
+      "postText": "Daily check-in, earn rewards!"
     },
     "whyShare": {
       "pointsForShare": "Share once: +10 points",
@@ -173,7 +179,7 @@ const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
       "copyFail": "複製失敗，請手動複製"
     },
     "share": {
-      "postText": "你好，歡迎"
+      "postText": "每日打卡，轻松赢奖励！"
     },
     "whyShare": {
       "pointsForShare": "每分享一次：+100 積分",
@@ -199,7 +205,7 @@ const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
       "copyFail": "コピーに失敗しました。手動でコピーしてください"
     },
     "share": {
-      "postText": "こんにちは、ようこそ"
+      "postText": "今日のチェックイン、報酬を得よう！"
     },
     "whyShare": {
       "pointsForShare": "1回のシェアで：+100 ポイント",
@@ -225,7 +231,7 @@ const tickerItems = $computed(() => [...inviteTicker, ...inviteTicker])
       "copyFail": "복사에 실패했습니다. 직접 복사해 주세요"
     },
     "share": {
-      "postText": "안녕하세요, 환영합니다"
+      "postText": "안녕하세요, 오늘의 체크인을 완료하셨습니다! 함께 이벤트에 참여하세요!"
     },
     "whyShare": {
       "title": "왜 공유하나요?",

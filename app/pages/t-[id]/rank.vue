@@ -3,6 +3,8 @@ definePageMeta({
   layout: "x",
 });
 
+let { topic } = $(pmDataStore())
+
 const route = useRoute()
 
 const debug = useDebug('rank_' + route.params.id)
@@ -20,13 +22,18 @@ let tiers = $ref([
   { rank: 'H', bg: 'rgb(255, 127, 10)', users: [] },
 ])
 
+let isLoading = $ref(true)
 async function loadData() {
+  isLoading = true
   const rz = await doFetch(`/api/invite/topic?id=${route.params.id}`).catch((err) => {
     console.error('topic-rank-get error', err)
     return
   })
 
-  const users = rz.map(item => ({
+  if (rz?.topic) {
+    topic = rz?.topic
+  }
+  const users = rz?.data?.map(item => ({
     id: item?.x_profiles?.id,
     avatar: item?.x_profiles?.avatar,
     name: item?.x_profiles?.fullname,
@@ -40,6 +47,7 @@ async function loadData() {
       tiers[tierIndex].users.push(user)
     }
   })
+  isLoading = false
 }
 
 onMounted(() => {
@@ -48,21 +56,39 @@ onMounted(() => {
 </script>
 
 <template>
-  <p class="text-4xl w-full text-center mt-8 sticky top-0 z-1 bg-black">Tier Rank Wall</p>
+  <article class="w-[calc(100dvw-28px)] sm:w-90 m-auto">
+    <van-skeleton :loading="isLoading || false">
+      <template #template>
+        <div class="w-[calc(100dvw-28px)] sm:w-90 h-[100dvh] flex flex-col justify-center items-center ">
+          <div :style="{ marginTop: '42px', width: '100%' }">
+            <van-skeleton-paragraph row-width="60%" />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+            <van-skeleton-paragraph />
+          </div>
 
-  <section class="w-full h-[calc(100dvh)] h-auto flex flex-col items-center justify-center space-y-[10px] mt-8">
-    <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
-      :key="tier.rank">
-      <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
-      <div class="flex-1 grid grid-cols-4 gap-[1px]">
-        <NuxtLink :to="`/u/${user.id}`" v-for="user in tier.users" :key="user.id"
-          class="border-0 flex flex-col items-center justify-center relative">
-          <XAvatar :src="user.avatar" />
-          <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">{{
-            user.name ||
-            'name' }}</p>
-        </NuxtLink>
-      </div>
-    </div>
-  </section>
+          <div class="w-full my-10 flex-1 flex justify-center items-center bg-[var(--van-active-color)] rounded-[24px]">
+            <van-loading size="48" />
+          </div>
+        </div>
+      </template>
+      <TopicHeader :topic />
+      <section id="share-download" class="w-full h-auto flex flex-col items-center justify-center space-y-[10px] mt-0">
+        <div class="flex justify-between items-stretch w-full border-0 border-red-500" v-for="(tier, index) in tiers"
+          :key="tier.rank">
+          <p class="w-8 leading-20 text-center text-2xl" :style="{ background: tier.bg || 'blue' }">{{ tier.rank }}</p>
+          <div class="flex-1 grid grid-cols-4 gap-[1px]">
+            <NuxtLink :to="`/u/${user.id}`" v-for="user in tier.users" :key="user.id"
+              class="border-0 flex flex-col items-center justify-center relative">
+              <XAvatar :src="user.avatar" />
+              <p class="leading-5 text-center text-xs border-0 w-full absolute bottom-0 bg-black/10 backdrop-blur-xs">
+                {{ user.name || 'name' }}
+              </p>
+            </NuxtLink>
+          </div>
+        </div>
+      </section>
+      <FloatShare />
+    </van-skeleton>
+  </article>
 </template>

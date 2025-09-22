@@ -23,7 +23,7 @@ const route = useRoute()
 // const sharedTopic = topics()
 // const topic = $computed(() => sharedTopic.find(t => t.id === Number(route.params.pid)))
 
-function onClickRetweet() {
+function onClickShareX() {
   if (!x_user.id) {
     return
   }
@@ -114,7 +114,7 @@ const shareTitle = computed(() => {
     <div class="w-full flex items-center justify-center space-x-2">
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
         @click="onAddToTgGroup">
-        <img name="/tg.svg" alt="" class="size-4">
+        <img src="/tg.svg" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Add to TG') }}</span>
       </button>
 
@@ -161,7 +161,7 @@ const shareTitle = computed(() => {
       </button>
 
       <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
-        @click="onClickRetweet">
+        @click="onClickShareX">
         <img src="/x.webp" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Share on X') }}</span>
       </button>
