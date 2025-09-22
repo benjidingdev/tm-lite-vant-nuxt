@@ -3,7 +3,9 @@ definePageMeta({
   layout: "x",
 });
 
-const debug = useDebug('pd')
+const route = useRoute()
+
+const debug = useDebug('rank_' + route.params.id)
 const { hasTwitterLogin, twitterIdentity, supabseUser } = $(supabaseStore())
 
 let tiers = $ref([
@@ -19,7 +21,10 @@ let tiers = $ref([
 ])
 
 async function loadData() {
-  const rz = await doFetch('/api/pd')
+  const rz = await doFetch(`/api/invite/topic?id=${route.params.id}`).catch((err) => {
+    console.error('topic-rank-get error', err)
+    return
+  })
 
   const users = rz.map(item => ({
     id: item?.x_profiles?.id,
