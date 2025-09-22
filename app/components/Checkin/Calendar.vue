@@ -5,7 +5,7 @@ const props = defineProps<{
   totalDays: number
   checkedDays: number[]
   todayIndex: number
-  missedDays?: number[]          
+  missedDays?: number[]
 }>()
 
 const emit = defineEmits<{
@@ -17,12 +17,13 @@ const checkedSet = computed(() => new Set(props.checkedDays))
 const explicitMissedSet = computed(() => new Set(props.missedDays ?? []))
 
 const missedSet = computed(() => {
-  if (props.missedDays && props.missedDays.length > 0) return explicitMissedSet.value
-  const s = new Set<number>()
-  for (let d = 1; d < props.todayIndex; d++) {
-    if (!checkedSet.value.has(d)) s.add(d)
-  }
-  return s
+  return explicitMissedSet.value
+  // if (props.missedDays && props.missedDays.length > 0) return explicitMissedSet.value
+  // const s = new Set<number>()
+  // for (let d = 1; d < props.todayIndex; d++) {
+  //   if (!checkedSet.value.has(d)) s.add(d)
+  // }
+  // return s
 })
 
 const items = computed(() =>

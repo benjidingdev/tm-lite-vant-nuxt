@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   if (!assets || assets.pAmount < makeupPoints)
     return { code: 500, message: 'Insufficient points' }
 
-  await updateUserPAmount(adminClient, userId, -makeupPoints, `User redeem makeup card, ${Date.now()}`)
+  await updateUserPAmount(adminClient, userId, -makeupPoints, `User redeem makeup card, jackpot id: ${jackpotId}, ${new Date().toISOString()}`)
 
   const { data: card, error: cardError } = await adminClient.from('checkin_makeup_cards').insert([{
     userId: userId,

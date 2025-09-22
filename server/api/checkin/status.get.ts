@@ -18,12 +18,13 @@ export default defineEventHandler(async (event) => {
 
   const dates = data.map(item => item.date as string)
 
-  const { count: makerupCardNum, error: makerupCardError } = await adminClient.from('checkin_makeup_cards')
-    .select('*', { count: 'exact', head: true })
+  const { data: cards, error: makerupCardError } = await adminClient.from('checkin_makeup_cards')
+    .select('*')
     .eq('userId', userId)
     .eq('jackpotId', jackpotId)
-    .eq('status', 0)
 
+  const makerupCardNum = cards?.filter(item => item.status === 0)?.length || 0
+  const makerupCardUsed = cards?.filter(item => item.status === 1)?.length || 0
 
   if (makerupCardError) throw makerupCardError
 
@@ -34,5 +35,5 @@ export default defineEventHandler(async (event) => {
 
   if (assetsError) throw assetsError
 
-  return { code: 0, data: { points: assets.pAmount || 0, makerupCardNum: makerupCardNum, dates: dates } }
+  return { code: 200, data: { userId, points: assets?.pAmount || 0, makerupCardNum: makerupCardNum, makerupCardUsed: makerupCardUsed, dates: dates } }
 })

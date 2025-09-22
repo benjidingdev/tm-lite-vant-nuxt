@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     return { code: 500, message: 'Date is required' }
 
   if (date < startDate || date > endDate)
-    return { code: 500, message: `Date not in range ${startDate} -  ${endDate}` }
+    return { code: 500, message: `Date not in range [${startDate}, ${endDate}]` }
 
   const { data: exists } = await adminClient
     .from('checkin_records')
@@ -68,7 +68,7 @@ export default defineEventHandler(async (event) => {
     if (!assets || assets.pAmount < checkinPoints)
       return { code: 500, message: 'Points not enough' }
 
-    await updateUserPAmount(adminClient, userId, -checkinPoints, `User checkin ${date}`)
+    await updateUserPAmount(adminClient, userId, -checkinPoints, `User checkin ${date}, jackpot id: ${jackpotId}`)
 
     await adminClient.from('checkin_records').upsert({
       userId,
@@ -92,9 +92,10 @@ export default defineEventHandler(async (event) => {
 
   let addPoints = (useMakeupCard ? makeupPoints : checkinPoints) as number
 
+  let returnPoints
   if (checkinCount === diffDays) {
-    const returnPoints = checkinPoints * checkinCount * returnMultiplier
-    await updateUserPAmount(adminClient, userId, returnPoints, `User checkin return ${jackpot.id}`)
+    returnPoints = checkinPoints * checkinCount * returnMultiplier
+    await updateUserPAmount(adminClient, userId, returnPoints, `User checkin reward, jackpot id: ${jackpot.id}`)
     // addPoints -= returnPoints
   }
 
@@ -103,6 +104,6 @@ export default defineEventHandler(async (event) => {
     .update({ totalPoints: totalPoints + addPoints })
     .eq('id', jackpotId)
 
-  return { code: 200, message: useMakeupCard ? 'Makeup checkin successful' : 'Checkin successful' }
+  return { code: 200, message: useMakeupCard ? 'Makeup checkin successful' : 'Checkin successful', reward: returnPoints }
 })
 
