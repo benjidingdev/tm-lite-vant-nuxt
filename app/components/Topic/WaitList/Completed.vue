@@ -1,5 +1,13 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
+import {
+  web_share_url,
+  x_share_url,
+  telegram_share_url,
+  telegram_bot_app_url,
+  telegram_bot_group_url,
+  replacePlaceholders,
+} from '@/utils/inviteUtils'
 
 const { topic } = defineProps({
   topic: {
@@ -9,7 +17,7 @@ const { topic } = defineProps({
 })
 const { t, locale } = useI18n()
 const { x_user, hasTwitterLogin } = $(supabaseStore())
-
+const { botUsername } = $(tgStore());
 const route = useRoute()
 
 // const sharedTopic = topics()
@@ -20,14 +28,27 @@ function onClickRetweet() {
     return
   }
 
-  // console.log('topic', topic)
-  handleRetweet({
-    hashtags: topic.meta?.x_info?.hashtags,
-    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
-    text: topic.meta?.x_info?.text,
-    refId: x_user.id,
-    title: topic.title,
-  })
+  const shareText = topic.meta?.x_info?.text;
+  if (shareText) {
+    const text = replacePlaceholders(shareText, { url: web_share_url("", { refId: x_user.id }), title: topic.title });
+    const url = x_share_url(text, topic.meta?.x_info?.retweetTargetLink, topic.meta?.x_info?.hashtags);
+    window.open(url, "_blank");
+    hasRetweetClicked = true
+  }
+}
+
+function onShareToTg() {
+  const shareText = topic.meta?.x_info?.text;
+  if (shareText) {
+    const text = replacePlaceholders(shareText, { url: telegram_bot_app_url(botUsername, { refId: x_user.id }), title: topic.title });
+    const url = telegram_share_url(text);
+    window.open(url, "_blank");
+  }
+}
+
+function onAddToTgGroup() {
+  const url = telegram_bot_group_url(botUsername, { refId: x_user.id });
+  window.open(url, "_blank");
 }
 
 function onClickFollow() {
@@ -87,6 +108,20 @@ const shareTitle = computed(() => {
         @click="onClickRetweet">
         <img src="/x.webp" alt="" class="size-4">
         <span class="text-white font-[900] text-xs">{{ t('Share on X') }}</span>
+      </button>
+    </div>
+
+    <div class="w-full flex items-center justify-center space-x-2">
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-1"
+        @click="onAddToTgGroup">
+        <img name="/tg.svg" alt="" class="size-4">
+        <span class="text-white font-[900] text-xs">{{ t('Add to TG') }}</span>
+      </button>
+
+      <button class="w-full bg-[#070707] opacity-70 h-11 rounded-[8px] mt-4 flex items-center justify-center space-x-2"
+        @click="onShareToTg">
+        <img src="/tg.svg" alt="" class="size-4">
+        <span class="text-white font-[900] text-xs">{{ t('Share on TG') }}</span>
       </button>
     </div>
 
