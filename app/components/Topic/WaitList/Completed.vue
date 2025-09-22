@@ -55,7 +55,7 @@ const shareTitle = computed(() => {
 <template>
   <section class="w-full flex flex-col items-center justify-center rounded-[16px] ">
 
-    <template v-if="topic?.meta?.isWaitingClosed">
+    <template v-if="topic.meta.status === 'started'">
       <p class="text-center text-[24px] flex items-center mt-4">
         <span class="opacity-80 text-[var(--turing-purple-color)]">{{ t('Share to get more') }}</span>
         <van-image class="size-6 ml-1" src="/p.png" />
@@ -118,7 +118,8 @@ const shareTitle = computed(() => {
 
       </div>
 
-      <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
+      <button
+        class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px] mt-8 flex items-center justify-center space-x-2"
         style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);" @click="onClickDownload">
         <img src="/download.webp" alt="" class="size-6">
         <span class="text-white font-[900]">{{ t('Download Phote') }}</span>
