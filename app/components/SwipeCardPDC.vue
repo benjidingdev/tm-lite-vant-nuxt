@@ -168,7 +168,12 @@ onMounted(async () => {
 
           <div class="overflow-hidden px-4">
             <div class="mh-[120px] text-center">
-              <p class="text-[#333] text-[18px] font-bold block leading-[1.2]">{{ card.title }}</p>
+              <div class="items-center flex justify-center">
+                <div class="text-gray-900 flex items-center justify-between">{{ card.title }}</div>
+                <a v-if="card.xUrl" :href="card.xUrl" class="p-2" target="_blank">
+                  <van-icon name="/icons/x.svg" />
+                </a>
+              </div>
             </div>
 
             <div class="w-full h-16 z-50 mt-5 relative">
