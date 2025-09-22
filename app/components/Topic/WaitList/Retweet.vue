@@ -12,14 +12,13 @@ const { topic } = defineProps({
 let hasRetweetClicked = $ref(false)
 
 function onClickRetweet() {
-  handleRetweet({
-    hashtags: topic.meta?.x_info?.hashtags,
-    retweetTargetUrl: topic.meta?.x_info?.retweetTargetLink,
-    text: topic.meta?.x_info?.text,
-    refId: x_user.id,
-    title: topic.title,
-  })
-  hasRetweetClicked = true
+  const shareText = topic.meta?.x_info?.text;
+  if (shareText) {
+    const text = replacePlaceholders(shareText, { url: web_share_url("", { refId: x_user.id }), title: topic.title });
+    const url = x_share_url(text, topic.meta?.x_info?.retweetTargetLink, topic.meta?.x_info?.hashtags);
+    window.open(url, "_blank");
+    hasRetweetClicked = true
+  }
 }
 
 const getAsset = async () => {
