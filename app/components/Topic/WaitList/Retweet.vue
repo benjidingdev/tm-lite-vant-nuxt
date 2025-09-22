@@ -82,7 +82,7 @@ onMounted(() => {
         <div class="w-full flex justify-between items-center mb-[15px]">
           <button class="w-full bg-[#7000FF] h-11 rounded-[8px]" @click="onClickRetweet"
             style="box-shadow: 0px 12px 32px -8px rgba(112,0,255,0.5);">
-            <text class="text-white font-[900]">Retweet</text>
+            <text class="text-white font-[900]">{{ t('Retweet') }}</text>
           </button>
         </div>
       </template>
