@@ -144,86 +144,89 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="w-full h-[400px] relative z-10!">
-    <section v-if="markets.length">
-      <div v-for="(card, index) in markets" :key="card.id"
-        class="absolute w-full h-full bg-white rounded-[15px] overflow-hidden transition-all duration-300 ease-in-out shadow-md draggable-element"
-        :style="{
-          'z-index': 30 - index,
-          transform: index == 0 ?
-            `translateX(${offset.X}px) translateY(${offset.Y}px) rotate(${offset.X / 20}deg)`
-            : `translateX(${0}px) translateY(${1 * index}px)`
-        }" @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))" @touchend="touchEnd(card)">
+  <div v-if="topic?.meta?.isWaitingClosed" class="w-full h-full flex flex-col justify-center items-center mt-6">
+    <article class="w-full h-[400px] relative z-10!">
+      <section v-if="markets.length">
+        <div v-for="(card, index) in markets" :key="card.id"
+          class="absolute w-full h-full bg-white rounded-[15px] overflow-hidden transition-all duration-300 ease-in-out shadow-md draggable-element"
+          :style="{
+            'z-index': 30 - index,
+            transform: index == 0 ?
+              `translateX(${offset.X}px) translateY(${offset.Y}px) rotate(${offset.X / 20}deg)`
+              : `translateX(${0}px) translateY(${1 * index}px)`
+          }" @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))" @touchend="touchEnd(card)">
 
-        <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
-          <div v-if="index === 0" class="hint-box">
-            <div v-if="movingYes" class="hint-box hint like">
-              YES
+          <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
+            <div v-if="index === 0" class="hint-box">
+              <div v-if="movingYes" class="hint-box hint like">
+                YES
+              </div>
+              <div v-else-if="movingNo" class="hint-box hint nope">
+                NO
+              </div>
+              <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
             </div>
-            <div v-else-if="movingNo" class="hint-box hint nope">
-              NO
-            </div>
-            <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
-          </div>
-        </van-image>
+          </van-image>
 
-        <div class="overflow-hidden px-4">
-          <div class="mh-[120px]">
-            <p class="name">{{ card.title }}</p>
-          </div>
-
-          <div class="w-full h-16 z-50 mt-5 relative">
-            <!--loading on buttons-->
-            <div v-if="isTrading" class="h-full bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
-              trading...
+          <div class="overflow-hidden px-4">
+            <div class="mh-[120px]">
+              <p class="name">{{ card.title }}</p>
             </div>
 
-            <template v-else>
-              <!--selected status-->
-              <div v-if="userSelectedMarkets.includes(card.id)"
-                :class="(yesMarkets.includes(card.id)) ? 'bg-[#7000FF]' : 'bg-[#B30FE7]'"
-                class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
-                @click="">
-                Try Claim Now!
+            <div class="w-full h-16 z-50 mt-5 relative">
+              <!--loading on buttons-->
+              <div v-if="isTrading" class="h-full bg-gray-500 opacity-85 rounded-lg flex items-center justify-center">
+                trading...
               </div>
 
-              <div v-else class="flex justify-between items-center h-full">
-                <div class="relative cursor-pointer" @click="goDeposit(card, true)">
-                  <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
-                  <span
-                    class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                    Yes({{ card.yesNum }})
-                  </span>
+              <template v-else>
+                <!--selected status-->
+                <div v-if="userSelectedMarkets.includes(card.id)"
+                  :class="(yesMarkets.includes(card.id)) ? 'bg-[#7000FF]' : 'bg-[#B30FE7]'"
+                  class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
+                  @click="">
+                  Try Claim Now!
                 </div>
-                <div class="relative cursor-pointer" @click="goDeposit(card, false)">
-                  <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
-                  <span
-                    class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
-                    No({{ card.noNum }})
-                  </span>
-                </div>
-              </div>
-            </template>
-          </div>
 
-          <div class="text-gray-400 underline text-right cursor-pointer" @click="swipeCard">next>></div>
+                <div v-else class="flex justify-between items-center h-full">
+                  <div class="relative cursor-pointer" @click="goDeposit(card, true)">
+                    <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
+                    <span
+                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                      Yes({{ card.yesNum }})
+                    </span>
+                  </div>
+                  <div class="relative cursor-pointer" @click="goDeposit(card, false)">
+                    <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
+                    <span
+                      class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
+                      No({{ card.noNum }})
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="text-gray-400 underline text-right cursor-pointer" @click="swipeCard">next>></div>
+
+          </div>
 
         </div>
+      </section>
 
-      </div>
-    </section>
+      <section v-else>
+        <van-empty description="If you are interested in Turing Market, please go to our official version"
+          style="--van-empty-description-color: #7e7e7e">
+          <template #image>
+            <img src="/assets/icon/logo.svg" />
+          </template>
+          <van-button round type="primary" class="bottom-button" @click="navigateTo('/pd')">Go to
+            watinglist</van-button>
+        </van-empty>
+      </section>
+    </article>
+  </div>
 
-    <section v-else>
-      <van-empty description="If you are interested in Turing Market, please go to our official version"
-        style="--van-empty-description-color: #7e7e7e">
-        <template #image>
-          <img src="/assets/icon/logo.svg" />
-        </template>
-        <van-button round type="primary" class="bottom-button" @click="navigateTo('/pd')">Go to
-          watinglist</van-button>
-      </van-empty>
-    </section>
-  </article>
 </template>
 
 <style scoped>
@@ -280,5 +283,4 @@ onMounted(async () => {
   backface-visibility: hidden;
   contain: content;
 }
-
 </style>
