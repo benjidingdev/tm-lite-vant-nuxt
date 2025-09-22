@@ -1,6 +1,7 @@
 export default {
   title: 'Who will be the biggest winner when the Monad mainnet goes live?',
   meta: {
+    status: 'waiting', // started, ended
     "logo": "/topic/predmoon.png",
     "shareBg": "/topic/monad-bg.jpg",
     "shareLogo": "/topic/shareLogo.png",
