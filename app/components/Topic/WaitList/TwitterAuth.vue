@@ -15,7 +15,7 @@ async function handleLogin() {
       {{ $t('Login with X') }}
     </button>
     <p class="text-center text-gray-500 text-xs mt-0">
-      {{ $t('Get access to all the tasks to earn more point') }}
+      {{ $t('Login to get access to all the tasks to earn more point') }}
     </p>
   </section>
 </template>
