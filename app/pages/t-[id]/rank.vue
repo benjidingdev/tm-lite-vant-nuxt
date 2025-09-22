@@ -3,6 +3,8 @@ definePageMeta({
   layout: "x",
 });
 
+const route = useRoute()
+
 const debug = useDebug('pd')
 const { hasTwitterLogin, twitterIdentity, supabseUser } = $(supabaseStore())
 
@@ -19,7 +21,7 @@ let tiers = $ref([
 ])
 
 async function loadData() {
-  const rz = await doFetch('/api/pd')
+  const rz = await doFetch(`/api/invite/topic?id=${route.params.id}`)
 
   const users = rz.map(item => ({
     id: item?.x_profiles?.id,
