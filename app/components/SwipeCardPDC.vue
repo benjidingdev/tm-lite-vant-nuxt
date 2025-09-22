@@ -226,7 +226,7 @@ onMounted(async () => {
   </article>
 </template>
 
-<style>
+<style scoped>
 .name {
   color: #333;
   font-size: 18px;

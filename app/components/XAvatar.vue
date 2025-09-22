@@ -7,7 +7,7 @@ defineProps({
 })
 </script>
 <template>
-  <van-image class="w-full h-full bg-cover" :src="xAvatar(src)">
+  <van-image :src="xAvatar(src)">
     <template v-slot:loading>
       <van-loading type="spinner" size="20" />
     </template>
