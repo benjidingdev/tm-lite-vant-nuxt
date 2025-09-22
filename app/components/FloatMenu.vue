@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouteQuery } from '@vueuse/router'
 
-const offset = ref({ x: 10, y: 10 });
+const offset = ref({ x: 20, y: 20 });
 const { t } = useI18n()
 let show = $ref(false);
 
@@ -27,7 +27,7 @@ const onSelect = (item) => {
 </script>
 <template>
   <div>
-      <van-floating-bubble v-model:offset="offset" axis="xy" icon="/tuit.jpg" magnetic="x" @offset-change="onOffsetChange" @click="show = true"/>
+      <van-floating-bubble axis="xy" icon="/tuit.png" magnetic="x" @offset-change="onOffsetChange" @click="show = true" />
       <van-action-sheet v-model:show="show" :actions="actions" @select="onSelect"  :cancel-text="$t('Cancel')" />
   </div>
 </template>
