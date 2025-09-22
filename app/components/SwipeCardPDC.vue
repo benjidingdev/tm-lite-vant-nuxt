@@ -188,8 +188,8 @@ onMounted(async () => {
               <template v-else>
                 <!--selected status-->
                 <div v-if="userSelectedMarkets.includes(card.id)"
-                  :class="(yesMarkets.includes(card.id)) ? 'bg-[var(--turing-purple-color)]' : 'bg-[#B30FE7]'"
-                  class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl cursor-pointer text-white"
+                  :class="(yesMarkets.includes(card.id)) ? 'text-[var(--turing-purple-color)]' : 'text-[#B30FE7]'"
+                  class="h-full font-bold left-0 rounded-lg flex items-center justify-center text-xl"
                   @click="">
                   YOU SELECTED {{ yesMarkets.includes(card.id) ? 'YES' : 'NO' }}({{ card.yesNum }})
                 </div>
