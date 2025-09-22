@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { get } from 'lodash'
+import { checkinRank } from '~/api/checkin'
+
 const { t } = useI18n()
+const { userId, jackpot } = $(checkinStore())
 
 let leaderboard = $ref([
   { name: 'Alice', invites: 23, points: 460, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=alice' },
@@ -10,13 +14,10 @@ let leaderboard = $ref([
   { name: 'Chloe', invites: 16, points: 320, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=chloe' },
 ])
 
-let streakboard = $ref([
-  { name: 'Cara', days: 26, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=cara' },
-  { name: 'Daniel', days: 24, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=daniel' },
-  { name: 'Evan', days: 22, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=evan' },
-  { name: 'Evan', days: 22, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=evan' },
-  { name: 'Evan', days: 22, avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=evan' },
-])
+let streakboard = $ref([])
+
+const avatarUrl = 'https://api.dicebear.com/7.x/identicon/svg?seed='
+const avatarSeeds = ['cara','daniel','evan','chloe','alice','bob']
 
 let loading = $ref(true)
 setTimeout(() => {
@@ -39,6 +40,21 @@ const getCrown = (idx: number) => {
   if (idx === 1) return No2
   if (idx === 2) return No3
   return null
+}
+
+const handleTabChange = (tab: string) => {
+  if (tab === t('tabs.invite')) {
+    leaderboard = [...leaderboard]
+  } else {
+    getStreak(jackpot.id)
+  }
+}
+
+const getStreak = async (jackpotId: number) => {
+  const res = await checkinRank(jackpotId)
+  if (res.code === 200) {
+    streakboard = res.data
+  }
 }
 </script>
 
@@ -75,9 +91,10 @@ const getCrown = (idx: number) => {
         title-inactive-color="#9ca3af"
         color="#1989FA"
         swipeable
+        @change="handleTabChange"
       >
         <van-tab :title="t('tabs.invite')">
-          <div class="space-y-2 mt-2 max-h-[300px] overflow-y-auto scrollbar-hidden">
+          <div class="space-y-2 mt-2 h-[300px] overflow-y-auto scrollbar-hidden">
             <div
               v-for="(item, idx) in leaderboard"
               :key="idx"
@@ -105,7 +122,7 @@ const getCrown = (idx: number) => {
         </van-tab>
 
         <van-tab :title="t('tabs.streak')">
-          <div class="space-y-2 mt-2 max-h-[300px] overflow-y-auto scrollbar-hidden">
+          <div class="space-y-2 mt-2 h-[300px] overflow-y-auto scrollbar-hidden">
             <div
               v-for="(item, idx) in streakboard"
               :key="idx"
@@ -114,7 +131,7 @@ const getCrown = (idx: number) => {
             >
               <div class="flex items-center gap-3">
                 <div class="relative inline-flex items-center justify-center w-8 h-8 shrink-0">
-                  <van-image :src="item.avatar" width="30" height="30" round />
+                  <van-image :src="avatarUrl + (idx < 3 ? avatarSeeds[idx] : avatarSeeds[3])" width="30" height="30" round />
                   <img
                     v-if="getCrown(idx)"
                     :src="getCrown(idx)!"
@@ -123,11 +140,11 @@ const getCrown = (idx: number) => {
                   />
                 </div>
                 <div class="text-sm">
-                  <div class="text-gray-800">{{ item.name }}</div>
-                  <div class="text-xs text-gray-500">{{ t('streakDays', { days: item.days }) }}</div>
+                  <div class="text-gray-800">{{ item.userId.slice(0, 6) }}...{{ item.userId.slice(-4) }}</div>
+                  <div class="text-xs text-gray-500">{{ t('streakDays', { days: item.cnt }) }}</div>
                 </div>
               </div>
-              <van-tag type="success">{{ t('daysUnit', { days: item.days }) }}</van-tag>
+              <van-tag type="success">{{ t('daysUnit', { days: item.cnt }) }}</van-tag>
             </div>
           </div>
         </van-tab>
@@ -143,16 +160,16 @@ const getCrown = (idx: number) => {
       "streak": "Streak Ranking"
     },
     "invitedN": "Invited {count} people",
-    "streakDays": "Streak {days} days",
+    "streakDays": "Check in {days} days",
     "daysUnit": "{days} days"
   },
   "zh-TW": {
     "tabs": {
       "invite": "邀請榜",
-      "streak": "堅持榜"
+      "streak": "打卡榜"
     },
     "invitedN": "邀請 {count} 人",
-    "streakDays": "連續 {days} 天",
+    "streakDays": "打卡 {days} 天",
     "daysUnit": "{days} 天"
   },
   "ja-JP": {
@@ -161,7 +178,7 @@ const getCrown = (idx: number) => {
       "streak": "継続ランキング"
     },
     "invitedN": "招待 {count} 人",
-    "streakDays": "連続 {days} 日",
+    "streakDays": "チェックイン {days} 日",
     "daysUnit": "{days} 日"
   },
   "ko-KR": {
@@ -170,7 +187,7 @@ const getCrown = (idx: number) => {
       "streak": "연속 랭킹"
     },
     "invitedN": "초대 {count}명",
-    "streakDays": "연속 {days}일",
+    "streakDays": "출석체크 {days}일",
     "daysUnit": "{days}일"
   }
 }</i18n>
