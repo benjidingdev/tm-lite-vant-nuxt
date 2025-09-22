@@ -40,28 +40,28 @@ onMounted(() => {
 <i18n lang="json">{
   "en-US": {
     "notices": {
-      "return": "Complete the whole campaign to receive 20,000 double points back",
+      "return": "Complete campaign to receive double points back",
       "poolSplit": "Finishers will evenly split the points pool",
       "reset": "Interrupted progress resets to zero"
     }
   },
   "zh-TW": {
     "notices": {
-      "return": "完成全程返還 20,000 雙倍積分",
+      "return": "完成全程返還雙倍積分",
       "poolSplit": "成功者平均分配積分池",
       "reset": "中斷清零"
     }
   },
   "ja-JP": {
     "notices": {
-      "return": "全行程を完了すると、ダブルポイント20,000を還元",
+      "return": "全行程を完了すると、ダブルポイントを還元",
       "poolSplit": "達成者でポイントプールを均等分配",
       "reset": "中断するとリセット"
     }
   },
   "ko-KR": {
     "notices": {
-      "return": "전체 완료 시 20,000 더블 포인트 반환",
+      "return": "전체 완료 시 더블 포인트 반환",
       "poolSplit": "성공자들이 포인트 풀을 균등 분배",
       "reset": "중단 시 초기화"
     }

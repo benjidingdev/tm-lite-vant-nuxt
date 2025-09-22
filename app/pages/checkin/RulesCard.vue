@@ -38,7 +38,7 @@ setTimeout(() => {
     "title": "Event Rules",
     "rules": {
       "r1": "Check-in must be continuous; interrupting will reset points to zero.",
-      "r2": "Complete the whole campaign to receive 20,000 double points back.",
+      "r2": "Complete the whole campaign to receive double points back.",
       "r3": "Successful finishers will evenly split the points pool; points are in-app and cannot be withdrawn or transferred."
     }
   },
@@ -46,7 +46,7 @@ setTimeout(() => {
     "title": "活動規則",
     "rules": {
       "r1": "活動需連續打卡，中斷則積分清零。",
-      "r2": "完成全程返還 20,000 雙倍積分。",
+      "r2": "完成全程返還雙倍積分。",
       "r3": "成功完成者平均分配積分池；積分為站內積分，不可提現/轉贈。"
     }
   },
@@ -54,7 +54,7 @@ setTimeout(() => {
     "title": "イベントルール",
     "rules": {
       "r1": "連続チェックインが必要です。中断するとポイントはリセットされます。",
-      "r2": "全行程を完了すると、ダブルポイント20,000を還元します。",
+      "r2": "全行程を完了すると、ダブルポイントを還元します。",
       "r3": "達成者でポイントプールを均等分配。ポイントはアプリ内ポイントで、出金/譲渡はできません。"
     }
   },
@@ -62,7 +62,7 @@ setTimeout(() => {
     "title": "이벤트 규칙",
     "rules": {
       "r1": "연속 출석이 필요하며 중단 시 포인트가 0으로 초기화됩니다.",
-      "r2": "전체 완료 시 20,000 더블 포인트가 지급됩니다.",
+      "r2": "전체 완료 시 더블 포인트가 지급됩니다.",
       "r3": "성공 완주자는 포인트 풀을 균등 분배하며, 포인트는 앱 내 포인트로 출금/양도가 불가능합니다."
     }
   }
