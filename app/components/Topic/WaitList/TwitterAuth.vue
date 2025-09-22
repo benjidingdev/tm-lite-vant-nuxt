@@ -3,6 +3,7 @@ const { doLogin } = $(supabaseStore())
 
 const route = useRoute()
 async function handleLogin() {
+  showToast('Logging in now...')
   const query = new URLSearchParams(location.search)
   const refId = query.get('refId')
   await doLogin({ pathname: location.pathname, refId, reason: `topic-${route.params.id}` })
