@@ -75,7 +75,6 @@ const shareTitle = computed(() => {
       <p class="text-center text-[24px] flex items-center mt-4">
         <span class="opacity-80 text-[var(--turing-purple-color)]">{{ t('Share to get more') }}</span>
         <van-image class="size-6 ml-1" src="/p.png" />
-
       </p>
     </template>
 

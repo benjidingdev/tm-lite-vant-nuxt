@@ -1,5 +1,6 @@
 <script setup>
 const emit = defineEmits(['onSuccess'])
+const t = useI18n().t
 const { x_user } = $(supabaseStore())
 let { pAmount } = $(pmDataStore())
 const hasRetweeted = $(defineModel())
@@ -38,9 +39,9 @@ const descText = $computed(() => {
   let text
 
   if (hasRetweetClicked) {
-    text = 'Then, paste the retweet link above and click submit.'
+    text = t('Then, paste the retweet link above and click submit.')
   } else {
-    text = 'First, click the retweet button below to retweet the topic tweet and paste the retweet link below.'
+    text = t('First, click the retweet button below to retweet the topic tweet and paste the retweet link below.')
   }
   return text
 })
@@ -68,22 +69,27 @@ onMounted(() => {
     <template v-if="hasRetweeted">
       <TopicWaitListCompleted :topic />
     </template>
-    <template v-else>
-      <p class="opacity-60 text-[14px] mt-8 mb-7">
-        {{ descText }}
-      </p>
-      <template v-if="hasRetweetClicked">
-        <TopicWaitListSubmitRetweetUrl @onBack="() => { hasRetweetClicked = false }"
-          @onSuccess="() => { hasRetweeted = true; emit('onSuccess') }" />
-      </template>
-      <template v-else>
-        <div class="w-full flex justify-between items-center mb-[15px]">
-          <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px]" @click="onClickRetweet">
-            <text class="text-white font-[900]">{{ $t('Retweet') }}</text>
+    <div v-else class="my-20 w-full">
+      <TopicWaitListSubmitRetweetUrl v-if="hasRetweetClicked" @onBack="() => { hasRetweetClicked = false }"
+        @onSuccess="() => { hasRetweeted = true; emit('onSuccess') }" />
+      <div v-else class="w-full flex justify-between items-center mb-[15px]">
+        <button class="w-full bg-[var(--turing-purple-color)] h-11 rounded-[8px]" @click="onClickRetweet">
+          <text class="text-white font-[900]">{{ t('Retweet to get x Points', {
+            reward: topic?.meta?.rewards?.retweet || 0
+          })
+            }}</text>
           </button>
         </div>
-      </template>
-    </template>
+    </div>
     <TopicWaitListRetweetList />
   </section>
 </template>
+<i18n>
+{
+  "en": {
+    "Retweet to get x Points": "Retweet to get {reward} Points",
+    "First, click the retweet button below to retweet the topic tweet and paste the retweet link below.": "First, click the retweet button below to retweet the topic tweet and paste the retweet link below.",
+    "Then, paste the retweet link above and click submit.": "Then, paste the retweet link above and click submit."
+  }
+}
+</i18n>

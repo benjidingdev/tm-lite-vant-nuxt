@@ -48,12 +48,12 @@ async function handleSubmit() {
   <div class="w-full flex flex-col justify-between items-center space-y-4">
     <button :disabled class="w-full text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
       :class="disabled ? 'bg-gray-500' : 'bg-[var(--turing-purple-color)] active'" @click="handleSubmit">
-      <span class="text-white font-[900]">submit</span>
+      <span class="text-white font-[900]">{{ $t('Submit') }}</span>
       <van-loading size="12" v-if="submitLoading" />
     </button>
 
     <button class="w-full border-1 border-[#353535] px-4 py-2 rounded-md" @click="() => emit('onBack')">
-      <span class="font-[900]">back</span>
+      <span class="font-[900]">{{ $t('Back') }}</span>
     </button>
   </div>
 </template>
