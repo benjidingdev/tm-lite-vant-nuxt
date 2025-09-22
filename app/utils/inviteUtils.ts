@@ -17,6 +17,9 @@ export const telegram_bot_url = (
   botUsername: string,
   params: Record<string, string>
 ) => {
+  if (!params?.redirect) {
+    params.redirect = useRequestURL().pathname;
+  }
   return `${LINK_CONSTANTS.telegram_official}/${botUsername}?start=${toBase64(
     params
   )}`;
@@ -26,6 +29,9 @@ export const telegram_bot_app_url = (
   botUsername: string,
   params: Record<string, string>
 ) => {
+  if (!params?.redirect) {
+    params.redirect = useRequestURL().pathname;
+  }
   return `${
     LINK_CONSTANTS.telegram_official
   }/${botUsername}?startapp=${toBase64(params)}`;
