@@ -38,7 +38,6 @@ const touchMove: any = (e: TouchEvent | any) => {
   offset.X = clientX - start.X;
   if (Math.abs(offset.X) > threshold.X) {
     currentDelta = offset.X > 0 ? 1 : -1;
-
     isSettlement = true;
   } else {
     currentDelta = 0

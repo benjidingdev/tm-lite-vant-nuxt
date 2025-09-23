@@ -1,7 +1,7 @@
 <script setup>
 const emit = defineEmits(['onSuccess'])
 let { pAmount } = $(pmDataStore())
-const { doLogin, hasTwitterLogin } = $(supabaseStore())
+const { hasTwitterLogin, x_user } = $(supabaseStore())
 const hasRetweeted = $(defineModel())
 const { topic } = defineProps({
   topic: {
@@ -12,7 +12,6 @@ const { topic } = defineProps({
 
 const { t } = useI18n()
 
-const route = useRoute()
 let hasRetweetClicked = $ref(false)
 const descText = $computed(() => {
   let text
@@ -36,29 +35,6 @@ function onClickRetweet() {
   })
   hasRetweetClicked = true
 }
-
-const getAsset = async () => {
-  let res = await doFetch(`/api/assets/getAsset`, {
-    method: 'GET',
-  })
-  if (res.status === 200) {
-    const asset = res?.data?.pAmount || 0;
-    pAmount = asset;
-  } else {
-    pAmount = 0;
-  }
-  return res;
-}
-
-async function handleLogin() {
-  const query = new URLSearchParams(location.search)
-  const refId = query.get('refId')
-  await doLogin({ pathname: location.pathname, refId, reason: `topic-${route.params.id}` })
-}
-
-onMounted(() => {
-  getAsset();
-})
 
 </script>
 

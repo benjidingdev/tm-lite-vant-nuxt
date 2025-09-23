@@ -22,6 +22,7 @@ function onClickRetweet() {
   }
 }
 
+
 const getAsset = async () => {
   let res = await doFetch(`/api/assets/getAsset`, {
     method: 'GET',
@@ -47,7 +48,9 @@ const descText = $computed(() => {
 })
 
 onMounted(() => {
-  getAsset();
+  if (x_user) {
+    getAsset();
+  }
 })
 
 </script>
@@ -78,8 +81,8 @@ onMounted(() => {
             reward: topic?.meta?.rewards?.retweet || 0
           })
             }}</text>
-          </button>
-        </div>
+        </button>
+      </div>
     </div>
     <TopicWaitListRetweetList />
   </section>

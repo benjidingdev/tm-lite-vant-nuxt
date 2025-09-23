@@ -18,15 +18,19 @@ type QueryParams = {
   cardID: string;
   inviteCode?: string;
 };
-
+const { query, path } = $(useRoute());
 const { t } = useI18n();
+
 const statusList = ["YES", "NO", "BOOKMARK", "NEXT"];
-let currentIndex = $ref(0); // The index of current card
-let offsetX = $ref(0); // The value  of offsetX
-let offsetY = $ref(0); // The value  of offsetY
-let startX = $ref(0); // The value of startX
-let startY = $ref(0); // The value of startY
+let start = { X: 0, Y: 0 };
 const threshold = 100; // Threshold of swiping
+const pageSize = 12;
+let total = 0;
+let queryParams: any = {
+  cardID: "",
+  inviteCode: "",
+};
+
 // The data from store
 const { userBalance } = $(walletStore());
 let { addRequest, cards, isLoading } = $(requestQueueStore());
@@ -34,16 +38,11 @@ const { token } = $(authStore());
 const { setModal } = $(uiStore());
 const { userOrderAmount } = $(userStore());
 
-let currentX = 0;
-let currentY = 0;
-const pageSize = 12;
-let total = 0;
-let queryParams: QueryParams = {
-  cardID: "",
-  inviteCode: "",
-};
 
+const carouselTrack = $ref(null);
+let offset = $ref({ X: 0, Y: 0 });
 let isSettlement = $ref(false);
+let currentDelta = $ref({ X: 0, Y: 0 });
 const recommondQueryParams = $ref({
   pageNo: 1,
   pageSize,
@@ -57,11 +56,14 @@ const recommondQueryParams = $ref({
   followed: false,
 });
 
-const { query, path } = $(useRoute());
+const { apply } = useMotion(carouselTrack, {
+  initial: { x: 0, y: 0, rotate: 0 },
+  next: { x: 0, y: 0, transition: { type: 'spring' } }
+});
 
-let movingYes = $computed(() => offsetX < 0);
-let movingNo = $computed(() => offsetX > 0);
-let movingNext = $computed(() => offsetY > 50 || offsetY < -50);
+let movingYes = $computed(() => isSettlement && offset.X < 0);
+let movingNo = $computed(() => isSettlement && offset.X > 0);
+let movingNext = $computed(() => offset.Y > threshold || offset.Y < -threshold);
 
 // get the list of cards
 const getInfoList = async (refresh: boolean) => {
@@ -78,17 +80,17 @@ const getInfoList = async (refresh: boolean) => {
     cards = [];
   }
 
-  const res = await getTopicsRecommend(recommondQueryParams);
+  const res: any = await getTopicsRecommend(recommondQueryParams);
   total = res.data.total;
 
   if (res.code === 0) {
-    cards.push(...res.data.list);
+    cards.push(...res?.data?.list);
     cards = cards.filter((item: any) => item.markets && item.markets.length);
     // If there is cardID in the url, put this card to the first
     if (queryParams.cardID) {
       const index = cards.findIndex((item: any) => item.id === Number(queryParams.cardID));
       if (index > -1) {
-        const card = cards.splice(index, 1)[0];
+        const card: any = cards.splice(index, 1)[0];
         cards.unshift(card);
       }
     }
@@ -96,69 +98,46 @@ const getInfoList = async (refresh: boolean) => {
   isLoading = false;
 };
 
-
-// Obtain the style of card
-const getCardStyle = (index: number) => {
-  if (index === currentIndex) {
-    return {
-      transform: `translateX(${offsetX}px) translateY(${offsetY}px) rotate(${offsetX / 20
-        }deg)`,
-      zIndex: 30 - index,
-    };
-  }
-  return {
-    transform: `translateX(${0}px) translateY(${1 * index}px)`,
-    zIndex: 30 - index,
-  };
-};
-
 // Touch start
 const touchStart = (e: TouchEvent | any) => {
-  if (currentIndex >= cards.length) return;
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-  offsetX = 0;
-  offsetY = 0;
+  const { clientX, clientY } = e.touches[0];
+  start.X = clientX;
+  start.Y = clientY;
+  offset.X = 0;
+  offset.Y = 0;
 };
 
 // Touch move
 const touchMove = (e: TouchEvent | any) => {
-  if (currentIndex >= cards.length) return;
-
-  currentX = e.touches[0].clientX;
-  currentY = e.touches[0].clientY;
-
-  offsetX = currentX - startX;
-  offsetY = currentY - startY;
-
-  const maxOffsetX = threshold;
-  const maxOffsetY = threshold;
-  if (Math.abs(offsetX) > maxOffsetX) {
-    offsetX = offsetX > 0 ? maxOffsetX : -maxOffsetX;
+  const { clientX, clientY } = e.touches[0];
+  offset.X = clientX - start.X;
+  offset.Y = clientY - start.Y;
+  if (Math.abs(offset.X) > threshold) {
+    currentDelta.X = offset.X > 0 ? 1 : -1;
+    currentDelta.Y = 0;
     isSettlement = true;
+  } else if (Math.abs(offset.Y) > threshold) {
+    currentDelta.Y = offset.Y > 0 ? 1 : -1;
+    currentDelta.X = 0;
   } else {
+    currentDelta.X = 0;
+    currentDelta.Y = 0
     isSettlement = false;
   }
-  if (Math.abs(offsetY) > maxOffsetY) {
-    offsetY = offsetY > 0 ? maxOffsetY : -maxOffsetY;
-  }
+  apply({ x: currentDelta.X * threshold, y: currentDelta.Y * threshold });
 };
 
 // Touch end
 const touchEnd = (card: Card) => {
-  if (currentIndex >= cards.length) return;
-
   if (cards.length <= pageSize / 2) {
     getInfoList(true);
   }
-  if (offsetX >= threshold) {
-    buyNo(card); // swipe to left means reject
-  } else if (offsetX <= -threshold) {
-    buyYes(card); // swipe to right means accept
-  } else if (offsetY >= threshold - 50) {
-    pickNext(); // swipe down means pick next card
-  } else if (offsetY <= -threshold + 50) {
-    pickNext(); // swipe up means bookmark
+  if (offset.X >= threshold) {
+    goDeposit(card, false);// swipe to left means reject
+  } else if (offset.X <= -threshold) {
+    goDeposit(card, true); // swipe to right means accept
+  } else if (offset.Y >= threshold - 50 || offset.Y <= -threshold + 50) {
+    swipeCard(statusList[3]); // swipe down means pick next card
   } else {
     resetCard(); // reset the position of card
   }
@@ -166,36 +145,20 @@ const touchEnd = (card: Card) => {
 
 // Card swipe Animation
 const swipeCard = (status: any) => {
-  let direction =
-    statusList.indexOf(status) === 0 || statusList.indexOf(status) === 2
-      ? 1
-      : -1;
-  offsetX = direction * 500;
-  offsetY = direction * 500;
   // Switch to next card after 0.3 second
   setTimeout(() => {
-    offsetX = 0;
-    offsetY = 0;
+    resetCard();
     cards.shift();
   }, 0);
 };
 
 // reset the position of cards
 const resetCard = () => {
-  offsetX = 0;
-  offsetY = 0;
-};
-
-const buyYes = (card: Card) => {
-  goDeposit(card, true);
-};
-
-const buyNo = (card: Card) => {
-  goDeposit(card, false);
-};
-
-const pickNext = () => {
-  swipeCard(statusList[3]);
+  offset.X = 0;
+  offset.Y = 0;
+  currentDelta.X = 0;
+  currentDelta.Y = 0;
+  apply({ x: 0, y: 0 });
 };
 
 // start transaction
@@ -283,20 +246,24 @@ onMounted(() => {
       </template>
 
       <div v-if="cards.length">
-        <div v-for="(card, index) in cards as cardsType" :key="card.id"
-          :class="['card', 'draggable-element', 'shadow-md', { active: currentIndex === index }]"
-          :style="getCardStyle(index)" @touchstart="(e) => _debounce(touchStart(e))"
-          @touchmove="(e) => _debounce(touchMove(e))" @touchend="(e) => _debounce(touchEnd(card))">
+        <div v-for="(card, index) in cards as cardsType" :key="card.id" ref="carouselTrack"
+          class="absolute w-full h-full bg-white rounded-[15px] transition-all duration-300 ease-in-out overflow-hidden shadow-md"
+          @touchstart="touchStart" @touchmove="(e) => _debounce(touchMove(e))"
+          @touchend="(e) => _debounce(touchEnd(card))" :style="{
+            'z-index': 30 - index,
+            transform: index == 0
+              ? `translateX(${currentDelta.X * 100}px) translateY(${currentDelta.Y * 100}px) rotate(${currentDelta.X * 8}deg)`
+              : `translateX(${0}px) translateY(${1 * index}px)`
+          }">
           <van-image width="100%" height="50%" :src="card.image" class="p-2" fit="contain">
-
             <div v-if="index === 0" class="hint-box" id="step6">
-              <div v-if="isSettlement && movingYes" class="hint-box hint like">
+              <div v-if="movingYes" class="hint-box hint font-bold text-white border-white bg-[var(--user-selected-yes-color)]">
                 YES
               </div>
-              <div v-else-if="isSettlement && movingNo" class="hint-box hint nope">
+              <div v-else-if="movingNo" class="hint-box hint font-bold text-white border-white bg-[var(--user-selected-no-color)]">
                 NO
               </div>
-              <div v-else-if="movingNext" class="hint-box hint next">NEXT</div>
+              <div v-else-if="movingNext" class="hint-box hint font-bold text-white border-white bg-[var(--user-selected-next-color)]">NEXT</div>
             </div>
           </van-image>
 
@@ -304,7 +271,7 @@ onMounted(() => {
             <div class="h-[85%] overflow-hidden">
               <!-- Title and question -->
               <div class="mh-[120px">
-                <p class="name">{{ card.title }}</p>
+                <p class="text-[18px] font-bold block leading-[1.2]">{{ card.title }}</p>
                 <p v-if="card?.markets.length" class="mt-1 leading-none!">{{
                   card?.markets[0].question
                 }}</p>
@@ -312,14 +279,14 @@ onMounted(() => {
               <!-- Yes and No button -->
               <div class="w-full h-16 z-50 mt-5">
                 <div class="flex justify-between items-center h-full">
-                  <div id="step4" class="relative" @click="buyYes(card)">
+                  <div id="step4" class="relative" @click="goDeposit(card, true);">
                     <img class="h-[56px]" src="@/assets/icon/yes.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
                       Yes {{ unitConvert(card.markets[0].yesPrice || 0) }}¢
                     </span>
                   </div>
-                  <div id="step5" class="relative" @click="buyNo(card)">
+                  <div id="step5" class="relative" @click="goDeposit(card, false);">
                     <img class="h-[56px]" src="@/assets/icon/no.png" alt="">
                     <span
                       class="absolute inset-0 flex items-center justify-center w-full h-full text-white text-xl font-bold">
@@ -357,74 +324,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.card {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: white;
-  border-radius: 15px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.name {
-  font-size: 18px;
-  font-weight: bold;
-  display: block;
-  line-height: 1.2;
-}
-
 .hint-box {
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
-  z-index: 0;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @apply absolute top-[2px] bottom-[2px] left-[2px] right-[2px] z-0 rounded-[15px] flex justify-center items-center
 }
 
 .hint {
-  font-weight: bold;
-  font-size: 36px;
-  color: white;
-  border: 3px solid white;
-  opacity: 1;
-  transition: opacity 0.3s;
-}
-
-.hint.like {
-  background: rgba(82, 196, 26, 0.7);
-}
-
-.hint.nope {
-  background: rgba(255, 77, 79, 0.7);
-}
-
-.hint.next {
-  background: rgba(173, 173, 173, 0.7);
+  @apply text-[36px] border-[3px] border-solid opacity-100 transition-opacity duration-300
 }
 
 .van-image img {
   border-radius: 15px;
-}
-
-.draggable-element {
-  will-change: transform;
-  touch-action: none;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  contain: content;
-}
-
-.gradient-left {
-  background-image: linear-gradient(to right, #1652F0, #1854ee);
-}
-
-.gradient-right {
-  background-image: linear-gradient(to right, #D103FB, rgb(242, 111, 179));
 }
 </style>
