@@ -9,7 +9,7 @@ const route = useRoute()
 let markets = $ref(topic?.markets || [])
 let { pAmount, yesMarkets, noMarkets }: any = $(pmDataStore());
 
-let offset = $ref({ X: 0, Y: 0 });
+let offset = $ref({ X: 0 });
 let isTrading = $ref(false)
 let isSettlement = $ref(false)
 const carouselTrack = $ref(null);
@@ -21,38 +21,30 @@ const { apply } = useMotion(carouselTrack, {
 });
 
 
-let threshold = { X: 100, Y: 100 };
+let threshold = { X: 50 };
 let movingYes = $computed(() => isSettlement && offset.X < 0);
 let movingNo = $computed(() => isSettlement && offset.X > 0);
-const movingNext = $computed(() => offset.Y > 50 || offset.Y < -50);
 const userSelectedMarkets = $computed(() => yesMarkets.concat(noMarkets));
 
-let start = { X: 0, Y: 0 }
+let start = { X: 0 }
 const touchStart = (e: TouchEvent | any, index: number) => {
-  const { clientX, clientY } = e.touches[0];
+  const { clientX } = e.touches[0];
   start.X = clientX;
-  start.Y = clientY;
   offset.X = 0;
-  offset.Y = 0;
 };
 
 const touchMove: any = (e: TouchEvent | any) => {
-  const { clientX, clientY } = e.touches[0];
+  const { clientX } = e.touches[0];
   offset.X = clientX - start.X;
-  offset.Y = clientY - start.Y;
   if (Math.abs(offset.X) > threshold.X) {
-    offset.X = offset.X > 0 ? threshold.X : -threshold.X;
+    currentDelta = offset.X > 0 ? 1 : -1;
+
     isSettlement = true;
   } else {
+    currentDelta = 0
     isSettlement = false;
   }
-  if (offset.X > 0) {
-    currentDelta = 1;
-    apply({ x: currentDelta * 100 });
-  } else {
-    currentDelta = -1;
-    apply({ x: -currentDelta * 100 });
-  }
+  apply({ x: currentDelta * threshold.X });
 };
 
 const touchEnd = (card: any) => {
@@ -69,11 +61,9 @@ const touchEnd = (card: any) => {
 const swipeCard = () => {
   let direction = -1;
   offset.X = direction * 500;
-  offset.Y = direction * 500;
   // Switch to next card after 0.3 second
   setTimeout(() => {
     offset.X = 0;
-    offset.Y = 0;
     // how to update the $PCards without changing the value of $Pcard
     const market = markets.shift();
     markets.push(market);
@@ -82,7 +72,7 @@ const swipeCard = () => {
 
 const resetCard = () => {
   offset.X = 0;
-  offset.Y = 0;
+  apply({ x: 0 });
 };
 
 async function trade(marketId: any, isYes: any) {
@@ -169,14 +159,14 @@ onMounted(async () => {
           }">
           <van-image width="100%" height="60%" :src="card.image" class="p-2" fit="contain">
             <div v-if="index === 0" class="hint-box">
-              <div v-if="movingYes" class="hint-box hint font-bold text-white border-white bg-[var(--user-selected-yes-color)]">
+              <div v-if="movingYes"
+                class="hint-box hint font-bold text-white border-white bg-[var(--user-selected-yes-color)]">
                 YES
               </div>
-              <div v-else-if="movingNo" class="hint-box hint font-bold  text-white border-white bg-[var(--user-selected-no-color)]">
+              <div v-else-if="movingNo"
+                class="hint-box hint font-bold  text-white border-white bg-[var(--user-selected-no-color)]">
                 NO
               </div>
-              <div v-else-if="movingNext" class="hint-box hint font-bold  text-white border-white bg-[var(--user-selected-next-color)]">
-                NEXT</div>
             </div>
           </van-image>
 
@@ -239,5 +229,4 @@ onMounted(async () => {
 .hint {
   @apply text-[36px] border-[3px] border-solid opacity-100 transition-opacity duration-300
 }
-
 </style>
